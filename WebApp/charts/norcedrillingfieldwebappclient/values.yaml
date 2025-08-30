@@ -49,15 +49,15 @@ ingress:
   hosts:
     - host: localhost
       paths:
-        - path: /GeodeticDatum/webapp
+        - path: /Field/webapp
           pathType: Prefix
     - host: dev.digiwells.no
       paths:
-        - path: /GeodeticDatum/webapp
+        - path: /Field/webapp
           pathType: Prefix
     - host: app.digiwells.no
       paths:
-        - path: /GeodeticDatum/webapp
+        - path: /Field/webapp
           pathType: Prefix
   tls: []
   #  - secretName: chart-example-tls
