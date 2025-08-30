@@ -1,0 +1,271 @@
+﻿@page "/FieldMain"
+@inject ILogger<FieldMain> logger
+@inject ISnackbar Snackbar
+
+<MudUnitAndReferenceChoiceTag HttpHost=@APIUtils.HostNameUnitConversion
+                              HttpBasePath=@APIUtils.HostBasePathUnitConversion
+                              HttpController="UnitSystem/"
+                              UnitSystemName="@DataUtils.UnitAndReferenceParameters.UnitSystemName"
+                              UnitSystemNameChanged="@DataUtils.UpdateUnitSystemName">
+    @if (fieldList == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <div hidden="@isHiddenMainPanel">
+            <MudDataGrid T="Field" MultiSelection="true" Items="@fieldList" SelectedItemsChanged="@SelectedItemsChanged"
+                         EditMode="DataGridEditMode.Cell"
+                         Hover="true"  RowClick="@RowClicked"
+                         SortMode="SortMode.Multiple"  QuickFilter="@_fieldFilter" Filterable="false"
+                         ReadOnly="false" ColumnResizeMode="ResizeMode.Column" Elevation="0">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Field</MudText>
+                    <MudButton OnClick="@AddField" Color="@Color.Success" Class="add-item-btn">Add</MudButton>
+                    <MudButton OnClick="@DeleteSelectedField" Color="@Color.Error" Class="add-item-btn">Delete</MudButton>
+                    <MudSpacer />
+                    <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                </ToolBarContent>
+                <Columns>
+                    <SelectColumn T="Field" />
+                    <PropertyColumn Property="x => x.Name" Title="@DataUtils.FieldNameLabel" CellStyle="width: 30%;" Sortable="true" Editable="false" />
+                    <PropertyColumn Property="x => x.Description" Title="@DataUtils.FieldDescrLabel" CellStyle="width: 60%;" Sortable="true" Editable="false" />
+                    <TemplateColumn CellStyle="width: 5%;">
+                        <EditTemplate>
+                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="(() => DeleteField(context.Item.MetaInfo.ID))" />
+                        </EditTemplate>
+                    </TemplateColumn>
+                </Columns>
+            </MudDataGrid>
+        </div>
+    }
+    @if (isHiddenMainPanel && currentField != null)
+    {
+        <FieldEdit CurrentField="@currentField" FieldTypes="@fieldTypeList" CartographicProjections="@cartographicProjectionList" OnUpdate="@ShowMainPanel" />
+    }
+</MudUnitAndReferenceChoiceTag>
+
+@code {
+    private List<Field> fieldList = new();
+    private List<Field> selectedFieldList = new();
+    private List<CartographicProjectionLight> cartographicProjectionList = new();
+    private List<FieldType> fieldTypeList = new();
+    private Field? currentField;
+    private List<object?>? inputDataList = new(); // container used to pass input data to the FieldEdit razor component without specifying content types (required by µservice Template)
+    // UI related variables
+    public bool isHiddenMainPanel;
+    public bool isHiddenEditPanel;
+    private string? _searchString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Show main panel
+            isHiddenMainPanel = false;
+            isHiddenEditPanel = true;
+            currentField = null;
+
+            // Starting all loading tasks asynchronously
+            logger.LogInformation("Trying to load list of Fields from client: " + APIUtils.HostNameField);
+            var fieldTask = APIUtils.ClientField.GetAllFieldAsync();
+            var cartographicProjectionTask = APIUtils.ClientCartographicProjection.GetAllCartographicProjectionLightAsync();
+
+            List<Task> loadingTaskList = new List<Task> { fieldTask, cartographicProjectionTask };
+
+            // Awaiting tasks and retrieve results as they become available
+            while (loadingTaskList.Count > 0)
+            {
+                Task finishedTask = await Task.WhenAny(loadingTaskList);
+                if (finishedTask == fieldTask)
+                {
+                    try
+                    {
+                        fieldList = (List<Field>)await fieldTask; // awaiting the finished task allows to retrieve its result and throw exception if needed
+                        if (fieldList != null)
+                        {
+                            fieldList.Sort((t1, t2) => t1.Name.CompareTo(t2.Name));
+                        }
+                        else
+                        {
+                            logger.LogWarning("Returned list of Field were null on initialization");
+                            Snackbar.Add("Returned list of Field were null on initialization", Severity.Warning);
+                        }
+                    }
+                    catch (ApiException ex)
+                    {
+                        logger.LogError(ex, "Impossible to load Field from client");
+                    }
+                }
+                else if (finishedTask == cartographicProjectionTask)
+                {
+                    try
+                    {
+                        List<CartographicProjectionLight>? cartographicProjections = (List<CartographicProjectionLight>)await cartographicProjectionTask; // awaiting the finished task allows to retrieve its result and throw exception if needed
+                        if (cartographicProjections != null)
+                        {
+                            cartographicProjectionList = cartographicProjections;
+                            cartographicProjectionList.Sort((t1, t2) => t1.Name.CompareTo(t2.Name));
+                        }
+                        else
+                        {
+                            logger.LogWarning("Returned list of cartographic projections were null on initialization");
+                            Snackbar.Add("Returned list of cartographic projections were null on initialization", Severity.Warning);
+                        }
+                    }
+                    catch (ApiException ex)
+                    {
+                        logger.LogError(ex, "Impossible to load cartographic projections from client");
+                    }
+                }
+                loadingTaskList.Remove(finishedTask);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Problem Field initialization");
+        }
+        await InvokeAsync(() => { StateHasChanged(); });
+    }
+
+    private async Task AddField()
+    {
+        try
+        {
+            MetaInfo metaInfo = new() { ID = Guid.NewGuid(), HttpHostName = APIUtils.HostNameField, HttpHostBasePath = APIUtils.HostBasePathField, HttpEndPoint = "Field/" };
+            DateTimeOffset creationDate = DateTimeOffset.UtcNow;
+            Field currentField = new()
+            {
+                MetaInfo = metaInfo,
+                Name = DataUtils.DEFAULT_NAME_Field,
+                Description = DataUtils.DEFAULT_DESCR_Field,
+                CreationDate = creationDate,
+                LastModificationDate = creationDate,
+
+            };
+            await APIUtils.ClientField.PostFieldAsync(currentField);
+            await OnInitializedAsync();
+            // Find the newly created datum in the refreshed list
+            var addedProjection = fieldList.FirstOrDefault(d => d.MetaInfo?.ID == currentField.MetaInfo?.ID);
+            if (addedProjection != null)
+            {
+                logger.LogInformation("Field posted successfully");
+                Snackbar.Add("Field posted successfully", Severity.Success);
+                await RowClicked(new DataGridRowClickEventArgs<Field>(new MouseEventArgs(), addedProjection, -1));
+            }
+            else
+            {
+                
+                logger.LogError("Could not retrieve the added field");
+                Snackbar.Add("Could not retrieve the added field", Severity.Warning);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Impossible to add a new Field");
+            Snackbar.Add("Impossible to add a new Field", Severity.Warning);
+        }
+    }
+
+    private async Task RowClicked(DataGridRowClickEventArgs<Field> args)
+    {
+        await EditField(args.Item.MetaInfo.ID);
+    }
+
+    private async Task EditField(Guid id)
+    {
+        try
+        {
+            currentField = await APIUtils.ClientField.GetFieldByIdAsync(id);
+            if (currentField != null)
+            {
+                isHiddenMainPanel = true;
+                isHiddenEditPanel = false;
+                await InvokeAsync(() => { StateHasChanged(); });
+            }
+            else
+            {
+                logger.LogWarning("Impossible to load Field");
+                Snackbar.Add("Impossible to load Field", Severity.Warning);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Impossible to load Field to be edited");
+            Snackbar.Add("Impossible to load Field to be edited", Severity.Warning);
+        }
+    }
+
+    private async Task DeleteField(Guid id)
+    {
+        try
+        {
+            await APIUtils.ClientField.DeleteFieldByIdAsync(id);
+            await OnInitializedAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Impossible to delete Field");
+        }
+    }
+
+    private async Task DeleteSelectedField()
+    {
+        try
+        {
+            foreach (Field field in selectedFieldList)
+            {
+                await APIUtils.ClientField.DeleteFieldByIdAsync(field.MetaInfo.ID);
+            }
+            await OnInitializedAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Impossible to delete all Field");
+        }
+
+    }
+
+    //Quick filter - filter gobally across multiple columns with the same input
+    private Func<Field, bool>
+    _fieldFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+        if ($"{x.Name} {x.Description}".Contains(_searchString))
+            return true;
+
+        return false;
+    };
+
+    //Events
+    private void StartedEditingItem(Field item)
+    {
+        //Activating Edit event capture with parameter StartedEditingItem="@StartedEditingItem" in MudDataGrid; arguments are specified in OnClick="@context.Actions.StartedEditingItem(...)"
+    }
+
+    private void CancelledEditingItem(Field item)
+    {
+        //Activating Cancel event capture with parameter CancelledEditingItem = "@CancelledEditingItem" in MudDataGrid; arguments are specified in OnClick="@context.Actions.CancelledEditingItem(...)"
+    }
+
+    private void CommittedItemChanges(Field item)
+    {
+        //Activating Commit event capture with parameter CommittedItemChanges = "@CommittedItemChanges" in MudDataGrid; arguments are specified in OnClick="@context.Actions.CommittedEditingItem(...)"
+    }
+
+    void SelectedItemsChanged(HashSet<Field>
+        items)
+    {
+        selectedFieldList.Clear();
+        selectedFieldList.InsertRange(0, items);
+    }
+
+    private async void ShowMainPanel()
+    {
+        isHiddenMainPanel = false;
+        isHiddenEditPanel = true;
+        await OnInitializedAsync();
+    }
+}

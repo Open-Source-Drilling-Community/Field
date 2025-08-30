@@ -1,0 +1,235 @@
+﻿@page "/Statistics"
+@inject ILogger<StatisticsMain> logger
+@inject ISnackbar Snackbar
+
+@if (statistics_ == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div hidden="@isHiddenMainPanel">
+        <MudText Class="mt-4 mb-4" Typo="Typo.h5"><strong>Usage Statistics</strong></MudText>
+        <div style="width: 90%; margin: auto">
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.h6">Total count:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.body1">@totalCount_</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.h6">Field Count:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.body1">@fieldCount_</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.h6">Field Conversion Set count:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.body1">@fieldConversionSetCount_</MudText>
+                </MudItem>
+            </MudGrid>
+        </div>
+    </div>
+}
+
+@code {
+    private UsageStatisticsField statistics_ = null!;
+    private long totalCount_ = 0;
+    private long fieldCount_ = 0;
+    private long fieldConversionSetCount_ = 0;
+
+    private bool isHiddenMainPanel = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            statistics_ = await APIUtils.ClientField.GetFieldUsageStatisticsAsync();
+            if (statistics_ != null)
+            {
+                totalCount_ = 0;
+                fieldCount_ = 0;
+                fieldConversionSetCount_ = 0;
+
+                if (statistics_.GetAllFieldIdPerDay != null && statistics_.GetAllFieldIdPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.GetAllFieldIdPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldCount_ += count.Count;
+                        }
+                    }
+                }
+                if (statistics_.GetAllFieldMetaInfoPerDay != null && statistics_.GetAllFieldMetaInfoPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.GetAllFieldMetaInfoPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldCount_ += count.Count;
+                        }
+                    }
+                }
+                if (statistics_.GetFieldByIdPerDay != null && statistics_.GetFieldByIdPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.GetFieldByIdPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldCount_ += count.Count;
+                        }
+                    }
+                }
+                if (statistics_.GetAllFieldPerDay != null && statistics_.GetAllFieldPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.GetAllFieldPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldCount_ += count.Count;
+                        }
+                    }
+                }
+                if (statistics_.PostFieldPerDay != null && statistics_.PostFieldPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.PostFieldPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldCount_ += count.Count;
+                        }
+                    }
+                }
+                if (statistics_.PutFieldByIdPerDay != null && statistics_.PutFieldByIdPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.PutFieldByIdPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldCount_ += count.Count;
+                        }
+                    }
+                }
+                if (statistics_.DeleteFieldByIdPerDay != null && statistics_.DeleteFieldByIdPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.DeleteFieldByIdPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldCount_ += count.Count;
+                        }
+                    }
+                }
+
+                if (statistics_.GetAllFieldCartographicConversionSetIdPerDay != null && statistics_.GetAllFieldCartographicConversionSetIdPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.GetAllFieldCartographicConversionSetIdPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldConversionSetCount_ += count.Count;
+                        }
+                    }
+                }
+                if (statistics_.GetAllFieldCartographicConversionSetMetaInfoPerDay != null && statistics_.GetAllFieldCartographicConversionSetMetaInfoPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.GetAllFieldCartographicConversionSetMetaInfoPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldConversionSetCount_ += count.Count;
+                        }
+                    }
+                }
+                if (statistics_.GetFieldCartographicConversionSetByIdPerDay != null && statistics_.GetFieldCartographicConversionSetByIdPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.GetFieldCartographicConversionSetByIdPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldConversionSetCount_ += count.Count;
+                        }
+                    }
+                }
+                if (statistics_.GetAllFieldCartographicConversionSetLightPerDay != null && statistics_.GetAllFieldCartographicConversionSetLightPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.GetAllFieldCartographicConversionSetLightPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldConversionSetCount_ += count.Count;
+                        }
+                    }
+                }
+                if (statistics_.GetAllFieldCartographicConversionSetPerDay != null && statistics_.GetAllFieldCartographicConversionSetPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.GetAllFieldCartographicConversionSetPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldConversionSetCount_ += count.Count;
+                        }
+                    }
+                }
+                if (statistics_.PostFieldCartographicConversionSetPerDay != null && statistics_.PostFieldCartographicConversionSetPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.PostFieldCartographicConversionSetPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldConversionSetCount_ += count.Count;
+                        }
+                    }
+                }
+
+                if (statistics_.PutFieldCartographicConversionSetByIdPerDay != null && statistics_.PutFieldCartographicConversionSetByIdPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.PutFieldCartographicConversionSetByIdPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldConversionSetCount_ += count.Count;
+                        }
+                    }
+                }
+                if (statistics_.DeleteFieldCartographicConversionSetByIdPerDay != null && statistics_.DeleteFieldCartographicConversionSetByIdPerDay.Data != null)
+                {
+                    foreach (CountPerDay count in statistics_.DeleteFieldCartographicConversionSetByIdPerDay.Data)
+                    {
+                        if (count != null)
+                        {
+                            totalCount_ += count.Count;
+                            fieldConversionSetCount_ += count.Count;
+                        }
+                    }
+                }
+            }
+            // Show main panel
+            isHiddenMainPanel = false;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Problem UsageStatistics initialization");
+        }
+        await InvokeAsync(() => { StateHasChanged(); });
+    }
+
+}

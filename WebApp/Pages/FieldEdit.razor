@@ -1,0 +1,146 @@
+﻿@implements IUnitAwareComponent
+@inject ILogger<FieldEdit> logger
+@inject ISnackbar Snackbar
+
+<MudText Class="mt-4 mb-4" Typo="Typo.h6">Edit Field</MudText>
+<MudContainer Class="d-flex flex-row mt-4 mb-4">
+    <MudButton Class="me-1" Variant="Variant.Filled" Color="Color.Success" OnClick="Update">Update</MudButton>
+    <MudButton Class="me-1" Variant="Variant.Filled" OnClick="Cancel">Cancel</MudButton>
+</MudContainer>
+
+<MudExpansionPanels Class="mt-4 mb-4">
+    <MudExpansionPanel Text="Description" Expanded="true">
+        <MudContainer Class="d-flex flex-column" style="max-width: 500px; width: 100%;">
+            <MudTextField @bind-Value="@_name" Label="Name" Variant="Variant.Filled"></MudTextField>
+            <MudTextField @bind-Value="@_descr" Label="Description" Variant="Variant.Filled"></MudTextField>
+            @if (CartographicProjections != null && CartographicProjections.Count > 0)
+            {
+                <MudSelect @bind-Value="@_cartographicProjection" Label="Cartographic Projection" Variant="Variant.Filled" ToStringFunc="@(s => s?.Name)">
+                    @foreach (var sph in CartographicProjections)
+                    {
+                        <MudSelectItem Value="@sph">@sph.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            }
+        </MudContainer>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+@code {
+    [CascadingParameter]
+    private MudUnitAndReferenceChoiceTag? Parent { get; set; }
+
+    [Parameter]
+    public Field? CurrentField { get; set; }
+
+    [Parameter]
+    public List<CartographicProjectionLight>? CartographicProjections { get; set; }
+
+    [Parameter]
+    public List<FieldType>? FieldTypes { get; set; }
+
+    [Parameter]
+    public Action? OnUpdate { get; set; }
+
+    private enum northSouthEnum { North, South }
+    // Local variables used to retrieve user-defined parameters
+    private CartographicProjectionLight? _cartographicProjection;
+    private string? _name;
+    private string? _descr;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (Parent == null)
+                throw new ArgumentNullException(nameof(Parent), "TargetEdit page must exist within a MudUnitAndReferenceChoiceTag");
+            Parent.Add(this);
+            ManageUnits();
+
+            if (CurrentField != null && CurrentField.MetaInfo != null)
+            {
+                _cartographicProjection = null;
+                if (CurrentField.CartographicProjectionID != null && CurrentField.CartographicProjectionID != Guid.Empty && CartographicProjections != null)
+                {
+                    CartographicProjectionLight? cartographicProjection = null;
+                    foreach (var projection in CartographicProjections)
+                    {
+                        if (projection.MetaInfo != null && projection.MetaInfo.ID == CurrentField.CartographicProjectionID)
+                        {
+                            cartographicProjection = projection;
+                            break;
+                        }
+                    }
+                    if (cartographicProjection == null)
+                    {
+                        logger.LogWarning("The Cartographic Projection associated with the Field cannot be found");
+                        Snackbar.Add("The Cartographic Projection associated with the Field cannot be found", Severity.Warning);
+                    }
+                    else
+                    {
+                        _cartographicProjection = cartographicProjection;
+                    }
+                }
+                _name = CurrentField.Name;
+                _descr = CurrentField.Description;
+            }
+            else
+            {
+                logger.LogError("Current Field is null or badly formed");
+                Snackbar.Add("Current Field is null or badly formed", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Problem on Field initialization");
+            Snackbar.Add("Problem on Field initialization", Severity.Error);
+        }
+        await InvokeAsync(() => { StateHasChanged(); });
+    }
+
+    public void ManageUnits()
+    {
+
+    }
+
+    private async Task Update()
+    {
+        try
+        {
+            if (CurrentField != null && CurrentField.MetaInfo != null)
+            {
+                Guid cartographicProjectionID = Guid.Empty;
+                if (_cartographicProjection != null && _cartographicProjection.MetaInfo != null && _cartographicProjection.MetaInfo.ID != Guid.Empty)
+                {
+                    cartographicProjectionID = _cartographicProjection.MetaInfo.ID;
+                }
+                Field field = new()
+                {
+                    MetaInfo = CurrentField.MetaInfo,
+                    Name = _name,
+                    Description = _descr,
+                    CreationDate = CurrentField.CreationDate,
+                    LastModificationDate = DateTimeOffset.UtcNow,
+                    CartographicProjectionID = cartographicProjectionID
+                };
+                await APIUtils.ClientField.PutFieldByIdAsync(CurrentField.MetaInfo.ID, field);
+                logger.LogInformation("Updated the Field successfully");
+                Snackbar.Add("Updated the Field successfully", Severity.Success);
+            }
+            else
+            {
+                logger.LogWarning("Problem while updating the Field");
+                Snackbar.Add("Problem while updating the Field", Severity.Warning);
+            }
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError(ex, "Problem while updating the Field");
+            Snackbar.Add("Problem while updating the Field", Severity.Warning);
+        }
+    }
+
+    private void Cancel()
+    {
+        OnUpdate?.Invoke();
+    }
+}
