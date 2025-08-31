@@ -52,7 +52,6 @@
     private List<CartographicProjectionLight> cartographicProjectionList = new();
     private List<FieldType> fieldTypeList = new();
     private Field? currentField;
-    private List<object?>? inputDataList = new(); // container used to pass input data to the FieldEdit razor component without specifying content types (required by µservice Template)
     // UI related variables
     public bool isHiddenMainPanel;
     public bool isHiddenEditPanel;
@@ -147,12 +146,12 @@
             await APIUtils.ClientField.PostFieldAsync(currentField);
             await OnInitializedAsync();
             // Find the newly created datum in the refreshed list
-            var addedProjection = fieldList.FirstOrDefault(d => d.MetaInfo?.ID == currentField.MetaInfo?.ID);
-            if (addedProjection != null)
+            var addedField = fieldList.FirstOrDefault(d => d.MetaInfo?.ID == currentField.MetaInfo?.ID);
+            if (addedField != null)
             {
                 logger.LogInformation("Field posted successfully");
                 Snackbar.Add("Field posted successfully", Severity.Success);
-                await RowClicked(new DataGridRowClickEventArgs<Field>(new MouseEventArgs(), addedProjection, -1));
+                await RowClicked(new DataGridRowClickEventArgs<Field>(new MouseEventArgs(), addedField, -1));
             }
             else
             {
