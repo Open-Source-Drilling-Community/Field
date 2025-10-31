@@ -49,7 +49,7 @@
                         @if (fieldList != null)
                         {
                             <MudItem xs="12" sm="6" md="6" lg="6">
-                                <MudSelect T="Field" Label="Target Cartographic Projection" @bind-Value="targetCartographicProjectionFromDatum">
+                                <MudSelect T="NORCE.Drilling.Field.ModelShared.Field" Label="Target Cartographic Projection" @bind-Value="field">
                                     @foreach (var proj in fieldList)
                                     {
                                         <MudSelectItem Value="@proj">@proj.Name</MudSelectItem>
@@ -156,7 +156,7 @@
                         @if (fieldList != null)
                         {
                             <MudItem xs="12" sm="6" md="6" lg="6">
-                                <MudSelect T="Field" Label="Target Cartographic Projection" @bind-Value="targetCartographicProjectionFromWGS84">
+                                <MudSelect T="NORCE.Drilling.Field.ModelShared.Field" Label="Target Cartographic Projection" @bind-Value="targetField">
                                     @foreach (var proj in fieldList)
                                     {
                                         <MudSelectItem Value="@proj">@proj.Name</MudSelectItem>
@@ -255,7 +255,7 @@
                         @if (fieldList != null)
                         {
                             <MudItem xs="12" sm="6">
-                                <MudSelect T="Field" Label="Source Cartographic Projection" @bind-Value="sourceCartographicProjection">
+                                <MudSelect T="NORCE.Drilling.Field.ModelShared.Field" Label="Source Cartographic Projection" @bind-Value="sourceField">
                                     @foreach (var proj in fieldList)
                                     {
                                         <MudSelectItem Value="@proj">@proj.Name</MudSelectItem>
@@ -349,7 +349,7 @@
     private double? fromLatitudeDatum;
     private double? fromLongitudeDatum;
     private double? fromVerticalDepthGeodeticDatum;
-    private Field? targetCartographicProjectionFromDatum;
+    private NORCE.Drilling.Field.ModelShared.Field? field;
     private double? toNorthingFromDatum;
     private double? toEastingFromDatum;
     private double? toVerticalDepthCartographicProjectionFromDatum;
@@ -362,7 +362,7 @@
     private double? fromLatitudeWGS84;
     private double? fromLongitudeWGS84;
     private double? fromVerticalDepthGeodeticWGS84;
-    private Field? targetCartographicProjectionFromWGS84;
+    private NORCE.Drilling.Field.ModelShared.Field? targetField;
     private double? toNorthingFromWGS84;
     private double? toEastingFromWGS84;
     private double? toVerticalDepthCartographicProjectionFromWGS84;
@@ -372,7 +372,7 @@
     private double? verticalDepthGeodeticDatumFromWGS84;
 
     // Input fields for cartographic projection → latlong
-    private Field? sourceCartographicProjection;
+    private NORCE.Drilling.Field.ModelShared.Field? sourceField;
     private double? fromNorthing;
     private double? fromEasting;
     private double? fromVerticalDepthCartographicProjection;
@@ -384,12 +384,12 @@
     private double? toVerticalDepthGeodeticWGS84;
     private double? gridConvergenceFromCarto;
     // List of available fields
-    private List<Field>? fieldList = null;
+    private List<NORCE.Drilling.Field.ModelShared.Field>? fieldList = null;
 
     // Conversion methods
     private void ConvertDatumToCarto()
     {
-        if (fromLatitudeDatum != null && fromLongitudeDatum != null && fromVerticalDepthGeodeticDatum != null && targetCartographicProjectionFromDatum != null)
+        if (fromLatitudeDatum != null && fromLongitudeDatum != null && fromVerticalDepthGeodeticDatum != null && field != null)
         {
             MetaInfo metaInfo = new() { ID = Guid.NewGuid(), HttpHostName = APIUtils.HostNameCartographicProjection, HttpHostBasePath = APIUtils.HostBasePathCartographicProjection, HttpEndPoint = "FieldCartographicConversionSet/" };
             DateTimeOffset creationDate = DateTimeOffset.UtcNow;
@@ -401,7 +401,7 @@
                 CreationDate = creationDate,
                 LastModificationDate = creationDate,
             };
-            conversionSet.FieldID = targetCartographicProjectionFromDatum.MetaInfo.ID;
+            conversionSet.FieldID = field.MetaInfo.ID;
             conversionSet.CartographicCoordinateList = new List<CartographicCoordinate>
         {
             new CartographicCoordinate
@@ -447,7 +447,7 @@
     }
     private void ConvertWGS84ToCarto()
     {
-        if (fromLatitudeWGS84 != null && fromLongitudeWGS84 != null && fromVerticalDepthGeodeticWGS84 != null && targetCartographicProjectionFromDatum != null)
+        if (fromLatitudeWGS84 != null && fromLongitudeWGS84 != null && fromVerticalDepthGeodeticWGS84 != null && field != null)
         {
             MetaInfo metaInfo = new() { ID = Guid.NewGuid(), HttpHostName = APIUtils.HostNameCartographicProjection, HttpHostBasePath = APIUtils.HostBasePathCartographicProjection, HttpEndPoint = "FieldCartographicConversionSet/" };
             DateTimeOffset creationDate = DateTimeOffset.UtcNow;
@@ -459,7 +459,7 @@
                 CreationDate = creationDate,
                 LastModificationDate = creationDate,
             };
-            conversionSet.FieldID = targetCartographicProjectionFromDatum.MetaInfo.ID;
+            conversionSet.FieldID = field.MetaInfo.ID;
             conversionSet.CartographicCoordinateList = new List<CartographicCoordinate>
         {
             new CartographicCoordinate
@@ -506,7 +506,7 @@
 
     private void ConvertCartoToLatLong()
     {
-        if (fromNorthing != null && fromEasting != null && fromVerticalDepthCartographicProjection != null && sourceCartographicProjection != null)
+        if (fromNorthing != null && fromEasting != null && fromVerticalDepthCartographicProjection != null && sourceField != null)
         {
             MetaInfo metaInfo = new() { ID = Guid.NewGuid(), HttpHostName = APIUtils.HostNameField, HttpHostBasePath = APIUtils.HostBasePathField, HttpEndPoint = "FieldCartographicConversionSet/" };
             DateTimeOffset creationDate = DateTimeOffset.UtcNow;
@@ -518,7 +518,7 @@
                 CreationDate = creationDate,
                 LastModificationDate = creationDate,
             };
-            conversionSet.FieldID = sourceCartographicProjection?.MetaInfo?.ID;
+            conversionSet.FieldID = sourceField?.MetaInfo?.ID;
             conversionSet.CartographicCoordinateList = new List<CartographicCoordinate>
         {
             new CartographicCoordinate
@@ -586,7 +586,7 @@
                 {
                     try
                     {
-                        fieldList = (List<Field>)await fieldTask; // awaiting the finished task allows to retrieve its result and throw exception if needed
+                        fieldList = (List<NORCE.Drilling.Field.ModelShared.Field>)await fieldTask; // awaiting the finished task allows to retrieve its result and throw exception if needed
                         if (fieldList != null)
                         {
                             fieldList.Sort((t1, t2) => t1.Name.CompareTo(t2.Name));

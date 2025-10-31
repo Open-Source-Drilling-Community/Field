@@ -30,7 +30,7 @@
     private MudUnitAndReferenceChoiceTag? Parent { get; set; }
 
     [Parameter]
-    public Field? CurrentField { get; set; }
+    public NORCE.Drilling.Field.ModelShared.Field? CurrentField { get; set; }
 
     [Parameter]
     public List<CartographicProjectionLight>? CartographicProjections { get; set; }
@@ -112,7 +112,7 @@
                 {
                     cartographicProjectionID = _cartographicProjection.MetaInfo.ID;
                 }
-                Field field = new()
+                NORCE.Drilling.Field.ModelShared.Field field = new()
                 {
                     MetaInfo = CurrentField.MetaInfo,
                     Name = _name,

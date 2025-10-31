@@ -37,15 +37,15 @@ dotnet run --project WebApp
 ```
 
 Default URLs (from `Properties/launchSettings.json`):
-- HTTP: `http://localhost:5012/Field/webapp/FieldMain`
-- HTTPS: `https://localhost:5011/Field/webapp/FieldMain`
+- HTTP: `http://localhost:5012/Field/webapp/Field`
+- HTTPS: `https://localhost:5011/Field/webapp/Field`
 
 Note: The app sets `UsePathBase("/Field/webapp")`, so all pages are rooted under that path base.
 
 ## Usage
 
 Main pages:
-- `FieldMain` (`/Field/webapp/FieldMain`): manage the list of Fields (add, select, delete, search, open editor).
+- `Field` (`/Field/webapp/Field`): manage the list of Fields (add, select, delete, search, open editor).
 - `CartographicConverter` (`/Field/webapp/CartographicConverter`): run cartographic ↔ geodetic conversions.
 - `Statistics` (`/Field/webapp/Statistics`): view per-endpoint usage counters.
 
@@ -71,7 +71,7 @@ Internal structure:
 - `Program.cs`: adds Razor Pages + Blazor, Mud services, path base (`/Field/webapp`), loads host URLs from configuration.
 - `Shared/APIUtils.cs`: creates HttpClient instances and NSwag clients to call Field and CartographicProjection services.
 - `Shared/DataUtils.cs`: UI labels and unit/reference parameters.
-- `Pages/*`: `FieldMain.razor`, `FieldEdit.razor`, `CartographicConverter.razor`, `StatisticsMain.razor`.
+- `Pages/*`: `Field.razor`, `FieldEdit.razor`, `CartographicConverter.razor`, `StatisticsMain.razor`.
 
 ## Integration in the Solution
 
@@ -98,7 +98,7 @@ docker run --rm -p 5011:5011 -p 5012:5012 \
   field-webapp
 ```
 
-Then open `https://localhost:5011/Field/webapp/FieldMain`.
+Then open `https://localhost:5011/Field/webapp/Field`.
 
 ---
 

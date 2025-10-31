@@ -3,7 +3,7 @@
     "WebApp": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "Field/webapp/FieldMain",
+      "launchUrl": "Field/webapp/Field",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
@@ -13,7 +13,7 @@
     "Docker": {
       "commandName": "Docker",
       "launchBrowser": false,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/Field/webapp/FieldMain",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/Field/webapp/Field",
       "publishAllPorts": true,
       "useSSL": true
     },
