@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="NORCE.Drilling.Field.Model.Field">
+    <Position X="10" Y="2.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAEAAgAAAAAAAAAAQIAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Field.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NORCE.Drilling.Field.Model.FieldCartographicConversionSet">
+    <Position X="6.5" Y="2.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>QAQIAAAAAAAgAAAAAAAAAAQIAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>FieldCartographicConversionSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
