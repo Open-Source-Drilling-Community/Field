@@ -39,7 +39,7 @@ builder.Services.AddMcpServer(options =>
 {
     options.ServerInfo = new Implementation
     {
-        Name = "UnitConversionService",
+        Name = "FieldService",
         Version = serverVersion
     };
     options.Capabilities = new ServerCapabilities
