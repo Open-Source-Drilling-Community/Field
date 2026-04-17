@@ -1,9 +1,17 @@
 using MudBlazor;
 using MudBlazor.Services;
+using NORCE.Drilling.Field.WebApp;
+using NORCE.Drilling.Field.WebPages;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+WebPagesHostConfiguration webPagesConfiguration = new()
+{
+    FieldHostURL = builder.Configuration["FieldHostURL"] ?? string.Empty,
+    CartographicProjectionHostURL = builder.Configuration["CartographicProjectionHostURL"] ?? string.Empty,
+    UnitConversionHostURL = builder.Configuration["UnitConversionHostURL"] ?? string.Empty,
+};
+
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices(config =>
@@ -17,32 +25,22 @@ builder.Services.AddMudServices(config =>
     config.SnackbarConfiguration.ShowTransitionDuration = 500;
     config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
 });
+builder.Services.AddSingleton<IFieldWebPagesConfiguration>(webPagesConfiguration);
+builder.Services.AddSingleton<IFieldAPIUtils, FieldAPIUtils>();
 
 var app = builder.Build();
 
 app.UseForwardedHeaders();
-// This needs to match with what is defined in "charts/<helm-chart-name>/templates/values.yaml ingress.Path
 app.UsePathBase("/Field/webapp");
 
-if (!String.IsNullOrEmpty(builder.Configuration["FieldHostURL"]))
-    NORCE.Drilling.Field.WebApp.Configuration.FieldHostURL = builder.Configuration["FieldHostURL"];
-if (!String.IsNullOrEmpty(builder.Configuration["CartographicProjectionHostURL"]))
-    NORCE.Drilling.Field.WebApp.Configuration.CartographicProjectionHostURL = builder.Configuration["CartographicProjectionHostURL"];
-if (!String.IsNullOrEmpty(builder.Configuration["UnitConversionHostURL"]))
-    NORCE.Drilling.Field.WebApp.Configuration.UnitConversionHostURL = builder.Configuration["UnitConversionHostURL"];
-
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-
 app.UseRouting();
 
 app.MapBlazorHub();

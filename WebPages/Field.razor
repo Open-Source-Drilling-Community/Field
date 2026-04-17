@@ -1,9 +1,10 @@
-﻿@page "/Field"
+@page "/Field"
 @inject ILogger<Field> logger
 @inject ISnackbar Snackbar
+@inject IFieldAPIUtils Api
 
-<MudUnitAndReferenceChoiceTag HttpHost=@APIUtils.HostNameUnitConversion
-                              HttpBasePath=@APIUtils.HostBasePathUnitConversion
+<MudUnitAndReferenceChoiceTag HttpHost=@Api.HostNameUnitConversion
+                              HttpBasePath=@Api.HostBasePathUnitConversion
                               HttpController="UnitSystem/"
                               UnitSystemName="@DataUtils.UnitAndReferenceParameters.UnitSystemName"
                               UnitSystemNameChanged="@DataUtils.UpdateUnitSystemName">
@@ -67,9 +68,9 @@
             currentField = null;
 
             // Starting all loading tasks asynchronously
-            logger.LogInformation("Trying to load list of Fields from client: " + APIUtils.HostNameField);
-            var fieldTask = APIUtils.ClientField.GetAllFieldAsync();
-            var cartographicProjectionTask = APIUtils.ClientCartographicProjection.GetAllCartographicProjectionLightAsync();
+            logger.LogInformation("Trying to load list of Fields from client: " + Api.HostNameField);
+            var fieldTask = Api.ClientField.GetAllFieldAsync();
+            var cartographicProjectionTask = Api.ClientCartographicProjection.GetAllCartographicProjectionLightAsync();
 
             List<Task> loadingTaskList = new List<Task> { fieldTask, cartographicProjectionTask };
 
@@ -132,7 +133,7 @@
     {
         try
         {
-            MetaInfo metaInfo = new() { ID = Guid.NewGuid(), HttpHostName = APIUtils.HostNameField, HttpHostBasePath = APIUtils.HostBasePathField, HttpEndPoint = "Field/" };
+            MetaInfo metaInfo = new() { ID = Guid.NewGuid(), HttpHostName = Api.HostNameField, HttpHostBasePath = Api.HostBasePathField, HttpEndPoint = "Field/" };
             DateTimeOffset creationDate = DateTimeOffset.UtcNow;
             NORCE.Drilling.Field.ModelShared.Field currentField = new()
             {
@@ -143,7 +144,7 @@
                 LastModificationDate = creationDate,
 
             };
-            await APIUtils.ClientField.PostFieldAsync(currentField);
+            await Api.ClientField.PostFieldAsync(currentField);
             await OnInitializedAsync();
             // Find the newly created datum in the refreshed list
             var addedField = fieldList.FirstOrDefault(d => d.MetaInfo?.ID == currentField.MetaInfo?.ID);
@@ -176,7 +177,7 @@
     {
         try
         {
-            currentField = await APIUtils.ClientField.GetFieldByIdAsync(id);
+            currentField = await Api.ClientField.GetFieldByIdAsync(id);
             if (currentField != null)
             {
                 isHiddenMainPanel = true;
@@ -200,7 +201,7 @@
     {
         try
         {
-            await APIUtils.ClientField.DeleteFieldByIdAsync(id);
+            await Api.ClientField.DeleteFieldByIdAsync(id);
             await OnInitializedAsync();
         }
         catch (Exception ex)
@@ -215,7 +216,7 @@
         {
             foreach (NORCE.Drilling.Field.ModelShared.Field field in selectedFieldList)
             {
-                await APIUtils.ClientField.DeleteFieldByIdAsync(field.MetaInfo.ID);
+                await Api.ClientField.DeleteFieldByIdAsync(field.MetaInfo.ID);
             }
             await OnInitializedAsync();
         }
@@ -268,3 +269,4 @@
         await OnInitializedAsync();
     }
 }
+

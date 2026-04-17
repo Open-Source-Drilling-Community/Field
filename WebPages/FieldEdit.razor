@@ -1,6 +1,7 @@
-﻿@implements IUnitAwareComponent
+@implements IUnitAwareComponent
 @inject ILogger<FieldEdit> logger
 @inject ISnackbar Snackbar
+@inject IFieldAPIUtils Api
 
 <MudText Class="mt-4 mb-4" Typo="Typo.h6">Edit Field</MudText>
 <MudContainer Class="d-flex flex-row mt-4 mb-4">
@@ -121,7 +122,7 @@
                     LastModificationDate = DateTimeOffset.UtcNow,
                     CartographicProjectionID = cartographicProjectionID
                 };
-                await APIUtils.ClientField.PutFieldByIdAsync(CurrentField.MetaInfo.ID, field);
+                await Api.ClientField.PutFieldByIdAsync(CurrentField.MetaInfo.ID, field);
                 logger.LogInformation("Updated the Field successfully");
                 Snackbar.Add("Updated the Field successfully", Severity.Success);
             }
