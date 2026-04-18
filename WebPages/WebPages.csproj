@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+	<AssemblyName>NORCE.Drilling.Field.WebPages</AssemblyName>
     <RootNamespace>NORCE.Drilling.Field.WebPages</RootNamespace>
     <PackageId>NORCE.Drilling.Field.WebPages</PackageId>
     <Title>NORCE.Drilling.Field.WebPages</Title>
@@ -17,7 +18,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/Open-Source-Drilling-Community/Field</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
