@@ -1,6 +1,5 @@
 using OSDC.DotnetLibraries.Drilling.WebAppUtils;
 using FieldModelShared = NORCE.Drilling.Field.ModelShared;
-using TrajectoryModelShared = NORCE.Drilling.Trajectory.ModelShared;
 
 namespace NORCE.Drilling.Field.WebPages;
 
@@ -14,7 +13,7 @@ public class FieldAPIUtils : APIUtils, IFieldAPIUtils
 
         HostNameTrajectory = Require(configuration.TrajectoryHostURL, nameof(configuration.TrajectoryHostURL));
         HttpClientTrajectory = SetHttpClient(HostNameTrajectory, HostBasePathTrajectory);
-        ClientTrajectory = new TrajectoryModelShared.Client(HttpClientTrajectory.BaseAddress!.ToString(), HttpClientTrajectory);
+        ClientTrajectory = new FieldModelShared.Client(HttpClientTrajectory.BaseAddress!.ToString(), HttpClientTrajectory);
 
         HostNameCartographicProjection = Require(configuration.CartographicProjectionHostURL, nameof(configuration.CartographicProjectionHostURL));
         HttpClientCartographicProjection = SetHttpClient(HostNameCartographicProjection, HostBasePathCartographicProjection);
@@ -41,7 +40,7 @@ public class FieldAPIUtils : APIUtils, IFieldAPIUtils
     public string HostNameTrajectory { get; }
     public string HostBasePathTrajectory { get; } = "Trajectory/api/";
     public HttpClient HttpClientTrajectory { get; }
-    public TrajectoryModelShared.Client ClientTrajectory { get; }
+    public FieldModelShared.Client ClientTrajectory { get; }
 
     public string HostNameCartographicProjection { get; }
     public string HostBasePathCartographicProjection { get; } = "CartographicProjection/api/";

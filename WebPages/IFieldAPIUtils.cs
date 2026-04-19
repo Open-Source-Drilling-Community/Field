@@ -1,5 +1,4 @@
 using FieldModelShared = NORCE.Drilling.Field.ModelShared;
-using TrajectoryModelShared = NORCE.Drilling.Trajectory.ModelShared;
 
 namespace NORCE.Drilling.Field.WebPages;
 
@@ -13,7 +12,7 @@ public interface IFieldAPIUtils
     string HostNameTrajectory { get; }
     string HostBasePathTrajectory { get; }
     HttpClient HttpClientTrajectory { get; }
-    TrajectoryModelShared.Client ClientTrajectory { get; }
+    FieldModelShared.Client ClientTrajectory { get; }
 
     string HostNameCartographicProjection { get; }
     string HostBasePathCartographicProjection { get; }

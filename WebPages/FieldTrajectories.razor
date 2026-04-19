@@ -3,7 +3,6 @@
 @inject ISnackbar Snackbar
 @inject IFieldAPIUtils Api
 @using FieldModelShared = NORCE.Drilling.Field.ModelShared
-@using TrajectoryModelShared = NORCE.Drilling.Trajectory.ModelShared
 
 <MudUnitAndReferenceChoiceTag HttpHost=@Api.HostNameUnitConversion
                               HttpBasePath=@Api.HostBasePathUnitConversion
@@ -130,8 +129,8 @@
 
 @code {
     private List<FieldModelShared.Field>? fieldList;
-    private List<TrajectoryModelShared.TrajectoryLight> trajectoryLightList = [];
-    private List<TrajectoryModelShared.Trajectory> trajectoryList = [];
+    private List<FieldModelShared.TrajectoryLight> trajectoryLightList = [];
+    private List<FieldModelShared.Trajectory> trajectoryList = [];
     private Guid? selectedFieldId;
     private string? errorMessage;
 
@@ -205,7 +204,7 @@
             logger.LogInformation("Loading trajectory light data for field {FieldId}", fieldId);
             trajectoryLightList = (await Api.ClientTrajectory.GetAllTrajectoryLightAsync(fieldId: fieldId)).OrderBy(trajectory => trajectory.Name).ToList();
 
-            List<Task<TrajectoryModelShared.Trajectory>> detailTasks = trajectoryLightList
+            List<Task<FieldModelShared.Trajectory>> detailTasks = trajectoryLightList
                 .Where(light => light?.MetaInfo != null && light.MetaInfo.ID != Guid.Empty)
                 .Select(light => Api.ClientTrajectory.GetTrajectoryByIdAsync(light.MetaInfo.ID))
                 .ToList();
@@ -236,7 +235,7 @@
         int colorIndex = 0;
         List<PlotTrace> nextPlotTraces = [];
 
-        foreach (TrajectoryModelShared.Trajectory trajectory in trajectoryList)
+        foreach (FieldModelShared.Trajectory trajectory in trajectoryList)
         {
             if (trajectory?.SurveyStationList == null || trajectory.SurveyStationList.Count == 0)
             {
@@ -247,7 +246,7 @@
             List<object> eastValues = [];
             List<object> tvdValues = [];
 
-            foreach (TrajectoryModelShared.SurveyStation station in trajectory.SurveyStationList)
+            foreach (FieldModelShared.SurveyStation station in trajectory.SurveyStationList)
             {
                 AppendPoint(station, northValues, eastValues, tvdValues);
             }
@@ -270,7 +269,7 @@
         plotTraces = nextPlotTraces;
     }
 
-    private void AppendPoint(TrajectoryModelShared.SurveyStation? point, List<object> northValues, List<object> eastValues, List<object> tvdValues)
+    private void AppendPoint(FieldModelShared.SurveyStation? point, List<object> northValues, List<object> eastValues, List<object> tvdValues)
     {
         if (point?.X is not { } north || point.Y is not { } east)
         {
