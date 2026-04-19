@@ -162,6 +162,12 @@
             errorMessage = "Unable to load fields.";
             Snackbar.Add(errorMessage, Severity.Error);
         }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unexpected problem while loading fields");
+            errorMessage = "Unable to load fields.";
+            Snackbar.Add(errorMessage, Severity.Error);
+        }
 
         await InvokeAsync(StateHasChanged);
     }
@@ -225,6 +231,15 @@
         catch (ApiException ex)
         {
             logger.LogError(ex, "Problem while loading trajectories for field {FieldId}", fieldId);
+            errorMessage = "Unable to load trajectories for the selected field.";
+            Snackbar.Add(errorMessage, Severity.Error);
+            trajectoryLightList.Clear();
+            trajectoryList.Clear();
+            ClearPlots();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unexpected problem while loading trajectories for field {FieldId}", fieldId);
             errorMessage = "Unable to load trajectories for the selected field.";
             Snackbar.Add(errorMessage, Severity.Error);
             trajectoryLightList.Clear();
