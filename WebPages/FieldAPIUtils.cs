@@ -1,5 +1,6 @@
-using NORCE.Drilling.Field.ModelShared;
 using OSDC.DotnetLibraries.Drilling.WebAppUtils;
+using FieldModelShared = NORCE.Drilling.Field.ModelShared;
+using TrajectoryModelShared = NORCE.Drilling.Trajectory.ModelShared;
 
 namespace NORCE.Drilling.Field.WebPages;
 
@@ -9,11 +10,15 @@ public class FieldAPIUtils : APIUtils, IFieldAPIUtils
     {
         HostNameField = Require(configuration.FieldHostURL, nameof(configuration.FieldHostURL));
         HttpClientField = SetHttpClient(HostNameField, HostBasePathField);
-        ClientField = new Client(HttpClientField.BaseAddress!.ToString(), HttpClientField);
+        ClientField = new FieldModelShared.Client(HttpClientField.BaseAddress!.ToString(), HttpClientField);
+
+        HostNameTrajectory = Require(configuration.TrajectoryHostURL, nameof(configuration.TrajectoryHostURL));
+        HttpClientTrajectory = SetHttpClient(HostNameTrajectory, HostBasePathTrajectory);
+        ClientTrajectory = new TrajectoryModelShared.Client(HttpClientTrajectory.BaseAddress!.ToString(), HttpClientTrajectory);
 
         HostNameCartographicProjection = Require(configuration.CartographicProjectionHostURL, nameof(configuration.CartographicProjectionHostURL));
         HttpClientCartographicProjection = SetHttpClient(HostNameCartographicProjection, HostBasePathCartographicProjection);
-        ClientCartographicProjection = new Client(HttpClientCartographicProjection.BaseAddress!.ToString(), HttpClientCartographicProjection);
+        ClientCartographicProjection = new FieldModelShared.Client(HttpClientCartographicProjection.BaseAddress!.ToString(), HttpClientCartographicProjection);
 
         HostNameUnitConversion = Require(configuration.UnitConversionHostURL, nameof(configuration.UnitConversionHostURL));
     }
@@ -31,12 +36,17 @@ public class FieldAPIUtils : APIUtils, IFieldAPIUtils
     public string HostNameField { get; }
     public string HostBasePathField { get; } = "Field/api/";
     public HttpClient HttpClientField { get; }
-    public Client ClientField { get; }
+    public FieldModelShared.Client ClientField { get; }
+
+    public string HostNameTrajectory { get; }
+    public string HostBasePathTrajectory { get; } = "Trajectory/api/";
+    public HttpClient HttpClientTrajectory { get; }
+    public TrajectoryModelShared.Client ClientTrajectory { get; }
 
     public string HostNameCartographicProjection { get; }
     public string HostBasePathCartographicProjection { get; } = "CartographicProjection/api/";
     public HttpClient HttpClientCartographicProjection { get; }
-    public Client ClientCartographicProjection { get; }
+    public FieldModelShared.Client ClientCartographicProjection { get; }
 
     public string HostNameUnitConversion { get; }
     public string HostBasePathUnitConversion { get; } = "UnitConversion/api/";

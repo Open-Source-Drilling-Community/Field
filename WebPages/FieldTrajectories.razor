@@ -1,0 +1,355 @@
+@page "/FieldTrajectories"
+@inject ILogger<FieldTrajectories> logger
+@inject ISnackbar Snackbar
+@inject IFieldAPIUtils Api
+@using FieldModelShared = NORCE.Drilling.Field.ModelShared
+@using TrajectoryModelShared = NORCE.Drilling.Trajectory.ModelShared
+
+<MudUnitAndReferenceChoiceTag HttpHost=@Api.HostNameUnitConversion
+                              HttpBasePath=@Api.HostBasePathUnitConversion
+                              HttpController="UnitSystem/"
+                              UnitSystemName="@DataUtils.UnitAndReferenceParameters.UnitSystemName"
+                              UnitSystemNameChanged="@DataUtils.UpdateUnitSystemName"
+                              DepthReferenceName="@DataUtils.UnitAndReferenceParameters.DepthReferenceName"
+                              DepthReferenceNameChanged="@DataUtils.UpdateDepthReferenceName"
+                              SeaWaterLevelDepthReferenceSource="@DataUtils.SeaWaterLevelDepthReferenceSource"
+                              PositionReferenceName="@DataUtils.UnitAndReferenceParameters.PositionReferenceName"
+                              PositionReferenceNameChanged="@DataUtils.UpdatePositionReferenceName"
+                              CartographicGridPositionReferenceSource="@DataUtils.CartographicGridPositionReferenceSource"
+                              LeaseLinePositionReferenceSource="@DataUtils.LeaseLinePositionReferenceSource"
+                              >
+    @if (fieldList == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <MudStack Spacing="3">
+            <MudPaper Class="pa-4" Elevation="2">
+                <MudGrid>
+                    <MudItem xs="12" md="6">
+                        <MudText Typo="Typo.h5">Field Trajectories</MudText>
+                        <MudText Typo="Typo.body2">All wellbore trajectories for the selected field, shown in 3D and as a horizontal projection.</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="8" md="4">
+                        <MudSelect Label="Field" T="Guid?" Value="@selectedFieldId" ValueChanged="OnFieldChanged" ShrinkLabel Clearable="true">
+                            @foreach (FieldModelShared.Field field in AvailableFields)
+                            {
+                                <MudSelectItem T="Guid?" Value="@((Guid?)field.MetaInfo.ID)">@field.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="12" sm="4" md="2">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="ReloadSelectedFieldAsync" Disabled="@(selectedFieldId == null)">Reload</MudButton>
+                    </MudItem>
+                </MudGrid>
+
+            </MudPaper>
+
+            @if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                <MudAlert Severity="Severity.Error" Dense="true">@errorMessage</MudAlert>
+            }
+            else if (selectedFieldId == null)
+            {
+                <MudAlert Severity="Severity.Info" Dense="true">Select a field to display its wellbore trajectories.</MudAlert>
+            }
+            else if (trajectoryList.Count == 0)
+            {
+                <MudAlert Severity="Severity.Info" Dense="true">No trajectories were found for the selected field.</MudAlert>
+            }
+            else
+            {
+                <MudGrid>
+                    <MudItem xs="12" xl="6">
+                        <MudPaper Class="pa-4" Elevation="2">
+                            <MudText Typo="Typo.h6">3D View</MudText>
+                            <Scatter3DPlot XUnit="PositionDrilling"
+                                           YUnit="PositionDrilling"
+                                           ZUnit="DepthDrilling"
+                                           NameList="@PlotNames"
+                                           ModeFlagList="@PlotModeFlags"
+                                           ColorList="@PlotColors"
+                                           XValuesList="@EastValuesList"
+                                           YValuesList="@NorthValuesList"
+                                           ZValuesList="@TvdValuesList"
+                                           XAxisTitle="Easting"
+                                           YAxisTitle="Northing"
+                                           ZAxisTitle="TVD"
+                                           PlotTitle="Field trajectories"
+                                           PlotHeight="600"
+                                           ZAxisReversed="true"
+                                           XAxisUsesPositionReference="true"
+                                           YAxisUsesPositionReference="true"
+                                           ZAxisUsesDepthReference="true"
+                                           XAxisPositionDirection="@PositionDirectionType.East"
+                                           YAxisPositionDirection="@PositionDirectionType.North" />
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="12" xl="6">
+                        <MudPaper Class="pa-4" Elevation="2">
+                            <MudText Typo="Typo.h6">Horizontal Projection</MudText>
+                            <ScatterPlot XUnit="PositionDrilling"
+                                         YUnit="PositionDrilling"
+                                         NameList="@PlotNames"
+                                         ModeFlagList="@PlotModeFlags"
+                                         ColorList="@PlotColors"
+                                         XValuesList="@EastValuesList"
+                                         YValuesList="@NorthValuesList"
+                                         XAxisTitle="Easting"
+                                         YAxisTitle="Northing"
+                                         PlotTitle="Horizontal projection"
+                                         PlotHeight="600"
+                                         AspectRatio="1"
+                                         XAxisUsesPositionReference="true"
+                                         YAxisUsesPositionReference="true"
+                                         XAxisPositionDirection="@PositionDirectionType.East"
+                                         YAxisPositionDirection="@PositionDirectionType.North" />
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
+
+                <MudPaper Class="pa-4" Elevation="2">
+                    <MudText Typo="Typo.h6">Legend</MudText>
+                    <MudGrid>
+                        @foreach (var trace in plotTraces)
+                        {
+                            <MudItem xs="12" sm="6" md="4" lg="3">
+                                <div style="display:flex;align-items:center;gap:12px;">
+                                    <span style="@($"width:18px;height:18px;border-radius:50%;display:inline-block;background:{trace.Color};")"></span>
+                                    <MudText Typo="Typo.body2">@trace.Name</MudText>
+                                </div>
+                            </MudItem>
+                        }
+                    </MudGrid>
+                </MudPaper>
+            }
+        </MudStack>
+    }
+</MudUnitAndReferenceChoiceTag>
+
+@code {
+    private List<FieldModelShared.Field>? fieldList;
+    private List<TrajectoryModelShared.TrajectoryLight> trajectoryLightList = [];
+    private List<TrajectoryModelShared.Trajectory> trajectoryList = [];
+    private Guid? selectedFieldId;
+    private string? errorMessage;
+
+    private List<PlotTrace> plotTraces = [];
+
+    private List<string> PlotNames => plotTraces.Select(trace => trace.Name).ToList();
+    private List<int> PlotModeFlags => plotTraces.Select(trace => trace.ModeFlag).ToList();
+    private List<string> PlotColors => plotTraces.Select(trace => trace.Color).ToList();
+    private List<List<object>> NorthValuesList => plotTraces.Select(trace => trace.NorthValues).ToList();
+    private List<List<object>> EastValuesList => plotTraces.Select(trace => trace.EastValues).ToList();
+    private List<List<object>> TvdValuesList => plotTraces.Select(trace => trace.TvdValues).ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            logger.LogInformation("Trying to load list of Fields from client: {Host}", Api.HostNameField);
+            fieldList = (await Api.ClientField.GetAllFieldAsync()).OrderBy(field => field.Name).ToList();
+            selectedFieldId = fieldList.FirstOrDefault()?.MetaInfo?.ID;
+            if (selectedFieldId != null)
+            {
+                await LoadTrajectoriesAsync(selectedFieldId.Value);
+            }
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError(ex, "Problem while loading fields");
+            errorMessage = "Unable to load fields.";
+            Snackbar.Add(errorMessage, Severity.Error);
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private List<FieldModelShared.Field> AvailableFields =>
+        fieldList?
+            .Where(field => field?.MetaInfo != null)
+            .OrderBy(field => field.Name)
+            .ToList() ?? [];
+
+    private async Task OnFieldChanged(Guid? fieldId)
+    {
+        selectedFieldId = fieldId;
+        if (selectedFieldId is Guid selected)
+        {
+            await LoadTrajectoriesAsync(selected);
+        }
+        else
+        {
+            trajectoryLightList.Clear();
+            trajectoryList.Clear();
+            ClearPlots();
+            errorMessage = null;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task ReloadSelectedFieldAsync()
+    {
+        if (selectedFieldId is Guid fieldId)
+        {
+            await LoadTrajectoriesAsync(fieldId);
+        }
+    }
+
+    private async Task LoadTrajectoriesAsync(Guid fieldId)
+    {
+        try
+        {
+            errorMessage = null;
+            logger.LogInformation("Loading trajectory light data for field {FieldId}", fieldId);
+            trajectoryLightList = (await Api.ClientTrajectory.GetAllTrajectoryLightAsync(fieldId: fieldId)).OrderBy(trajectory => trajectory.Name).ToList();
+
+            List<Task<TrajectoryModelShared.Trajectory>> detailTasks = trajectoryLightList
+                .Where(light => light?.MetaInfo != null && light.MetaInfo.ID != Guid.Empty)
+                .Select(light => Api.ClientTrajectory.GetTrajectoryByIdAsync(light.MetaInfo.ID))
+                .ToList();
+
+            trajectoryList = (await Task.WhenAll(detailTasks))
+                .Where(trajectory => trajectory != null)
+                .OrderBy(trajectory => trajectory.Name)
+                .ToList();
+
+            UpdatePlots();
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError(ex, "Problem while loading trajectories for field {FieldId}", fieldId);
+            errorMessage = "Unable to load trajectories for the selected field.";
+            Snackbar.Add(errorMessage, Severity.Error);
+            trajectoryLightList.Clear();
+            trajectoryList.Clear();
+            ClearPlots();
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void UpdatePlots()
+    {
+        ClearPlots();
+        int colorIndex = 0;
+        List<PlotTrace> nextPlotTraces = [];
+
+        foreach (TrajectoryModelShared.Trajectory trajectory in trajectoryList)
+        {
+            if (trajectory?.SurveyStationList == null || trajectory.SurveyStationList.Count == 0)
+            {
+                continue;
+            }
+
+            List<object> northValues = [];
+            List<object> eastValues = [];
+            List<object> tvdValues = [];
+
+            foreach (TrajectoryModelShared.SurveyStation station in trajectory.SurveyStationList)
+            {
+                AppendPoint(station, northValues, eastValues, tvdValues);
+            }
+
+            if (northValues.Count < 2 || northValues.Count != eastValues.Count || northValues.Count != tvdValues.Count)
+            {
+                continue;
+            }
+
+            nextPlotTraces.Add(new PlotTrace(
+                string.IsNullOrWhiteSpace(trajectory.Name) ? "trajectory" : trajectory.Name,
+                1,
+                Colors[colorIndex % Colors.Length],
+                northValues,
+                eastValues,
+                tvdValues));
+            colorIndex++;
+        }
+
+        plotTraces = nextPlotTraces;
+    }
+
+    private void AppendPoint(TrajectoryModelShared.SurveyStation? point, List<object> northValues, List<object> eastValues, List<object> tvdValues)
+    {
+        if (point?.X is not { } north || point.Y is not { } east)
+        {
+            return;
+        }
+
+        double tvd = point.TVD ?? point.Z ?? 0.0;
+        AppendPointValues(north, east, tvd, northValues, eastValues, tvdValues);
+    }
+
+    private static void AppendPointValues(double north, double east, double tvd, List<object> northValues, List<object> eastValues, List<object> tvdValues)
+    {
+        if (northValues.Count > 0 &&
+            eastValues.Count == northValues.Count &&
+            tvdValues.Count == northValues.Count &&
+            TryGetLastDouble(northValues, out double lastNorth) &&
+            TryGetLastDouble(eastValues, out double lastEast) &&
+            TryGetLastDouble(tvdValues, out double lastTvd) &&
+            AreClose(lastNorth, north) &&
+            AreClose(lastEast, east) &&
+            AreClose(lastTvd, tvd))
+        {
+            return;
+        }
+
+        northValues.Add(north);
+        eastValues.Add(east);
+        tvdValues.Add(tvd);
+    }
+
+    private static bool TryGetLastDouble(List<object> values, out double value)
+    {
+        value = default;
+        if (values.Count == 0)
+        {
+            return false;
+        }
+
+        object last = values[^1];
+        return last switch
+        {
+            double d => (value = d) == d,
+            float f => (value = f) == f,
+            decimal m => (value = (double)m) == (double)m,
+            int i => (value = i) == i,
+            long l => (value = l) == l,
+            _ => false
+        };
+    }
+
+    private static bool AreClose(double left, double right)
+    {
+        return Math.Abs(left - right) <= 1e-6;
+    }
+
+    private void ClearPlots()
+    {
+        plotTraces = [];
+    }
+
+    private static readonly string[] Colors =
+    [
+        "black",
+        "blue",
+        "grey",
+        "red",
+        "orange",
+        "green",
+        "yellow",
+        "pink",
+        "brown",
+        "purple"
+    ];
+
+    private sealed record PlotTrace(
+        string Name,
+        int ModeFlag,
+        string Color,
+        List<object> NorthValues,
+        List<object> EastValues,
+        List<object> TvdValues);
+}
