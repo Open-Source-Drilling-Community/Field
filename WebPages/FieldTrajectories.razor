@@ -49,6 +49,10 @@
             {
                 <MudAlert Severity="Severity.Error" Dense="true">@errorMessage</MudAlert>
             }
+            else if (isLoadingTrajectories)
+            {
+                <MudAlert Severity="Severity.Info" Dense="true">Loading trajectories for the selected field.</MudAlert>
+            }
             else if (selectedFieldId == null)
             {
                 <MudAlert Severity="Severity.Info" Dense="true">Select a field to display its wellbore trajectories.</MudAlert>
@@ -133,6 +137,7 @@
     private List<FieldModelShared.Trajectory> trajectoryList = [];
     private Guid? selectedFieldId;
     private string? errorMessage;
+    private bool isLoadingTrajectories;
 
     private List<PlotTrace> plotTraces = [];
 
@@ -149,11 +154,7 @@
         {
             logger.LogInformation("Trying to load list of Fields from client: {Host}", Api.HostNameField);
             fieldList = (await Api.ClientField.GetAllFieldAsync()).OrderBy(field => field.Name).ToList();
-            selectedFieldId = fieldList.FirstOrDefault()?.MetaInfo?.ID;
-            if (selectedFieldId != null)
-            {
-                await LoadTrajectoriesAsync(selectedFieldId.Value);
-            }
+            selectedFieldId = null;
         }
         catch (ApiException ex)
         {
@@ -201,6 +202,11 @@
         try
         {
             errorMessage = null;
+            isLoadingTrajectories = true;
+            trajectoryLightList.Clear();
+            trajectoryList.Clear();
+            ClearPlots();
+            await InvokeAsync(StateHasChanged);
             logger.LogInformation("Loading trajectory light data for field {FieldId}", fieldId);
             trajectoryLightList = (await Api.ClientTrajectory.GetAllTrajectoryLightAsync(fieldId: fieldId)).OrderBy(trajectory => trajectory.Name).ToList();
 
@@ -224,6 +230,10 @@
             trajectoryLightList.Clear();
             trajectoryList.Clear();
             ClearPlots();
+        }
+        finally
+        {
+            isLoadingTrajectories = false;
         }
 
         await InvokeAsync(StateHasChanged);
