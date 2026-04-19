@@ -11,6 +11,7 @@ WebPagesHostConfiguration webPagesConfiguration = new()
     FieldHostURL = builder.Configuration["FieldHostURL"] ?? string.Empty,
     TrajectoryHostURL = builder.Configuration["TrajectoryHostURL"] ?? string.Empty,
     CartographicProjectionHostURL = builder.Configuration["CartographicProjectionHostURL"] ?? string.Empty,
+    GeodeticDatumHostURL = builder.Configuration["GeodeticDatumHostURL"] ?? string.Empty,
     UnitConversionHostURL = builder.Configuration["UnitConversionHostURL"] ?? string.Empty,
 };
 
@@ -29,6 +30,7 @@ builder.Services.AddMudServices(config =>
 });
 builder.Services.AddSingleton<IFieldWebPagesConfiguration>(webPagesConfiguration);
 builder.Services.AddSingleton<IFieldAPIUtils, FieldAPIUtils>();
+builder.Services.AddExternalWebPages(webPagesConfiguration);
 
 var app = builder.Build();
 
