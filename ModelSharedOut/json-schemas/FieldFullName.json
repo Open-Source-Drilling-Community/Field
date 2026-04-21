@@ -370,6 +370,36 @@
         }
       }
     },
+    "/FieldCartographicConversionSet/FieldID": {
+      "get": {
+        "tags": [
+          "FieldCartographicConversionSet"
+        ],
+        "operationId": "GetAllFieldCartographicConversionSetByFieldId",
+        "parameters": [
+          {
+            "name": "fieldId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCartographicConversionSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/FieldCartographicConversionSet/LightData": {
       "get": {
         "tags": [
@@ -627,6 +657,9 @@
             "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
           },
           "GetFieldCartographicConversionSetByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetAllFieldCartographicConversionSetByFieldIdPerDay": {
             "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
           },
           "GetAllFieldCartographicConversionSetLightPerDay": {

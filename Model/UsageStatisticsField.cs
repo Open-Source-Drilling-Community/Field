@@ -77,6 +77,7 @@ namespace NORCE.Drilling.Field.Model
         public History GetAllFieldCartographicConversionSetIdPerDay { get; set; } = new History();
         public History GetAllFieldCartographicConversionSetMetaInfoPerDay { get; set; } = new History();
         public History GetFieldCartographicConversionSetByIdPerDay { get; set; } = new History();
+        public History GetAllFieldCartographicConversionSetByFieldIdPerDay { get; set; } = new History();
         public History GetAllFieldCartographicConversionSetLightPerDay { get; set; } = new History();
         public History GetAllFieldCartographicConversionSetPerDay { get; set; } = new History();
         public History PostFieldCartographicConversionSetPerDay { get; set; } = new History();
@@ -245,7 +246,18 @@ namespace NORCE.Drilling.Field.Model
                 ManageBackup();
             }
         }
-
+        public void IncrementGetFieldCartographicConversionSetByFieldIdPerDay()
+        {
+            lock (lock_)
+            {
+                if (GetAllFieldCartographicConversionSetByFieldIdPerDay == null)
+                {
+                    GetAllFieldCartographicConversionSetByFieldIdPerDay = new History();
+                }
+                GetAllFieldCartographicConversionSetByFieldIdPerDay.Increment();
+                ManageBackup();
+            }
+        }
         public void IncrementGetFieldCartographicConversionSetByIdPerDay()
         {
             lock (lock_)
@@ -338,6 +350,7 @@ namespace NORCE.Drilling.Field.Model
                 }
                 catch (Exception ex)
                 {
+                    throw new Exception("Failed to save usage statistics to file.", ex);
                 }
             }
         }
