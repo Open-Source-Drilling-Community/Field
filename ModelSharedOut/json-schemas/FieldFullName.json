@@ -514,6 +514,14 @@
             "format": "uuid",
             "nullable": true
           },
+          "FieldName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FieldDescription": {
+            "type": "string",
+            "nullable": true
+          },
           "CartographicCoordinateList": {
             "type": "array",
             "items": {
@@ -546,6 +554,11 @@
           "LastModificationDate": {
             "type": "string",
             "format": "date-time",
+            "nullable": true
+          },
+          "FieldID": {
+            "type": "string",
+            "format": "uuid",
             "nullable": true
           },
           "FieldName": {

@@ -293,7 +293,7 @@ namespace NORCE.Drilling.Field.Service.Managers
             if (connection != null)
             {
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT MetaInfo, Name, Description, CreationDate, LastModificationDate, FieldName, FieldDescription FROM FieldCartographicConversionSetTable";
+                command.CommandText = "SELECT MetaInfo, Name, Description, CreationDate, LastModificationDate, FieldID, FieldName, FieldDescription FROM FieldCartographicConversionSetTable";
                 try
                 {
                     using var reader = command.ExecuteReader();
@@ -310,14 +310,16 @@ namespace NORCE.Drilling.Field.Service.Managers
                         DateTimeOffset? lastModificationDate = null;
                         if (DateTimeOffset.TryParse(reader.GetString(4), out DateTimeOffset lDate))
                             lastModificationDate = lDate;
-                        string fieldName = reader.GetString(5);
-                        string fieldDescr = reader.GetString(6);
+                        string fieldId = reader.GetString(5);
+                        string fieldName = reader.GetString(6);
+                        string fieldDescr = reader.GetString(7);
                         fieldCartographicConversionSetLightList.Add(new Model.FieldCartographicConversionSetLight(
                                 metaInfo,
                                 string.IsNullOrEmpty(name) ? null : name,
                                 string.IsNullOrEmpty(descr) ? null : descr,
                                 creationDate,
                                 lastModificationDate,
+                                fieldId,
                                 fieldName,
                                 fieldDescr));
                     }
@@ -390,6 +392,7 @@ namespace NORCE.Drilling.Field.Service.Managers
                                "Description, " +
                                "CreationDate, " +
                                "LastModificationDate, " +
+                               "FieldID, " +
                                "FieldName, " +
                                "FieldDescription, " +
                                "FieldCartographicConversionSet" +
@@ -400,6 +403,7 @@ namespace NORCE.Drilling.Field.Service.Managers
                                $"'{fieldCartographicConversionSet.Description}', " +
                                $"'{cDate}', " +
                                $"'{lDate}', " +
+                               $"'{field.MetaInfo!.ID}', " +
                                $"'{field.Name}', " +
                                $"'{field.Description}', " +
                                $"'{data}'" +
@@ -496,6 +500,7 @@ namespace NORCE.Drilling.Field.Service.Managers
                             $"FieldCartographicConversionSet = '{data}', " +
                             $"CreationDate = '{cDate}', " +
                             $"LastModificationDate = '{lDate}', " +
+                            $"FieldID = '{field!.MetaInfo!.ID}', " +
                             $"FieldName = '{field!.Name}', " +
                             $"FieldDescription = '{field.Description}' " +
                             $"WHERE ID = '{guid}'";

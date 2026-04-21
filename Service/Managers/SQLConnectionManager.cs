@@ -49,6 +49,7 @@ namespace NORCE.Drilling.Field.Service.Managers
                     "Description text",
                     "CreationDate text",
                     "LastModificationDate text",
+                    "FieldID text",
                     "FieldName text",
                     "FieldDescription text",
                     "FieldCartographicConversionSet text" }
