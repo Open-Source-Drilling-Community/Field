@@ -89,6 +89,33 @@ namespace NORCE.Drilling.Field.Service.Controllers
         }
 
         /// <summary>
+        /// Returns the FieldCartographicConversionSet identified by fields Guid from the microservice database, at endpoint CartographicProjection/api/CartographicConversionSet/MetaInfo/id
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <returns>the FieldCartographicConversionSet identified by its Guid from the microservice database, at endpoint CartographicProjection/api/CartographicConversionSet/MetaInfo/id</returns>
+        [HttpGet("FieldID", Name = "GetAllFieldCartographicConversionSetByFieldId")]
+        public ActionResult<Model.FieldCartographicConversionSet?> GetAllFieldCartographicConversionSetByFieldId(Guid fieldId)
+        {
+            UsageStatisticsField.Instance.IncrementGetFieldCartographicConversionSetByIdPerDay();
+            if (!fieldId.Equals(Guid.Empty))
+            {
+                var val = _fieldCartographicConversionSetManager.GetAllFieldCartographicConversionSetByFieldId(fieldId);
+                if (val != null)
+                {
+                    return Ok(val);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        /// <summary>
         /// Returns the list of all FieldCartographicConversionSetLight present in the microservice database, at endpoint CartographicProjection/api/CartographicConversionSet/LightData
         /// </summary>
         /// <returns>the list of all FieldCartographicConversionSetLight present in the microservice database, at endpoint CartographicProjection/api/CartographicConversionSet/LightData</returns>
