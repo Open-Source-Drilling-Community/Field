@@ -73,6 +73,7 @@
                                            NameList="@PlotNames"
                                            ModeFlagList="@PlotModeFlags"
                                            ColorList="@PlotColors"
+                                           MarkerSizeList="@PlotMarkerSizes"
                                            XValuesList="@EastValuesList"
                                            YValuesList="@NorthValuesList"
                                            ZValuesList="@TvdValuesList"
@@ -86,7 +87,8 @@
                                            YAxisUsesPositionReference="true"
                                            ZAxisUsesDepthReference="true"
                                            XAxisPositionDirection="@PositionDirectionType.East"
-                                           YAxisPositionDirection="@PositionDirectionType.North" />
+                                           YAxisPositionDirection="@PositionDirectionType.North"
+                                           TraceClicked="OnTrajectoryTraceClicked" />
                         </MudPaper>
                     </MudItem>
                     <MudItem xs="12" xl="6">
@@ -111,6 +113,41 @@
                         </MudPaper>
                     </MudItem>
                 </MudGrid>
+
+                <MudPaper Class="pa-4" Elevation="2">
+                    <MudStack Spacing="2">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                            <MudText Typo="Typo.h6">Closest Approach</MudText>
+                            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="ClearClosestApproachSelection" Disabled="@(selectedTrajectoryIds.Count == 0 && closestApproachResult == null)">Clear</MudButton>
+                        </MudStack>
+                        <MudText Typo="Typo.body2">Click two trajectories in the 3D view to calculate the closest centerline approach.</MudText>
+                        @if (selectedTrajectoryIds.Count > 0)
+                        {
+                            <MudText Typo="Typo.body2">Selected: @SelectedTrajectoryText</MudText>
+                        }
+                        @if (closestApproachResult != null)
+                        {
+                            <MudGrid>
+                                <MudItem xs="12" sm="6" md="3">
+                                    <MudText Typo="Typo.subtitle2">Centerline distance</MudText>
+                                    <MudText Typo="Typo.body2">@FormatDistance(closestApproachResult.Distance)</MudText>
+                                </MudItem>
+                                <MudItem xs="12" sm="6" md="3">
+                                    <MudText Typo="Typo.subtitle2">Borehole clearance</MudText>
+                                    <MudText Typo="Typo.body2">@FormatNullableDistance(closestApproachResult.Clearance)</MudText>
+                                </MudItem>
+                                <MudItem xs="12" sm="6" md="3">
+                                    <MudText Typo="Typo.subtitle2">@closestApproachResult.First.Name</MudText>
+                                    <MudText Typo="Typo.body2">MD @FormatNullableDistance(closestApproachResult.First.MD), radius @FormatNullableDistance(closestApproachResult.First.BoreholeRadius)</MudText>
+                                </MudItem>
+                                <MudItem xs="12" sm="6" md="3">
+                                    <MudText Typo="Typo.subtitle2">@closestApproachResult.Second.Name</MudText>
+                                    <MudText Typo="Typo.body2">MD @FormatNullableDistance(closestApproachResult.Second.MD), radius @FormatNullableDistance(closestApproachResult.Second.BoreholeRadius)</MudText>
+                                </MudItem>
+                            </MudGrid>
+                        }
+                    </MudStack>
+                </MudPaper>
 
                 <MudPaper Class="pa-4" Elevation="2">
                     <MudText Typo="Typo.h6">Legend</MudText>
@@ -140,13 +177,17 @@
     private bool isLoadingTrajectories;
 
     private List<PlotTrace> plotTraces = [];
+    private List<Guid> selectedTrajectoryIds = [];
+    private ClosestApproachResult? closestApproachResult;
 
     private List<string> PlotNames => plotTraces.Select(trace => trace.Name).ToList();
     private List<int> PlotModeFlags => plotTraces.Select(trace => trace.ModeFlag).ToList();
     private List<string> PlotColors => plotTraces.Select(trace => trace.Color).ToList();
+    private List<double?> PlotMarkerSizes => plotTraces.Select(trace => trace.MarkerSize).ToList();
     private List<List<object>> NorthValuesList => plotTraces.Select(trace => trace.NorthValues).ToList();
     private List<List<object>> EastValuesList => plotTraces.Select(trace => trace.EastValues).ToList();
     private List<List<object>> TvdValuesList => plotTraces.Select(trace => trace.TvdValues).ToList();
+    private string SelectedTrajectoryText => string.Join(" -> ", selectedTrajectoryIds.Select(id => FindTrajectoryName(id)));
 
     protected override async Task OnInitializedAsync()
     {
@@ -189,6 +230,7 @@
         {
             trajectoryLightList.Clear();
             trajectoryList.Clear();
+            ClearClosestApproachSelection();
             ClearPlots();
             errorMessage = null;
             await InvokeAsync(StateHasChanged);
@@ -211,6 +253,7 @@
             isLoadingTrajectories = true;
             trajectoryLightList.Clear();
             trajectoryList.Clear();
+            ClearClosestApproachSelection();
             ClearPlots();
             await InvokeAsync(StateHasChanged);
             logger.LogInformation("Loading trajectory light data for field {FieldId}", fieldId);
@@ -235,6 +278,7 @@
             Snackbar.Add(errorMessage, Severity.Error);
             trajectoryLightList.Clear();
             trajectoryList.Clear();
+            ClearClosestApproachSelection();
             ClearPlots();
         }
         catch (Exception ex)
@@ -244,6 +288,7 @@
             Snackbar.Add(errorMessage, Severity.Error);
             trajectoryLightList.Clear();
             trajectoryList.Clear();
+            ClearClosestApproachSelection();
             ClearPlots();
         }
         finally
@@ -283,15 +328,101 @@
 
             nextPlotTraces.Add(new PlotTrace(
                 string.IsNullOrWhiteSpace(trajectory.Name) ? "trajectory" : trajectory.Name,
-                1,
+                3,
                 Colors[colorIndex % Colors.Length],
+                2.0,
+                trajectory.MetaInfo.ID,
+                true,
                 northValues,
                 eastValues,
                 tvdValues));
             colorIndex++;
         }
 
+        AppendClosestApproachOverlay(nextPlotTraces);
         plotTraces = nextPlotTraces;
+    }
+
+    private async Task OnTrajectoryTraceClicked(int traceIndex)
+    {
+        if (traceIndex < 0 || traceIndex >= plotTraces.Count)
+        {
+            return;
+        }
+
+        PlotTrace trace = plotTraces[traceIndex];
+        if (!trace.IsSelectable || trace.TrajectoryId is not { } trajectoryId)
+        {
+            return;
+        }
+
+        if (selectedTrajectoryIds.Count == 1 && selectedTrajectoryIds[0] == trajectoryId)
+        {
+            Snackbar.Add("Select a different trajectory for closest approach.", Severity.Info);
+            return;
+        }
+
+        if (selectedTrajectoryIds.Count >= 2)
+        {
+            selectedTrajectoryIds.Clear();
+            closestApproachResult = null;
+        }
+
+        selectedTrajectoryIds.Add(trajectoryId);
+
+        if (selectedTrajectoryIds.Count == 2)
+        {
+            FieldModelShared.Trajectory? first = FindTrajectory(selectedTrajectoryIds[0]);
+            FieldModelShared.Trajectory? second = FindTrajectory(selectedTrajectoryIds[1]);
+            closestApproachResult = first != null && second != null
+                ? CalculateClosestApproach(first, second)
+                : null;
+
+            if (closestApproachResult == null)
+            {
+                Snackbar.Add("Unable to calculate closest approach for the selected trajectories.", Severity.Warning);
+            }
+        }
+
+        UpdatePlots();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void ClearClosestApproachSelection()
+    {
+        selectedTrajectoryIds.Clear();
+        closestApproachResult = null;
+        UpdatePlots();
+    }
+
+    private void AppendClosestApproachOverlay(List<PlotTrace> traces)
+    {
+        if (closestApproachResult == null)
+        {
+            return;
+        }
+
+        traces.Add(new PlotTrace(
+            "Closest approach",
+            1,
+            "#d62728",
+            null,
+            null,
+            false,
+            [closestApproachResult.First.Point.North, closestApproachResult.Second.Point.North],
+            [closestApproachResult.First.Point.East, closestApproachResult.Second.Point.East],
+            [closestApproachResult.First.Point.Tvd, closestApproachResult.Second.Point.Tvd]));
+
+        traces.Add(new PlotTrace(
+            "Closest points",
+            2,
+            "#d62728",
+            5.0,
+            null,
+            false,
+            [closestApproachResult.First.Point.North, closestApproachResult.Second.Point.North],
+            [closestApproachResult.First.Point.East, closestApproachResult.Second.Point.East],
+            [closestApproachResult.First.Point.Tvd, closestApproachResult.Second.Point.Tvd]));
     }
 
     private void AppendPoint(FieldModelShared.SurveyStation? point, List<object> northValues, List<object> eastValues, List<object> tvdValues)
@@ -355,6 +486,164 @@
         plotTraces = [];
     }
 
+    private FieldModelShared.Trajectory? FindTrajectory(Guid trajectoryId) =>
+        trajectoryList.FirstOrDefault(trajectory => trajectory?.MetaInfo?.ID == trajectoryId);
+
+    private string FindTrajectoryName(Guid trajectoryId) =>
+        FindTrajectory(trajectoryId)?.Name is { Length: > 0 } name ? name : trajectoryId.ToString();
+
+    private static ClosestApproachResult? CalculateClosestApproach(FieldModelShared.Trajectory first, FieldModelShared.Trajectory second)
+    {
+        List<TrajectoryPoint> firstPoints = BuildTrajectoryPoints(first);
+        List<TrajectoryPoint> secondPoints = BuildTrajectoryPoints(second);
+        if (firstPoints.Count < 2 || secondPoints.Count < 2)
+        {
+            return null;
+        }
+
+        ClosestApproachResult? best = null;
+        string firstName = string.IsNullOrWhiteSpace(first.Name) ? "trajectory" : first.Name;
+        string secondName = string.IsNullOrWhiteSpace(second.Name) ? "trajectory" : second.Name;
+
+        for (int i = 0; i < firstPoints.Count - 1; i++)
+        {
+            for (int j = 0; j < secondPoints.Count - 1; j++)
+            {
+                SegmentClosestApproach segmentResult = CalculateSegmentClosestApproach(firstPoints[i], firstPoints[i + 1], secondPoints[j], secondPoints[j + 1]);
+                ClosestApproachPoint firstClosest = InterpolatePoint(firstName, firstPoints[i], firstPoints[i + 1], segmentResult.FirstParameter);
+                ClosestApproachPoint secondClosest = InterpolatePoint(secondName, secondPoints[j], secondPoints[j + 1], segmentResult.SecondParameter);
+                double clearance = CalculateClearance(segmentResult.Distance, firstClosest.BoreholeRadius, secondClosest.BoreholeRadius);
+                double? nullableClearance = double.IsNaN(clearance) ? null : clearance;
+                ClosestApproachResult candidate = new(firstClosest, secondClosest, segmentResult.Distance, nullableClearance);
+
+                if (best == null || candidate.Distance < best.Distance)
+                {
+                    best = candidate;
+                }
+            }
+        }
+
+        return best;
+    }
+
+    private static List<TrajectoryPoint> BuildTrajectoryPoints(FieldModelShared.Trajectory trajectory)
+    {
+        List<TrajectoryPoint> points = [];
+        if (trajectory.SurveyStationList == null)
+        {
+            return points;
+        }
+
+        foreach (FieldModelShared.SurveyStation station in trajectory.SurveyStationList)
+        {
+            if (station?.X is not { } north || station.Y is not { } east)
+            {
+                continue;
+            }
+
+            double tvd = station.TVD ?? station.Z ?? 0.0;
+            TrajectoryPoint point = new(north, east, tvd, station.MD, station.BoreholeRadius);
+            if (points.Count == 0 || !points[^1].HasSamePosition(point))
+            {
+                points.Add(point);
+            }
+        }
+
+        return points;
+    }
+
+    private static SegmentClosestApproach CalculateSegmentClosestApproach(TrajectoryPoint firstStart, TrajectoryPoint firstEnd, TrajectoryPoint secondStart, TrajectoryPoint secondEnd)
+    {
+        Vector3 p1 = firstStart.Position;
+        Vector3 q1 = firstEnd.Position;
+        Vector3 p2 = secondStart.Position;
+        Vector3 q2 = secondEnd.Position;
+        Vector3 d1 = q1 - p1;
+        Vector3 d2 = q2 - p2;
+        Vector3 r = p1 - p2;
+        double a = d1.Dot(d1);
+        double e = d2.Dot(d2);
+        double f = d2.Dot(r);
+        double s;
+        double t;
+
+        if (a <= 1e-12 && e <= 1e-12)
+        {
+            s = 0.0;
+            t = 0.0;
+        }
+        else if (a <= 1e-12)
+        {
+            s = 0.0;
+            t = Clamp01(f / e);
+        }
+        else
+        {
+            double c = d1.Dot(r);
+            if (e <= 1e-12)
+            {
+                t = 0.0;
+                s = Clamp01(-c / a);
+            }
+            else
+            {
+                double b = d1.Dot(d2);
+                double denominator = a * e - b * b;
+                s = denominator != 0.0 ? Clamp01((b * f - c * e) / denominator) : 0.0;
+                t = (b * s + f) / e;
+
+                if (t < 0.0)
+                {
+                    t = 0.0;
+                    s = Clamp01(-c / a);
+                }
+                else if (t > 1.0)
+                {
+                    t = 1.0;
+                    s = Clamp01((b - c) / a);
+                }
+            }
+        }
+
+        Vector3 closestFirst = p1 + d1 * s;
+        Vector3 closestSecond = p2 + d2 * t;
+        return new SegmentClosestApproach(s, t, closestFirst.DistanceTo(closestSecond));
+    }
+
+    private static ClosestApproachPoint InterpolatePoint(string name, TrajectoryPoint start, TrajectoryPoint end, double parameter)
+    {
+        Vector3 position = start.Position + (end.Position - start.Position) * parameter;
+        double? md = InterpolateNullable(start.MD, end.MD, parameter);
+        double? radius = InterpolateNullable(start.BoreholeRadius, end.BoreholeRadius, parameter);
+        return new ClosestApproachPoint(name, new TrajectoryPoint(position.North, position.East, position.Tvd, md, radius), md, radius);
+    }
+
+    private static double? InterpolateNullable(double? start, double? end, double parameter)
+    {
+        if (start is { } startValue && end is { } endValue)
+        {
+            return startValue + (endValue - startValue) * parameter;
+        }
+
+        return start ?? end;
+    }
+
+    private static double CalculateClearance(double centerlineDistance, double? firstRadius, double? secondRadius)
+    {
+        if (firstRadius is not { } first || secondRadius is not { } second || first < 0.0 || second < 0.0)
+        {
+            return double.NaN;
+        }
+
+        return centerlineDistance - first - second;
+    }
+
+    private static double Clamp01(double value) => Math.Min(1.0, Math.Max(0.0, value));
+
+    private static string FormatDistance(double value) => $"{value:0.###} m";
+
+    private static string FormatNullableDistance(double? value) => value.HasValue ? FormatDistance(value.Value) : "N/A";
+
     private static readonly string[] Colors =
     [
         "black",
@@ -373,7 +662,31 @@
         string Name,
         int ModeFlag,
         string Color,
+        double? MarkerSize,
+        Guid? TrajectoryId,
+        bool IsSelectable,
         List<object> NorthValues,
         List<object> EastValues,
         List<object> TvdValues);
+
+    private readonly record struct Vector3(double North, double East, double Tvd)
+    {
+        public static Vector3 operator +(Vector3 left, Vector3 right) => new(left.North + right.North, left.East + right.East, left.Tvd + right.Tvd);
+        public static Vector3 operator -(Vector3 left, Vector3 right) => new(left.North - right.North, left.East - right.East, left.Tvd - right.Tvd);
+        public static Vector3 operator *(Vector3 value, double factor) => new(value.North * factor, value.East * factor, value.Tvd * factor);
+        public double Dot(Vector3 other) => North * other.North + East * other.East + Tvd * other.Tvd;
+        public double DistanceTo(Vector3 other) => Math.Sqrt(Math.Pow(North - other.North, 2.0) + Math.Pow(East - other.East, 2.0) + Math.Pow(Tvd - other.Tvd, 2.0));
+    }
+
+    private sealed record TrajectoryPoint(double North, double East, double Tvd, double? MD, double? BoreholeRadius)
+    {
+        public Vector3 Position => new(North, East, Tvd);
+        public bool HasSamePosition(TrajectoryPoint other) => AreClose(North, other.North) && AreClose(East, other.East) && AreClose(Tvd, other.Tvd);
+    }
+
+    private sealed record SegmentClosestApproach(double FirstParameter, double SecondParameter, double Distance);
+
+    private sealed record ClosestApproachPoint(string Name, TrajectoryPoint Point, double? MD, double? BoreholeRadius);
+
+    private sealed record ClosestApproachResult(ClosestApproachPoint First, ClosestApproachPoint Second, double Distance, double? Clearance);
 }

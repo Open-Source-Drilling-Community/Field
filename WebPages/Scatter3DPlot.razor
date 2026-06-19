@@ -2,6 +2,7 @@
 @implements IDisposable
 @using System.Globalization
 @using System.Text
+@inject IJSRuntime JSRuntime
 
 <PlotlyChart Config="config" Layout="layout" Data="data" @ref="chart" />
 
@@ -14,6 +15,7 @@
     [Parameter] public List<string> NameList { get; set; } = [];
     [Parameter] public List<int> ModeFlagList { get; set; } = [];
     [Parameter] public List<string> ColorList { get; set; } = [];
+    [Parameter] public List<double?> MarkerSizeList { get; set; } = [];
     [Parameter] public List<List<object>> XValuesList { get; set; } = [];
     [Parameter] public List<List<object>> YValuesList { get; set; } = [];
     [Parameter] public List<List<object>> ZValuesList { get; set; } = [];
@@ -30,11 +32,16 @@
     [Parameter] public bool ZAxisUsesDepthReference { get; set; }
     [Parameter] public PositionDirectionType XAxisPositionDirection { get; set; } = PositionDirectionType.Independent;
     [Parameter] public PositionDirectionType YAxisPositionDirection { get; set; } = PositionDirectionType.Independent;
+    [Parameter] public EventCallback<int> TraceClicked { get; set; }
 
     private PlotlyChart? chart;
     private bool _plotlyReady;
     private bool _disposed;
     private readonly SemaphoreSlim _plotSemaphore = new(1, 1);
+    private const string PlotlyUiRevision = "field-scatter-3d-camera";
+    private IJSObjectReference? _cameraPersistenceModule;
+    private string? _cameraPersistenceChartId;
+    private DotNetObjectReference<Scatter3DPlot>? _dotNetReference;
     private string? _lastPlotSignature;
     private bool _forceReplot = true;
 
@@ -66,6 +73,7 @@
         {
             _plotlyReady = true;
             await PlotAsync();
+            await EnsureCameraPersistenceAsync();
         }
     }
 
@@ -77,6 +85,7 @@
     public void Dispose()
     {
         _disposed = true;
+        _ = DisposeCameraPersistenceAsync();
     }
 
     public void ManageUnits()
@@ -115,6 +124,7 @@
             catch
             {
             }
+            await EnsureCameraPersistenceAsync();
 
             await InvokeAsync(StateHasChanged);
             _lastPlotSignature = plotSignature;
@@ -124,6 +134,71 @@
         {
             _plotSemaphore.Release();
         }
+    }
+
+    private async Task EnsureCameraPersistenceAsync()
+    {
+        if (_disposed || !_plotlyReady || chart?.Id == null)
+        {
+            return;
+        }
+
+        try
+        {
+            _cameraPersistenceModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>(
+                "import",
+                "./_content/NORCE.Drilling.Field.WebPages/scatter3dCameraPersistence.js?v=20260602-closest-approach");
+
+            if (_cameraPersistenceChartId != chart.Id)
+            {
+                _cameraPersistenceChartId = chart.Id;
+                _dotNetReference ??= DotNetObjectReference.Create(this);
+                await _cameraPersistenceModule.InvokeVoidAsync("install", chart.Id, _dotNetReference);
+            }
+        }
+        catch (JSException)
+        {
+        }
+        catch (InvalidOperationException)
+        {
+        }
+    }
+
+    private async Task DisposeCameraPersistenceAsync()
+    {
+        if (_cameraPersistenceModule == null)
+        {
+            return;
+        }
+
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(_cameraPersistenceChartId))
+            {
+                await _cameraPersistenceModule.InvokeVoidAsync("uninstall", _cameraPersistenceChartId);
+            }
+
+            await _cameraPersistenceModule.DisposeAsync();
+            _dotNetReference?.Dispose();
+            _dotNetReference = null;
+        }
+        catch (JSException)
+        {
+        }
+        catch (InvalidOperationException)
+        {
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnPlotlyTraceClicked(int traceIndex)
+    {
+        if (_disposed || !TraceClicked.HasDelegate)
+        {
+            return;
+        }
+
+        await TraceClicked.InvokeAsync(traceIndex);
     }
 
     private async Task ManageTracesAsync()
@@ -203,6 +278,10 @@
             Plotly.Blazor.Traces.Scatter3DLib.Marker? marker = wantsMarkers
                 ? (i < ColorList.Count ? new Plotly.Blazor.Traces.Scatter3DLib.Marker { Color = ColorList[i] } : new Plotly.Blazor.Traces.Scatter3DLib.Marker { AutoColorScale = true })
                 : null;
+            if (marker != null && i < MarkerSizeList.Count && MarkerSizeList[i] is { } markerSize && markerSize > 0.0)
+            {
+                marker.Size = (decimal)markerSize;
+            }
 
             Plotly.Blazor.Traces.Scatter3DLib.Line? line = wantsLines
                 ? (i < ColorList.Count ? new Plotly.Blazor.Traces.Scatter3DLib.Line { Color = ColorList[i], Width = 3 } : new Plotly.Blazor.Traces.Scatter3DLib.Line { Width = 3 })
@@ -234,9 +313,11 @@
         layout.Height = PlotHeight > 0 ? PlotHeight : null;
         layout.Width = PlotWidth > 0 ? PlotWidth : null;
         layout.Title.Text = PlotTitle;
+        layout.UiRevision = PlotlyUiRevision;
 
         foreach (var scene in layout.Scene)
         {
+            scene.UiRevision = PlotlyUiRevision;
             scene.Domain = new Plotly.Blazor.LayoutLib.SceneLib.Domain { X = [0, 1], Y = [0, 1] };
             scene.AspectMode = Plotly.Blazor.LayoutLib.SceneLib.AspectModeEnum.Data;
             scene.XAxis.Title.Text = $"{XAxisTitle}{(xUnitLabel != null ? $" ({xUnitLabel})" : "")}";
@@ -308,6 +389,7 @@
         AppendListSignature(builder, NameList);
         AppendListSignature(builder, ModeFlagList);
         AppendListSignature(builder, ColorList);
+        AppendListSignature(builder, MarkerSizeList);
         AppendNestedListSignature(builder, XValuesList);
         AppendNestedListSignature(builder, YValuesList);
         AppendNestedListSignature(builder, ZValuesList);
