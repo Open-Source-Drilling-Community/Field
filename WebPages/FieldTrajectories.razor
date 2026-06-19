@@ -462,7 +462,7 @@
             if (trajectory.MetaInfo?.ID is Guid trajectoryId &&
                 ellipseResultsByTrajectory.TryGetValue(trajectoryId, out List<FieldModelShared.SurveyStationEllipseResult>? ellipseResults))
             {
-                AddEllipseTraces(nextPlotTraces, trajectory.SurveyStationList, ellipseResults, Colors[colorIndex % Colors.Length], trajectory.Name);
+                AddEllipseTraces(nextPlotTraces, trajectory.SurveyStationList, ellipseResults, Colors[colorIndex % Colors.Length], trajectoryId, trajectory.Name);
             }
             colorIndex++;
         }
@@ -534,6 +534,7 @@
             "Closest approach",
             1,
             "#d62728",
+            true,
             null,
             null,
             false,
@@ -545,6 +546,7 @@
             "Closest points",
             2,
             "#d62728",
+            true,
             5.0,
             null,
             false,
@@ -553,7 +555,212 @@
             [closestApproachResult.First.Point.Tvd, closestApproachResult.Second.Point.Tvd]));
     }
 
-    private void AppendPoint(FieldModelShared.SurveyStation? point, List<object> northValues, List<object> eastValues, List<object> tvdValues)
+    private async Task CalculateUncertaintyEllipsesAsync()
+    {
+        if (trajectoryList.Count == 0)
+        {
+            return;
+        }
+
+        try
+        {
+            isCalculatingEllipses = true;
+            ellipseResultsByTrajectory.Clear();
+            await InvokeAsync(StateHasChanged);
+
+            foreach (FieldModelShared.Trajectory trajectory in trajectoryList)
+            {
+                if (trajectory.MetaInfo?.ID is not Guid trajectoryId ||
+                    trajectory.SurveyStationList is not { Count: > 0 } surveyStations)
+                {
+                    continue;
+                }
+
+                FieldModelShared.SurveyStationEllipseCalculation order = new()
+                {
+                    MetaInfo = new FieldModelShared.MetaInfo { ID = Guid.NewGuid() },
+                    Name = $"{trajectory.Name} uncertainty ellipses",
+                    Description = string.Empty,
+                    CreationDate = DateTimeOffset.UtcNow,
+                    LastModificationDate = DateTimeOffset.UtcNow,
+                    ConfidenceFactor = ellipseConfidenceFactor,
+                    SurveyStationList = surveyStations
+                };
+
+                HttpResponseMessage response = await Api.HttpClientTrajectory.PostAsJsonAsync("SurveyStationEllipseCalculation", order);
+                response.EnsureSuccessStatusCode();
+                FieldModelShared.SurveyStationEllipseCalculation? result = await response.Content.ReadFromJsonAsync<FieldModelShared.SurveyStationEllipseCalculation>();
+                if (result?.SurveyStationEllipseResultList is { Count: > 0 } ellipseResults)
+                {
+                    ellipseResultsByTrajectory[trajectoryId] = ellipseResults.ToList();
+                }
+            }
+
+            UpdatePlots();
+            if (ellipseResultsByTrajectory.Count == 0)
+            {
+                Snackbar.Add("No uncertainty ellipses could be calculated.", Severity.Warning);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Problem while calculating uncertainty ellipses");
+            Snackbar.Add("Problem while calculating uncertainty ellipses: " + ex.Message, Severity.Error);
+        }
+        finally
+        {
+            isCalculatingEllipses = false;
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void ClearUncertaintyEllipses()
+    {
+        ellipseResultsByTrajectory.Clear();
+        UpdatePlots();
+    }
+
+    private static void AddEllipseTraces(
+        List<PlotTrace> traces,
+        ICollection<FieldModelShared.SurveyStation> surveyStations,
+        IReadOnlyList<FieldModelShared.SurveyStationEllipseResult> ellipseResults,
+        string color,
+        Guid trajectoryId,
+        string? trajectoryName)
+    {
+        bool horizontalLegendShown = false;
+        bool perpendicularLegendShown = false;
+        foreach ((FieldModelShared.SurveyStation station, FieldModelShared.SurveyStationEllipseResult result) in SelectEvenlySpacedEllipses(surveyStations, ellipseResults))
+        {
+            if (BuildHorizontalEllipseTrace(station, result.HorizontalEllipse, color, !horizontalLegendShown, trajectoryId, trajectoryName) is { } horizontalTrace)
+            {
+                traces.Add(horizontalTrace);
+                horizontalLegendShown = true;
+            }
+            if (BuildPerpendicularEllipseTrace(station, result.PerpendicularEllipse, color, !perpendicularLegendShown, trajectoryId, trajectoryName) is { } perpendicularTrace)
+            {
+                traces.Add(perpendicularTrace);
+                perpendicularLegendShown = true;
+            }
+        }
+    }
+
+    private static IReadOnlyList<(FieldModelShared.SurveyStation Station, FieldModelShared.SurveyStationEllipseResult Result)> SelectEvenlySpacedEllipses(
+        ICollection<FieldModelShared.SurveyStation> surveyStations,
+        IReadOnlyList<FieldModelShared.SurveyStationEllipseResult> ellipseResults)
+    {
+        List<(FieldModelShared.SurveyStation Station, FieldModelShared.SurveyStationEllipseResult Result)> candidates = [];
+        foreach (FieldModelShared.SurveyStationEllipseResult result in ellipseResults)
+        {
+            FieldModelShared.SurveyStation? station = FindStation(surveyStations, result.MD);
+            if (station != null)
+            {
+                candidates.Add((station, result));
+            }
+        }
+
+        if (candidates.Count <= MaxDisplayedUncertaintyEllipses)
+        {
+            return candidates;
+        }
+
+        List<(FieldModelShared.SurveyStation Station, FieldModelShared.SurveyStationEllipseResult Result)> ordered = candidates
+            .OrderBy(candidate => candidate.Result.MD ?? candidate.Station.MD ?? candidate.Station.Abscissa ?? double.MaxValue)
+            .ToList();
+        HashSet<int> selectedIndexes = [];
+        for (int sampleIndex = 0; sampleIndex < MaxDisplayedUncertaintyEllipses; sampleIndex++)
+        {
+            int sourceIndex = (int)Math.Round(sampleIndex * (ordered.Count - 1.0) / (MaxDisplayedUncertaintyEllipses - 1.0));
+            selectedIndexes.Add(Math.Clamp(sourceIndex, 0, ordered.Count - 1));
+        }
+        selectedIndexes.Add(ordered.Count - 1);
+        return selectedIndexes.Order().Select(index => ordered[index]).ToList();
+    }
+
+    private static FieldModelShared.SurveyStation? FindStation(ICollection<FieldModelShared.SurveyStation> surveyStations, double? md)
+    {
+        if (md is not { } definedMd)
+        {
+            return null;
+        }
+
+        return surveyStations
+            .Where(station => station != null && (station.MD ?? station.Abscissa) is { })
+            .OrderBy(station => Math.Abs(((station.MD ?? station.Abscissa) ?? double.MaxValue) - definedMd))
+            .FirstOrDefault();
+    }
+
+    private static PlotTrace? BuildHorizontalEllipseTrace(FieldModelShared.SurveyStation station, FieldModelShared.SurveyStationEllipse? ellipse, string color, bool showLegend, Guid trajectoryId, string? trajectoryName)
+    {
+        if (ellipse?.SemiMajorAxis is not double semiMajor ||
+            ellipse.SemiMinorAxis is not double semiMinor ||
+            ellipse.OrientationAngle is not double angle ||
+            station.X is not double centerNorth ||
+            station.Y is not double centerEast)
+        {
+            return null;
+        }
+
+        List<object> northValues = [];
+        List<object> eastValues = [];
+        List<object> tvdValues = [];
+        double centerTvd = station.TVD ?? station.Z ?? 0.0;
+        for (int i = 0; i <= EllipsePointCount; i++)
+        {
+            double phi = 2.0 * Math.PI * i / EllipsePointCount;
+            double major = semiMajor * Math.Cos(phi);
+            double minor = semiMinor * Math.Sin(phi);
+            double northOffset = major * Math.Cos(angle) - minor * Math.Sin(angle);
+            double eastOffset = major * Math.Sin(angle) + minor * Math.Cos(angle);
+            northValues.Add(centerNorth + northOffset);
+            eastValues.Add(centerEast + eastOffset);
+            tvdValues.Add(centerTvd);
+        }
+
+        return new PlotTrace($"{trajectoryName ?? "trajectory"} horizontal ellipses", 1, color, showLegend, 2.0, trajectoryId, false, northValues, eastValues, tvdValues, false, true);
+    }
+
+    private static PlotTrace? BuildPerpendicularEllipseTrace(FieldModelShared.SurveyStation station, FieldModelShared.SurveyStationEllipse? ellipse, string color, bool showLegend, Guid trajectoryId, string? trajectoryName)
+    {
+        if (ellipse?.SemiMajorAxis is not double semiMajor ||
+            ellipse.SemiMinorAxis is not double semiMinor ||
+            ellipse.OrientationAngle is not double angle ||
+            station.Inclination is not double inclination ||
+            station.Azimuth is not double azimuth ||
+            station.X is not double centerNorth ||
+            station.Y is not double centerEast)
+        {
+            return null;
+        }
+
+        double centerTvd = station.TVD ?? station.Z ?? 0.0;
+        double cosA = Math.Cos(azimuth);
+        double sinA = Math.Sin(azimuth);
+        double cosI = Math.Cos(inclination);
+        double sinI = Math.Sin(inclination);
+        double cosO = Math.Cos(angle);
+        double sinO = Math.Sin(angle);
+        List<object> northValues = [];
+        List<object> eastValues = [];
+        List<object> tvdValues = [];
+        for (int i = 0; i <= EllipsePointCount; i++)
+        {
+            double phi = 2.0 * Math.PI * i / EllipsePointCount;
+            double localX0 = semiMajor * Math.Cos(phi);
+            double localY0 = semiMinor * Math.Sin(phi);
+            double localX = localX0 * cosO - localY0 * sinO;
+            double localY = localX0 * sinO + localY0 * cosO;
+            northValues.Add(centerNorth + cosA * cosI * localX - sinA * localY);
+            eastValues.Add(centerEast + sinA * cosI * localX + cosA * localY);
+            tvdValues.Add(centerTvd - sinI * localX);
+        }
+
+        return new PlotTrace($"{trajectoryName ?? "trajectory"} perpendicular ellipses", 1, color, showLegend, 2.0, trajectoryId, false, northValues, eastValues, tvdValues, true, false);
+    }
+
+
+    private static void AppendPoint(FieldModelShared.SurveyStation? point, List<object> northValues, List<object> eastValues, List<object> tvdValues)
     {
         if (point?.X is not { } north || point.Y is not { } east)
         {
