@@ -11,38 +11,8 @@ namespace NORCE.Drilling.Field.Model
     /// The octree code for the WGS84 geodetic position can also calculated at the requested level of details.
     /// it is also possible to pass the octree code (in the WGS84 datum), and then the geodetic coordinates and cartographic coordinates are calculated
     /// </summary>
-    public class FieldCartographicConversionSet
+    public class FieldCartographicConversionSet : FieldCartographicConversionSetLight
     {
-        /// <summary>
-        /// a MetaInfo for the CartographicConversionSet
-        /// </summary>
-        public OSDC.DotnetLibraries.General.DataManagement.MetaInfo? MetaInfo { get; set; }
-
-        /// <summary>
-        /// name of the data
-        /// </summary>
-        public string? Name { get; set; }
-
-        /// <summary>
-        /// a description of the data
-        /// </summary>
-        public string? Description { get; set; }
-
-        /// <summary>
-        /// the date when the data was created
-        /// </summary>
-        public DateTimeOffset? CreationDate { get; set; }
-
-        /// <summary>
-        /// the date when the data was last modified
-        /// </summary>
-        public DateTimeOffset? LastModificationDate { get; set; }
-
-        /// <summary>
-        /// the ID of the Field
-        /// </summary>
-        public Guid? FieldID { get; set; } = null;
-
         /// <summary>
         /// an input list of CartographicCoordinate
         /// </summary>

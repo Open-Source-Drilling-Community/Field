@@ -35,6 +35,11 @@ namespace NORCE.Drilling.Field.Model
         public DateTimeOffset? LastModificationDate { get; set; }
 
         /// <summary>
+        /// the ID of the Field
+        /// </summary>
+        public Guid? FieldID { get; set; } = null;
+
+        /// <summary>
         /// the name of the reference field
         /// </summary>
         public string? FieldName { get; set; }
@@ -49,13 +54,17 @@ namespace NORCE.Drilling.Field.Model
         public FieldCartographicConversionSetLight() : base()
         {
         }
-        public FieldCartographicConversionSetLight(OSDC.DotnetLibraries.General.DataManagement.MetaInfo? metaInfo, string? name, string? descr, DateTimeOffset? creationDate, DateTimeOffset? modifDate, string? fieldName, string? fieldDescr)
+        public FieldCartographicConversionSetLight(OSDC.DotnetLibraries.General.DataManagement.MetaInfo? metaInfo, 
+                string? name, string? descr, 
+                DateTimeOffset? creationDate, DateTimeOffset? modifDate, string? fieldId, string? fieldName, string? fieldDescr)
         {
             MetaInfo = metaInfo;
             Name = name;
             Description = descr;
             CreationDate = creationDate;
             LastModificationDate = modifDate;
+            if (Guid.TryParse(fieldId, out Guid fId))
+                FieldID = fId;
             FieldName = fieldName;
             FieldDescription = fieldDescr;
         }

@@ -15,6 +15,7 @@
     [Parameter] public List<string> NameList { get; set; } = [];
     [Parameter] public List<int> ModeFlagList { get; set; } = [];
     [Parameter] public List<string> ColorList { get; set; } = [];
+    [Parameter] public List<bool>? ShowLegends { get; set; }
     [Parameter] public List<double?> MarkerSizeList { get; set; } = [];
     [Parameter] public List<List<object>> XValuesList { get; set; } = [];
     [Parameter] public List<List<object>> YValuesList { get; set; } = [];
@@ -269,6 +270,7 @@
             }
 
             string name = i < NameList.Count ? NameList[i] : $"trace_{i}";
+            bool showLegend = ShowLegends != null && i < ShowLegends.Count ? ShowLegends[i] : true;
             int modeInt = i < ModeFlagList.Count ? ModeFlagList[i] : 1;
             var mode = MapMode(modeInt);
 
@@ -290,6 +292,7 @@
             var trace = new Scatter3D
             {
                 Name = name,
+                ShowLegend = showLegend,
                 Mode = mode,
                 X = xOut,
                 Y = yOut,
@@ -389,6 +392,7 @@
         AppendListSignature(builder, NameList);
         AppendListSignature(builder, ModeFlagList);
         AppendListSignature(builder, ColorList);
+        AppendListSignature(builder, ShowLegends);
         AppendListSignature(builder, MarkerSizeList);
         AppendNestedListSignature(builder, XValuesList);
         AppendNestedListSignature(builder, YValuesList);
@@ -433,3 +437,7 @@
         builder.Append('|');
     }
 }
+
+
+
+

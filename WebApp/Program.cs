@@ -35,7 +35,8 @@ builder.Services.AddExternalWebPages(webPagesConfiguration);
 var app = builder.Build();
 
 app.UseForwardedHeaders();
-app.UsePathBase("/Field/webapp");
+var basePath = "/field/webapp";
+app.UsePathBase(basePath);
 
 if (!app.Environment.IsDevelopment())
 {
@@ -51,3 +52,4 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.Run();
+

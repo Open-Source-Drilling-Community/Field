@@ -13,6 +13,7 @@
     [Parameter] public List<string>? NameList { get; set; }
     [Parameter] public List<int>? ModeFlagList { get; set; }
     [Parameter] public List<string>? ColorList { get; set; }
+    [Parameter] public List<bool>? ShowLegends { get; set; }
     [Parameter] public List<List<object>>? XValuesList { get; set; }
     [Parameter] public List<List<object>>? YValuesList { get; set; }
     [Parameter] public int PlotHeight { get; set; }
@@ -189,6 +190,7 @@
             }
 
             string name = NameList != null && i < NameList.Count ? NameList[i] : $"trace_{i}";
+            bool showLegend = ShowLegends != null && i < ShowLegends.Count ? ShowLegends[i] : true;
             Plotly.Blazor.Traces.ScatterLib.ModeFlag mode =
                 ModeFlagList != null && i < ModeFlagList.Count
                     ? (Plotly.Blazor.Traces.ScatterLib.ModeFlag)ModeFlagList[i]
@@ -201,6 +203,7 @@
             await chart.AddTrace(new Scatter
             {
                 Name = name,
+                    ShowLegend = showLegend,
                 Mode = mode,
                 Marker = marker,
                 X = xValues,
@@ -306,6 +309,7 @@
         AppendListSignature(builder, NameList);
         AppendListSignature(builder, ModeFlagList);
         AppendListSignature(builder, ColorList);
+        AppendListSignature(builder, ShowLegends);
         AppendNestedListSignature(builder, XValuesList);
         AppendNestedListSignature(builder, YValuesList);
         return builder.ToString();
@@ -348,3 +352,5 @@
         builder.Append('|');
     }
 }
+
+

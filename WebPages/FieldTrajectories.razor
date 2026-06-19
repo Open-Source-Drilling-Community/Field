@@ -2,6 +2,8 @@
 @inject ILogger<FieldTrajectories> logger
 @inject ISnackbar Snackbar
 @inject IFieldAPIUtils Api
+@using System.Net.Http.Json
+@using System.Text.Json
 @using FieldModelShared = NORCE.Drilling.Field.ModelShared
 
 <MudUnitAndReferenceChoiceTag HttpHost=@Api.HostNameUnitConversion
@@ -41,8 +43,52 @@
                     <MudItem xs="12" sm="4" md="2">
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="ReloadSelectedFieldAsync" Disabled="@(selectedFieldId == null)">Reload</MudButton>
                     </MudItem>
+                    <MudItem xs="12" sm="4" md="2">
+                        <MudSelect Label="Type" T="string" Value="@selectedTrajectoryTypeFilter" ValueChanged="OnTrajectoryFilterChanged" ShrinkLabel>
+                            <MudSelectItem T="string" Value="@TrajectoryTypeFilterAll">All</MudSelectItem>
+                            <MudSelectItem T="string" Value="@TrajectoryTypeFilterPlanned">Planned</MudSelectItem>
+                            <MudSelectItem T="string" Value="@TrajectoryTypeFilterActual">Actual</MudSelectItem>
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="12" sm="4" md="2">
+                        <MudCheckBox T="bool" Value="@definitiveTrajectoryOnly" ValueChanged="OnDefinitiveTrajectoryFilterChanged" Label="Definitive only" />
+                    </MudItem>
                 </MudGrid>
-
+                <MudDivider Class="my-3" />
+                <MudGrid>
+                    <MudItem xs="12" sm="4" md="3">
+                        <MudNumericField @bind-Value="ellipseConfidenceFactor"
+                                         Label="Confidence factor"
+                                         Min="0.0"
+                                         Max="1.0"
+                                         Step="0.01"
+                                         ShrinkLabel />
+                    </MudItem>
+                    <MudItem xs="12" sm="4" md="3">
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   FullWidth="true"
+                                   OnClick="CalculateUncertaintyEllipsesAsync"
+                                   Disabled="@(trajectoryList.Count == 0 || isLoadingTrajectories || isCalculatingEllipses)">
+                            Calculate Ellipses
+                        </MudButton>
+                    </MudItem>
+                    <MudItem xs="12" sm="4" md="3">
+                        <MudButton Variant="Variant.Text"
+                                   Color="Color.Secondary"
+                                   FullWidth="true"
+                                   OnClick="ClearUncertaintyEllipses"
+                                   Disabled="@(ellipseResultsByTrajectory.Count == 0 || isCalculatingEllipses)">
+                            Clear Ellipses
+                        </MudButton>
+                    </MudItem>
+                    @if (isCalculatingEllipses)
+                    {
+                        <MudItem xs="12" md="3">
+                            <MudProgressLinear Indeterminate="true" Color="Color.Info" Class="mt-4" />
+                        </MudItem>
+                    }
+                </MudGrid>
             </MudPaper>
 
             @if (!string.IsNullOrWhiteSpace(errorMessage))
@@ -70,13 +116,13 @@
                             <Scatter3DPlot XUnit="PositionDrilling"
                                            YUnit="PositionDrilling"
                                            ZUnit="DepthDrilling"
-                                           NameList="@PlotNames"
-                                           ModeFlagList="@PlotModeFlags"
-                                           ColorList="@PlotColors"
+                                           NameList="@Plot3DNames"
+                                           ModeFlagList="@Plot3DModeFlags"
+                                           ColorList="@Plot3DColors"
                                            MarkerSizeList="@PlotMarkerSizes"
-                                           XValuesList="@EastValuesList"
-                                           YValuesList="@NorthValuesList"
-                                           ZValuesList="@TvdValuesList"
+                                           XValuesList="@Plot3DEastValuesList"
+                                           YValuesList="@Plot3DNorthValuesList"
+                                           ZValuesList="@Plot3DTvdValuesList"
                                            XAxisTitle="Easting"
                                            YAxisTitle="Northing"
                                            ZAxisTitle="TVD"
@@ -88,6 +134,7 @@
                                            ZAxisUsesDepthReference="true"
                                            XAxisPositionDirection="@PositionDirectionType.East"
                                            YAxisPositionDirection="@PositionDirectionType.North"
+                                           ShowLegends="@Plot3DShowLegends"
                                            TraceClicked="OnTrajectoryTraceClicked" />
                         </MudPaper>
                     </MudItem>
@@ -96,11 +143,11 @@
                             <MudText Typo="Typo.h6">Horizontal Projection</MudText>
                             <ScatterPlot XUnit="PositionDrilling"
                                          YUnit="PositionDrilling"
-                                         NameList="@PlotNames"
-                                         ModeFlagList="@PlotModeFlags"
-                                         ColorList="@PlotColors"
-                                         XValuesList="@EastValuesList"
-                                         YValuesList="@NorthValuesList"
+                                         NameList="@PlotHorizontalNames"
+                                         ModeFlagList="@PlotHorizontalModeFlags"
+                                         ColorList="@PlotHorizontalColors"
+                                         XValuesList="@PlotHorizontalEastValuesList"
+                                         YValuesList="@PlotHorizontalNorthValuesList"
                                          XAxisTitle="Easting"
                                          YAxisTitle="Northing"
                                          PlotTitle="Horizontal projection"
@@ -109,7 +156,8 @@
                                          XAxisUsesPositionReference="true"
                                          YAxisUsesPositionReference="true"
                                          XAxisPositionDirection="@PositionDirectionType.East"
-                                         YAxisPositionDirection="@PositionDirectionType.North" />
+                                         YAxisPositionDirection="@PositionDirectionType.North"
+                                         ShowLegends="@PlotHorizontalShowLegends" />
                         </MudPaper>
                     </MudItem>
                 </MudGrid>
@@ -152,7 +200,7 @@
                 <MudPaper Class="pa-4" Elevation="2">
                     <MudText Typo="Typo.h6">Legend</MudText>
                     <MudGrid>
-                        @foreach (var trace in plotTraces)
+                        @foreach (var trace in plotTraces.Where(trace => trace.ShowLegend))
                         {
                             <MudItem xs="12" sm="6" md="4" lg="3">
                                 <div style="display:flex;align-items:center;gap:12px;">
@@ -175,18 +223,40 @@
     private Guid? selectedFieldId;
     private string? errorMessage;
     private bool isLoadingTrajectories;
+    private const string TrajectoryTypeFilterAll = "All";
+    private const string TrajectoryTypeFilterPlanned = "Planned";
+    private const string TrajectoryTypeFilterActual = "Actual";
+    private string selectedTrajectoryTypeFilter = TrajectoryTypeFilterAll;
+    private bool definitiveTrajectoryOnly;
+    private bool isCalculatingEllipses;
+    private double ellipseConfidenceFactor = 0.95;
 
     private List<PlotTrace> plotTraces = [];
+    private Dictionary<Guid, List<FieldModelShared.SurveyStationEllipseResult>> ellipseResultsByTrajectory = [];
     private List<Guid> selectedTrajectoryIds = [];
     private ClosestApproachResult? closestApproachResult;
 
     private List<string> PlotNames => plotTraces.Select(trace => trace.Name).ToList();
     private List<int> PlotModeFlags => plotTraces.Select(trace => trace.ModeFlag).ToList();
     private List<string> PlotColors => plotTraces.Select(trace => trace.Color).ToList();
+    private List<bool> PlotShowLegends => plotTraces.Select(trace => trace.ShowLegend).ToList();
     private List<double?> PlotMarkerSizes => plotTraces.Select(trace => trace.MarkerSize).ToList();
     private List<List<object>> NorthValuesList => plotTraces.Select(trace => trace.NorthValues).ToList();
     private List<List<object>> EastValuesList => plotTraces.Select(trace => trace.EastValues).ToList();
     private List<List<object>> TvdValuesList => plotTraces.Select(trace => trace.TvdValues).ToList();
+    private List<string> Plot3DNames => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.Name).ToList();
+    private List<int> Plot3DModeFlags => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.ModeFlag).ToList();
+    private List<string> Plot3DColors => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.Color).ToList();
+    private List<bool> Plot3DShowLegends => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.ShowLegend).ToList();
+    private List<List<object>> Plot3DNorthValuesList => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.NorthValues).ToList();
+    private List<List<object>> Plot3DEastValuesList => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.EastValues).ToList();
+    private List<List<object>> Plot3DTvdValuesList => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.TvdValues).ToList();
+    private List<string> PlotHorizontalNames => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.Name).ToList();
+    private List<int> PlotHorizontalModeFlags => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.ModeFlag).ToList();
+    private List<string> PlotHorizontalColors => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.Color).ToList();
+    private List<bool> PlotHorizontalShowLegends => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.ShowLegend).ToList();
+    private List<List<object>> PlotHorizontalNorthValuesList => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.NorthValues).ToList();
+    private List<List<object>> PlotHorizontalEastValuesList => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.EastValues).ToList();
     private string SelectedTrajectoryText => string.Join(" -> ", selectedTrajectoryIds.Select(id => FindTrajectoryName(id)));
 
     protected override async Task OnInitializedAsync()
@@ -245,23 +315,50 @@
         }
     }
 
+
+    private async Task OnTrajectoryFilterChanged(string value)
+    {
+        selectedTrajectoryTypeFilter = string.IsNullOrWhiteSpace(value) ? TrajectoryTypeFilterAll : value;
+        await ReloadCurrentSelectionAsync();
+    }
+
+    private async Task OnDefinitiveTrajectoryFilterChanged(bool value)
+    {
+        definitiveTrajectoryOnly = value;
+        await ReloadCurrentSelectionAsync();
+    }
+
+    private bool MatchesTrajectoryFilters(FieldModelShared.TrajectoryLight trajectory)
+    {
+        bool typeMatches = selectedTrajectoryTypeFilter == TrajectoryTypeFilterAll ||
+            string.Equals(trajectory.TrajectoryType.ToString(), selectedTrajectoryTypeFilter, StringComparison.OrdinalIgnoreCase);
+        bool definitiveMatches = !definitiveTrajectoryOnly || trajectory.IsDefinitive;
+        return typeMatches && definitiveMatches;
+    }
+
+    private async Task ReloadCurrentSelectionAsync()
+    {
+        if (selectedFieldId is Guid fieldId) { await LoadTrajectoriesAsync(fieldId); }
+    }
+
     private async Task LoadTrajectoriesAsync(Guid fieldId)
     {
         try
         {
             errorMessage = null;
             isLoadingTrajectories = true;
+            ellipseResultsByTrajectory.Clear();
             trajectoryLightList.Clear();
             trajectoryList.Clear();
             ClearClosestApproachSelection();
             ClearPlots();
             await InvokeAsync(StateHasChanged);
             logger.LogInformation("Loading trajectory light data for field {FieldId}", fieldId);
-            trajectoryLightList = (await Api.ClientTrajectory.GetAllTrajectoryLightAsync(fieldId: fieldId)).OrderBy(trajectory => trajectory.Name).ToList();
+            trajectoryLightList = (await Api.ClientTrajectory.GetAllTrajectoryLightAsync(fieldId: fieldId)).Where(MatchesTrajectoryFilters).OrderBy(trajectory => trajectory.Name).ToList();
 
             List<Task<FieldModelShared.Trajectory>> detailTasks = trajectoryLightList
                 .Where(light => light?.MetaInfo != null && light.MetaInfo.ID != Guid.Empty)
-                .Select(light => Api.ClientTrajectory.GetTrajectoryByIdAsync(light.MetaInfo.ID))
+                .Select(light => LoadTrajectoryWithSurveyStationsAsync(light.MetaInfo.ID))
                 .ToList();
 
             trajectoryList = (await Task.WhenAll(detailTasks))
@@ -299,6 +396,30 @@
         await InvokeAsync(StateHasChanged);
     }
 
+    private async Task<FieldModelShared.Trajectory> LoadTrajectoryWithSurveyStationsAsync(Guid trajectoryId)
+    {
+        FieldModelShared.Trajectory trajectory = await Api.ClientTrajectory.GetTrajectoryByIdAsync(trajectoryId);
+        int chunkCount = await Api.HttpClientTrajectory.GetFromJsonAsync<int>($"Trajectory/{trajectoryId}/SurveyStations/ChunkCount");
+        if (chunkCount <= 0)
+        {
+            trajectory.SurveyStationList ??= [];
+            return trajectory;
+        }
+
+        List<FieldModelShared.SurveyStation> stations = [];
+        for (int chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++)
+        {
+            FieldModelShared.SurveyStationChunk? chunk = await Api.HttpClientTrajectory.GetFromJsonAsync<FieldModelShared.SurveyStationChunk>($"Trajectory/{trajectoryId}/SurveyStations/Chunks/{chunkIndex}");
+            if (chunk?.SurveyStationList is { Count: > 0 } chunkStations)
+            {
+                stations.AddRange(chunkStations);
+            }
+        }
+
+        trajectory.SurveyStationList = stations;
+        return trajectory;
+    }
+
     private void UpdatePlots()
     {
         ClearPlots();
@@ -330,12 +451,19 @@
                 string.IsNullOrWhiteSpace(trajectory.Name) ? "trajectory" : trajectory.Name,
                 3,
                 Colors[colorIndex % Colors.Length],
+                true,
                 2.0,
                 trajectory.MetaInfo.ID,
                 true,
                 northValues,
                 eastValues,
                 tvdValues));
+
+            if (trajectory.MetaInfo?.ID is Guid trajectoryId &&
+                ellipseResultsByTrajectory.TryGetValue(trajectoryId, out List<FieldModelShared.SurveyStationEllipseResult>? ellipseResults))
+            {
+                AddEllipseTraces(nextPlotTraces, trajectory.SurveyStationList, ellipseResults, Colors[colorIndex % Colors.Length], trajectory.Name);
+            }
             colorIndex++;
         }
 
@@ -485,6 +613,9 @@
     {
         plotTraces = [];
     }
+
+    private const int MaxDisplayedUncertaintyEllipses = 200;
+    private const int EllipsePointCount = 72;
 
     private FieldModelShared.Trajectory? FindTrajectory(Guid trajectoryId) =>
         trajectoryList.FirstOrDefault(trajectory => trajectory?.MetaInfo?.ID == trajectoryId);
@@ -662,12 +793,16 @@
         string Name,
         int ModeFlag,
         string Color,
+        bool ShowLegend,
         double? MarkerSize,
         Guid? TrajectoryId,
         bool IsSelectable,
         List<object> NorthValues,
         List<object> EastValues,
-        List<object> TvdValues);
+        List<object> TvdValues,
+        bool ShowIn3D = true,
+        bool ShowInHorizontal = true);
+
 
     private readonly record struct Vector3(double North, double East, double Tvd)
     {
@@ -690,3 +825,8 @@
 
     private sealed record ClosestApproachResult(ClosestApproachPoint First, ClosestApproachPoint Second, double Distance, double? Clearance);
 }
+
+
+
+
+
