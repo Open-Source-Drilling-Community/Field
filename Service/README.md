@@ -132,3 +132,10 @@ Run (mapping HTTPS and HTTP, provide external service URL):
 
 Access Swagger at `https://localhost:5001/Field/api/swagger`.
 
+## Funding
+
+The current work has been funded by the [Research Council of Norway](https://www.forskningsradet.no/) and [Industry partners](https://www.digiwells.no/about/board/) in the framework of the center for research-based innovation [SFI Digiwells (2020-2028)](https://www.digiwells.no/).
+
+## Contributors
+
+- Eric Cayeux, NORCE Energy Modelling and Automation

@@ -1,11 +1,11 @@
 # Field
 
-The Field solution provides a microservice (REST API) and a Blazor Server web application to manage Field data and related cartographic conversions. It also includes shared models and generators for OpenAPI-based clients used across the solution.
+The Field solution provides a microservice (REST API), reusable Razor pages, and a Blazor Server web application to manage Field data, display field trajectories and survey runs, and run contextual calculators. It also includes shared models and generators for OpenAPI-based clients used across the solution.
 
 ## Purpose
 
 - Expose a REST API to create, read, update, and delete Field data, and to compute cartographic conversion sets associated with a Field.
-- Provide a web UI to browse, edit, and visualize data and usage statistics.
+- Provide a web UI to browse and edit fields, display field-level trajectories and survey runs, and run cartographic and vertical datum conversions.
 - Share OpenAPI-generated clients/DTOs to keep contracts consistent across Service, WebApp, and tests.
 
 ## Installation
@@ -29,7 +29,7 @@ Steps (dev):
 
 Configuration:
 - Service reads `CartographicProjectionHostURL` (see `Service/appsettings.*.json`).
-- WebApp reads `FieldHostURL`, `CartographicProjectionHostURL`, and `UnitConversionHostURL` (see `WebApp/appsettings.*.json`).
+- WebApp reads `FieldHostURL`, `ClusterHostURL`, `TrajectoryHostURL`, `CartographicProjectionHostURL`, `GeodeticDatumHostURL`, `VerticalDatumHostURL`, and `UnitConversionHostURL` (see `WebApp/appsettings.*.json`).
 
 ## Usage Examples
 
@@ -49,8 +49,8 @@ curl -k -X POST "https://localhost:5001/Field/api/Field" \
 ```
 
 WebApp (UI):
-- Local Field page: `https://localhost:5011/Field/webapp/FieldMain`
-- Dev example: `https://dev.digiwells.no/Field/webapp/FieldMain`
+- Local Field page: `https://localhost:5011/Field/webapp/Field`
+- Dev example: `https://dev.digiwells.no/Field/webapp/Field`
 
 # Solution architecture
 
@@ -77,8 +77,13 @@ The solution is composed of:
   - microservice client that performs unit tests on the microservice (by default, an instance of the microservice must be running on http port 8080 to run tests)
   - *dependencies* = ModelShared
 - **WebApp**
-  - microservice web app client that manages data associated with Field and allow to interact with the microservice
-  - *dependencies* = ModelShared
+  - Blazor Server webapp named `Field Management`
+  - hosts field management, field trajectory and survey run displays, contextual data pages, and calculator pages
+  - *dependencies* = WebPages + reusable CartographicProjection, GeodeticDatum, and VerticalDatum web page packages
+- **WebPages**
+  - reusable Razor class library containing the Field web pages
+  - includes field management, field trajectory display, field survey run display, cartographic conversions, and usage statistics pages
+  - *dependencies* = ModelSharedOut + WebAppUtils + DrillingRazorMudComponents
 - **home** (auto-generated)
   - data are persisted in the microservice container using the Sqlite database located at *home/Field.db*
 
@@ -86,7 +91,8 @@ The solution is composed of:
 
 - Core runtime: .NET 8
 - Service: ASP.NET Core, `Microsoft.Data.Sqlite`, `Swashbuckle.AspNetCore`, `Microsoft.OpenApi`
-- WebApp: Blazor Server, MudBlazor, `OSDC.UnitConversion.DrillingRazorMudComponents`
+- WebApp: Blazor Server, MudBlazor, external Razor page packages for cartographic projection, geodetic datum, and vertical datum
+- WebPages: MudBlazor, `OSDC.UnitConversion.DrillingRazorMudComponents`, Plotly.Blazor
 - Shared model/codegen: `NSwag.CodeGeneration.CSharp`, `Microsoft.OpenApi.Readers`
 - Domain model: OSDC DotnetLibraries (General.DataManagement, General.Common, General.Statistics, DrillingProperties)
 
@@ -112,9 +118,9 @@ https://app.digiwells.no/Field/api/Field
 
 Web app is available at:
 
-https://dev.digiwells.no/Field/webapp/FieldMain
+https://dev.digiwells.no/Field/webapp/Field
 
-https://app.digiwells.no/Field/webapp/FieldMain
+https://app.digiwells.no/Field/webapp/Field
 
 The OpenApi schema of the microservice is available and testable at:
 
@@ -133,9 +139,3 @@ The current work has been funded by the [Research Council of Norway](https://www
 # Contributors
 
 **Eric Cayeux**, *NORCE Energy Modelling and Automation*
-
-**Gilles Pelfrene**, *NORCE Energy Modelling and Automation*
-
-**Andrew Holsaeter**, *NORCE Energy Modelling and Automation*
-
-**Lucas Volpi**, *NORCE Energy Modelling and Automation*

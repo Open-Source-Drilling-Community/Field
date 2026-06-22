@@ -111,3 +111,10 @@ UsageStatisticsField.Instance.IncrementGetAllFieldIdPerDay();
 
 The Model project builds as a class library targeting .NET 8 and is referenced by the Service and other projects in this solution.
 
+## Funding
+
+The current work has been funded by the [Research Council of Norway](https://www.forskningsradet.no/) and [Industry partners](https://www.digiwells.no/about/board/) in the framework of the center for research-based innovation [SFI Digiwells (2020-2028)](https://www.digiwells.no/).
+
+## Contributors
+
+- Eric Cayeux, NORCE Energy Modelling and Automation

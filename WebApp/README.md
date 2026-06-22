@@ -1,113 +1,132 @@
-# WebApp Project
+# Field Management WebApp
 
-The WebApp is a Blazor Server front end for the Field microservice. It provides pages to browse, create, edit, and delete Field entities, run cartographic conversions, and visualize usage statistics. The UI uses MudBlazor components and calls the Service REST API via an NSwag-generated client.
+The WebApp is a Blazor Server front end for the Field microservice. It hosts the Field management page, field-level trajectory and survey run displays, contextual data pages, and calculator pages.
 
 ## Purpose
 
-- Offer a user-friendly interface on top of the Field REST API.
-- Orchestrate interactions with related microservices for cartographic projections and unit conversions.
-- Demonstrate end-to-end usage of the Service with live data and conversions.
+- Manage Field records through the Field REST API.
+- Display trajectories and survey runs for a selected field.
+- Configure field-level depth and position references for plotting.
+- Provide calculators for cartographic conversions and single vertical datum conversion.
+- Reuse contextual data pages from the CartographicProjection, GeodeticDatum, and VerticalDatum web page packages.
 
 ## Installation
 
 Prerequisites:
+
 - .NET SDK 8.0+
 
-Configuration (appsettings):
-- `FieldHostURL`: base URL of the Field Service (e.g., `https://localhost:5001/`).
+Configuration keys:
+
+- `FieldHostURL`: base URL of the Field service.
+- `ClusterHostURL`: base URL of the Cluster service.
+- `TrajectoryHostURL`: base URL of the Trajectory service.
 - `CartographicProjectionHostURL`: base URL of the CartographicProjection service.
+- `GeodeticDatumHostURL`: base URL of the GeodeticDatum service.
+- `VerticalDatumHostURL`: base URL of the VerticalDatum service.
 - `UnitConversionHostURL`: base URL of the UnitConversion service.
 
 Example `WebApp/appsettings.Development.json`:
-```
+
+```json
 {
   "DetailedErrors": true,
-  "Logging": { "LogLevel": { "Default": "Information", "Microsoft.AspNetCore": "Warning" } },
-  "FieldHostURL": "https://localhost:5001/",
+  "FieldHostURL": "https://dev.digiwells.no/",
+  "ClusterHostURL": "https://dev.digiwells.no/",
+  "TrajectoryHostURL": "https://dev.digiwells.no/",
   "CartographicProjectionHostURL": "https://dev.digiwells.no/",
+  "GeodeticDatumHostURL": "https://dev.digiwells.no/",
+  "VerticalDatumHostURL": "https://app.digiwells.no/",
   "UnitConversionHostURL": "https://dev.digiwells.no/"
 }
 ```
 
-Build and run (dev):
-```
+Build and run from the solution root:
+
+```bash
 dotnet restore
 dotnet build Field.sln
 dotnet run --project WebApp
 ```
 
-Default URLs (from `Properties/launchSettings.json`):
+Default URLs:
+
 - HTTP: `http://localhost:5012/Field/webapp/Field`
 - HTTPS: `https://localhost:5011/Field/webapp/Field`
 
-Note: The app sets `UsePathBase("/Field/webapp")`, so all pages are rooted under that path base.
+The app sets `UsePathBase("/Field/webapp")`, so all pages are rooted under that path base.
 
-## Usage
+## Pages
 
-Main pages:
-- `Field` (`/Field/webapp/Field`): manage the list of Fields (add, select, delete, search, open editor).
-- `CartographicConverter` (`/Field/webapp/CartographicConverter`): run cartographic ↔ geodetic conversions.
-- `Statistics` (`/Field/webapp/Statistics`): view per-endpoint usage counters.
+Field Management:
 
-Common actions:
-- Add Field: From Field page, click “Add” to create a new Field; the app posts to the Service and opens the editor.
-- Edit Field: Select a Field to open `FieldEdit`, update name/description/projection, then save (PUT to Service).
-- Delete Field: Select rows and click “Delete” (DELETE to Service).
+- `Field` (`/Field/webapp/Field`): create, edit, delete, and search Field records.
 
-Client calls:
-- The app constructs HttpClient base addresses using the values above and calls the Service through the NSwag `Client` in `ModelSharedOut`.
-- Dev-only: SSL validation is bypassed in `APIUtils` to simplify local testing.
+Survey Display:
+
+- `Field Trajectories` (`/Field/webapp/FieldTrajectories`): display all trajectories for the selected field in 3D and horizontal projection.
+- `Field Survey Runs` (`/Field/webapp/FieldSurveyRuns`): display all survey runs for the selected field in 3D and horizontal projection.
+
+Contextual Data:
+
+- `Cartographic Projections` (`/Field/webapp/CartographicProjection`)
+- `Geodetic Datum` (`/Field/webapp/GeodeticDatum`)
+- `Spheroid` (`/Field/webapp/Spheroid`)
+
+Calculators:
+
+- `Cartographic Conversions` (`/Field/webapp/FieldCartographicConverter`)
+- `Vertical Datum Single Conversion` (`/Field/webapp/VerticalDatumConversion`)
 
 ## Dependencies
 
-Runtime and packages (see `WebApp/WebApp.csproj`):
-- ASP.NET Core (Server-side Blazor), .NET 8
-- `MudBlazor` UI via `MudBlazor.Services`
-- `OSDC.UnitConversion.DrillingRazorMudComponents` for unit/reference selection
+Runtime and packages:
+
+- ASP.NET Core Blazor Server, .NET 8
+- MudBlazor
+- `NORCE.Drilling.Field.WebPages`
+- `NORCE.Drilling.CartographicProjection.WebPages`
+- `NORCE.Drilling.GeodeticDatum.WebPages`
+- `NORCE.Drilling.VerticalDatum.WebPage`
 - `OSDC.DotnetLibraries.General.DataManagement`
-- Project reference to `ModelSharedOut` for the NSwag client and DTOs
 
 Internal structure:
-- `Program.cs`: adds Razor Pages + Blazor, Mud services, path base (`/Field/webapp`), loads host URLs from configuration.
-- `Shared/APIUtils.cs`: creates HttpClient instances and NSwag clients to call Field and CartographicProjection services.
-- `Shared/DataUtils.cs`: UI labels and unit/reference parameters.
-- `Pages/*`: `Field.razor`, `FieldEdit.razor`, `CartographicConverter.razor`, `StatisticsMain.razor`.
 
-## Integration in the Solution
-
-- Service: Primary backend the WebApp calls at `/Field/api` (Field controllers).
-- ModelSharedOut: NSwag-generated client used by the WebApp to consume the Service.
-- CartographicProjection service: Accessed for projections and conversions.
-- UnitConversion service: Provides unit and reference system settings via Razor components.
-- ServiceTest: Tests can run independently; the WebApp is not required for API tests but exercises the same endpoints interactively.
+- `Program.cs`: configures Blazor, MudBlazor, path base, host URLs, and service registration.
+- `ExternalRazorAssemblies.cs`: exposes Field and external web page assemblies to the Blazor router.
+- `ExternalWebPagesServiceCollectionExtensions.cs`: registers API utilities for external web page packages.
+- `WebPagesHostConfiguration.cs`: shares host URL configuration across Field and imported web pages.
+- `Shared/NavMenu.razor`: defines the grouped side menu.
 
 ## Docker
 
 Build:
-```
+
+```bash
 docker build -t field-webapp ./WebApp
 ```
 
-Run (map ports and configure backend URLs):
-```
+Run:
+
+```bash
 docker run --rm -p 5011:5011 -p 5012:5012 \
   -e ASPNETCORE_URLS="https://+:5011;http://+:5012" \
   -e FieldHostURL="https://host.docker.internal:5001/" \
+  -e ClusterHostURL="https://dev.your-host/" \
+  -e TrajectoryHostURL="https://dev.your-host/" \
   -e CartographicProjectionHostURL="https://dev.your-host/" \
+  -e GeodeticDatumHostURL="https://dev.your-host/" \
+  -e VerticalDatumHostURL="https://app.digiwells.no/" \
   -e UnitConversionHostURL="https://dev.your-host/" \
   field-webapp
 ```
 
 Then open `https://localhost:5011/Field/webapp/Field`.
 
----
+## Funding
 
-Funding
+The current work has been funded by the [Research Council of Norway](https://www.forskningsradet.no/) and [Industry partners](https://www.digiwells.no/about/board/) in the framework of the center for research-based innovation [SFI Digiwells (2020-2028)](https://www.digiwells.no/).
 
-The current work has been funded by the [Research Council of Norway](https://www.forskningsradet.no/) and [Industry partners](https://www.digiwells.no/about/board/) in the framework of the center for research-based innovation [SFI Digiwells (2020–2028)](https://www.digiwells.no/).
-
-Contributors
+## Contributors
 
 - Eric Cayeux, NORCE Energy Modelling and Automation
-- Gilles Pelfrene, NORCE Energy Modelling and Automation
-- Andrew Holsaeter, NORCE Energy Modelling and Automation
