@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.32112.339
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11723.231 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Service\Service.csproj", "{0600E920-F4A9-4403-A221-FA03B908E7FC}"
 EndProject
@@ -30,8 +30,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelSharedIn", "ModelSharedIn\ModelSharedIn.csproj", "{8599556D-B893-C377-978F-E262F40875A5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPages", "WebPages\WebPages.csproj", "{F9759C0F-8AC3-4BBA-B8AE-4E30F3B49CD9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBaseUpdater", "DataBaseUpdater\DataBaseUpdater.csproj", "{FF0B0664-94C7-4A6C-B944-C013986AD6CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -139,18 +137,6 @@ Global
 		{F9759C0F-8AC3-4BBA-B8AE-4E30F3B49CD9}.Release|x64.Build.0 = Release|Any CPU
 		{F9759C0F-8AC3-4BBA-B8AE-4E30F3B49CD9}.Release|x86.ActiveCfg = Release|Any CPU
 		{F9759C0F-8AC3-4BBA-B8AE-4E30F3B49CD9}.Release|x86.Build.0 = Release|Any CPU
-		{FF0B0664-94C7-4A6C-B944-C013986AD6CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FF0B0664-94C7-4A6C-B944-C013986AD6CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FF0B0664-94C7-4A6C-B944-C013986AD6CC}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{FF0B0664-94C7-4A6C-B944-C013986AD6CC}.Debug|x64.Build.0 = Debug|Any CPU
-		{FF0B0664-94C7-4A6C-B944-C013986AD6CC}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{FF0B0664-94C7-4A6C-B944-C013986AD6CC}.Debug|x86.Build.0 = Debug|Any CPU
-		{FF0B0664-94C7-4A6C-B944-C013986AD6CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FF0B0664-94C7-4A6C-B944-C013986AD6CC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FF0B0664-94C7-4A6C-B944-C013986AD6CC}.Release|x64.ActiveCfg = Release|Any CPU
-		{FF0B0664-94C7-4A6C-B944-C013986AD6CC}.Release|x64.Build.0 = Release|Any CPU
-		{FF0B0664-94C7-4A6C-B944-C013986AD6CC}.Release|x86.ActiveCfg = Release|Any CPU
-		{FF0B0664-94C7-4A6C-B944-C013986AD6CC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
