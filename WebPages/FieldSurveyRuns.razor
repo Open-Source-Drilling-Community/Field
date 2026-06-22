@@ -14,12 +14,12 @@
                               DepthReferenceName="@DataUtils.UnitAndReferenceParameters.DepthReferenceName"
                               DepthReferenceNameChanged="@DataUtils.UpdateDepthReferenceName"
                               SeaWaterLevelDepthReferenceSource="@DataUtils.SeaWaterLevelDepthReferenceSource"
+                              MeanSeaLevelDepthReferenceSource="@DataUtils.MeanSeaLevelDepthReferenceSource"
                               PositionReferenceName="@DataUtils.UnitAndReferenceParameters.PositionReferenceName"
                               PositionReferenceNameChanged="@DataUtils.UpdatePositionReferenceName"
                               CartographicGridPositionReferenceSource="@DataUtils.CartographicGridPositionReferenceSource"
-                              LeaseLinePositionReferenceSource="@DataUtils.LeaseLinePositionReferenceSource"
                               >
-    @if (fieldList == null)
+    @if (fieldList == null || clusterList == null)
     {
         <p><em>Loading...</em></p>
     }
@@ -178,6 +178,7 @@
 
 @code {
     private List<FieldModelShared.Field>? fieldList;
+    private List<FieldModelShared.Cluster>? clusterList;
     private List<FieldModelShared.SurveyRunLight> surveyRunLightList = [];
     private List<FieldModelShared.SurveyRun> surveyRunList = [];
     private Guid? selectedFieldId;
@@ -219,8 +220,12 @@
         try
         {
             logger.LogInformation("Trying to load list of Fields from client: {Host}", Api.HostNameField);
-            fieldList = (await Api.ClientField.GetAllFieldAsync()).OrderBy(field => field.Name).ToList();
+            Task<ICollection<FieldModelShared.Field>> fieldTask = Api.ClientField.GetAllFieldAsync();
+            Task<ICollection<FieldModelShared.Cluster>> clusterTask = Api.ClientCluster.GetAllClusterAsync();
+            fieldList = (await fieldTask).OrderBy(field => field.Name).ToList();
+            clusterList = (await clusterTask).OrderBy(cluster => cluster.Name).ToList();
             selectedFieldId = null;
+            FieldReferenceDatumUtils.Clear();
         }
         catch (ApiException ex)
         {
@@ -249,6 +254,7 @@
         selectedFieldId = fieldId;
         if (selectedFieldId is Guid selected)
         {
+            await ApplySelectedFieldReferenceValuesAsync(selected);
             await LoadSurveyRunsAsync(selected);
         }
         else
@@ -256,6 +262,7 @@
             surveyRunLightList.Clear();
             surveyRunList.Clear();
             ClearPlots();
+            FieldReferenceDatumUtils.Clear();
             errorMessage = null;
             await InvokeAsync(StateHasChanged);
         }
@@ -265,6 +272,7 @@
     {
         if (selectedFieldId is Guid fieldId)
         {
+            await ApplySelectedFieldReferenceValuesAsync(fieldId);
             await LoadSurveyRunsAsync(fieldId);
         }
     }
@@ -285,7 +293,17 @@
 
     private async Task ReloadCurrentSelectionAsync()
     {
-        if (selectedFieldId is Guid fieldId) { await LoadSurveyRunsAsync(fieldId); }
+        if (selectedFieldId is Guid fieldId)
+        {
+            await ApplySelectedFieldReferenceValuesAsync(fieldId);
+            await LoadSurveyRunsAsync(fieldId);
+        }
+    }
+
+    private async Task ApplySelectedFieldReferenceValuesAsync(Guid fieldId)
+    {
+        FieldReferenceDatumUtils.Apply(
+            await FieldReferenceDatumUtils.ResolveForFieldAsync(Api, fieldId, clusterList));
     }
 
     private async Task LoadSurveyRunsAsync(Guid fieldId)
@@ -391,6 +409,11 @@
                 continue;
             }
 
+            if (surveyRun.MetaInfo?.ID is not Guid surveyRunId)
+            {
+                continue;
+            }
+
             nextPlotTraces.Add(new PlotTrace(
                 string.IsNullOrWhiteSpace(surveyRun.Name) ? "survey run" : surveyRun.Name,
                 1,
@@ -400,8 +423,7 @@
                 eastValues,
                 tvdValues));
 
-            if (surveyRun.MetaInfo?.ID is Guid surveyRunId &&
-                ellipseResultsBySurveyRun.TryGetValue(surveyRunId, out List<FieldModelShared.SurveyStationEllipseResult>? ellipseResults))
+            if (ellipseResultsBySurveyRun.TryGetValue(surveyRunId, out List<FieldModelShared.SurveyStationEllipseResult>? ellipseResults))
             {
                 AddEllipseTraces(nextPlotTraces, surveyRun.SurveyStationList, ellipseResults, Colors[colorIndex % Colors.Length], surveyRun.Name);
             }
@@ -424,6 +446,7 @@
             ellipseResultsBySurveyRun.Clear();
             await InvokeAsync(StateHasChanged);
 
+            Dictionary<Guid, List<FieldModelShared.SurveyStationEllipseResult>> nextEllipseResultsBySurveyRun = [];
             foreach (FieldModelShared.SurveyRun surveyRun in surveyRunList)
             {
                 if (surveyRun.MetaInfo?.ID is not Guid surveyRunId ||
@@ -448,10 +471,11 @@
                 FieldModelShared.SurveyStationEllipseCalculation? result = await response.Content.ReadFromJsonAsync<FieldModelShared.SurveyStationEllipseCalculation>();
                 if (result?.SurveyStationEllipseResultList is { Count: > 0 } ellipseResults)
                 {
-                    ellipseResultsBySurveyRun[surveyRunId] = ellipseResults.ToList();
+                    nextEllipseResultsBySurveyRun[surveyRunId] = ellipseResults.ToList();
                 }
             }
 
+            ellipseResultsBySurveyRun = nextEllipseResultsBySurveyRun;
             UpdatePlots();
             if (ellipseResultsBySurveyRun.Count == 0)
             {

@@ -9,6 +9,11 @@ public interface IFieldAPIUtils
     HttpClient HttpClientField { get; }
     FieldModelShared.Client ClientField { get; }
 
+    string HostNameCluster { get; }
+    string HostBasePathCluster { get; }
+    HttpClient HttpClientCluster { get; }
+    FieldModelShared.Client ClientCluster { get; }
+
     string HostNameTrajectory { get; }
     string HostBasePathTrajectory { get; }
     HttpClient HttpClientTrajectory { get; }
@@ -21,4 +26,9 @@ public interface IFieldAPIUtils
 
     string HostNameUnitConversion { get; }
     string HostBasePathUnitConversion { get; }
+
+    string HostNameVerticalDatum { get; }
+    string HostBasePathVerticalDatum { get; }
+    HttpClient HttpClientVerticalDatum { get; }
+    FieldModelShared.Client ClientVerticalDatum { get; }
 }

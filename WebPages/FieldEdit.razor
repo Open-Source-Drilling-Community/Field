@@ -1,35 +1,38 @@
-@implements IUnitAwareComponent
 @inject ILogger<FieldEdit> logger
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 @inject IFieldAPIUtils Api
 
 <MudText Class="mt-4 mb-4" Typo="Typo.h6">Edit Field</MudText>
 <MudContainer Class="d-flex flex-row mt-4 mb-4">
-    <MudButton Class="me-1" Variant="Variant.Filled" Color="Color.Success" OnClick="Update">Update</MudButton>
-    <MudButton Class="me-1" Variant="Variant.Filled" OnClick="Cancel">Cancel</MudButton>
+    <MudButton Class="me-1" Variant="Variant.Filled" Color="Color.Success" OnClick="Save">Save</MudButton>
+    <MudButton Class="me-1" Variant="Variant.Filled" Color="Color.Error" OnClick="CloseEditorAsync">Close</MudButton>
 </MudContainer>
 
 <MudExpansionPanels Class="mt-4 mb-4">
     <MudExpansionPanel Text="Description" Expanded="true">
-        <MudContainer Class="d-flex flex-column" style="max-width: 500px; width: 100%;">
-            <MudTextField @bind-Value="@_name" Label="Name" Variant="Variant.Filled"></MudTextField>
-            <MudTextField @bind-Value="@_descr" Label="Description" Variant="Variant.Filled"></MudTextField>
+        <MudGrid>
+            <MudItem xs="12" md="3">
+                <MudTextField @bind-Value="@_name" Label="Name" Required="true" ShrinkLabel />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField @bind-Value="@_descr" Label="Description" ShrinkLabel />
+            </MudItem>
             @if (CartographicProjections != null && CartographicProjections.Count > 0)
             {
-                <MudSelect @bind-Value="@_cartographicProjection" Label="Cartographic Projection" Variant="Variant.Filled" ToStringFunc="@(s => s?.Name)">
-                    @foreach (var sph in CartographicProjections)
-                    {
-                        <MudSelectItem Value="@sph">@sph.Name</MudSelectItem>
-                    }
-                </MudSelect>
+                <MudItem xs="12" md="3">
+                    <MudSelect @bind-Value="@_cartographicProjection" Label="Cartographic projection" ShrinkLabel ToStringFunc="@(s => s?.Name)">
+                        @foreach (var sph in CartographicProjections)
+                        {
+                            <MudSelectItem Value="@sph">@sph.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
             }
-        </MudContainer>
+        </MudGrid>
     </MudExpansionPanel>
 </MudExpansionPanels>
 @code {
-    [CascadingParameter]
-    private MudUnitAndReferenceChoiceTag? Parent { get; set; }
-
     [Parameter]
     public NORCE.Drilling.Field.ModelShared.Field? CurrentField { get; set; }
 
@@ -46,16 +49,12 @@
     private CartographicProjectionLight? _cartographicProjection;
     private string? _name;
     private string? _descr;
+    private string? cleanFieldSnapshot_;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            if (Parent == null)
-                throw new ArgumentNullException(nameof(Parent), "TargetEdit page must exist within a MudUnitAndReferenceChoiceTag");
-            Parent.Add(this);
-            ManageUnits();
-
             if (CurrentField != null && CurrentField.MetaInfo != null)
             {
                 _cartographicProjection = null;
@@ -82,6 +81,7 @@
                 }
                 _name = CurrentField.Name;
                 _descr = CurrentField.Description;
+                MarkFieldClean();
             }
             else
             {
@@ -97,12 +97,7 @@
         await InvokeAsync(() => { StateHasChanged(); });
     }
 
-    public void ManageUnits()
-    {
-
-    }
-
-    private async Task Update()
+    private async Task Save()
     {
         try
         {
@@ -123,24 +118,70 @@
                     CartographicProjectionID = cartographicProjectionID
                 };
                 await Api.ClientField.PutFieldByIdAsync(CurrentField.MetaInfo.ID, field);
+                CurrentField = field;
+                MarkFieldClean();
                 logger.LogInformation("Updated the Field successfully");
-                Snackbar.Add("Updated the Field successfully", Severity.Success);
+                Snackbar.Add("Saved the Field successfully", Severity.Success);
             }
             else
             {
-                logger.LogWarning("Problem while updating the Field");
-                Snackbar.Add("Problem while updating the Field", Severity.Warning);
+                logger.LogWarning("Problem while saving the Field");
+                Snackbar.Add("Problem while saving the Field", Severity.Warning);
             }
         }
         catch (ApiException ex)
         {
-            logger.LogError(ex, "Problem while updating the Field");
-            Snackbar.Add("Problem while updating the Field", Severity.Warning);
+            logger.LogError(ex, "Problem while saving the Field");
+            Snackbar.Add("Problem while saving the Field", Severity.Warning);
         }
     }
 
-    private void Cancel()
+    private async Task CloseEditorAsync()
     {
+        if (HasUnsavedFieldChanges() && !await ConfirmCloseWithoutSavingAsync())
+        {
+            return;
+        }
+
         OnUpdate?.Invoke();
+    }
+
+    private void MarkFieldClean()
+    {
+        cleanFieldSnapshot_ = BuildFieldDirtySnapshot();
+    }
+
+    private bool HasUnsavedFieldChanges()
+    {
+        return cleanFieldSnapshot_ != null &&
+            !string.Equals(cleanFieldSnapshot_, BuildFieldDirtySnapshot(), StringComparison.Ordinal);
+    }
+
+    private string BuildFieldDirtySnapshot()
+    {
+        return System.Text.Json.JsonSerializer.Serialize(new
+        {
+            FieldId = CurrentField?.MetaInfo?.ID,
+            Name = _name,
+            Description = _descr,
+            CartographicProjectionId = _cartographicProjection?.MetaInfo?.ID ?? Guid.Empty
+        });
+    }
+
+    private async Task<bool> ConfirmCloseWithoutSavingAsync()
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Unsaved changes",
+            "Some changes have not been saved. Close without saving?",
+            yesText: "Close without saving",
+            cancelText: "Stay",
+            options: new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                FullWidth = false,
+                MaxWidth = MaxWidth.ExtraSmall
+            });
+
+        return result == true;
     }
 }

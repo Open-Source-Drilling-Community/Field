@@ -14,12 +14,12 @@
                               DepthReferenceName="@DataUtils.UnitAndReferenceParameters.DepthReferenceName"
                               DepthReferenceNameChanged="@DataUtils.UpdateDepthReferenceName"
                               SeaWaterLevelDepthReferenceSource="@DataUtils.SeaWaterLevelDepthReferenceSource"
+                              MeanSeaLevelDepthReferenceSource="@DataUtils.MeanSeaLevelDepthReferenceSource"
                               PositionReferenceName="@DataUtils.UnitAndReferenceParameters.PositionReferenceName"
                               PositionReferenceNameChanged="@DataUtils.UpdatePositionReferenceName"
                               CartographicGridPositionReferenceSource="@DataUtils.CartographicGridPositionReferenceSource"
-                              LeaseLinePositionReferenceSource="@DataUtils.LeaseLinePositionReferenceSource"
                               >
-    @if (fieldList == null)
+    @if (fieldList == null || clusterList == null)
     {
         <p><em>Loading...</em></p>
     }
@@ -218,6 +218,7 @@
 
 @code {
     private List<FieldModelShared.Field>? fieldList;
+    private List<FieldModelShared.Cluster>? clusterList;
     private List<FieldModelShared.TrajectoryLight> trajectoryLightList = [];
     private List<FieldModelShared.Trajectory> trajectoryList = [];
     private Guid? selectedFieldId;
@@ -264,8 +265,12 @@
         try
         {
             logger.LogInformation("Trying to load list of Fields from client: {Host}", Api.HostNameField);
-            fieldList = (await Api.ClientField.GetAllFieldAsync()).OrderBy(field => field.Name).ToList();
+            Task<ICollection<FieldModelShared.Field>> fieldTask = Api.ClientField.GetAllFieldAsync();
+            Task<ICollection<FieldModelShared.Cluster>> clusterTask = Api.ClientCluster.GetAllClusterAsync();
+            fieldList = (await fieldTask).OrderBy(field => field.Name).ToList();
+            clusterList = (await clusterTask).OrderBy(cluster => cluster.Name).ToList();
             selectedFieldId = null;
+            FieldReferenceDatumUtils.Clear();
         }
         catch (ApiException ex)
         {
@@ -294,6 +299,7 @@
         selectedFieldId = fieldId;
         if (selectedFieldId is Guid selected)
         {
+            await ApplySelectedFieldReferenceValuesAsync(selected);
             await LoadTrajectoriesAsync(selected);
         }
         else
@@ -302,6 +308,7 @@
             trajectoryList.Clear();
             ClearClosestApproachSelection();
             ClearPlots();
+            FieldReferenceDatumUtils.Clear();
             errorMessage = null;
             await InvokeAsync(StateHasChanged);
         }
@@ -311,6 +318,7 @@
     {
         if (selectedFieldId is Guid fieldId)
         {
+            await ApplySelectedFieldReferenceValuesAsync(fieldId);
             await LoadTrajectoriesAsync(fieldId);
         }
     }
@@ -338,7 +346,17 @@
 
     private async Task ReloadCurrentSelectionAsync()
     {
-        if (selectedFieldId is Guid fieldId) { await LoadTrajectoriesAsync(fieldId); }
+        if (selectedFieldId is Guid fieldId)
+        {
+            await ApplySelectedFieldReferenceValuesAsync(fieldId);
+            await LoadTrajectoriesAsync(fieldId);
+        }
+    }
+
+    private async Task ApplySelectedFieldReferenceValuesAsync(Guid fieldId)
+    {
+        FieldReferenceDatumUtils.Apply(
+            await FieldReferenceDatumUtils.ResolveForFieldAsync(Api, fieldId, clusterList));
     }
 
     private async Task LoadTrajectoriesAsync(Guid fieldId)
@@ -447,20 +465,24 @@
                 continue;
             }
 
+            if (trajectory.MetaInfo?.ID is not Guid trajectoryId)
+            {
+                continue;
+            }
+
             nextPlotTraces.Add(new PlotTrace(
                 string.IsNullOrWhiteSpace(trajectory.Name) ? "trajectory" : trajectory.Name,
                 3,
                 Colors[colorIndex % Colors.Length],
                 true,
                 2.0,
-                trajectory.MetaInfo.ID,
+                trajectoryId,
                 true,
                 northValues,
                 eastValues,
                 tvdValues));
 
-            if (trajectory.MetaInfo?.ID is Guid trajectoryId &&
-                ellipseResultsByTrajectory.TryGetValue(trajectoryId, out List<FieldModelShared.SurveyStationEllipseResult>? ellipseResults))
+            if (ellipseResultsByTrajectory.TryGetValue(trajectoryId, out List<FieldModelShared.SurveyStationEllipseResult>? ellipseResults))
             {
                 AddEllipseTraces(nextPlotTraces, trajectory.SurveyStationList, ellipseResults, Colors[colorIndex % Colors.Length], trajectoryId, trajectory.Name);
             }
@@ -568,6 +590,7 @@
             ellipseResultsByTrajectory.Clear();
             await InvokeAsync(StateHasChanged);
 
+            Dictionary<Guid, List<FieldModelShared.SurveyStationEllipseResult>> nextEllipseResultsByTrajectory = [];
             foreach (FieldModelShared.Trajectory trajectory in trajectoryList)
             {
                 if (trajectory.MetaInfo?.ID is not Guid trajectoryId ||
@@ -592,10 +615,11 @@
                 FieldModelShared.SurveyStationEllipseCalculation? result = await response.Content.ReadFromJsonAsync<FieldModelShared.SurveyStationEllipseCalculation>();
                 if (result?.SurveyStationEllipseResultList is { Count: > 0 } ellipseResults)
                 {
-                    ellipseResultsByTrajectory[trajectoryId] = ellipseResults.ToList();
+                    nextEllipseResultsByTrajectory[trajectoryId] = ellipseResults.ToList();
                 }
             }
 
+            ellipseResultsByTrajectory = nextEllipseResultsByTrajectory;
             UpdatePlots();
             if (ellipseResultsByTrajectory.Count == 0)
             {

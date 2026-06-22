@@ -1,51 +1,51 @@
 @page "/Field"
 @inject ILogger<Field> logger
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 @inject IFieldAPIUtils Api
 
-<MudUnitAndReferenceChoiceTag HttpHost=@Api.HostNameUnitConversion
-                              HttpBasePath=@Api.HostBasePathUnitConversion
-                              HttpController="UnitSystem/"
-                              UnitSystemName="@DataUtils.UnitAndReferenceParameters.UnitSystemName"
-                              UnitSystemNameChanged="@DataUtils.UpdateUnitSystemName">
-    @if (fieldList == null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        <div hidden="@isHiddenMainPanel">
-            <MudDataGrid T="NORCE.Drilling.Field.ModelShared.Field" MultiSelection="true" Items="@fieldList" SelectedItemsChanged="@SelectedItemsChanged"
-                         EditMode="DataGridEditMode.Cell"
-                         Hover="true"  RowClick="@RowClicked"
-                         SortMode="SortMode.Multiple"  QuickFilter="@_fieldFilter" Filterable="false"
-                         ReadOnly="false" ColumnResizeMode="ResizeMode.Column" Elevation="0">
-                <ToolBarContent>
-                    <MudText Typo="Typo.h6">Field</MudText>
-                    <MudButton OnClick="@AddField" Color="@Color.Success" Class="add-item-btn">Add</MudButton>
-                    <MudButton OnClick="@DeleteSelectedField" Color="@Color.Error" Class="add-item-btn">Delete</MudButton>
-                    <MudSpacer />
-                    <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                </ToolBarContent>
-                <Columns>
-                    <SelectColumn T="NORCE.Drilling.Field.ModelShared.Field" />
-                    <PropertyColumn Property="x => x.Name" Title="@DataUtils.FieldNameLabel" CellStyle="width: 30%;" Sortable="true" Editable="false" />
-                    <PropertyColumn Property="x => x.Description" Title="@DataUtils.FieldDescrLabel" CellStyle="width: 60%;" Sortable="true" Editable="false" />
-                    <TemplateColumn CellStyle="width: 5%;">
-                        <EditTemplate>
-                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="(() => DeleteField(context.Item.MetaInfo.ID))" />
-                        </EditTemplate>
-                    </TemplateColumn>
-                </Columns>
-            </MudDataGrid>
-        </div>
-    }
-    @if (isHiddenMainPanel && currentField != null)
-    {
-        <FieldEdit CurrentField="@currentField" FieldTypes="@fieldTypeList" CartographicProjections="@cartographicProjectionList" OnUpdate="@ShowMainPanel" />
-    }
-</MudUnitAndReferenceChoiceTag>
+@if (fieldList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div hidden="@isHiddenMainPanel">
+        <MudDataGrid T="NORCE.Drilling.Field.ModelShared.Field" @key="_gridKey"
+                     MultiSelection="true" Items="@fieldList" SelectedItemsChanged="@SelectedItemsChanged"
+                     EditMode="DataGridEditMode.Form"
+                     Hover="true"  RowClick="@RowClicked"
+                     SortMode="SortMode.Multiple"  QuickFilter="@_fieldFilter" Filterable="false"
+                     ReadOnly="false" ColumnResizeMode="ResizeMode.Column" Elevation="0">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Field</MudText>
+                <MudButton OnClick="@AddField" Color="@Color.Success" Class="add-item-btn">Add</MudButton>
+                <MudButton OnClick="@DeleteSelectedField" Color="@Color.Error" Class="add-item-btn"
+                           Disabled="@(selectedFieldList.Count == 0)">Delete</MudButton>
+                <MudSpacer />
+                <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            </ToolBarContent>
+            <Columns>
+                <SelectColumn T="NORCE.Drilling.Field.ModelShared.Field" />
+                <PropertyColumn Property="x => x.Name" Title="@DataUtils.FieldNameLabel" CellStyle="width: 30%;" Sortable="true" Editable="false" />
+                <PropertyColumn Property="x => x.Description" Title="@DataUtils.FieldDescrLabel" CellStyle="width: 60%;" Sortable="true" Editable="false" />
+                <TemplateColumn CellClass="d-flex justify-end">
+                    <CellTemplate>
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="(() => DeleteField(context.Item))" />
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="NORCE.Drilling.Field.ModelShared.Field" />
+            </PagerContent>
+        </MudDataGrid>
+    </div>
+}
+@if (isHiddenMainPanel && currentField != null)
+{
+    <FieldEdit CurrentField="@currentField" FieldTypes="@fieldTypeList" CartographicProjections="@cartographicProjectionList" OnUpdate="@ShowMainPanel" />
+}
 
 @code {
     private List<NORCE.Drilling.Field.ModelShared.Field> fieldList = new();
@@ -57,8 +57,14 @@
     public bool isHiddenMainPanel;
     public bool isHiddenEditPanel;
     private string? _searchString;
+    private int _gridKey;
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
     {
         try
         {
@@ -66,6 +72,7 @@
             isHiddenMainPanel = false;
             isHiddenEditPanel = true;
             currentField = null;
+            selectedFieldList = new List<NORCE.Drilling.Field.ModelShared.Field>();
 
             // Starting all loading tasks asynchronously
             logger.LogInformation("Trying to load list of Fields from client: " + Api.HostNameField);
@@ -126,7 +133,8 @@
         {
             logger.LogError(ex, "Problem Field initialization");
         }
-        await InvokeAsync(() => { StateHasChanged(); });
+        _gridKey++;
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task AddField()
@@ -145,7 +153,7 @@
 
             };
             await Api.ClientField.PostFieldAsync(currentField);
-            await OnInitializedAsync();
+            await LoadDataAsync();
             // Find the newly created datum in the refreshed list
             var addedField = fieldList.FirstOrDefault(d => d.MetaInfo?.ID == currentField.MetaInfo?.ID);
             if (addedField != null)
@@ -197,34 +205,92 @@
         }
     }
 
-    private async Task DeleteField(Guid id)
+    private async Task DeleteField(NORCE.Drilling.Field.ModelShared.Field field)
     {
+        if (field?.MetaInfo?.ID is not Guid id || id == Guid.Empty)
+        {
+            return;
+        }
+
         try
         {
-            await Api.ClientField.DeleteFieldByIdAsync(id);
-            await OnInitializedAsync();
+            bool confirmed = await ConfirmFieldDeletionAsync(
+                "Do you really want to delete this Field?",
+                [GetFieldDisplayName(field)]);
+
+            if (confirmed)
+            {
+                await Api.ClientField.DeleteFieldByIdAsync(id);
+                await LoadDataAsync();
+            }
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Impossible to delete Field");
+            Snackbar.Add("Failed to delete field.", Severity.Error);
         }
     }
 
     private async Task DeleteSelectedField()
     {
+        var toDelete = selectedFieldList
+            .Where(field => field?.MetaInfo?.ID is Guid id && id != Guid.Empty)
+            .ToList();
+        if (toDelete.Count == 0)
+        {
+            return;
+        }
+
         try
         {
-            foreach (NORCE.Drilling.Field.ModelShared.Field field in selectedFieldList)
+            bool confirmed = await ConfirmFieldDeletionAsync(
+                toDelete.Count == 1
+                    ? "Do you really want to delete this Field?"
+                    : "Do you really want to delete these Fields?",
+                toDelete.Select(GetFieldDisplayName).ToList());
+
+            if (confirmed)
             {
-                await Api.ClientField.DeleteFieldByIdAsync(field.MetaInfo.ID);
+                foreach (NORCE.Drilling.Field.ModelShared.Field field in toDelete)
+                {
+                    await Api.ClientField.DeleteFieldByIdAsync(field.MetaInfo.ID);
+                }
+                await LoadDataAsync();
             }
-            await OnInitializedAsync();
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Impossible to delete all Field");
+            Snackbar.Add("Failed to delete one or more fields.", Severity.Error);
         }
 
+    }
+
+    private async Task<bool> ConfirmFieldDeletionAsync(string message, List<string> fieldNames)
+    {
+        DialogParameters parameters = new()
+        {
+            { nameof(DialogDeleteTemplate.Message), message },
+            { nameof(DialogDeleteTemplate.Items), fieldNames }
+        };
+        IDialogReference dialog = await DialogService.ShowAsync<DialogDeleteTemplate>(
+            "DELETE",
+            parameters,
+            new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true });
+        DialogResult? result = await dialog.Result;
+        return result != null && !result.Canceled;
+    }
+
+    private static string GetFieldDisplayName(NORCE.Drilling.Field.ModelShared.Field field)
+    {
+        if (!string.IsNullOrWhiteSpace(field?.Name))
+        {
+            return field.Name;
+        }
+
+        return field?.MetaInfo?.ID is Guid id && id != Guid.Empty
+            ? id.ToString()
+            : "Unnamed Field";
     }
 
     //Quick filter - filter gobally across multiple columns with the same input
@@ -233,7 +299,7 @@
     {
         if (string.IsNullOrWhiteSpace(_searchString))
             return true;
-        if ($"{x.Name} {x.Description}".Contains(_searchString))
+        if ($"{x.Name} {x.Description}".Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
         return false;
@@ -258,15 +324,14 @@
     void SelectedItemsChanged(HashSet<NORCE.Drilling.Field.ModelShared.Field>
         items)
     {
-        selectedFieldList.Clear();
-        selectedFieldList.InsertRange(0, items);
+        selectedFieldList = items.ToList();
     }
 
     private async void ShowMainPanel()
     {
         isHiddenMainPanel = false;
         isHiddenEditPanel = true;
-        await OnInitializedAsync();
+        await LoadDataAsync();
     }
 }
 

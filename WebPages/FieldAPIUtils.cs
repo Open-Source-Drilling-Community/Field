@@ -11,6 +11,10 @@ public class FieldAPIUtils : APIUtils, IFieldAPIUtils
         HttpClientField = SetHttpClient(HostNameField, HostBasePathField);
         ClientField = new FieldModelShared.Client(HttpClientField.BaseAddress!.ToString(), HttpClientField);
 
+        HostNameCluster = Require(configuration.ClusterHostURL, nameof(configuration.ClusterHostURL));
+        HttpClientCluster = SetHttpClient(HostNameCluster, HostBasePathCluster);
+        ClientCluster = new FieldModelShared.Client(HttpClientCluster.BaseAddress!.ToString(), HttpClientCluster);
+
         HostNameTrajectory = Require(configuration.TrajectoryHostURL, nameof(configuration.TrajectoryHostURL));
         HttpClientTrajectory = SetHttpClient(HostNameTrajectory, HostBasePathTrajectory);
         ClientTrajectory = new FieldModelShared.Client(HttpClientTrajectory.BaseAddress!.ToString(), HttpClientTrajectory);
@@ -20,6 +24,10 @@ public class FieldAPIUtils : APIUtils, IFieldAPIUtils
         ClientCartographicProjection = new FieldModelShared.Client(HttpClientCartographicProjection.BaseAddress!.ToString(), HttpClientCartographicProjection);
 
         HostNameUnitConversion = Require(configuration.UnitConversionHostURL, nameof(configuration.UnitConversionHostURL));
+
+        HostNameVerticalDatum = Require(configuration.VerticalDatumHostURL, nameof(configuration.VerticalDatumHostURL));
+        HttpClientVerticalDatum = SetHttpClient(HostNameVerticalDatum, HostBasePathVerticalDatum);
+        ClientVerticalDatum = new FieldModelShared.Client(HttpClientVerticalDatum.BaseAddress!.ToString(), HttpClientVerticalDatum);
     }
 
     private static string Require(string? value, string propertyName)
@@ -37,6 +45,11 @@ public class FieldAPIUtils : APIUtils, IFieldAPIUtils
     public HttpClient HttpClientField { get; }
     public FieldModelShared.Client ClientField { get; }
 
+    public string HostNameCluster { get; }
+    public string HostBasePathCluster { get; } = "Cluster/api/";
+    public HttpClient HttpClientCluster { get; }
+    public FieldModelShared.Client ClientCluster { get; }
+
     public string HostNameTrajectory { get; }
     public string HostBasePathTrajectory { get; } = "Trajectory/api/";
     public HttpClient HttpClientTrajectory { get; }
@@ -49,4 +62,9 @@ public class FieldAPIUtils : APIUtils, IFieldAPIUtils
 
     public string HostNameUnitConversion { get; }
     public string HostBasePathUnitConversion { get; } = "UnitConversion/api/";
+
+    public string HostNameVerticalDatum { get; }
+    public string HostBasePathVerticalDatum { get; } = "VerticalDatum/api/";
+    public HttpClient HttpClientVerticalDatum { get; }
+    public FieldModelShared.Client ClientVerticalDatum { get; }
 }

@@ -37,6 +37,7 @@ public static class DataUtils
 
     public static GroundMudLineDepthReferenceSource GroundMudLineDepthReferenceSource { get; } = new();
     public static SeaWaterLevelDepthReferenceSource SeaWaterLevelDepthReferenceSource { get; } = new();
+    public static MeanSeaLevelDepthReferenceSource MeanSeaLevelDepthReferenceSource { get; } = new();
     public static RotaryTableDepthReferenceSource RotaryTableDepthReferenceSource { get; } = new();
     public static WellHeadPositionReferenceSource WellHeadPositionReferenceSource { get; } = new();
     public static CartographicGridPositionReferenceSource CartographicGridPositionReferenceSource { get; } = new();
@@ -62,6 +63,11 @@ public class RotaryTableDepthReferenceSource : IRotaryTableDepthReferenceSource
 public class SeaWaterLevelDepthReferenceSource : ISeaWaterLevelDepthReferenceSource
 {
     public double? SeaWaterLevelDepthReference { get; set; }
+}
+
+public class MeanSeaLevelDepthReferenceSource : IMeanSeaLevelDepthReferenceSource
+{
+    public double? MeanSeaLevelDepthReference { get; set; }
 }
 
 public class WellHeadPositionReferenceSource : IWellHeadPositionReferenceSource

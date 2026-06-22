@@ -107,7 +107,7 @@
                 return;
             }
 
-            await ManageTracesAsync();
+            ManageTraces();
             try
             {
                 await chart.React();
@@ -116,7 +116,6 @@
             {
             }
 
-            await InvokeAsync(StateHasChanged);
             _lastPlotSignature = plotSignature;
             _forceReplot = false;
         }
@@ -126,23 +125,16 @@
         }
     }
 
-    private async Task ManageTracesAsync()
+    private void ManageTraces()
     {
         if (_disposed || !_plotlyReady || chart == null || Parent == null || XUnit == null || YUnit == null)
         {
             return;
         }
 
-        if (XValuesList == null || YValuesList == null || !XValuesList.Any() || XValuesList.Count != YValuesList.Count)
-        {
-            return;
-        }
+        data.Clear();
 
-        try
-        {
-            await chart.Clear();
-        }
-        catch (NullReferenceException)
+        if (XValuesList == null || YValuesList == null || !XValuesList.Any() || XValuesList.Count != YValuesList.Count)
         {
             return;
         }
@@ -200,10 +192,10 @@
                 ? new Marker { Color = ColorList[i] }
                 : new Marker { AutoColorScale = true };
 
-            await chart.AddTrace(new Scatter
+            data.Add(new Scatter
             {
                 Name = name,
-                    ShowLegend = showLegend,
+                ShowLegend = showLegend,
                 Mode = mode,
                 Marker = marker,
                 X = xValues,

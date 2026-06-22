@@ -1,0 +1,41 @@
+
+<MudDialog>
+    <DialogContent>
+        <MudText>@(Message ?? "Deletion cannot be undone!")</MudText>
+        @if (Items is { Count: > 0 })
+        {
+            <MudText Class="mt-2" Typo="Typo.body2">@ItemPreview</MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" OnClick="Submit">Delete</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public string? Message { get; set; }
+    [Parameter] public List<string>? Items { get; set; }
+    private string ItemPreview => BuildItemPreview(Items);
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+
+    private static string BuildItemPreview(List<string>? items)
+    {
+        const int maxCharacters = 500;
+        if (items == null || items.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        string preview = string.Join(", ", items.Where(item => !string.IsNullOrWhiteSpace(item)));
+        if (preview.Length <= maxCharacters)
+        {
+            return preview;
+        }
+
+        int lastSeparator = preview.LastIndexOf(", ", Math.Min(maxCharacters, preview.Length - 1), StringComparison.Ordinal);
+        int cutIndex = lastSeparator > 0 ? lastSeparator : maxCharacters;
+        return preview[..cutIndex].TrimEnd(',', ' ') + ", ...";
+    }
+}

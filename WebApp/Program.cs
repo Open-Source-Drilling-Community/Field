@@ -9,9 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 WebPagesHostConfiguration webPagesConfiguration = new()
 {
     FieldHostURL = builder.Configuration["FieldHostURL"] ?? string.Empty,
+    ClusterHostURL = builder.Configuration["ClusterHostURL"] ?? string.Empty,
     TrajectoryHostURL = builder.Configuration["TrajectoryHostURL"] ?? string.Empty,
     CartographicProjectionHostURL = builder.Configuration["CartographicProjectionHostURL"] ?? string.Empty,
     GeodeticDatumHostURL = builder.Configuration["GeodeticDatumHostURL"] ?? string.Empty,
+    VerticalDatumHostURL = builder.Configuration["VerticalDatumHostURL"] ?? string.Empty,
     UnitConversionHostURL = builder.Configuration["UnitConversionHostURL"] ?? string.Empty,
 };
 

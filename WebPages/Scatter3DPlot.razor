@@ -117,7 +117,7 @@
                 return;
             }
 
-            await ManageTracesAsync();
+            ManageTraces();
             try
             {
                 await chart.React();
@@ -127,7 +127,6 @@
             }
             await EnsureCameraPersistenceAsync();
 
-            await InvokeAsync(StateHasChanged);
             _lastPlotSignature = plotSignature;
             _forceReplot = false;
         }
@@ -202,23 +201,16 @@
         await TraceClicked.InvokeAsync(traceIndex);
     }
 
-    private async Task ManageTracesAsync()
+    private void ManageTraces()
     {
         if (_disposed || !_plotlyReady || chart == null)
         {
             return;
         }
 
-        if (XValuesList == null || YValuesList == null || ZValuesList == null || !XValuesList.Any() || !YValuesList.Any() || !ZValuesList.Any())
-        {
-            return;
-        }
+        data.Clear();
 
-        try
-        {
-            await chart.Clear();
-        }
-        catch (NullReferenceException)
+        if (XValuesList == null || YValuesList == null || ZValuesList == null || !XValuesList.Any() || !YValuesList.Any() || !ZValuesList.Any())
         {
             return;
         }
@@ -301,7 +293,7 @@
             if (marker != null) trace.Marker = marker;
             if (line != null) trace.Line = line;
 
-            await chart.AddTrace(trace);
+            data.Add(trace);
         }
     }
 
