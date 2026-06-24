@@ -2,17 +2,19 @@
 @inject ILogger<FieldTrajectories> logger
 @inject ISnackbar Snackbar
 @inject IFieldAPIUtils Api
+@using System.Globalization
 @using System.Net.Http.Json
 @using System.Text.Json
 @using FieldModelShared = NORCE.Drilling.Field.ModelShared
 
-<MudUnitAndReferenceChoiceTag HttpHost=@Api.HostNameUnitConversion
+<MudUnitAndReferenceChoiceTag @ref="unitReference"
+                              HttpHost=@Api.HostNameUnitConversion
                               HttpBasePath=@Api.HostBasePathUnitConversion
                               HttpController="UnitSystem/"
                               UnitSystemName="@DataUtils.UnitAndReferenceParameters.UnitSystemName"
-                              UnitSystemNameChanged="@DataUtils.UpdateUnitSystemName"
+                              UnitSystemNameChanged="OnUnitSystemNameChanged"
                               DepthReferenceName="@DataUtils.UnitAndReferenceParameters.DepthReferenceName"
-                              DepthReferenceNameChanged="@DataUtils.UpdateDepthReferenceName"
+                              DepthReferenceNameChanged="OnDepthReferenceNameChanged"
                               SeaWaterLevelDepthReferenceSource="@DataUtils.SeaWaterLevelDepthReferenceSource"
                               MeanSeaLevelDepthReferenceSource="@DataUtils.MeanSeaLevelDepthReferenceSource"
                               PositionReferenceName="@DataUtils.UnitAndReferenceParameters.PositionReferenceName"
@@ -173,10 +175,28 @@
                             <MudText Typo="Typo.h6">Closest Approach</MudText>
                             <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="ClearClosestApproachSelection" Disabled="@(selectedTrajectoryIds.Count == 0 && closestApproachResult == null)">Clear</MudButton>
                         </MudStack>
-                        <MudText Typo="Typo.body2">Click two trajectories in the 3D view to calculate the closest centerline approach.</MudText>
+                        <MudText Typo="Typo.body2">Click two trajectories in the 3D view to calculate the closest centerline approach. Start MD is applied independently to each trajectory.</MudText>
+                        <MudGrid>
+                            <MudItem xs="12" sm="6" md="4">
+                                <MudTextField T="string"
+                                              Label="Start MD"
+                                              Variant="Variant.Outlined"
+                                              ShrinkLabel
+                                              Clearable="true"
+                                              Value="@closestApproachStartMdText"
+                                              ValueChanged="OnClosestApproachStartMdTextChanged"
+                                              Validation="@(new Func<string?, string?>(ValidateClosestApproachStartMd))"
+                                              Adornment="Adornment.End"
+                                              AdornmentText="@closestApproachDepthUnitLabel" />
+                            </MudItem>
+                        </MudGrid>
                         @if (selectedTrajectoryIds.Count > 0)
                         {
                             <MudText Typo="Typo.body2">Selected: @SelectedTrajectoryText</MudText>
+                        }
+                        @if (selectedTrajectoryIds.Count == 2 && closestApproachStartMd.HasValue && closestApproachResult == null)
+                        {
+                            <MudAlert Severity="Severity.Info" Dense="true">No common trajectory portion is available at or beyond the selected start MD.</MudAlert>
                         }
                         @if (closestApproachResult != null)
                         {
@@ -191,11 +211,11 @@
                                 </MudItem>
                                 <MudItem xs="12" sm="6" md="3">
                                     <MudText Typo="Typo.subtitle2">@closestApproachResult.First.Name</MudText>
-                                    <MudText Typo="Typo.body2">MD @FormatNullableDistance(closestApproachResult.First.MD), radius @FormatNullableDistance(closestApproachResult.First.BoreholeRadius)</MudText>
+                                    <MudText Typo="Typo.body2">MD @FormatReferencedDepth(closestApproachResult.First.MD), borehole radius @FormatNullableDistance(closestApproachResult.First.BoreholeRadius)</MudText>
                                 </MudItem>
                                 <MudItem xs="12" sm="6" md="3">
                                     <MudText Typo="Typo.subtitle2">@closestApproachResult.Second.Name</MudText>
-                                    <MudText Typo="Typo.body2">MD @FormatNullableDistance(closestApproachResult.Second.MD), radius @FormatNullableDistance(closestApproachResult.Second.BoreholeRadius)</MudText>
+                                    <MudText Typo="Typo.body2">MD @FormatReferencedDepth(closestApproachResult.Second.MD), borehole radius @FormatNullableDistance(closestApproachResult.Second.BoreholeRadius)</MudText>
                                 </MudItem>
                             </MudGrid>
                         }
@@ -240,12 +260,16 @@
     private bool definitiveTrajectoryOnly;
     private bool isCalculatingEllipses;
     private double ellipseConfidenceFactor = 0.95;
+    private MudUnitAndReferenceChoiceTag? unitReference;
 
     private List<PlotTrace> plotTraces = [];
     private readonly Dictionary<Guid, string> trajectoryColorsById = [];
     private Dictionary<Guid, List<FieldModelShared.SurveyStationEllipseResult>> ellipseResultsByTrajectory = [];
     private List<Guid> selectedTrajectoryIds = [];
     private ClosestApproachResult? closestApproachResult;
+    private double? closestApproachStartMd;
+    private string? closestApproachStartMdText;
+    private string closestApproachDepthUnitLabel = string.Empty;
     private Guid? lastTrajectoryClickId;
     private long lastTrajectoryClickTimestamp;
     private const long DuplicateTrajectoryClickWindowMilliseconds = 1000;
@@ -306,6 +330,29 @@
         await InvokeAsync(StateHasChanged);
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            RefreshClosestApproachStartMdDisplay();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task OnUnitSystemNameChanged(string value)
+    {
+        DataUtils.UpdateUnitSystemName(value);
+        RefreshClosestApproachStartMdDisplay();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnDepthReferenceNameChanged(string value)
+    {
+        DataUtils.UpdateDepthReferenceName(value);
+        RefreshClosestApproachStartMdDisplay();
+        await InvokeAsync(StateHasChanged);
+    }
+
     private List<FieldModelShared.Field> AvailableFields =>
         fieldList?
             .Where(field => field?.MetaInfo != null)
@@ -327,6 +374,7 @@
             ClearClosestApproachSelection();
             ClearPlots();
             FieldReferenceDatumUtils.Clear();
+            RefreshClosestApproachStartMdDisplay();
             errorMessage = null;
             await InvokeAsync(StateHasChanged);
         }
@@ -375,6 +423,7 @@
     {
         FieldReferenceDatumUtils.Apply(
             await FieldReferenceDatumUtils.ResolveForFieldAsync(Api, fieldId, clusterList));
+        RefreshClosestApproachStartMdDisplay();
     }
 
     private async Task LoadTrajectoriesAsync(Guid fieldId)
@@ -551,20 +600,143 @@
 
         if (selectedTrajectoryIds.Count == 2)
         {
-            FieldModelShared.Trajectory? first = FindTrajectory(selectedTrajectoryIds[0]);
-            FieldModelShared.Trajectory? second = FindTrajectory(selectedTrajectoryIds[1]);
-            closestApproachResult = first != null && second != null
-                ? CalculateClosestApproach(first, second)
-                : null;
-
-            if (closestApproachResult == null)
-            {
-                Snackbar.Add("Unable to calculate closest approach for the selected trajectories.", Severity.Warning);
-            }
+            CalculateSelectedClosestApproach(true);
         }
 
         UpdatePlots();
         await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnClosestApproachStartMdTextChanged(string? startMdText)
+    {
+        closestApproachStartMdText = startMdText;
+        if (string.IsNullOrWhiteSpace(startMdText))
+        {
+            closestApproachStartMd = null;
+        }
+        else if (TryParseDepth(startMdText, out double startMdInUserUnit) && unitReference != null)
+        {
+            double convertedMd = ConvertDisplayedDepthToWgs84(startMdInUserUnit);
+            if (!double.IsNaN(convertedMd))
+            {
+                closestApproachStartMd = convertedMd;
+            }
+        }
+
+        if (selectedTrajectoryIds.Count == 2)
+        {
+            CalculateSelectedClosestApproach(false);
+            UpdatePlots();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void RefreshClosestApproachStartMdDisplay()
+    {
+        if (unitReference == null)
+        {
+            return;
+        }
+
+        closestApproachDepthUnitLabel = GetReferencedDepthUnitLabel();
+        closestApproachStartMdText = closestApproachStartMd.HasValue
+            ? FormatReferencedDepthValue(closestApproachStartMd.Value)
+            : null;
+    }
+
+    private double ConvertDisplayedDepthToWgs84(double displayedDepth)
+    {
+        if (unitReference == null)
+        {
+            return double.NaN;
+        }
+
+        if (IsSeaWaterLevelDepthReference())
+        {
+            double depthInSi = unitReference.ToSI(displayedDepth, "DepthDrilling");
+            return depthInSi - GetSeaWaterLevelDepthReference();
+        }
+
+        return unitReference.ToWGS84DepthSI(displayedDepth, "DepthDrilling");
+    }
+
+    private string FormatReferencedDepthValue(double wgs84Depth)
+    {
+        if (unitReference == null)
+        {
+            return string.Empty;
+        }
+
+        if (IsSeaWaterLevelDepthReference())
+        {
+            double referencedDepth = wgs84Depth + GetSeaWaterLevelDepthReference();
+            return unitReference.FromSI(referencedDepth, "DepthDrilling", false);
+        }
+
+        return unitReference.FromWGS84DepthSI(wgs84Depth, "DepthDrilling", false);
+    }
+
+    private string GetReferencedDepthUnitLabel()
+    {
+        if (unitReference == null)
+        {
+            return string.Empty;
+        }
+
+        return IsSeaWaterLevelDepthReference()
+            ? $"{unitReference.GetUnitLabel("DepthDrilling")}SL-WL"
+            : unitReference.GetDepthUnitLabel("DepthDrilling");
+    }
+
+    private static bool IsSeaWaterLevelDepthReference() =>
+        string.Equals(
+            DataUtils.UnitAndReferenceParameters.DepthReferenceName,
+            "Sea/Water Level",
+            StringComparison.OrdinalIgnoreCase);
+
+    private static double GetSeaWaterLevelDepthReference() =>
+        DataUtils.SeaWaterLevelDepthReferenceSource.SeaWaterLevelDepthReference ??
+        DataUtils.MeanSeaLevelDepthReferenceSource.MeanSeaLevelDepthReference ??
+        0.0;
+
+    private string FormatReferencedDepth(double? value)
+    {
+        if (value is not { } depth || unitReference == null)
+        {
+            return "N/A";
+        }
+
+        string convertedValue = FormatReferencedDepthValue(depth);
+        string unitLabel = GetReferencedDepthUnitLabel();
+        return string.IsNullOrWhiteSpace(convertedValue)
+            ? "N/A"
+            : $"{convertedValue} {unitLabel}".Trim();
+    }
+
+    private static bool TryParseDepth(string value, out double result) =>
+        double.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.CurrentCulture, out result) ||
+        double.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out result);
+
+    private static string? ValidateClosestApproachStartMd(string? value) =>
+        string.IsNullOrWhiteSpace(value) || TryParseDepth(value, out _)
+            ? null
+            : "Invalid depth.";
+
+    private void CalculateSelectedClosestApproach(bool showWarning)
+    {
+        FieldModelShared.Trajectory? first = FindTrajectory(selectedTrajectoryIds[0]);
+        FieldModelShared.Trajectory? second = FindTrajectory(selectedTrajectoryIds[1]);
+        closestApproachResult = first != null && second != null
+            ? CalculateClosestApproach(first, second, closestApproachStartMd)
+            : null;
+
+        if (showWarning && closestApproachResult == null)
+        {
+            string message = closestApproachStartMd.HasValue
+                ? "Unable to calculate closest approach at or beyond the selected start MD."
+                : "Unable to calculate closest approach for the selected trajectories.";
+            Snackbar.Add(message, Severity.Warning);
+        }
     }
 
     private void ClearClosestApproachSelection()
@@ -885,7 +1057,7 @@
     private string FindTrajectoryName(Guid trajectoryId) =>
         FindTrajectory(trajectoryId)?.Name is { Length: > 0 } name ? name : trajectoryId.ToString();
 
-    private static ClosestApproachResult? CalculateClosestApproach(FieldModelShared.Trajectory first, FieldModelShared.Trajectory second)
+    private static ClosestApproachResult? CalculateClosestApproach(FieldModelShared.Trajectory first, FieldModelShared.Trajectory second, double? startMd)
     {
         List<TrajectoryPoint> firstPoints = BuildTrajectoryPoints(first);
         List<TrajectoryPoint> secondPoints = BuildTrajectoryPoints(second);
@@ -900,11 +1072,21 @@
 
         for (int i = 0; i < firstPoints.Count - 1; i++)
         {
+            if (!TryClipSegmentAtStartMd(firstPoints[i], firstPoints[i + 1], startMd, out TrajectoryPoint firstStart, out TrajectoryPoint firstEnd))
+            {
+                continue;
+            }
+
             for (int j = 0; j < secondPoints.Count - 1; j++)
             {
-                SegmentClosestApproach segmentResult = CalculateSegmentClosestApproach(firstPoints[i], firstPoints[i + 1], secondPoints[j], secondPoints[j + 1]);
-                ClosestApproachPoint firstClosest = InterpolatePoint(firstName, firstPoints[i], firstPoints[i + 1], segmentResult.FirstParameter);
-                ClosestApproachPoint secondClosest = InterpolatePoint(secondName, secondPoints[j], secondPoints[j + 1], segmentResult.SecondParameter);
+                if (!TryClipSegmentAtStartMd(secondPoints[j], secondPoints[j + 1], startMd, out TrajectoryPoint secondStart, out TrajectoryPoint secondEnd))
+                {
+                    continue;
+                }
+
+                SegmentClosestApproach segmentResult = CalculateSegmentClosestApproach(firstStart, firstEnd, secondStart, secondEnd);
+                ClosestApproachPoint firstClosest = InterpolatePoint(firstName, firstStart, firstEnd, segmentResult.FirstParameter);
+                ClosestApproachPoint secondClosest = InterpolatePoint(secondName, secondStart, secondEnd, segmentResult.SecondParameter);
                 double clearance = CalculateClearance(segmentResult.Distance, firstClosest.BoreholeRadius, secondClosest.BoreholeRadius);
                 double? nullableClearance = double.IsNaN(clearance) ? null : clearance;
                 ClosestApproachResult candidate = new(firstClosest, secondClosest, segmentResult.Distance, nullableClearance);
@@ -917,6 +1099,57 @@
         }
 
         return best;
+    }
+
+    private static bool TryClipSegmentAtStartMd(
+        TrajectoryPoint start,
+        TrajectoryPoint end,
+        double? startMd,
+        out TrajectoryPoint clippedStart,
+        out TrajectoryPoint clippedEnd)
+    {
+        clippedStart = start;
+        clippedEnd = end;
+        if (startMd is not { } minimumMd)
+        {
+            return true;
+        }
+
+        if (start.MD is not { } startMeasuredDepth || end.MD is not { } endMeasuredDepth)
+        {
+            return false;
+        }
+
+        bool startIsIncluded = startMeasuredDepth >= minimumMd;
+        bool endIsIncluded = endMeasuredDepth >= minimumMd;
+        if (startIsIncluded && endIsIncluded)
+        {
+            return true;
+        }
+
+        if (!startIsIncluded && !endIsIncluded)
+        {
+            return false;
+        }
+
+        double mdDifference = endMeasuredDepth - startMeasuredDepth;
+        if (Math.Abs(mdDifference) <= 1e-12)
+        {
+            return false;
+        }
+
+        double intersectionParameter = Clamp01((minimumMd - startMeasuredDepth) / mdDifference);
+        TrajectoryPoint intersection = InterpolateTrajectoryPoint(start, end, intersectionParameter);
+        if (startIsIncluded)
+        {
+            clippedEnd = intersection;
+        }
+        else
+        {
+            clippedStart = intersection;
+        }
+
+        return true;
     }
 
     private static List<TrajectoryPoint> BuildTrajectoryPoints(FieldModelShared.Trajectory trajectory)
@@ -1005,10 +1238,16 @@
 
     private static ClosestApproachPoint InterpolatePoint(string name, TrajectoryPoint start, TrajectoryPoint end, double parameter)
     {
+        TrajectoryPoint point = InterpolateTrajectoryPoint(start, end, parameter);
+        return new ClosestApproachPoint(name, point, point.MD, point.BoreholeRadius);
+    }
+
+    private static TrajectoryPoint InterpolateTrajectoryPoint(TrajectoryPoint start, TrajectoryPoint end, double parameter)
+    {
         Vector3 position = start.Position + (end.Position - start.Position) * parameter;
         double? md = InterpolateNullable(start.MD, end.MD, parameter);
         double? radius = InterpolateNullable(start.BoreholeRadius, end.BoreholeRadius, parameter);
-        return new ClosestApproachPoint(name, new TrajectoryPoint(position.North, position.East, position.Tvd, md, radius), md, radius);
+        return new TrajectoryPoint(position.North, position.East, position.Tvd, md, radius);
     }
 
     private static double? InterpolateNullable(double? start, double? end, double parameter)
