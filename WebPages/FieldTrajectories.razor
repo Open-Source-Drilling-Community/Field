@@ -135,7 +135,12 @@
                                            XAxisPositionDirection="@PositionDirectionType.East"
                                            YAxisPositionDirection="@PositionDirectionType.North"
                                            ShowLegends="@Plot3DShowLegends"
-                                           TraceClicked="OnTrajectoryTraceClicked" />
+                                           LegendLinkedTraceIds="@Plot3DLegendLinkedTraceIds"
+                                           LegendControlsLinkedTraces="@Plot3DLegendControlsLinkedTraces"
+                                           LegendTraceKinds="@Plot3DLegendTraceKinds"
+                                           SelectableTraceIds="@Plot3DSelectableTraceIds"
+                                           SelectedTraceIds="@Plot3DSelectedTraceIds"
+                                           TraceIdClicked="OnTrajectoryTraceClicked" />
                         </MudPaper>
                     </MudItem>
                     <MudItem xs="12" xl="6">
@@ -200,11 +205,15 @@
                 <MudPaper Class="pa-4" Elevation="2">
                     <MudText Typo="Typo.h6">Legend</MudText>
                     <MudGrid>
-                        @foreach (var trace in plotTraces.Where(trace => trace.ShowLegend))
+                        @foreach (var trace in plotTraces.Where(trace => trace.ShowLegend && trace.IsSelectable && trace.TrajectoryId != null))
                         {
                             <MudItem xs="12" sm="6" md="4" lg="3">
                                 <div style="display:flex;align-items:center;gap:12px;">
-                                    <span style="@($"width:18px;height:18px;border-radius:50%;display:inline-block;background:{trace.Color};")"></span>
+                                    <input type="color"
+                                           value="@GetColorPickerValue(trace.Color)"
+                                           title="Select color"
+                                           style="width:32px;height:28px;border:0;background:transparent;padding:0;cursor:pointer;"
+                                           @onchange="@((ChangeEventArgs args) => SetTraceColor(trace, args.Value?.ToString()))" />
                                     <MudText Typo="Typo.body2">@trace.Name</MudText>
                                 </div>
                             </MudItem>
@@ -233,9 +242,13 @@
     private double ellipseConfidenceFactor = 0.95;
 
     private List<PlotTrace> plotTraces = [];
+    private readonly Dictionary<Guid, string> trajectoryColorsById = [];
     private Dictionary<Guid, List<FieldModelShared.SurveyStationEllipseResult>> ellipseResultsByTrajectory = [];
     private List<Guid> selectedTrajectoryIds = [];
     private ClosestApproachResult? closestApproachResult;
+    private Guid? lastTrajectoryClickId;
+    private long lastTrajectoryClickTimestamp;
+    private const long DuplicateTrajectoryClickWindowMilliseconds = 1000;
 
     private List<string> PlotNames => plotTraces.Select(trace => trace.Name).ToList();
     private List<int> PlotModeFlags => plotTraces.Select(trace => trace.ModeFlag).ToList();
@@ -249,6 +262,11 @@
     private List<int> Plot3DModeFlags => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.ModeFlag).ToList();
     private List<string> Plot3DColors => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.Color).ToList();
     private List<bool> Plot3DShowLegends => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.ShowLegend).ToList();
+    private List<string?> Plot3DLegendLinkedTraceIds => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.TrajectoryId?.ToString("D")).ToList();
+    private List<bool> Plot3DLegendControlsLinkedTraces => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.ShowLegend && trace.TrajectoryId != null && trace.LegendTraceKind != PlotTraceKindOther).ToList();
+    private List<string> Plot3DLegendTraceKinds => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.LegendTraceKind).ToList();
+    private List<string?> Plot3DSelectableTraceIds => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.IsSelectable ? trace.TrajectoryId?.ToString("D") : null).ToList();
+    private List<string> Plot3DSelectedTraceIds => selectedTrajectoryIds.Select(id => id.ToString("D")).ToList();
     private List<List<object>> Plot3DNorthValuesList => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.NorthValues).ToList();
     private List<List<object>> Plot3DEastValuesList => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.EastValues).ToList();
     private List<List<object>> Plot3DTvdValuesList => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.TvdValues).ToList();
@@ -465,15 +483,17 @@
                 continue;
             }
 
-            if (trajectory.MetaInfo?.ID is not Guid trajectoryId)
+            if (trajectory.MetaInfo?.ID is not Guid trajectoryId || trajectoryId == Guid.Empty)
             {
                 continue;
             }
 
+            string traceColor = GetTrajectoryColor(trajectoryId, colorIndex);
+
             nextPlotTraces.Add(new PlotTrace(
                 string.IsNullOrWhiteSpace(trajectory.Name) ? "trajectory" : trajectory.Name,
                 3,
-                Colors[colorIndex % Colors.Length],
+                traceColor,
                 true,
                 2.0,
                 trajectoryId,
@@ -484,7 +504,7 @@
 
             if (ellipseResultsByTrajectory.TryGetValue(trajectoryId, out List<FieldModelShared.SurveyStationEllipseResult>? ellipseResults))
             {
-                AddEllipseTraces(nextPlotTraces, trajectory.SurveyStationList, ellipseResults, Colors[colorIndex % Colors.Length], trajectoryId, trajectory.Name);
+                AddEllipseTraces(nextPlotTraces, trajectory.SurveyStationList, ellipseResults, traceColor, trajectoryId, trajectory.Name);
             }
             colorIndex++;
         }
@@ -493,18 +513,27 @@
         plotTraces = nextPlotTraces;
     }
 
-    private async Task OnTrajectoryTraceClicked(int traceIndex)
+    private async Task OnTrajectoryTraceClicked(string trajectoryIdValue)
     {
-        if (traceIndex < 0 || traceIndex >= plotTraces.Count)
+        if (!Guid.TryParse(trajectoryIdValue, out Guid trajectoryId) || trajectoryId == Guid.Empty)
         {
             return;
         }
 
-        PlotTrace trace = plotTraces[traceIndex];
-        if (!trace.IsSelectable || trace.TrajectoryId is not { } trajectoryId)
+        if (!plotTraces.Any(trace => trace.ShowIn3D && trace.IsSelectable && trace.TrajectoryId == trajectoryId))
         {
             return;
         }
+
+        long clickTimestamp = Environment.TickCount64;
+        if (lastTrajectoryClickId == trajectoryId &&
+            clickTimestamp - lastTrajectoryClickTimestamp < DuplicateTrajectoryClickWindowMilliseconds)
+        {
+            return;
+        }
+
+        lastTrajectoryClickId = trajectoryId;
+        lastTrajectoryClickTimestamp = clickTimestamp;
 
         if (selectedTrajectoryIds.Count == 1 && selectedTrajectoryIds[0] == trajectoryId)
         {
@@ -542,6 +571,8 @@
     {
         selectedTrajectoryIds.Clear();
         closestApproachResult = null;
+        lastTrajectoryClickId = null;
+        lastTrajectoryClickTimestamp = 0;
         UpdatePlots();
     }
 
@@ -742,7 +773,7 @@
             tvdValues.Add(centerTvd);
         }
 
-        return new PlotTrace($"{trajectoryName ?? "trajectory"} horizontal ellipses", 1, color, showLegend, 2.0, trajectoryId, false, northValues, eastValues, tvdValues, false, true);
+        return new PlotTrace($"{trajectoryName ?? "trajectory"} horizontal ellipses", 1, color, showLegend, 2.0, trajectoryId, false, northValues, eastValues, tvdValues, false, true, PlotTraceKindHorizontalEllipse);
     }
 
     private static PlotTrace? BuildPerpendicularEllipseTrace(FieldModelShared.SurveyStation station, FieldModelShared.SurveyStationEllipse? ellipse, string color, bool showLegend, Guid trajectoryId, string? trajectoryName)
@@ -780,7 +811,7 @@
             tvdValues.Add(centerTvd - sinI * localX);
         }
 
-        return new PlotTrace($"{trajectoryName ?? "trajectory"} perpendicular ellipses", 1, color, showLegend, 2.0, trajectoryId, false, northValues, eastValues, tvdValues, true, false);
+        return new PlotTrace($"{trajectoryName ?? "trajectory"} perpendicular ellipses", 1, color, showLegend, 2.0, trajectoryId, false, northValues, eastValues, tvdValues, true, false, PlotTraceKindPerpendicularEllipse);
     }
 
 
@@ -1006,19 +1037,165 @@
 
     private static string FormatNullableDistance(double? value) => value.HasValue ? FormatDistance(value.Value) : "N/A";
 
+    private string GetTrajectoryColor(Guid trajectoryId, int colorIndex)
+    {
+        if (trajectoryColorsById.TryGetValue(trajectoryId, out string? color))
+        {
+            return color;
+        }
+
+        color = GetDefaultTrajectoryColor(colorIndex);
+        trajectoryColorsById[trajectoryId] = color;
+        return color;
+    }
+
+    private void SetTraceColor(PlotTrace trace, string? color)
+    {
+        if (trace.TrajectoryId is not Guid trajectoryId || trajectoryId == Guid.Empty)
+        {
+            return;
+        }
+
+        string normalizedColor = GetColorPickerValue(color);
+        trajectoryColorsById[trajectoryId] = normalizedColor;
+        for (int i = 0; i < plotTraces.Count; i++)
+        {
+            if (plotTraces[i].TrajectoryId == trajectoryId)
+            {
+                plotTraces[i] = plotTraces[i] with { Color = normalizedColor };
+            }
+        }
+    }
+
+    private static string GetColorPickerValue(string? color)
+    {
+        if (string.IsNullOrWhiteSpace(color))
+        {
+            return "#000000";
+        }
+
+        string trimmed = color.Trim();
+        if (IsHexColor(trimmed))
+        {
+            return trimmed;
+        }
+
+        return NamedColorValues.TryGetValue(trimmed, out string? hexColor) ? hexColor : "#000000";
+    }
+
+    private static bool IsHexColor(string color)
+    {
+        if (color.Length != 7 || color[0] != '#')
+        {
+            return false;
+        }
+
+        for (int i = 1; i < color.Length; i++)
+        {
+            if (!Uri.IsHexDigit(color[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static string GetDefaultTrajectoryColor(int colorIndex)
+    {
+        if (colorIndex >= 0 && colorIndex < Colors.Length)
+        {
+            return Colors[colorIndex];
+        }
+
+        double hue = (colorIndex * 137.508) % 360.0;
+        return HslToHex(hue, 0.64, 0.42);
+    }
+
+    private static string HslToHex(double hue, double saturation, double lightness)
+    {
+        hue = ((hue % 360.0) + 360.0) % 360.0;
+        saturation = Clamp01(saturation);
+        lightness = Clamp01(lightness);
+
+        double chroma = (1.0 - Math.Abs(2.0 * lightness - 1.0)) * saturation;
+        double huePrime = hue / 60.0;
+        double x = chroma * (1.0 - Math.Abs(huePrime % 2.0 - 1.0));
+        double red1 = 0.0;
+        double green1 = 0.0;
+        double blue1 = 0.0;
+
+        if (huePrime < 1.0)
+        {
+            red1 = chroma;
+            green1 = x;
+        }
+        else if (huePrime < 2.0)
+        {
+            red1 = x;
+            green1 = chroma;
+        }
+        else if (huePrime < 3.0)
+        {
+            green1 = chroma;
+            blue1 = x;
+        }
+        else if (huePrime < 4.0)
+        {
+            green1 = x;
+            blue1 = chroma;
+        }
+        else if (huePrime < 5.0)
+        {
+            red1 = x;
+            blue1 = chroma;
+        }
+        else
+        {
+            red1 = chroma;
+            blue1 = x;
+        }
+
+        double match = lightness - chroma / 2.0;
+        int red = (int)Math.Round((red1 + match) * 255.0);
+        int green = (int)Math.Round((green1 + match) * 255.0);
+        int blue = (int)Math.Round((blue1 + match) * 255.0);
+        return $"#{red:X2}{green:X2}{blue:X2}";
+    }
+
     private static readonly string[] Colors =
     [
-        "black",
-        "blue",
-        "grey",
-        "red",
-        "orange",
-        "green",
-        "yellow",
-        "pink",
-        "brown",
-        "purple"
+        "#0072B2",
+        "#D55E00",
+        "#009E73",
+        "#CC79A7",
+        "#56B4E9",
+        "#E69F00",
+        "#111827",
+        "#8A5A44",
+        "#6A3D9A",
+        "#4D4D4D"
     ];
+
+    private static readonly Dictionary<string, string> NamedColorValues = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["black"] = "#000000",
+        ["blue"] = "#0000FF",
+        ["grey"] = "#808080",
+        ["gray"] = "#808080",
+        ["red"] = "#FF0000",
+        ["orange"] = "#FFA500",
+        ["green"] = "#008000",
+        ["yellow"] = "#FFFF00",
+        ["pink"] = "#FFC0CB",
+        ["brown"] = "#A52A2A",
+        ["purple"] = "#800080"
+    };
+
+    private const string PlotTraceKindTrajectory = "trajectory";
+    private const string PlotTraceKindHorizontalEllipse = "horizontal-ellipse";
+    private const string PlotTraceKindPerpendicularEllipse = "perpendicular-ellipse";
+    private const string PlotTraceKindOther = "other";
 
     private sealed record PlotTrace(
         string Name,
@@ -1032,7 +1209,8 @@
         List<object> EastValues,
         List<object> TvdValues,
         bool ShowIn3D = true,
-        bool ShowInHorizontal = true);
+        bool ShowInHorizontal = true,
+        string LegendTraceKind = PlotTraceKindTrajectory);
 
 
     private readonly record struct Vector3(double North, double East, double Tvd)

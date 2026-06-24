@@ -1,17 +1,27 @@
 const installations = new Map();
+const trajectoryTraceKind = "trajectory";
+const otherTraceKind = "other";
 
-export function install(chartId, dotNetReference) {
+export function install(chartId, dotNetReference, legendLinkedTraceIds = [], legendControlsLinkedTraces = [], legendTraceKinds = [], selectableTraceIds = [], selectedTraceIds = []) {
     uninstall(chartId);
 
     const plot = document.getElementById(chartId);
     if (!plot || !window.Plotly) {
-        window.setTimeout(() => install(chartId), 50);
+        window.setTimeout(() => install(chartId, dotNetReference, legendLinkedTraceIds, legendControlsLinkedTraces, legendTraceKinds, selectableTraceIds, selectedTraceIds), 50);
         return;
     }
 
     const state = {
         camera: cloneCamera(getCamera(plot)),
-        suppressCaptureUntil: 0
+        suppressCaptureUntil: 0,
+        legendLinkedTraceIds: normalizeLegendTraceIds(legendLinkedTraceIds),
+        legendControlsLinkedTraces: normalizeLegendControls(legendControlsLinkedTraces),
+        legendTraceKinds: normalizeLegendTraceKinds(legendTraceKinds),
+        selectableTraceIds: normalizeLegendTraceIds(selectableTraceIds),
+        selectedTraceIds: new Set(normalizeLegendTraceIds(selectedTraceIds).filter(Boolean)),
+        lastNotifiedTraceId: null,
+        lastNotifiedAt: 0,
+        legendVisibilityByKey: new Map()
     };
 
     const relayoutHandler = (eventData) => {
@@ -27,7 +37,8 @@ export function install(chartId, dotNetReference) {
     };
 
     const captureHandler = () => scheduleCameraCapture(plot, state);
-    const clickHandler = (eventData) => notifyTraceClick(eventData, dotNetReference);
+    const clickHandler = (eventData) => notifyTraceClick(eventData, dotNetReference, state);
+    const legendClickHandler = (eventData) => handleLegendClick(eventData, plot, state);
 
     const modebarHandler = (event) => {
         const button = findModebarButton(event);
@@ -52,6 +63,7 @@ export function install(chartId, dotNetReference) {
     plot.on?.("plotly_relayout", relayoutHandler);
     plot.on?.("plotly_relayouting", relayoutHandler);
     plot.on?.("plotly_click", clickHandler);
+    plot.on?.("plotly_legendclick", legendClickHandler);
     plot.addEventListener("wheel", captureHandler, true);
     plot.addEventListener("pointerup", captureHandler, true);
     plot.addEventListener("mouseup", captureHandler, true);
@@ -61,7 +73,21 @@ export function install(chartId, dotNetReference) {
     document.addEventListener("mousedown", modebarHandler, true);
     document.addEventListener("click", modebarHandler, true);
 
-    installations.set(chartId, { plot, relayoutHandler, captureHandler, clickHandler, modebarHandler });
+    installations.set(chartId, { plot, state, relayoutHandler, captureHandler, clickHandler, legendClickHandler, modebarHandler });
+}
+
+export function setLegendLinks(chartId, legendLinkedTraceIds = [], legendControlsLinkedTraces = [], legendTraceKinds = [], selectableTraceIds = [], selectedTraceIds = []) {
+    const installation = installations.get(chartId);
+    if (!installation) {
+        return;
+    }
+
+    installation.state.legendLinkedTraceIds = normalizeLegendTraceIds(legendLinkedTraceIds);
+    installation.state.legendControlsLinkedTraces = normalizeLegendControls(legendControlsLinkedTraces);
+    installation.state.legendTraceKinds = normalizeLegendTraceKinds(legendTraceKinds);
+    installation.state.selectableTraceIds = normalizeLegendTraceIds(selectableTraceIds);
+    installation.state.selectedTraceIds = new Set(normalizeLegendTraceIds(selectedTraceIds).filter(Boolean));
+    scheduleStoredLegendVisibilityRestore(installation.plot, installation.state);
 }
 
 export function uninstall(chartId) {
@@ -73,6 +99,7 @@ export function uninstall(chartId) {
     installation.plot.removeListener?.("plotly_relayout", installation.relayoutHandler);
     installation.plot.removeListener?.("plotly_relayouting", installation.relayoutHandler);
     installation.plot.removeListener?.("plotly_click", installation.clickHandler);
+    installation.plot.removeListener?.("plotly_legendclick", installation.legendClickHandler);
     installation.plot.removeEventListener("wheel", installation.captureHandler, true);
     installation.plot.removeEventListener("pointerup", installation.captureHandler, true);
     installation.plot.removeEventListener("mouseup", installation.captureHandler, true);
@@ -116,10 +143,6 @@ function captureCamera(plot, state, force = false) {
 }
 
 function captureCameraFromEvent(eventData, state) {
-    if (Date.now() < state.suppressCaptureUntil) {
-        return;
-    }
-
     const camera = getCameraFromEvent(eventData, state.camera);
     if (camera) {
         state.camera = camera;
@@ -163,15 +186,192 @@ function scheduleCameraCapture(plot, state) {
     window.setTimeout(() => captureCamera(plot, state), 150);
 }
 
-function notifyTraceClick(eventData, dotNetReference) {
+function notifyTraceClick(eventData, dotNetReference, state) {
     if (!dotNetReference || !eventData?.points?.length) {
         return;
     }
 
-    const traceIndex = eventData.points[0]?.curveNumber;
-    if (Number.isInteger(traceIndex)) {
-        dotNetReference.invokeMethodAsync("OnPlotlyTraceClicked", traceIndex);
+    const firstTraceIndex = eventData.points[0]?.curveNumber;
+    const candidates = eventData.points
+        .map((point) => {
+            const traceIndex = point?.curveNumber;
+            if (!Number.isInteger(traceIndex)) {
+                return null;
+            }
+
+            const traceMeta = point?.data?.meta;
+            return typeof traceMeta === "string" && traceMeta
+                ? { traceId: traceMeta, traceIndex }
+                : { traceId: state.selectableTraceIds[traceIndex], traceIndex };
+        })
+        .filter((candidate) => candidate?.traceId);
+
+    const candidate = candidates.find(({ traceId }) => !state.selectedTraceIds.has(traceId)) ?? candidates[0];
+    const traceId = candidate?.traceId;
+    if (traceId) {
+        const now = Date.now();
+        if (state.lastNotifiedTraceId === traceId && now - state.lastNotifiedAt < 500) {
+            return;
+        }
+
+        state.lastNotifiedTraceId = traceId;
+        state.lastNotifiedAt = now;
+        dotNetReference.invokeMethodAsync("OnPlotlyTraceIdClicked", traceId);
     }
+    else if (Number.isInteger(firstTraceIndex)) {
+        dotNetReference.invokeMethodAsync("OnPlotlyTraceClicked", firstTraceIndex);
+    }
+}
+
+function handleLegendClick(eventData, plot, state) {
+    const traceIndex = eventData?.curveNumber;
+    if (!Number.isInteger(traceIndex)) {
+        return true;
+    }
+
+    const traceId = state.legendLinkedTraceIds[traceIndex];
+    const traceKind = state.legendTraceKinds[traceIndex];
+    if (!traceId || !traceKind || state.legendControlsLinkedTraces[traceIndex] !== true) {
+        return true;
+    }
+
+    const linkedTraceIndexes = getLinkedTraceIndexes(plot, state, traceId, traceKind);
+    if (!linkedTraceIndexes.length || !window.Plotly) {
+        return true;
+    }
+
+    const nextVisibility = isTraceVisible(plot.data[traceIndex]) ? "legendonly" : true;
+    captureCamera(plot, state, true);
+    const camera = cloneCamera(state.camera) ?? cloneCamera(getCamera(plot));
+    rememberLegendVisibility(state, linkedTraceIndexes, nextVisibility);
+    window.Plotly.restyle(plot, { visible: nextVisibility }, linkedTraceIndexes);
+    if (camera) {
+        restoreCameraRepeated(plot, state, camera);
+    }
+
+    return false;
+}
+
+function getLinkedTraceIndexes(plot, state, traceId, traceKind) {
+    const linkedTraceIndexes = [];
+    const traceCount = Math.min(
+        plot?.data?.length ?? 0,
+        state.legendLinkedTraceIds.length,
+        state.legendTraceKinds.length);
+
+    for (let i = 0; i < traceCount; i++) {
+        if (state.legendLinkedTraceIds[i] !== traceId) {
+            continue;
+        }
+
+        const candidateKind = state.legendTraceKinds[i];
+        if (traceKind === trajectoryTraceKind) {
+            if (candidateKind !== otherTraceKind) {
+                linkedTraceIndexes.push(i);
+            }
+        }
+        else if (candidateKind === traceKind) {
+            linkedTraceIndexes.push(i);
+        }
+    }
+
+    return linkedTraceIndexes;
+}
+
+function rememberLegendVisibility(state, traceIndexes, visibility) {
+    for (const traceIndex of traceIndexes) {
+        const visibilityKey = getLegendVisibilityKey(state, traceIndex);
+        if (visibilityKey) {
+            state.legendVisibilityByKey.set(visibilityKey, visibility);
+        }
+    }
+}
+
+function scheduleStoredLegendVisibilityRestore(plot, state) {
+    for (const delay of [0, 50, 150]) {
+        window.setTimeout(() => restoreStoredLegendVisibility(plot, state), delay);
+    }
+}
+
+function restoreStoredLegendVisibility(plot, state) {
+    if (!plot || !window.Plotly || !state.legendVisibilityByKey?.size) {
+        return;
+    }
+
+    const traceIndexes = [];
+    const visibilityValues = [];
+    const traceCount = Math.min(
+        plot.data?.length ?? 0,
+        state.legendLinkedTraceIds.length,
+        state.legendTraceKinds.length);
+
+    for (let i = 0; i < traceCount; i++) {
+        const visibility = getStoredLegendVisibility(state, i);
+        if (visibility !== null) {
+            traceIndexes.push(i);
+            visibilityValues.push(visibility);
+        }
+    }
+
+    if (!traceIndexes.length) {
+        return;
+    }
+
+    const camera = cloneCamera(state.camera) ?? cloneCamera(getCamera(plot));
+    window.Plotly.restyle(plot, { visible: visibilityValues }, traceIndexes);
+    if (camera) {
+        restoreCameraRepeated(plot, state, camera);
+    }
+}
+
+function getStoredLegendVisibility(state, traceIndex) {
+    const visibilityKey = getLegendVisibilityKey(state, traceIndex);
+    if (!visibilityKey) {
+        return null;
+    }
+
+    if (state.legendVisibilityByKey.has(visibilityKey)) {
+        return state.legendVisibilityByKey.get(visibilityKey);
+    }
+
+    const traceId = state.legendLinkedTraceIds[traceIndex];
+    const traceKind = state.legendTraceKinds[traceIndex];
+    if (!traceId || traceKind === trajectoryTraceKind || traceKind === otherTraceKind) {
+        return null;
+    }
+
+    const trajectoryVisibility = state.legendVisibilityByKey.get(`${traceId}|${trajectoryTraceKind}`);
+    return trajectoryVisibility === "legendonly" ? "legendonly" : null;
+}
+
+function getLegendVisibilityKey(state, traceIndex) {
+    const traceId = state.legendLinkedTraceIds[traceIndex];
+    const traceKind = state.legendTraceKinds[traceIndex];
+    return traceId && traceKind && traceKind !== otherTraceKind
+        ? `${traceId}|${traceKind}`
+        : null;
+}
+
+function isTraceVisible(trace) {
+    return trace?.visible !== "legendonly" && trace?.visible !== false;
+}
+
+function normalizeLegendTraceIds(values) {
+    return Array.isArray(values)
+        ? values.map((value) => value == null ? null : `${value}`)
+        : [];
+}
+
+function normalizeLegendControls(values) {
+    return Array.isArray(values)
+        ? values.map((value) => value === true)
+        : [];
+}
+
+function normalizeLegendTraceKinds(values) {
+    return Array.isArray(values)
+        ? values.map((value) => value == null ? otherTraceKind : `${value}`)
+        : [];
 }
 
 function isCameraEvent(eventData) {

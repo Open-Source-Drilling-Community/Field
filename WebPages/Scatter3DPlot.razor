@@ -16,6 +16,11 @@
     [Parameter] public List<int> ModeFlagList { get; set; } = [];
     [Parameter] public List<string> ColorList { get; set; } = [];
     [Parameter] public List<bool>? ShowLegends { get; set; }
+    [Parameter] public List<string?> LegendLinkedTraceIds { get; set; } = [];
+    [Parameter] public List<bool> LegendControlsLinkedTraces { get; set; } = [];
+    [Parameter] public List<string> LegendTraceKinds { get; set; } = [];
+    [Parameter] public List<string?> SelectableTraceIds { get; set; } = [];
+    [Parameter] public List<string> SelectedTraceIds { get; set; } = [];
     [Parameter] public List<double?> MarkerSizeList { get; set; } = [];
     [Parameter] public List<List<object>> XValuesList { get; set; } = [];
     [Parameter] public List<List<object>> YValuesList { get; set; } = [];
@@ -34,6 +39,7 @@
     [Parameter] public PositionDirectionType XAxisPositionDirection { get; set; } = PositionDirectionType.Independent;
     [Parameter] public PositionDirectionType YAxisPositionDirection { get; set; } = PositionDirectionType.Independent;
     [Parameter] public EventCallback<int> TraceClicked { get; set; }
+    [Parameter] public EventCallback<string> TraceIdClicked { get; set; }
 
     private PlotlyChart? chart;
     private bool _plotlyReady;
@@ -147,7 +153,7 @@
         {
             _cameraPersistenceModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>(
                 "import",
-                "./_content/NORCE.Drilling.Field.WebPages/scatter3dCameraPersistence.js?v=20260602-closest-approach");
+                "./_content/NORCE.Drilling.Field.WebPages/scatter3dCameraPersistence.js?v=20260624-deduplicated-trace-click");
 
             if (_cameraPersistenceChartId != chart.Id)
             {
@@ -155,6 +161,15 @@
                 _dotNetReference ??= DotNetObjectReference.Create(this);
                 await _cameraPersistenceModule.InvokeVoidAsync("install", chart.Id, _dotNetReference);
             }
+
+            await _cameraPersistenceModule.InvokeVoidAsync(
+                "setLegendLinks",
+                chart.Id,
+                LegendLinkedTraceIds,
+                LegendControlsLinkedTraces,
+                LegendTraceKinds,
+                SelectableTraceIds,
+                SelectedTraceIds);
         }
         catch (JSException)
         {
@@ -199,6 +214,17 @@
         }
 
         await TraceClicked.InvokeAsync(traceIndex);
+    }
+
+    [JSInvokable]
+    public async Task OnPlotlyTraceIdClicked(string traceId)
+    {
+        if (_disposed || !TraceIdClicked.HasDelegate || string.IsNullOrWhiteSpace(traceId))
+        {
+            return;
+        }
+
+        await TraceIdClicked.InvokeAsync(traceId);
     }
 
     private void ManageTraces()
@@ -286,6 +312,7 @@
                 Name = name,
                 ShowLegend = showLegend,
                 Mode = mode,
+                Meta = i < SelectableTraceIds.Count ? SelectableTraceIds[i] : null,
                 X = xOut,
                 Y = yOut,
                 Z = zOut
@@ -385,6 +412,11 @@
         AppendListSignature(builder, ModeFlagList);
         AppendListSignature(builder, ColorList);
         AppendListSignature(builder, ShowLegends);
+        AppendListSignature(builder, LegendLinkedTraceIds);
+        AppendListSignature(builder, LegendControlsLinkedTraces);
+        AppendListSignature(builder, LegendTraceKinds);
+        AppendListSignature(builder, SelectableTraceIds);
+        AppendListSignature(builder, SelectedTraceIds);
         AppendListSignature(builder, MarkerSizeList);
         AppendNestedListSignature(builder, XValuesList);
         AppendNestedListSignature(builder, YValuesList);
