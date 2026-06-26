@@ -1007,7 +1007,8 @@
         }
 
         double centerTvd = terminal.Station.TVD ?? terminal.Station.Z ?? 0.0;
-        double tangentSemiAxis = Math.Max(Math.Abs(semiMajor), Math.Abs(semiMinor));
+        double boreholeRadius = terminal.Station.BoreholeRadius ?? 0.0;
+        double tangentSemiAxis = Math.Max(0.0, Math.Max(Math.Abs(semiMajor), Math.Abs(semiMinor)) - boreholeRadius);
         if (!double.IsFinite(tangentSemiAxis) || tangentSemiAxis < 0.0)
         {
             return;
