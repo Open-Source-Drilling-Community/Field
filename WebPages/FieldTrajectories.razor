@@ -858,7 +858,8 @@
     {
         bool horizontalLegendShown = false;
         bool perpendicularLegendShown = false;
-        foreach ((FieldModelShared.SurveyStation station, FieldModelShared.SurveyStationEllipseResult result) in SelectEvenlySpacedEllipses(surveyStations, ellipseResults))
+        IReadOnlyList<(FieldModelShared.SurveyStation Station, FieldModelShared.SurveyStationEllipseResult Result)> plotCandidates = SelectEvenlySpacedEllipses(surveyStations, ellipseResults);
+        foreach ((FieldModelShared.SurveyStation station, FieldModelShared.SurveyStationEllipseResult result) in plotCandidates)
         {
             if (BuildHorizontalEllipseTrace(station, result.HorizontalEllipse, color, !horizontalLegendShown, trajectoryId, trajectoryName) is { } horizontalTrace)
             {
@@ -871,6 +872,8 @@
                 perpendicularLegendShown = true;
             }
         }
+
+        AddTerminalEndCapTraces(traces, plotCandidates, color, trajectoryId, trajectoryName);
     }
 
     private static IReadOnlyList<(FieldModelShared.SurveyStation Station, FieldModelShared.SurveyStationEllipseResult Result)> SelectEvenlySpacedEllipses(
@@ -929,23 +932,20 @@
             return null;
         }
 
-        List<object> northValues = [];
-        List<object> eastValues = [];
-        List<object> tvdValues = [];
         double centerTvd = station.TVD ?? station.Z ?? 0.0;
-        for (int i = 0; i <= EllipsePointCount; i++)
-        {
-            double phi = 2.0 * Math.PI * i / EllipsePointCount;
-            double major = semiMajor * Math.Cos(phi);
-            double minor = semiMinor * Math.Sin(phi);
-            double northOffset = major * Math.Cos(angle) - minor * Math.Sin(angle);
-            double eastOffset = major * Math.Sin(angle) + minor * Math.Cos(angle);
-            northValues.Add(centerNorth + northOffset);
-            eastValues.Add(centerEast + eastOffset);
-            tvdValues.Add(centerTvd);
-        }
-
-        return new PlotTrace($"{trajectoryName ?? "trajectory"} horizontal ellipses", 1, color, showLegend, 2.0, trajectoryId, false, northValues, eastValues, tvdValues, false, true, PlotTraceKindHorizontalEllipse);
+        return BuildHorizontalEllipseTrace(
+            centerNorth,
+            centerEast,
+            centerTvd,
+            semiMajor,
+            semiMinor,
+            angle,
+            $"{trajectoryName ?? "trajectory"} horizontal ellipses",
+            color,
+            showLegend,
+            trajectoryId,
+            1,
+            2.0);
     }
 
     private static PlotTrace? BuildPerpendicularEllipseTrace(FieldModelShared.SurveyStation station, FieldModelShared.SurveyStationEllipse? ellipse, string color, bool showLegend, Guid trajectoryId, string? trajectoryName)
@@ -962,6 +962,200 @@
         }
 
         double centerTvd = station.TVD ?? station.Z ?? 0.0;
+        return BuildPerpendicularEllipseTrace(
+            centerNorth,
+            centerEast,
+            centerTvd,
+            inclination,
+            azimuth,
+            semiMajor,
+            semiMinor,
+            angle,
+            $"{trajectoryName ?? "trajectory"} perpendicular ellipses",
+            color,
+            showLegend,
+            trajectoryId,
+            PlotTraceKindPerpendicularEllipse,
+            1,
+            2.0,
+            false);
+    }
+
+    private static void AddTerminalEndCapTraces(
+        List<PlotTrace> traces,
+        IReadOnlyList<(FieldModelShared.SurveyStation Station, FieldModelShared.SurveyStationEllipseResult Result)> plotCandidates,
+        string color,
+        Guid trajectoryId,
+        string? trajectoryName)
+    {
+        (FieldModelShared.SurveyStation Station, FieldModelShared.SurveyStationEllipseResult Result) terminal = plotCandidates
+            .Where(candidate => candidate.Result.PerpendicularEllipse != null)
+            .OrderBy(candidate => candidate.Result.MD ?? candidate.Station.MD ?? candidate.Station.Abscissa ?? double.MaxValue)
+            .LastOrDefault();
+
+        if (terminal.Station == null ||
+            terminal.Result?.PerpendicularEllipse is not { } ellipse ||
+            ellipse.SemiMajorAxis is not double semiMajor ||
+            ellipse.SemiMinorAxis is not double semiMinor ||
+            ellipse.OrientationAngle is not double angle ||
+            terminal.Station.Inclination is not double inclination ||
+            terminal.Station.Azimuth is not double azimuth ||
+            terminal.Station.X is not double centerNorth ||
+            terminal.Station.Y is not double centerEast)
+        {
+            return;
+        }
+
+        double centerTvd = terminal.Station.TVD ?? terminal.Station.Z ?? 0.0;
+        double tangentSemiAxis = Math.Max(Math.Abs(semiMajor), Math.Abs(semiMinor));
+        if (!double.IsFinite(tangentSemiAxis) || tangentSemiAxis < 0.0)
+        {
+            return;
+        }
+
+        double sinInclination = Math.Sin(inclination);
+        double tangentNorth = sinInclination * Math.Cos(azimuth);
+        double tangentEast = sinInclination * Math.Sin(azimuth);
+        double tangentTvd = Math.Cos(inclination);
+
+        string traceName = $"{trajectoryName ?? "trajectory"} perpendicular ellipses";
+        for (int i = 1; i <= TerminalEndCapSliceCount; i++)
+        {
+            double normalizedOffset = (double)i / TerminalEndCapSliceCount;
+            double radiusScale = Math.Sqrt(Math.Max(0.0, 1.0 - normalizedOffset * normalizedOffset));
+            double tangentOffset = tangentSemiAxis * normalizedOffset;
+            bool isTangentPoint = i == TerminalEndCapSliceCount;
+            PlotTrace capTrace = BuildPerpendicularEllipseTrace(
+                centerNorth + tangentOffset * tangentNorth,
+                centerEast + tangentOffset * tangentEast,
+                centerTvd + tangentOffset * tangentTvd,
+                inclination,
+                azimuth,
+                semiMajor * radiusScale,
+                semiMinor * radiusScale,
+                angle,
+                traceName,
+                color,
+                false,
+                trajectoryId,
+                PlotTraceKindPerpendicularEllipse,
+                isTangentPoint ? 2 : 1,
+                isTangentPoint ? 4.0 : 2.0,
+                false);
+            traces.Add(capTrace);
+        }
+
+        AddTerminalHorizontalEndCapTraces(
+            traces,
+            terminal,
+            centerNorth,
+            centerEast,
+            centerTvd,
+            tangentNorth,
+            tangentEast,
+            tangentSemiAxis,
+            color,
+            trajectoryId,
+            trajectoryName);
+    }
+
+    private static void AddTerminalHorizontalEndCapTraces(
+        List<PlotTrace> traces,
+        (FieldModelShared.SurveyStation Station, FieldModelShared.SurveyStationEllipseResult Result) terminal,
+        double centerNorth,
+        double centerEast,
+        double centerTvd,
+        double tangentNorth,
+        double tangentEast,
+        double tangentSemiAxis,
+        string color,
+        Guid trajectoryId,
+        string? trajectoryName)
+    {
+        if (terminal.Result.HorizontalEllipse is not { } horizontalEllipse ||
+            horizontalEllipse.SemiMajorAxis is not double semiMajor ||
+            horizontalEllipse.SemiMinorAxis is not double semiMinor ||
+            horizontalEllipse.OrientationAngle is not double angle)
+        {
+            return;
+        }
+
+        string traceName = $"{trajectoryName ?? "trajectory"} horizontal ellipses";
+        for (int i = 1; i <= TerminalEndCapSliceCount; i++)
+        {
+            double normalizedOffset = (double)i / TerminalEndCapSliceCount;
+            double radiusScale = Math.Sqrt(Math.Max(0.0, 1.0 - normalizedOffset * normalizedOffset));
+            double tangentOffset = tangentSemiAxis * normalizedOffset;
+            bool isTangentPoint = i == TerminalEndCapSliceCount;
+
+            PlotTrace capTrace = BuildHorizontalEllipseTrace(
+                centerNorth + tangentOffset * tangentNorth,
+                centerEast + tangentOffset * tangentEast,
+                centerTvd,
+                semiMajor * radiusScale,
+                semiMinor * radiusScale,
+                angle,
+                traceName,
+                color,
+                false,
+                trajectoryId,
+                isTangentPoint ? 2 : 1,
+                isTangentPoint ? 4.0 : 2.0);
+            traces.Add(capTrace);
+        }
+    }
+
+    private static PlotTrace BuildHorizontalEllipseTrace(
+        double centerNorth,
+        double centerEast,
+        double centerTvd,
+        double semiMajor,
+        double semiMinor,
+        double angle,
+        string name,
+        string color,
+        bool showLegend,
+        Guid trajectoryId,
+        int modeFlag,
+        double? markerSize)
+    {
+        List<object> northValues = [];
+        List<object> eastValues = [];
+        List<object> tvdValues = [];
+        int pointCount = modeFlag == 2 ? 0 : EllipsePointCount;
+        for (int i = 0; i <= pointCount; i++)
+        {
+            double phi = pointCount == 0 ? 0.0 : 2.0 * Math.PI * i / pointCount;
+            double major = semiMajor * Math.Cos(phi);
+            double minor = semiMinor * Math.Sin(phi);
+            double northOffset = major * Math.Cos(angle) - minor * Math.Sin(angle);
+            double eastOffset = major * Math.Sin(angle) + minor * Math.Cos(angle);
+            northValues.Add(centerNorth + northOffset);
+            eastValues.Add(centerEast + eastOffset);
+            tvdValues.Add(centerTvd);
+        }
+
+        return new PlotTrace(name, modeFlag, color, showLegend, markerSize, trajectoryId, false, northValues, eastValues, tvdValues, false, true, PlotTraceKindHorizontalEllipse);
+    }
+
+    private static PlotTrace BuildPerpendicularEllipseTrace(
+        double centerNorth,
+        double centerEast,
+        double centerTvd,
+        double inclination,
+        double azimuth,
+        double semiMajor,
+        double semiMinor,
+        double angle,
+        string name,
+        string color,
+        bool showLegend,
+        Guid trajectoryId,
+        string legendTraceKind,
+        int modeFlag,
+        double? markerSize,
+        bool showInHorizontal)
+    {
         double cosA = Math.Cos(azimuth);
         double sinA = Math.Sin(azimuth);
         double cosI = Math.Cos(inclination);
@@ -971,9 +1165,10 @@
         List<object> northValues = [];
         List<object> eastValues = [];
         List<object> tvdValues = [];
-        for (int i = 0; i <= EllipsePointCount; i++)
+        int pointCount = modeFlag == 2 ? 0 : EllipsePointCount;
+        for (int i = 0; i <= pointCount; i++)
         {
-            double phi = 2.0 * Math.PI * i / EllipsePointCount;
+            double phi = pointCount == 0 ? 0.0 : 2.0 * Math.PI * i / pointCount;
             double localX0 = semiMajor * Math.Cos(phi);
             double localY0 = semiMinor * Math.Sin(phi);
             double localX = localX0 * cosO - localY0 * sinO;
@@ -983,7 +1178,7 @@
             tvdValues.Add(centerTvd - sinI * localX);
         }
 
-        return new PlotTrace($"{trajectoryName ?? "trajectory"} perpendicular ellipses", 1, color, showLegend, 2.0, trajectoryId, false, northValues, eastValues, tvdValues, true, false, PlotTraceKindPerpendicularEllipse);
+        return new PlotTrace(name, modeFlag, color, showLegend, markerSize, trajectoryId, false, northValues, eastValues, tvdValues, true, showInHorizontal, legendTraceKind);
     }
 
 
@@ -1050,6 +1245,7 @@
 
     private const int MaxDisplayedUncertaintyEllipses = 200;
     private const int EllipsePointCount = 72;
+    private const int TerminalEndCapSliceCount = 3;
 
     private FieldModelShared.Trajectory? FindTrajectory(Guid trajectoryId) =>
         trajectoryList.FirstOrDefault(trajectory => trajectory?.MetaInfo?.ID == trajectoryId);
