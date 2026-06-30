@@ -40,6 +40,7 @@
     [Parameter] public PositionDirectionType YAxisPositionDirection { get; set; } = PositionDirectionType.Independent;
     [Parameter] public EventCallback<int> TraceClicked { get; set; }
     [Parameter] public EventCallback<string> TraceIdClicked { get; set; }
+    [Parameter] public EventCallback<bool> CameraIsAboveSceneChanged { get; set; }
 
     private PlotlyChart? chart;
     private bool _plotlyReady;
@@ -153,7 +154,7 @@
         {
             _cameraPersistenceModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>(
                 "import",
-                "./_content/NORCE.Drilling.Field.WebPages/scatter3dCameraPersistence.js?v=20260624-deduplicated-trace-click");
+                "./_content/NORCE.Drilling.Field.WebPages/scatter3dCameraPersistence.js?v=20260630-delineation-plane");
 
             if (_cameraPersistenceChartId != chart.Id)
             {
@@ -225,6 +226,17 @@
         }
 
         await TraceIdClicked.InvokeAsync(traceId);
+    }
+
+    [JSInvokable]
+    public async Task OnPlotlyCameraPlaneChanged(bool cameraIsAboveScene)
+    {
+        if (_disposed || !CameraIsAboveSceneChanged.HasDelegate)
+        {
+            return;
+        }
+
+        await CameraIsAboveSceneChanged.InvokeAsync(cameraIsAboveScene);
     }
 
     private void ManageTraces()

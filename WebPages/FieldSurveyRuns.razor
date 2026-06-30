@@ -130,6 +130,7 @@
                                            ZAxisUsesDepthReference="true"
                                            XAxisPositionDirection="@PositionDirectionType.East"
                                            YAxisPositionDirection="@PositionDirectionType.North"
+                                           CameraIsAboveSceneChanged="OnCameraIsAboveSceneChanged"
                                            ShowLegends="@Plot3DShowLegends" />
                         </MudPaper>
                     </MudItem>
@@ -143,6 +144,7 @@
                                          ColorList="@PlotHorizontalColors"
                                          XValuesList="@PlotHorizontalEastValuesList"
                                          YValuesList="@PlotHorizontalNorthValuesList"
+                                         LineDashList="@PlotHorizontalLineDashes"
                                          XAxisTitle="Easting"
                                          YAxisTitle="Northing"
                                          PlotTitle="Horizontal projection"
@@ -181,6 +183,7 @@
     private List<FieldModelShared.Cluster>? clusterList;
     private List<FieldModelShared.SurveyRunLight> surveyRunLightList = [];
     private List<FieldModelShared.SurveyRun> surveyRunList = [];
+    private List<FieldModelShared.FieldDelineationLine> selectedFieldDelineationLines = [];
     private Guid? selectedFieldId;
     private string? errorMessage;
     private bool isLoadingSurveyRuns;
@@ -190,6 +193,7 @@
     private string selectedSurveyRunTypeFilter = SurveyRunTypeFilterAll;
     private bool isCalculatingEllipses;
     private double ellipseConfidenceFactor = 0.95;
+    private bool cameraIsAboveScene = true;
 
     private List<PlotTrace> plotTraces = [];
     private Dictionary<Guid, List<FieldModelShared.SurveyStationEllipseResult>> ellipseResultsBySurveyRun = [];
@@ -212,6 +216,7 @@
     private List<int> PlotHorizontalModeFlags => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.ModeFlag).ToList();
     private List<string> PlotHorizontalColors => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.Color).ToList();
     private List<bool> PlotHorizontalShowLegends => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.ShowLegend).ToList();
+    private List<string> PlotHorizontalLineDashes => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.LineDash).ToList();
     private List<List<object>> PlotHorizontalNorthValuesList => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.NorthValues).ToList();
     private List<List<object>> PlotHorizontalEastValuesList => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.EastValues).ToList();
 
@@ -261,6 +266,7 @@
         {
             surveyRunLightList.Clear();
             surveyRunList.Clear();
+            selectedFieldDelineationLines.Clear();
             ClearPlots();
             FieldReferenceDatumUtils.Clear();
             errorMessage = null;
@@ -315,8 +321,10 @@
             ellipseResultsBySurveyRun.Clear();
             surveyRunLightList.Clear();
             surveyRunList.Clear();
+            selectedFieldDelineationLines.Clear();
             ClearPlots();
             await InvokeAsync(StateHasChanged);
+            selectedFieldDelineationLines = await LoadSelectedFieldDelineationLinesAsync(fieldId);
             logger.LogInformation("Loading survey run light data for field {FieldId}", fieldId);
             surveyRunLightList = (await Api.ClientTrajectory.GetAllSurveyRunLightAsync(fieldId: fieldId)).Where(MatchesSurveyRunFilters).OrderBy(surveyRun => surveyRun.Name).ToList();
 
@@ -339,6 +347,7 @@
             Snackbar.Add(errorMessage, Severity.Error);
             surveyRunLightList.Clear();
             surveyRunList.Clear();
+            selectedFieldDelineationLines.Clear();
             ClearPlots();
         }
         catch (Exception ex)
@@ -348,6 +357,7 @@
             Snackbar.Add(errorMessage, Severity.Error);
             surveyRunLightList.Clear();
             surveyRunList.Clear();
+            selectedFieldDelineationLines.Clear();
             ClearPlots();
         }
         finally
@@ -380,6 +390,22 @@
 
         surveyRun.SurveyStationList = stations;
         return surveyRun;
+    }
+
+    private async Task<List<FieldModelShared.FieldDelineationLine>> LoadSelectedFieldDelineationLinesAsync(Guid fieldId)
+    {
+        try
+        {
+            FieldModelShared.Field field = await Api.ClientField.GetFieldByIdAsync(fieldId);
+            return field.DelineationLines?
+                .Where(line => line?.Points?.Count >= 2)
+                .ToList() ?? [];
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Unable to load delineation lines for field {FieldId}", fieldId);
+            return [];
+        }
     }
 
     private void UpdatePlots()
@@ -430,7 +456,104 @@
             colorIndex++;
         }
 
+        AppendDelineationTraces(nextPlotTraces);
         plotTraces = nextPlotTraces;
+    }
+
+    private async Task OnCameraIsAboveSceneChanged(bool value)
+    {
+        if (cameraIsAboveScene == value)
+        {
+            return;
+        }
+
+        cameraIsAboveScene = value;
+        UpdatePlots();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void AppendDelineationTraces(List<PlotTrace> traces)
+    {
+        if (selectedFieldDelineationLines.Count == 0)
+        {
+            return;
+        }
+
+        double planeTvd = GetDelineationPlaneTvd(traces);
+        int index = 0;
+        foreach (FieldModelShared.FieldDelineationLine line in selectedFieldDelineationLines)
+        {
+            string color = Colors[(index + 4) % Colors.Length];
+            string name = string.IsNullOrWhiteSpace(line.Name) ? $"delineation {index + 1}" : line.Name;
+            if (BuildDelineationTrace(name, line.Points, color, "solid", true, planeTvd) is { } trace)
+            {
+                traces.Add(trace);
+            }
+
+            int boundaryIndex = 1;
+            foreach (FieldModelShared.FieldDelineationBoundaryLine boundary in line.CalculatedBoundaryLines ?? [])
+            {
+                if (BuildDelineationTrace($"{name} boundary {boundaryIndex}", boundary.Points, color, "dash", false, planeTvd) is { } boundaryTrace)
+                {
+                    traces.Add(boundaryTrace);
+                }
+                boundaryIndex++;
+            }
+            index++;
+        }
+    }
+
+    private double GetDelineationPlaneTvd(IEnumerable<PlotTrace> traces)
+    {
+        List<double> tvdValues = traces
+            .SelectMany(trace => trace.TvdValues)
+            .SelectMany(ToDoubleValue)
+            .ToList();
+        if (tvdValues.Count == 0)
+        {
+            return 0.0;
+        }
+
+        return cameraIsAboveScene ? tvdValues.Min() : tvdValues.Max();
+    }
+
+    private static PlotTrace? BuildDelineationTrace(
+        string name,
+        ICollection<FieldModelShared.Point3DGlobalCoordinates>? points,
+        string color,
+        string lineDash,
+        bool showLegend,
+        double planeTvd)
+    {
+        if (points == null || points.Count < 2)
+        {
+            return null;
+        }
+
+        List<object> northValues = [];
+        List<object> eastValues = [];
+        List<object> tvdValues = [];
+        foreach (FieldModelShared.Point3DGlobalCoordinates point in points)
+        {
+            if (point.RiemannianNorth is not { } north || point.RiemannianEast is not { } east)
+            {
+                continue;
+            }
+
+            AppendPointValues(north, east, planeTvd, northValues, eastValues, tvdValues);
+        }
+
+        return northValues.Count >= 2 && northValues.Count == eastValues.Count
+            ? new PlotTrace(name, 1, color, showLegend, northValues, eastValues, tvdValues, true, true, lineDash)
+            : null;
+    }
+
+    private static IEnumerable<double> ToDoubleValue(object value)
+    {
+        if (TryGetDouble(value, out double converted))
+        {
+            yield return converted;
+        }
     }
 
     private async Task CalculateUncertaintyEllipsesAsync()
@@ -690,6 +813,20 @@
         };
     }
 
+    private static bool TryGetDouble(object value, out double converted)
+    {
+        converted = default;
+        return value switch
+        {
+            double d => (converted = d) == d,
+            float f => (converted = f) == f,
+            decimal m => (converted = (double)m) == (double)m,
+            int i => (converted = i) == i,
+            long l => (converted = l) == l,
+            _ => false
+        };
+    }
+
     private static bool AreClose(double left, double right)
     {
         return Math.Abs(left - right) <= 1e-6;
@@ -726,7 +863,8 @@
         List<object> EastValues,
         List<object> TvdValues,
         bool ShowIn3D = true,
-        bool ShowInHorizontal = true);
+        bool ShowInHorizontal = true,
+        string LineDash = "solid");
 
 }
 

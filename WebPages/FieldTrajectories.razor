@@ -142,6 +142,7 @@
                                            LegendTraceKinds="@Plot3DLegendTraceKinds"
                                            SelectableTraceIds="@Plot3DSelectableTraceIds"
                                            SelectedTraceIds="@Plot3DSelectedTraceIds"
+                                           CameraIsAboveSceneChanged="OnCameraIsAboveSceneChanged"
                                            TraceIdClicked="OnTrajectoryTraceClicked" />
                         </MudPaper>
                     </MudItem>
@@ -155,6 +156,7 @@
                                          ColorList="@PlotHorizontalColors"
                                          XValuesList="@PlotHorizontalEastValuesList"
                                          YValuesList="@PlotHorizontalNorthValuesList"
+                                         LineDashList="@PlotHorizontalLineDashes"
                                          XAxisTitle="Easting"
                                          YAxisTitle="Northing"
                                          PlotTitle="Horizontal projection"
@@ -250,6 +252,7 @@
     private List<FieldModelShared.Cluster>? clusterList;
     private List<FieldModelShared.TrajectoryLight> trajectoryLightList = [];
     private List<FieldModelShared.Trajectory> trajectoryList = [];
+    private List<FieldModelShared.FieldDelineationLine> selectedFieldDelineationLines = [];
     private Guid? selectedFieldId;
     private string? errorMessage;
     private bool isLoadingTrajectories;
@@ -272,6 +275,7 @@
     private string closestApproachDepthUnitLabel = string.Empty;
     private Guid? lastTrajectoryClickId;
     private long lastTrajectoryClickTimestamp;
+    private bool cameraIsAboveScene = true;
     private const long DuplicateTrajectoryClickWindowMilliseconds = 1000;
 
     private List<string> PlotNames => plotTraces.Select(trace => trace.Name).ToList();
@@ -298,6 +302,7 @@
     private List<int> PlotHorizontalModeFlags => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.ModeFlag).ToList();
     private List<string> PlotHorizontalColors => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.Color).ToList();
     private List<bool> PlotHorizontalShowLegends => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.ShowLegend).ToList();
+    private List<string> PlotHorizontalLineDashes => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.LineDash).ToList();
     private List<List<object>> PlotHorizontalNorthValuesList => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.NorthValues).ToList();
     private List<List<object>> PlotHorizontalEastValuesList => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.EastValues).ToList();
     private string SelectedTrajectoryText => string.Join(" -> ", selectedTrajectoryIds.Select(id => FindTrajectoryName(id)));
@@ -371,6 +376,7 @@
         {
             trajectoryLightList.Clear();
             trajectoryList.Clear();
+            selectedFieldDelineationLines.Clear();
             ClearClosestApproachSelection();
             ClearPlots();
             FieldReferenceDatumUtils.Clear();
@@ -435,9 +441,11 @@
             ellipseResultsByTrajectory.Clear();
             trajectoryLightList.Clear();
             trajectoryList.Clear();
+            selectedFieldDelineationLines.Clear();
             ClearClosestApproachSelection();
             ClearPlots();
             await InvokeAsync(StateHasChanged);
+            selectedFieldDelineationLines = await LoadSelectedFieldDelineationLinesAsync(fieldId);
             logger.LogInformation("Loading trajectory light data for field {FieldId}", fieldId);
             trajectoryLightList = (await Api.ClientTrajectory.GetAllTrajectoryLightAsync(fieldId: fieldId)).Where(MatchesTrajectoryFilters).OrderBy(trajectory => trajectory.Name).ToList();
 
@@ -460,6 +468,7 @@
             Snackbar.Add(errorMessage, Severity.Error);
             trajectoryLightList.Clear();
             trajectoryList.Clear();
+            selectedFieldDelineationLines.Clear();
             ClearClosestApproachSelection();
             ClearPlots();
         }
@@ -470,6 +479,7 @@
             Snackbar.Add(errorMessage, Severity.Error);
             trajectoryLightList.Clear();
             trajectoryList.Clear();
+            selectedFieldDelineationLines.Clear();
             ClearClosestApproachSelection();
             ClearPlots();
         }
@@ -503,6 +513,22 @@
 
         trajectory.SurveyStationList = stations;
         return trajectory;
+    }
+
+    private async Task<List<FieldModelShared.FieldDelineationLine>> LoadSelectedFieldDelineationLinesAsync(Guid fieldId)
+    {
+        try
+        {
+            FieldModelShared.Field field = await Api.ClientField.GetFieldByIdAsync(fieldId);
+            return field.DelineationLines?
+                .Where(line => line?.Points?.Count >= 2)
+                .ToList() ?? [];
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Unable to load delineation lines for field {FieldId}", fieldId);
+            return [];
+        }
     }
 
     private void UpdatePlots()
@@ -559,7 +585,105 @@
         }
 
         AppendClosestApproachOverlay(nextPlotTraces);
+        AppendDelineationTraces(nextPlotTraces);
         plotTraces = nextPlotTraces;
+    }
+
+    private async Task OnCameraIsAboveSceneChanged(bool value)
+    {
+        if (cameraIsAboveScene == value)
+        {
+            return;
+        }
+
+        cameraIsAboveScene = value;
+        UpdatePlots();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void AppendDelineationTraces(List<PlotTrace> traces)
+    {
+        if (selectedFieldDelineationLines.Count == 0)
+        {
+            return;
+        }
+
+        double planeTvd = GetDelineationPlaneTvd(traces);
+        int index = 0;
+        foreach (FieldModelShared.FieldDelineationLine line in selectedFieldDelineationLines)
+        {
+            string color = GetDefaultTrajectoryColor(index + 10);
+            string name = string.IsNullOrWhiteSpace(line.Name) ? $"delineation {index + 1}" : line.Name;
+            if (BuildDelineationTrace(name, line.Points, color, "solid", true, planeTvd) is { } trace)
+            {
+                traces.Add(trace);
+            }
+
+            int boundaryIndex = 1;
+            foreach (FieldModelShared.FieldDelineationBoundaryLine boundary in line.CalculatedBoundaryLines ?? [])
+            {
+                if (BuildDelineationTrace($"{name} boundary {boundaryIndex}", boundary.Points, color, "dash", false, planeTvd) is { } boundaryTrace)
+                {
+                    traces.Add(boundaryTrace);
+                }
+                boundaryIndex++;
+            }
+            index++;
+        }
+    }
+
+    private double GetDelineationPlaneTvd(IEnumerable<PlotTrace> traces)
+    {
+        List<double> tvdValues = traces
+            .Where(trace => trace.LegendTraceKind != PlotTraceKindDelineation)
+            .SelectMany(trace => trace.TvdValues)
+            .SelectMany(ToDoubleValue)
+            .ToList();
+        if (tvdValues.Count == 0)
+        {
+            return 0.0;
+        }
+
+        return cameraIsAboveScene ? tvdValues.Min() : tvdValues.Max();
+    }
+
+    private static PlotTrace? BuildDelineationTrace(
+        string name,
+        ICollection<FieldModelShared.Point3DGlobalCoordinates>? points,
+        string color,
+        string lineDash,
+        bool showLegend,
+        double planeTvd)
+    {
+        if (points == null || points.Count < 2)
+        {
+            return null;
+        }
+
+        List<object> northValues = [];
+        List<object> eastValues = [];
+        List<object> tvdValues = [];
+        foreach (FieldModelShared.Point3DGlobalCoordinates point in points)
+        {
+            if (point.RiemannianNorth is not { } north || point.RiemannianEast is not { } east)
+            {
+                continue;
+            }
+
+            AppendPointValues(north, east, planeTvd, northValues, eastValues, tvdValues);
+        }
+
+        return northValues.Count >= 2 && northValues.Count == eastValues.Count
+            ? new PlotTrace(name, 1, color, showLegend, null, null, false, northValues, eastValues, tvdValues, true, true, PlotTraceKindDelineation, lineDash)
+            : null;
+    }
+
+    private static IEnumerable<double> ToDoubleValue(object value)
+    {
+        if (TryGetDouble(value, out double converted))
+        {
+            yield return converted;
+        }
     }
 
     private async Task OnTrajectoryTraceClicked(string trajectoryIdValue)
@@ -1234,6 +1358,20 @@
         };
     }
 
+    private static bool TryGetDouble(object value, out double converted)
+    {
+        converted = default;
+        return value switch
+        {
+            double d => (converted = d) == d,
+            float f => (converted = f) == f,
+            decimal m => (converted = (double)m) == (double)m,
+            int i => (converted = i) == i,
+            long l => (converted = l) == l,
+            _ => false
+        };
+    }
+
     private static bool AreClose(double left, double right)
     {
         return Math.Abs(left - right) <= 1e-6;
@@ -1631,6 +1769,7 @@
     private const string PlotTraceKindTrajectory = "trajectory";
     private const string PlotTraceKindHorizontalEllipse = "horizontal-ellipse";
     private const string PlotTraceKindPerpendicularEllipse = "perpendicular-ellipse";
+    private const string PlotTraceKindDelineation = "delineation";
     private const string PlotTraceKindOther = "other";
 
     private sealed record PlotTrace(
@@ -1646,7 +1785,8 @@
         List<object> TvdValues,
         bool ShowIn3D = true,
         bool ShowInHorizontal = true,
-        string LegendTraceKind = PlotTraceKindTrajectory);
+        string LegendTraceKind = PlotTraceKindTrajectory,
+        string LineDash = "solid");
 
 
     private readonly record struct Vector3(double North, double East, double Tvd)

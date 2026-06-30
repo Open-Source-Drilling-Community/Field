@@ -150,6 +150,8 @@ else
                 Description = DataUtils.DEFAULT_DESCR_Field,
                 CreationDate = creationDate,
                 LastModificationDate = creationDate,
+                FieldFeatureAssignments = new List<FieldFeatureAssignment>(),
+                DelineationLines = new List<FieldDelineationLine>()
 
             };
             await Api.ClientField.PostFieldAsync(currentField);

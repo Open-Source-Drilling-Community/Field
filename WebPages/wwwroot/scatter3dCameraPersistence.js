@@ -19,8 +19,10 @@ export function install(chartId, dotNetReference, legendLinkedTraceIds = [], leg
         legendTraceKinds: normalizeLegendTraceKinds(legendTraceKinds),
         selectableTraceIds: normalizeLegendTraceIds(selectableTraceIds),
         selectedTraceIds: new Set(normalizeLegendTraceIds(selectedTraceIds).filter(Boolean)),
+        dotNetReference,
         lastNotifiedTraceId: null,
         lastNotifiedAt: 0,
+        lastCameraIsAboveScene: null,
         legendVisibilityByKey: new Map()
     };
 
@@ -74,6 +76,7 @@ export function install(chartId, dotNetReference, legendLinkedTraceIds = [], leg
     document.addEventListener("click", modebarHandler, true);
 
     installations.set(chartId, { plot, state, relayoutHandler, captureHandler, clickHandler, legendClickHandler, modebarHandler });
+    notifyCameraPlane(state.camera, state);
 }
 
 export function setLegendLinks(chartId, legendLinkedTraceIds = [], legendControlsLinkedTraces = [], legendTraceKinds = [], selectableTraceIds = [], selectedTraceIds = []) {
@@ -139,6 +142,7 @@ function captureCamera(plot, state, force = false) {
     const camera = cloneCamera(getCamera(plot));
     if (camera) {
         state.camera = camera;
+        notifyCameraPlane(camera, state);
     }
 }
 
@@ -146,7 +150,23 @@ function captureCameraFromEvent(eventData, state) {
     const camera = getCameraFromEvent(eventData, state.camera);
     if (camera) {
         state.camera = camera;
+        notifyCameraPlane(camera, state);
     }
+}
+
+function notifyCameraPlane(camera, state) {
+    const eyeZ = Number(camera?.eye?.z);
+    if (!Number.isFinite(eyeZ)) {
+        return;
+    }
+
+    const cameraIsAboveScene = eyeZ >= 0;
+    if (state.lastCameraIsAboveScene === cameraIsAboveScene) {
+        return;
+    }
+
+    state.lastCameraIsAboveScene = cameraIsAboveScene;
+    state.dotNetReference?.invokeMethodAsync("OnPlotlyCameraPlaneChanged", cameraIsAboveScene);
 }
 
 function getCameraFromEvent(eventData, currentCamera) {

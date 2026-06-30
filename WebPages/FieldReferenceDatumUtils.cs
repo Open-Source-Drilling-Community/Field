@@ -38,16 +38,16 @@ public static class FieldReferenceDatumUtils
     {
         DataUtils.SeaWaterLevelDepthReferenceSource.SeaWaterLevelDepthReference = values.SeaWaterLevelDepthReference;
         DataUtils.MeanSeaLevelDepthReferenceSource.MeanSeaLevelDepthReference = values.MeanSeaLevelDepthReference;
-        DataUtils.CartographicGridPositionReferenceSource.CartographicGridNorthPositionReference = 0;
-        DataUtils.CartographicGridPositionReferenceSource.CartographicGridEastPositionReference = 0;
     }
 
     public static void Clear()
     {
         DataUtils.SeaWaterLevelDepthReferenceSource.SeaWaterLevelDepthReference = null;
         DataUtils.MeanSeaLevelDepthReferenceSource.MeanSeaLevelDepthReference = null;
-        DataUtils.CartographicGridPositionReferenceSource.CartographicGridNorthPositionReference = 0;
-        DataUtils.CartographicGridPositionReferenceSource.CartographicGridEastPositionReference = 0;
+        DataUtils.CartographicGridPositionReferenceSource.CartographicGridNorthPositionReference = null;
+        DataUtils.CartographicGridPositionReferenceSource.CartographicGridEastPositionReference = null;
+        DataUtils.CartographicProjectionDatumGeodeticReferenceSource.CartographicProjectionDatumLatitudeReference = null;
+        DataUtils.CartographicProjectionDatumGeodeticReferenceSource.CartographicProjectionDatumLongitudeReference = null;
     }
 
     public static async Task<double?> CalculateMeanSeaLevelDepthReferenceAsync(IFieldAPIUtils api, double? latitude, double? longitude)
@@ -92,7 +92,7 @@ public static class FieldReferenceDatumUtils
             await api.ClientVerticalDatum.PostVerticalDatumOrderAsync(order);
             FieldModelShared.VerticalDatumOrder completed = await api.ClientVerticalDatum.GetVerticalDatumOrderByIdAsync(orderId);
             double? verticalDatumWgs64 = completed.VerticalDatum?.DatumSet?.FirstOrDefault()?.VerticalDatumWGS64;
-            return verticalDatumWgs64 is null ? null : -verticalDatumWgs64;
+            return verticalDatumWgs64;
         }
         finally
         {

@@ -53,6 +53,43 @@ namespace NORCE.Drilling.Field.Service.Managers
                     "FieldName text",
                     "FieldDescription text",
                     "FieldCartographicConversionSet text" }
+                },
+                { "FieldDelineationLineTypeTable", new string[] {
+                    "ID text primary key",
+                    "MetaInfo text",
+                    "Name text",
+                    "CreationDate text",
+                    "LastModificationDate text",
+                    "FieldDelineationLineType text" }
+                },
+                { "FieldFeatureCategoryTable", new string[] {
+                    "ID text primary key",
+                    "MetaInfo text",
+                    "Name text",
+                    "Description text",
+                    "IsExclusive integer",
+                    "HasValidityPeriod integer",
+                    "CreationDate text",
+                    "LastModificationDate text",
+                    "FieldFeatureCategory text" }
+                },
+                { "FieldIdentityTable", new string[] {
+                    "ID text primary key",
+                    "MetaInfo text",
+                    "Name text",
+                    "CreationDate text",
+                    "LastModificationDate text",
+                    "FieldIdentity text" }
+                },
+                { "FieldMembershipCategoryTable", new string[] {
+                    "ID text primary key",
+                    "MetaInfo text",
+                    "Name text",
+                    "IsExclusive integer",
+                    "HasValidityPeriod integer",
+                    "CreationDate text",
+                    "LastModificationDate text",
+                    "FieldMembershipCategory text" }
                 }
             };
 

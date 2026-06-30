@@ -1184,6 +1184,220 @@
         }
       }
     },
+    "/Cluster": {
+      "get": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "GetAllClusterId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "PostCluster",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Cluster"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Cluster"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Cluster"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Cluster/MetaInfo": {
+      "get": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "GetAllClusterMetaInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MetaInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Cluster/{id}": {
+      "get": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "GetClusterById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cluster"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "PutClusterById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Cluster"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Cluster"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Cluster"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "DeleteClusterById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Cluster/HeavyData": {
+      "get": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "GetAllCluster",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Cluster"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ClusterUsageStatistics": {
+      "get": {
+        "tags": [
+          "ClusterUsageStatistics"
+        ],
+        "operationId": "GetClusterUsageStatistics",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageStatisticsCluster"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/Field": {
       "get": {
         "tags": [
@@ -1549,36 +1763,6 @@
         }
       }
     },
-    "/FieldCartographicConversionSet/FieldID": {
-      "get": {
-        "tags": [
-          "FieldCartographicConversionSet"
-        ],
-        "operationId": "GetAllFieldCartographicConversionSetByFieldId",
-        "parameters": [
-          {
-            "name": "fieldId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FieldCartographicConversionSet"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/FieldCartographicConversionSet/LightData": {
       "get": {
         "tags": [
@@ -1638,220 +1822,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UsageStatisticsField"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Cluster": {
-      "get": {
-        "tags": [
-          "Cluster"
-        ],
-        "operationId": "GetAllClusterId",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Cluster"
-        ],
-        "operationId": "PostCluster",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Cluster"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Cluster"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Cluster"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/Cluster/MetaInfo": {
-      "get": {
-        "tags": [
-          "Cluster"
-        ],
-        "operationId": "GetAllClusterMetaInfo",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MetaInfo"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Cluster/{id}": {
-      "get": {
-        "tags": [
-          "Cluster"
-        ],
-        "operationId": "GetClusterById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Cluster"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Cluster"
-        ],
-        "operationId": "PutClusterById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Cluster"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Cluster"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Cluster"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Cluster"
-        ],
-        "operationId": "DeleteClusterById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/Cluster/HeavyData": {
-      "get": {
-        "tags": [
-          "Cluster"
-        ],
-        "operationId": "GetAllCluster",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Cluster"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/ClusterUsageStatistics": {
-      "get": {
-        "tags": [
-          "ClusterUsageStatistics"
-        ],
-        "operationId": "GetClusterUsageStatistics",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UsageStatisticsCluster"
                 }
               }
             }
@@ -7896,6 +7866,812 @@
           }
         }
       }
+    },
+    "/FieldCartographicConversionSet/FieldID": {
+      "get": {
+        "tags": [
+          "FieldCartographicConversionSet"
+        ],
+        "operationId": "GetAllFieldCartographicConversionSetByFieldId",
+        "parameters": [
+          {
+            "name": "fieldId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldCartographicConversionSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/FieldDelineationLineType": {
+      "get": {
+        "tags": [
+          "FieldDelineationLineType"
+        ],
+        "operationId": "GetAllFieldDelineationLineTypeId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FieldDelineationLineType"
+        ],
+        "operationId": "PostFieldDelineationLineType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldDelineationLineType"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldDelineationLineType"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldDelineationLineType"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/FieldDelineationLineType/MetaInfo": {
+      "get": {
+        "tags": [
+          "FieldDelineationLineType"
+        ],
+        "operationId": "GetAllFieldDelineationLineTypeMetaInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MetaInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/FieldDelineationLineType/{id}": {
+      "get": {
+        "tags": [
+          "FieldDelineationLineType"
+        ],
+        "operationId": "GetFieldDelineationLineTypeById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldDelineationLineType"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "FieldDelineationLineType"
+        ],
+        "operationId": "PutFieldDelineationLineTypeById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldDelineationLineType"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldDelineationLineType"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldDelineationLineType"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FieldDelineationLineType"
+        ],
+        "operationId": "DeleteFieldDelineationLineTypeById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/FieldDelineationLineType/HeavyData": {
+      "get": {
+        "tags": [
+          "FieldDelineationLineType"
+        ],
+        "operationId": "GetAllFieldDelineationLineType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FieldDelineationLineType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/FieldFeatureCategory": {
+      "get": {
+        "tags": [
+          "FieldFeatureCategory"
+        ],
+        "operationId": "GetAllFieldFeatureCategoryId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FieldFeatureCategory"
+        ],
+        "operationId": "PostFieldFeatureCategory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldFeatureCategory"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldFeatureCategory"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldFeatureCategory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/FieldFeatureCategory/MetaInfo": {
+      "get": {
+        "tags": [
+          "FieldFeatureCategory"
+        ],
+        "operationId": "GetAllFieldFeatureCategoryMetaInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MetaInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/FieldFeatureCategory/{id}": {
+      "get": {
+        "tags": [
+          "FieldFeatureCategory"
+        ],
+        "operationId": "GetFieldFeatureCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldFeatureCategory"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "FieldFeatureCategory"
+        ],
+        "operationId": "PutFieldFeatureCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldFeatureCategory"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldFeatureCategory"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldFeatureCategory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FieldFeatureCategory"
+        ],
+        "operationId": "DeleteFieldFeatureCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/FieldFeatureCategory/HeavyData": {
+      "get": {
+        "tags": [
+          "FieldFeatureCategory"
+        ],
+        "operationId": "GetAllFieldFeatureCategory",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FieldFeatureCategory"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/FieldIdentity": {
+      "get": {
+        "tags": [
+          "FieldIdentity"
+        ],
+        "operationId": "GetAllFieldIdentityId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FieldIdentity"
+        ],
+        "operationId": "PostFieldIdentity",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldIdentity"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldIdentity"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldIdentity"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/FieldIdentity/MetaInfo": {
+      "get": {
+        "tags": [
+          "FieldIdentity"
+        ],
+        "operationId": "GetAllFieldIdentityMetaInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MetaInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/FieldIdentity/{id}": {
+      "get": {
+        "tags": [
+          "FieldIdentity"
+        ],
+        "operationId": "GetFieldIdentityById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldIdentity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "FieldIdentity"
+        ],
+        "operationId": "PutFieldIdentityById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldIdentity"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldIdentity"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldIdentity"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FieldIdentity"
+        ],
+        "operationId": "DeleteFieldIdentityById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/FieldIdentity/HeavyData": {
+      "get": {
+        "tags": [
+          "FieldIdentity"
+        ],
+        "operationId": "GetAllFieldIdentity",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FieldIdentity"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/FieldMembershipCategory": {
+      "get": {
+        "tags": [
+          "FieldMembershipCategory"
+        ],
+        "operationId": "GetAllFieldMembershipCategoryId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FieldMembershipCategory"
+        ],
+        "operationId": "PostFieldMembershipCategory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldMembershipCategory"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldMembershipCategory"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldMembershipCategory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/FieldMembershipCategory/MetaInfo": {
+      "get": {
+        "tags": [
+          "FieldMembershipCategory"
+        ],
+        "operationId": "GetAllFieldMembershipCategoryMetaInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MetaInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/FieldMembershipCategory/{id}": {
+      "get": {
+        "tags": [
+          "FieldMembershipCategory"
+        ],
+        "operationId": "GetFieldMembershipCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldMembershipCategory"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "FieldMembershipCategory"
+        ],
+        "operationId": "PutFieldMembershipCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldMembershipCategory"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldMembershipCategory"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldMembershipCategory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FieldMembershipCategory"
+        ],
+        "operationId": "DeleteFieldMembershipCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/FieldMembershipCategory/HeavyData": {
+      "get": {
+        "tags": [
+          "FieldMembershipCategory"
+        ],
+        "operationId": "GetAllFieldMembershipCategory",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FieldMembershipCategory"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -9001,170 +9777,6 @@
           }
         }
       },
-      "Field": {
-        "type": "object",
-        "properties": {
-          "MetaInfo": {
-            "$ref": "#/components/schemas/MetaInfo"
-          },
-          "Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "Description": {
-            "type": "string",
-            "nullable": true
-          },
-          "CreationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "LastModificationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "CartographicProjectionID": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          }
-        }
-      },
-      "FieldCartographicConversionSet": {
-        "type": "object",
-        "properties": {
-          "MetaInfo": {
-            "$ref": "#/components/schemas/MetaInfo"
-          },
-          "Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "Description": {
-            "type": "string",
-            "nullable": true
-          },
-          "CreationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "LastModificationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "FieldID": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "CartographicCoordinateList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CartographicCoordinate"
-            },
-            "nullable": true
-          }
-        }
-      },
-      "FieldCartographicConversionSetLight": {
-        "type": "object",
-        "properties": {
-          "MetaInfo": {
-            "$ref": "#/components/schemas/MetaInfo"
-          },
-          "Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "Description": {
-            "type": "string",
-            "nullable": true
-          },
-          "CreationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "LastModificationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "FieldName": {
-            "type": "string",
-            "nullable": true
-          },
-          "FieldDescription": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "UsageStatisticsField": {
-        "type": "object",
-        "properties": {
-          "LastSaved": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "BackUpInterval": {
-            "type": "string",
-            "format": "date-span"
-          },
-          "GetAllFieldIdPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "GetAllFieldMetaInfoPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "GetFieldByIdPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "GetAllFieldLightPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "GetAllFieldPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "PostFieldPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "PutFieldByIdPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "DeleteFieldByIdPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "GetAllFieldCartographicConversionSetIdPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "GetAllFieldCartographicConversionSetMetaInfoPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "GetFieldCartographicConversionSetByIdPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "GetAllFieldCartographicConversionSetLightPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "GetAllFieldCartographicConversionSetPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "PostFieldCartographicConversionSetPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "PutFieldCartographicConversionSetByIdPerDay": {
-            "$ref": "#/components/schemas/History"
-          },
-          "DeleteFieldCartographicConversionSetByIdPerDay": {
-            "$ref": "#/components/schemas/History"
-          }
-        }
-      },
       "Cluster": {
         "type": "object",
         "properties": {
@@ -9324,6 +9936,217 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          }
+        }
+      },
+      "Field": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CartographicProjectionID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "ReferencePoint": {
+            "$ref": "#/components/schemas/Point3DGlobalCoordinates"
+          },
+          "FieldFeatureAssignments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldFeatureAssignment"
+            },
+            "nullable": true
+          },
+          "FieldIdentityAssignments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldIdentityAssignment"
+            },
+            "nullable": true
+          },
+          "FieldMembershipAssignments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldMembershipAssignment"
+            },
+            "nullable": true
+          },
+          "DelineationLines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldDelineationLine"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "FieldCartographicConversionSet": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "FieldID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "FieldName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FieldDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "CartographicCoordinateList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartographicCoordinate"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "FieldCartographicConversionSetLight": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "FieldID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "FieldName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FieldDescription": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UsageStatisticsField": {
+        "type": "object",
+        "properties": {
+          "LastSaved": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "BackUpInterval": {
+            "type": "string",
+            "format": "date-span"
+          },
+          "GetAllFieldIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldMetaInfoPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetFieldByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldLightPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "PostFieldPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "PutFieldByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "DeleteFieldByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldCartographicConversionSetIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldCartographicConversionSetMetaInfoPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetFieldCartographicConversionSetByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldCartographicConversionSetByFieldIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldCartographicConversionSetLightPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldCartographicConversionSetPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "PostFieldCartographicConversionSetPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "PutFieldCartographicConversionSetByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "DeleteFieldCartographicConversionSetByIdPerDay": {
+            "$ref": "#/components/schemas/History"
           }
         }
       },
@@ -17576,6 +18399,352 @@
           },
           "TubingHangerDepth": {
             "$ref": "#/components/schemas/ScalarDrillingProperty"
+          }
+        }
+      },
+      "FieldDelineationBoundaryLine": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "IsInteriorBoundary": {
+            "type": "boolean"
+          },
+          "IsClosed": {
+            "type": "boolean"
+          },
+          "Points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Point3DGlobalCoordinates"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "FieldDelineationLine": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "DelineationLineTypeID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "LineType": {
+            "type": "string",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "Margin": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TopDepth": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "BottomDepth": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Point3DGlobalCoordinates"
+            },
+            "nullable": true
+          },
+          "CalculatedBoundaryLines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldDelineationBoundaryLine"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "FieldDelineationLineType": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "FieldFeatureAssignment": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "FieldFeatureCategoryID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "FieldFeatureOptionID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "FromDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ToDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "FieldFeatureCategory": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsExclusive": {
+            "type": "boolean"
+          },
+          "HasValidityPeriod": {
+            "type": "boolean"
+          },
+          "Options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldFeatureOption"
+            },
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "FieldFeatureOption": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "FieldIdentity": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "FieldIdentityAssignment": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "FieldIdentityID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "Value": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "FieldMembershipAssignment": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "FieldMembershipCategoryID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "FieldMembershipOptionID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "FromDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ToDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "FieldMembershipCategory": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsExclusive": {
+            "type": "boolean"
+          },
+          "HasValidityPeriod": {
+            "type": "boolean"
+          },
+          "Options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldMembershipOption"
+            },
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "FieldMembershipOption": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Point3DGlobalCoordinates": {
+        "type": "object",
+        "properties": {
+          "X": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Y": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Z": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "RiemannianNorth": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "RiemannianEast": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TVD": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         }
       }

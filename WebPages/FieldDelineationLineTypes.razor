@@ -1,0 +1,247 @@
+@page "/FieldDelineationLineTypes"
+@inject ILogger<FieldDelineationLineTypes> logger
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject IFieldAPIUtils Api
+
+@if (lineTypes == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudText Class="mt-4 mb-4" Typo="Typo.h6">Delineation Line Types</MudText>
+    <MudContainer Class="d-flex flex-row pa-0 mb-3">
+        <MudButton Class="me-1" Variant="Variant.Filled" Color="Color.Success" OnClick="AddLineType">Add</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" Disabled="@(!_selectedLineTypeIds.Any())" OnClick="DeleteSelectedLineTypesAsync">Delete</MudButton>
+    </MudContainer>
+
+    <MudGrid Class="mt-2">
+        <MudItem xs="2" md="1" Class="d-flex align-center">
+            <MudCheckBox T="bool" Value="@AreAllLineTypesSelected()" ValueChanged="@SetAllLineTypesSelected" />
+        </MudItem>
+        <MudItem xs="10" md="10" Class="d-flex align-center">
+            <MudText Typo="Typo.subtitle2">Name</MudText>
+        </MudItem>
+        <MudItem xs="2" md="1" />
+    </MudGrid>
+
+    @foreach (FieldDelineationLineType lineType in lineTypes)
+    {
+        <MudGrid Class="mt-2" @key="lineType.MetaInfo?.ID">
+            <MudItem xs="2" md="1" Class="d-flex align-center">
+                <MudCheckBox T="bool" Value="@IsLineTypeSelected(lineType)" ValueChanged="@((bool selected) => SetLineTypeSelected(lineType, selected))" />
+            </MudItem>
+            <MudItem xs="10" md="10">
+                <MudTextField @bind-Value="lineType.Name" Required="true" />
+            </MudItem>
+            <MudItem xs="2" md="1" Class="d-flex align-center justify-end">
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => DeleteLineTypeAsync(lineType))" />
+            </MudItem>
+        </MudGrid>
+    }
+
+    <MudContainer Class="d-flex flex-row pa-0 mt-4">
+        <MudButton Class="me-1" Variant="Variant.Filled" Color="Color.Success" OnClick="SaveAsync">Save</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LoadDataAsync">Reload</MudButton>
+    </MudContainer>
+}
+
+@code {
+    private List<FieldDelineationLineType>? lineTypes;
+    private readonly HashSet<Guid> _selectedLineTypeIds = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        try
+        {
+            lineTypes = (List<FieldDelineationLineType>)await Api.ClientField.GetAllFieldDelineationLineTypeAsync();
+            lineTypes = lineTypes
+                .Where(lineType => lineType?.MetaInfo?.ID != null)
+                .OrderBy(lineType => lineType.Name, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+            _selectedLineTypeIds.Clear();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Impossible to load delineation line types");
+            Snackbar.Add("Impossible to load delineation line types", Severity.Error);
+            lineTypes = [];
+        }
+    }
+
+    private void AddLineType()
+    {
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        lineTypes ??= [];
+        lineTypes.Add(new FieldDelineationLineType
+        {
+            MetaInfo = new MetaInfo { ID = Guid.NewGuid(), HttpHostName = Api.HostNameField, HttpHostBasePath = Api.HostBasePathField, HttpEndPoint = "FieldDelineationLineType/" },
+            Name = "new delineation line type",
+            CreationDate = now,
+            LastModificationDate = now
+        });
+    }
+
+    private async Task SaveAsync()
+    {
+        if (lineTypes == null || !TryValidateLineTypes())
+        {
+            return;
+        }
+
+        try
+        {
+            List<Guid> existingIds = ((IEnumerable<Guid>)await Api.ClientField.GetAllFieldDelineationLineTypeIdAsync()).ToList();
+            foreach (FieldDelineationLineType lineType in lineTypes)
+            {
+                EnsureMetaInfo(lineType);
+                if (existingIds.Contains(lineType.MetaInfo!.ID))
+                {
+                    await Api.ClientField.PutFieldDelineationLineTypeByIdAsync(lineType.MetaInfo.ID, lineType);
+                }
+                else
+                {
+                    await Api.ClientField.PostFieldDelineationLineTypeAsync(lineType);
+                }
+            }
+
+            Snackbar.Add("Saved delineation line types", Severity.Success);
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Impossible to save delineation line types");
+            Snackbar.Add("Impossible to save delineation line types", Severity.Error);
+        }
+    }
+
+    private async Task DeleteSelectedLineTypesAsync()
+    {
+        if (lineTypes == null)
+        {
+            return;
+        }
+
+        foreach (FieldDelineationLineType lineType in lineTypes.Where(IsLineTypeSelected).ToList())
+        {
+            await DeleteLineTypeAsync(lineType);
+        }
+    }
+
+    private async Task DeleteLineTypeAsync(FieldDelineationLineType lineType)
+    {
+        Guid? id = lineType.MetaInfo?.ID;
+        if (lineTypes == null || id == null || id == Guid.Empty)
+        {
+            return;
+        }
+
+        try
+        {
+            if (await ConfirmDeletionAsync(lineType))
+            {
+                try
+                {
+                    await Api.ClientField.DeleteFieldDelineationLineTypeByIdAsync(id.Value);
+                }
+                catch (ApiException ex) when (ex.StatusCode == 404)
+                {
+                    // Locally added unsaved item.
+                }
+                lineTypes.Remove(lineType);
+                _selectedLineTypeIds.Remove(id.Value);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Impossible to delete delineation line type");
+            Snackbar.Add("Impossible to delete delineation line type", Severity.Error);
+        }
+    }
+
+    private async Task<bool> ConfirmDeletionAsync(FieldDelineationLineType lineType)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Delete",
+            $"Delete delineation line type '{lineType.Name ?? lineType.MetaInfo?.ID.ToString()}'?",
+            yesText: "Delete",
+            cancelText: "Cancel",
+            options: new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.ExtraSmall });
+        return result == true;
+    }
+
+    private bool TryValidateLineTypes()
+    {
+        if (lineTypes == null)
+        {
+            return false;
+        }
+        if (lineTypes.Any(lineType => string.IsNullOrWhiteSpace(lineType.Name)))
+        {
+            Snackbar.Add("Delineation line type names cannot be empty", Severity.Warning);
+            return false;
+        }
+        if (lineTypes.GroupBy(lineType => lineType.Name!.Trim(), StringComparer.OrdinalIgnoreCase).Any(group => group.Count() > 1))
+        {
+            Snackbar.Add("Delineation line type names must be unique", Severity.Warning);
+            return false;
+        }
+        return true;
+    }
+
+    private static void EnsureMetaInfo(FieldDelineationLineType lineType)
+    {
+        if (lineType.MetaInfo == null || lineType.MetaInfo.ID == Guid.Empty)
+        {
+            lineType.MetaInfo = new MetaInfo { ID = Guid.NewGuid() };
+        }
+    }
+
+    private bool IsLineTypeSelected(FieldDelineationLineType lineType)
+    {
+        return lineType.MetaInfo?.ID is Guid id && _selectedLineTypeIds.Contains(id);
+    }
+
+    private void SetLineTypeSelected(FieldDelineationLineType lineType, bool selected)
+    {
+        if (lineType.MetaInfo?.ID is not Guid id || id == Guid.Empty)
+        {
+            return;
+        }
+
+        if (selected)
+        {
+            _selectedLineTypeIds.Add(id);
+        }
+        else
+        {
+            _selectedLineTypeIds.Remove(id);
+        }
+    }
+
+    private bool AreAllLineTypesSelected()
+    {
+        return lineTypes?.Count > 0 && lineTypes.All(IsLineTypeSelected);
+    }
+
+    private void SetAllLineTypesSelected(bool selected)
+    {
+        _selectedLineTypeIds.Clear();
+        if (selected && lineTypes != null)
+        {
+            foreach (FieldDelineationLineType lineType in lineTypes)
+            {
+                if (lineType.MetaInfo?.ID is Guid id && id != Guid.Empty)
+                {
+                    _selectedLineTypeIds.Add(id);
+                }
+            }
+        }
+    }
+}

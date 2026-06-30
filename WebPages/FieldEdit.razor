@@ -2,36 +2,223 @@
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @inject IFieldAPIUtils Api
+@inject IJSRuntime JSRuntime
+@using System.Net.Http.Json
+@using MathPoint3DGlobalCoordinates = OSDC.DotnetLibraries.General.Math.Point3DGlobalCoordinates
+@using DtoPoint3DGlobalCoordinates = NORCE.Drilling.Field.ModelShared.Point3DGlobalCoordinates
 
-<MudText Class="mt-4 mb-4" Typo="Typo.h6">Edit Field</MudText>
-<MudContainer Class="d-flex flex-row mt-4 mb-4">
-    <MudButton Class="me-1" Variant="Variant.Filled" Color="Color.Success" OnClick="Save">Save</MudButton>
-    <MudButton Class="me-1" Variant="Variant.Filled" Color="Color.Error" OnClick="CloseEditorAsync">Close</MudButton>
-</MudContainer>
+<MudUnitAndReferenceChoiceTag HttpHost="@Api.HostNameUnitConversion"
+                              HttpBasePath="@Api.HostBasePathUnitConversion"
+                              HttpController="UnitSystem/"
+                              UnitSystemName="@DataUtils.UnitAndReferenceParameters.UnitSystemName"
+                              UnitSystemNameChanged="@DataUtils.UpdateUnitSystemName"
+                              DepthReferenceName="@DataUtils.UnitAndReferenceParameters.DepthReferenceName"
+                              DepthReferenceNameChanged="@DataUtils.UpdateDepthReferenceName"
+                              MeanSeaLevelDepthReferenceSource="@DataUtils.MeanSeaLevelDepthReferenceSource"
+                              PositionReferenceName="@DataUtils.UnitAndReferenceParameters.PositionReferenceName"
+                              PositionReferenceNameChanged="@UpdateFieldPositionReferenceName"
+                              GeodeticReferenceName="@DataUtils.UnitAndReferenceParameters.GeodeticReferenceName"
+                              GeodeticReferenceNameChanged="@DataUtils.UpdateGeodeticReferenceName"
+                              CartographicProjectionDatumGeodeticReferenceSource="@DataUtils.CartographicProjectionDatumGeodeticReferenceSource"
+                              FieldPositionReferenceSource="@DataUtils.FieldPositionReferenceSource"
+                              CartographicGridPositionReferenceSource="@DataUtils.CartographicGridPositionReferenceSource">
+    <MudText Class="mt-4 mb-4" Typo="Typo.h6">Edit Field</MudText>
+    <MudContainer Class="d-flex flex-row align-center mt-4 mb-4">
+        <MudButton Class="me-1" Variant="Variant.Filled" Color="Color.Success" OnClick="Save">Save</MudButton>
+        <MudButton Class="me-1" Variant="Variant.Filled" Color="Color.Error" OnClick="CloseEditorAsync">Close</MudButton>
+        <MudButton Class="me-1" Variant="Variant.Filled" Color="Color.Primary" OnClick="ExportFieldAsync">Export</MudButton>
+        <label class="mud-button-root mud-button mud-button-filled mud-button-filled-primary mud-button-filled-size-medium">
+            Import
+            <InputFile OnChange="ImportFieldAsync" style="display:none" />
+        </label>
+    </MudContainer>
 
-<MudExpansionPanels Class="mt-4 mb-4">
-    <MudExpansionPanel Text="Description" Expanded="true">
-        <MudGrid>
-            <MudItem xs="12" md="3">
-                <MudTextField @bind-Value="@_name" Label="Name" Required="true" ShrinkLabel />
-            </MudItem>
-            <MudItem xs="12" md="6">
-                <MudTextField @bind-Value="@_descr" Label="Description" ShrinkLabel />
-            </MudItem>
-            @if (CartographicProjections != null && CartographicProjections.Count > 0)
-            {
+    <MudExpansionPanels Class="mt-4 mb-4">
+        <MudExpansionPanel Text="Description" Expanded="true">
+            <MudGrid>
                 <MudItem xs="12" md="3">
-                    <MudSelect @bind-Value="@_cartographicProjection" Label="Cartographic projection" ShrinkLabel ToStringFunc="@(s => s?.Name)">
-                        @foreach (var sph in CartographicProjections)
-                        {
-                            <MudSelectItem Value="@sph">@sph.Name</MudSelectItem>
-                        }
-                    </MudSelect>
+                    <MudTextField @bind-Value="@_name" Label="Name" Required="true" ShrinkLabel />
                 </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="@_descr" Label="Description" ShrinkLabel />
+                </MudItem>
+                @if (CartographicProjections != null && CartographicProjections.Count > 0)
+                {
+                    <MudItem xs="12" md="3">
+                        <MudSelect @bind-Value="@_cartographicProjection" Label="Cartographic projection" ShrinkLabel ToStringFunc="@(s => s?.Name)">
+                            @foreach (var sph in CartographicProjections)
+                            {
+                                <MudSelectItem Value="@sph">@sph.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
+                <MudItem xs="12" md="3">
+                    <MudInputWithUnitAdornment QuantityName="PositionDrilling"
+                                               QuantityLabel="Reference North"
+                                               DrillingSignalReference="@DrillingSignalReferenceType.Position"
+                                               PositionDirection="@PositionDirectionType.North"
+                                               SIValueNullable="@_referencePoint.RiemannianNorth"
+                                               SIValueNullableChanged="@SetReferenceNorth"
+                                               Immediate="true" />
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <MudInputWithUnitAdornment QuantityName="PositionDrilling"
+                                               QuantityLabel="Reference East"
+                                               DrillingSignalReference="@DrillingSignalReferenceType.Position"
+                                               PositionDirection="@PositionDirectionType.East"
+                                               SIValueNullable="@_referencePoint.RiemannianEast"
+                                               SIValueNullableChanged="@SetReferenceEast"
+                                               Immediate="true" />
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <MudInputWithUnitAdornment QuantityName="PlaneAngleGeodesic"
+                                               QuantityLabel="Reference Latitude"
+                                               DrillingSignalReference="@DrillingSignalReferenceType.Geodetic"
+                                               PositionDirection="@PositionDirectionType.North"
+                                               SIValueNullable="@_referencePoint.Latitude"
+                                               SIValueNullableChanged="@SetReferenceLatitude"
+                                               Immediate="true" />
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <MudInputWithUnitAdornment QuantityName="PlaneAngleGeodesic"
+                                               QuantityLabel="Reference Longitude"
+                                               DrillingSignalReference="@DrillingSignalReferenceType.Geodetic"
+                                               PositionDirection="@PositionDirectionType.East"
+                                               SIValueNullable="@_referencePoint.Longitude"
+                                               SIValueNullableChanged="@SetReferenceLongitude"
+                                               Immediate="true" />
+                </MudItem>
+            </MudGrid>
+        </MudExpansionPanel>
+        <MudExpansionPanel Text="Identities">
+            @if (_fieldIdentities.Count > 0)
+            {
+                <MudGrid Class="mt-2">
+                    <MudItem xs="12" md="5">
+                        <MudText Typo="Typo.subtitle2" Class="mb-2">Available</MudText>
+                        @foreach (FieldIdentity identity in _fieldIdentities)
+                        {
+                            <MudButton Class="me-1 mb-1" Variant="@GetIdentityButtonVariant(identity)" Color="@GetIdentityButtonColor(identity)" Size="Size.Small" Disabled="@IsIdentityAssigned(identity)" OnClick="@(() => SelectFieldIdentity(identity))">
+                                @GetIdentityDisplayName(identity)
+                            </MudButton>
+                        }
+                    </MudItem>
+                    <MudItem xs="12" md="2" Class="d-flex flex-column justify-center">
+                        <MudButton Class="mb-2" Variant="Variant.Filled" Color="Color.Success" Disabled="@(!CanAssignSelectedIdentity())" OnClick="AssignSelectedIdentity">Assign</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" Disabled="@(!_selectedIdentityAssignmentId.HasValue)" OnClick="UnassignSelectedIdentity">Unassign</MudButton>
+                    </MudItem>
+                    <MudItem xs="12" md="5">
+                        <MudText Typo="Typo.subtitle2" Class="mb-2">Selected</MudText>
+                        <MudDataGrid T="FieldIdentityAssignment" Items="@_fieldIdentityAssignments" SelectedItem="@_selectedIdentityAssignment" SelectedItemChanged="SetSelectedIdentityAssignment" Hover="true" Dense="true" Elevation="0">
+                            <Columns>
+                                <PropertyColumn Property="x => GetIdentityAssignmentDisplayName(x)" Title="Name" Editable="false" />
+                                <TemplateColumn Title="Value">
+                                    <CellTemplate>
+                                        <MudTextField @bind-Value="context.Item.Value" Required="true" />
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                        </MudDataGrid>
+                    </MudItem>
+                </MudGrid>
             }
-        </MudGrid>
-    </MudExpansionPanel>
-</MudExpansionPanels>
+        </MudExpansionPanel>
+        <MudExpansionPanel Text="Features">
+            @if (_fieldFeatureCategories.Count > 0)
+            {
+                <MudGrid Class="mt-2">
+                    <MudItem xs="12" md="5">
+                        <MudText Typo="Typo.subtitle2" Class="mb-2">Available</MudText>
+                        <MudExpansionPanels MultiExpansion="true">
+                            @foreach (FieldFeatureCategory category in _fieldFeatureCategories)
+                            {
+                                <MudExpansionPanel Text="@GetCategoryDisplayName(category)">
+                                    @foreach (FieldFeatureOption option in category.Options ?? [])
+                                    {
+                                        <MudButton Class="me-1 mb-1" Variant="@GetOptionButtonVariant(category, option)" Color="@GetOptionButtonColor(category, option)" Size="Size.Small" Disabled="@IsOptionUnavailable(category)" OnClick="@(() => SelectFeatureOption(category, option))">
+                                            @option.Name
+                                        </MudButton>
+                                    }
+                                </MudExpansionPanel>
+                            }
+                        </MudExpansionPanels>
+                    </MudItem>
+                    <MudItem xs="12" md="2" Class="d-flex flex-column justify-center">
+                        <MudButton Class="mb-2" Variant="Variant.Filled" Color="Color.Success" Disabled="@(!CanAssignSelectedOption())" OnClick="AssignSelectedOption">Assign</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" Disabled="@(!_selectedFeatureAssignmentId.HasValue)" OnClick="UnassignSelectedFeature">Unassign</MudButton>
+                    </MudItem>
+                    <MudItem xs="12" md="5">
+                        <MudText Typo="Typo.subtitle2" Class="mb-2">Selected</MudText>
+                        <MudDataGrid T="FieldFeatureAssignment" Items="@_fieldFeatureAssignments" SelectedItem="@_selectedFeatureAssignment" SelectedItemChanged="SetSelectedFeatureAssignment" Hover="true" Dense="true" Elevation="0">
+                            <Columns>
+                                <PropertyColumn Property="x => GetAssignmentDisplayName(x)" Title="Name" Editable="false" />
+                                <TemplateColumn Title="From">
+                                    <CellTemplate>
+                                        <MudDatePicker Date="@ToDateTime(context.Item.FromDate)" DateChanged="@((DateTime? value) => SetAssignmentFromDate(context.Item, value))" Clearable="true" Disabled="@(!CategoryHasValidityPeriod(context.Item))" />
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="To">
+                                    <CellTemplate>
+                                        <MudDatePicker Date="@ToDateTime(context.Item.ToDate)" DateChanged="@((DateTime? value) => SetAssignmentToDate(context.Item, value))" Clearable="true" Disabled="@(!CategoryHasValidityPeriod(context.Item))" />
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                        </MudDataGrid>
+                    </MudItem>
+                </MudGrid>
+            }
+        </MudExpansionPanel>
+        <MudExpansionPanel Text="Memberships">
+            @if (_fieldMembershipCategories.Count > 0)
+            {
+                <MudGrid Class="mt-2">
+                    <MudItem xs="12" md="5">
+                        <MudText Typo="Typo.subtitle2" Class="mb-2">Available</MudText>
+                        <MudExpansionPanels MultiExpansion="true">
+                            @foreach (FieldMembershipCategory category in _fieldMembershipCategories)
+                            {
+                                <MudExpansionPanel Text="@GetMembershipCategoryDisplayName(category)">
+                                    @foreach (FieldMembershipOption option in category.Options ?? [])
+                                    {
+                                        <MudButton Class="me-1 mb-1" Variant="@GetMembershipOptionButtonVariant(category, option)" Color="@GetMembershipOptionButtonColor(category, option)" Size="Size.Small" Disabled="@IsMembershipOptionUnavailable(category)" OnClick="@(() => SelectMembershipOption(category, option))">
+                                            @option.Name
+                                        </MudButton>
+                                    }
+                                </MudExpansionPanel>
+                            }
+                        </MudExpansionPanels>
+                    </MudItem>
+                    <MudItem xs="12" md="2" Class="d-flex flex-column justify-center">
+                        <MudButton Class="mb-2" Variant="Variant.Filled" Color="Color.Success" Disabled="@(!CanAssignSelectedMembershipOption())" OnClick="AssignSelectedMembershipOption">Assign</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" Disabled="@(!_selectedMembershipAssignmentId.HasValue)" OnClick="UnassignSelectedMembership">Unassign</MudButton>
+                    </MudItem>
+                    <MudItem xs="12" md="5">
+                        <MudText Typo="Typo.subtitle2" Class="mb-2">Selected</MudText>
+                        <MudDataGrid T="FieldMembershipAssignment" Items="@_fieldMembershipAssignments" SelectedItem="@_selectedMembershipAssignment" SelectedItemChanged="SetSelectedMembershipAssignment" Hover="true" Dense="true" Elevation="0">
+                            <Columns>
+                                <PropertyColumn Property="x => GetMembershipAssignmentDisplayName(x)" Title="Name" Editable="false" />
+                                <TemplateColumn Title="From">
+                                    <CellTemplate>
+                                        <MudDatePicker Date="@ToDateTime(context.Item.FromDate)" DateChanged="@((DateTime? value) => SetMembershipAssignmentFromDate(context.Item, value))" Clearable="true" Disabled="@(!MembershipCategoryHasValidityPeriod(context.Item))" />
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="To">
+                                    <CellTemplate>
+                                        <MudDatePicker Date="@ToDateTime(context.Item.ToDate)" DateChanged="@((DateTime? value) => SetMembershipAssignmentToDate(context.Item, value))" Clearable="true" Disabled="@(!MembershipCategoryHasValidityPeriod(context.Item))" />
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                        </MudDataGrid>
+                    </MudItem>
+                </MudGrid>
+            }
+        </MudExpansionPanel>
+        <MudExpansionPanel Text="Delineation lines">
+            <FieldDelineationEditor Lines="@_delineationLines" LineTypes="@_delineationLineTypes" LinesChanged="@RefreshCartographicGridPositionReferenceAsync" />
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</MudUnitAndReferenceChoiceTag>
 @code {
     [Parameter]
     public NORCE.Drilling.Field.ModelShared.Field? CurrentField { get; set; }
@@ -49,12 +236,35 @@
     private CartographicProjectionLight? _cartographicProjection;
     private string? _name;
     private string? _descr;
+    private MathPoint3DGlobalCoordinates _referencePoint = new();
+    private List<FieldFeatureCategory> _fieldFeatureCategories = new();
+    private List<FieldFeatureAssignment> _fieldFeatureAssignments = new();
+    private Guid? _selectedFeatureCategoryId;
+    private Guid? _selectedFeatureOptionId;
+    private Guid? _selectedFeatureAssignmentId;
+    private FieldFeatureAssignment? _selectedFeatureAssignment;
+    private List<FieldIdentity> _fieldIdentities = new();
+    private List<FieldIdentityAssignment> _fieldIdentityAssignments = new();
+    private Guid? _selectedIdentityId;
+    private Guid? _selectedIdentityAssignmentId;
+    private FieldIdentityAssignment? _selectedIdentityAssignment;
+    private List<FieldMembershipCategory> _fieldMembershipCategories = new();
+    private List<FieldMembershipAssignment> _fieldMembershipAssignments = new();
+    private Guid? _selectedMembershipCategoryId;
+    private Guid? _selectedMembershipOptionId;
+    private Guid? _selectedMembershipAssignmentId;
+    private FieldMembershipAssignment? _selectedMembershipAssignment;
+    private List<FieldDelineationLine> _delineationLines = new();
+    private List<FieldDelineationLineType> _delineationLineTypes = new();
     private string? cleanFieldSnapshot_;
+    private bool isRefreshingCartographicGridReference_;
+    private bool hasPendingCartographicGridReferenceRefresh_;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            EnsureSupportedDepthReference();
             if (CurrentField != null && CurrentField.MetaInfo != null)
             {
                 _cartographicProjection = null;
@@ -81,6 +291,17 @@
                 }
                 _name = CurrentField.Name;
                 _descr = CurrentField.Description;
+                _referencePoint = CloneReferencePointForEditor(CurrentField.ReferencePoint);
+                UpdateFieldPositionReferenceSource();
+                _fieldFeatureCategories = await LoadFieldFeatureCategoriesAsync();
+                _fieldFeatureAssignments = CloneFeatureAssignments(CurrentField.FieldFeatureAssignments);
+                _fieldIdentities = await LoadFieldIdentitiesAsync();
+                _fieldIdentityAssignments = CloneIdentityAssignments(CurrentField.FieldIdentityAssignments);
+                _fieldMembershipCategories = await LoadFieldMembershipCategoriesAsync();
+                _fieldMembershipAssignments = CloneMembershipAssignments(CurrentField.FieldMembershipAssignments);
+                _delineationLineTypes = await LoadFieldDelineationLineTypesAsync();
+                _delineationLines = CloneDelineationLines(CurrentField.DelineationLines);
+                await RefreshCartographicGridPositionReferenceAsync();
                 MarkFieldClean();
             }
             else
@@ -97,28 +318,37 @@
         await InvokeAsync(() => { StateHasChanged(); });
     }
 
+    private static void EnsureSupportedDepthReference()
+    {
+        if (string.Equals(DataUtils.UnitAndReferenceParameters.DepthReferenceName, "Sea/Water Level", StringComparison.OrdinalIgnoreCase))
+        {
+            DataUtils.UnitAndReferenceParameters.DepthReferenceName = "WGS84";
+        }
+    }
+
     private async Task Save()
     {
         try
         {
             if (CurrentField != null && CurrentField.MetaInfo != null)
             {
-                Guid cartographicProjectionID = Guid.Empty;
-                if (_cartographicProjection != null && _cartographicProjection.MetaInfo != null && _cartographicProjection.MetaInfo.ID != Guid.Empty)
+                if (!TryValidateFeatureAssignments() || !TryValidateIdentityAssignments() || !TryValidateMembershipAssignments() || !TryValidateDelineationLines())
                 {
-                    cartographicProjectionID = _cartographicProjection.MetaInfo.ID;
+                    return;
                 }
-                NORCE.Drilling.Field.ModelShared.Field field = new()
-                {
-                    MetaInfo = CurrentField.MetaInfo,
-                    Name = _name,
-                    Description = _descr,
-                    CreationDate = CurrentField.CreationDate,
-                    LastModificationDate = DateTimeOffset.UtcNow,
-                    CartographicProjectionID = cartographicProjectionID
-                };
+
+                NORCE.Drilling.Field.ModelShared.Field field = BuildEditedField(DateTimeOffset.UtcNow);
                 await Api.ClientField.PutFieldByIdAsync(CurrentField.MetaInfo.ID, field);
-                CurrentField = field;
+                CurrentField = await Api.ClientField.GetFieldByIdAsync(CurrentField.MetaInfo.ID);
+                _fieldFeatureAssignments = CloneFeatureAssignments(CurrentField.FieldFeatureAssignments);
+                _fieldFeatureCategories = await LoadFieldFeatureCategoriesAsync();
+                _fieldIdentityAssignments = CloneIdentityAssignments(CurrentField.FieldIdentityAssignments);
+                _fieldIdentities = await LoadFieldIdentitiesAsync();
+                _fieldMembershipAssignments = CloneMembershipAssignments(CurrentField.FieldMembershipAssignments);
+                _fieldMembershipCategories = await LoadFieldMembershipCategoriesAsync();
+                _delineationLines = CloneDelineationLines(CurrentField.DelineationLines);
+                _delineationLineTypes = await LoadFieldDelineationLineTypesAsync();
+                await RefreshCartographicGridPositionReferenceAsync();
                 MarkFieldClean();
                 logger.LogInformation("Updated the Field successfully");
                 Snackbar.Add("Saved the Field successfully", Severity.Success);
@@ -133,6 +363,49 @@
         {
             logger.LogError(ex, "Problem while saving the Field");
             Snackbar.Add("Problem while saving the Field", Severity.Warning);
+        }
+    }
+
+    private async Task ExportFieldAsync()
+    {
+        if (CurrentField?.MetaInfo == null)
+        {
+            Snackbar.Add("No field is available for export", Severity.Warning);
+            return;
+        }
+
+        NORCE.Drilling.Field.ModelShared.Field field = BuildEditedField(CurrentField.LastModificationDate);
+        await DownloadJsonAsync(field, SanitizeFileName($"{_name ?? "field"}.json"));
+        Snackbar.Add("Exported field", Severity.Success);
+    }
+
+    private async Task ImportFieldAsync(InputFileChangeEventArgs args)
+    {
+        if (CurrentField?.MetaInfo == null)
+        {
+            Snackbar.Add("No current field is available for import", Severity.Warning);
+            return;
+        }
+
+        try
+        {
+            using System.IO.Stream stream = args.File.OpenReadStream(128 * 1024 * 1024);
+            NORCE.Drilling.Field.ModelShared.Field? imported = await System.Text.Json.JsonSerializer.DeserializeAsync<NORCE.Drilling.Field.ModelShared.Field>(
+                stream,
+                new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (imported == null)
+            {
+                Snackbar.Add("The selected file does not contain a field", Severity.Warning);
+                return;
+            }
+
+            ApplyImportedField(imported);
+            Snackbar.Add("Imported field into the editor. Save to persist the changes.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Problem importing the Field");
+            Snackbar.Add("Error importing field: " + ex.Message, Severity.Error);
         }
     }
 
@@ -164,8 +437,1449 @@
             FieldId = CurrentField?.MetaInfo?.ID,
             Name = _name,
             Description = _descr,
-            CartographicProjectionId = _cartographicProjection?.MetaInfo?.ID ?? Guid.Empty
+            CartographicProjectionId = _cartographicProjection?.MetaInfo?.ID ?? Guid.Empty,
+            ReferencePoint = BuildReferencePointDirtySnapshot(_referencePoint),
+            FieldFeatureAssignments = BuildFeatureAssignmentDirtySnapshot(_fieldFeatureAssignments),
+            FieldIdentityAssignments = BuildIdentityAssignmentDirtySnapshot(_fieldIdentityAssignments),
+            FieldMembershipAssignments = BuildMembershipAssignmentDirtySnapshot(_fieldMembershipAssignments),
+            DelineationLines = BuildDelineationDirtySnapshot(_delineationLines)
         });
+    }
+
+    private async Task<List<FieldFeatureCategory>> LoadFieldFeatureCategoriesAsync()
+    {
+        try
+        {
+            List<FieldFeatureCategory>? categories = (List<FieldFeatureCategory>)await Api.ClientField.GetAllFieldFeatureCategoryAsync();
+            return categories?
+                .Where(category => category?.MetaInfo?.ID != null)
+                .OrderBy(category => category.Name, StringComparer.OrdinalIgnoreCase)
+                .ToList() ?? [];
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Impossible to load field feature categories");
+            Snackbar.Add("Impossible to load field feature categories", Severity.Warning);
+            return [];
+        }
+    }
+
+    private async Task<List<FieldDelineationLineType>> LoadFieldDelineationLineTypesAsync()
+    {
+        try
+        {
+            List<FieldDelineationLineType>? lineTypes = (List<FieldDelineationLineType>)await Api.ClientField.GetAllFieldDelineationLineTypeAsync();
+            return lineTypes?
+                .Where(lineType => lineType?.MetaInfo?.ID != null)
+                .OrderBy(lineType => lineType.Name, StringComparer.OrdinalIgnoreCase)
+                .ToList() ?? [];
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Impossible to load delineation line types");
+            Snackbar.Add("Impossible to load delineation line types", Severity.Warning);
+            return [];
+        }
+    }
+
+    private async Task<List<FieldIdentity>> LoadFieldIdentitiesAsync()
+    {
+        try
+        {
+            List<FieldIdentity>? identities = (List<FieldIdentity>)await Api.ClientField.GetAllFieldIdentityAsync();
+            return identities?
+                .Where(identity => identity?.MetaInfo?.ID != null)
+                .OrderBy(identity => identity.Name, StringComparer.OrdinalIgnoreCase)
+                .ToList() ?? [];
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Impossible to load field identities");
+            Snackbar.Add("Impossible to load field identities", Severity.Warning);
+            return [];
+        }
+    }
+
+    private async Task<List<FieldMembershipCategory>> LoadFieldMembershipCategoriesAsync()
+    {
+        try
+        {
+            List<FieldMembershipCategory>? categories = (List<FieldMembershipCategory>)await Api.ClientField.GetAllFieldMembershipCategoryAsync();
+            return categories?
+                .Where(category => category?.MetaInfo?.ID != null)
+                .OrderBy(category => category.Name, StringComparer.OrdinalIgnoreCase)
+                .ToList() ?? [];
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Impossible to load field membership categories");
+            Snackbar.Add("Impossible to load field membership categories", Severity.Warning);
+            return [];
+        }
+    }
+
+    private NORCE.Drilling.Field.ModelShared.Field BuildEditedField(DateTimeOffset? lastModificationDate)
+    {
+        Guid cartographicProjectionID = Guid.Empty;
+        if (_cartographicProjection != null && _cartographicProjection.MetaInfo != null && _cartographicProjection.MetaInfo.ID != Guid.Empty)
+        {
+            cartographicProjectionID = _cartographicProjection.MetaInfo.ID;
+        }
+
+        return new NORCE.Drilling.Field.ModelShared.Field
+        {
+            MetaInfo = CurrentField?.MetaInfo,
+            Name = _name,
+            Description = _descr,
+            CreationDate = CurrentField?.CreationDate,
+            LastModificationDate = lastModificationDate,
+            CartographicProjectionID = cartographicProjectionID,
+            ReferencePoint = CloneReferencePointForStorage(_referencePoint),
+            FieldFeatureAssignments = CloneFeatureAssignments(_fieldFeatureAssignments),
+            FieldIdentityAssignments = CloneIdentityAssignments(_fieldIdentityAssignments),
+            FieldMembershipAssignments = CloneMembershipAssignments(_fieldMembershipAssignments),
+            DelineationLines = CloneDelineationLines(_delineationLines)
+        };
+    }
+
+    private void ApplyImportedField(NORCE.Drilling.Field.ModelShared.Field imported)
+    {
+        _name = imported.Name;
+        _descr = imported.Description;
+        _cartographicProjection = FindCartographicProjection(imported.CartographicProjectionID);
+        _referencePoint = CloneReferencePointForEditor(imported.ReferencePoint);
+        UpdateFieldPositionReferenceSource();
+        _fieldFeatureAssignments = CloneFeatureAssignments(imported.FieldFeatureAssignments);
+        _fieldIdentityAssignments = CloneIdentityAssignments(imported.FieldIdentityAssignments);
+        _fieldMembershipAssignments = CloneMembershipAssignments(imported.FieldMembershipAssignments);
+        _delineationLines = CloneDelineationLines(imported.DelineationLines);
+        _ = RefreshCartographicGridPositionReferenceAsync();
+    }
+
+    private static MathPoint3DGlobalCoordinates CloneReferencePointForEditor(DtoPoint3DGlobalCoordinates? point)
+    {
+        MathPoint3DGlobalCoordinates editorPoint = new() { TVD = 0, Z = 0 };
+        if (point == null)
+        {
+            return editorPoint;
+        }
+
+        if (point.RiemannianNorth != null || point.RiemannianEast != null)
+        {
+            editorPoint.RiemannianNorth = point.RiemannianNorth;
+            editorPoint.RiemannianEast = point.RiemannianEast;
+        }
+        else
+        {
+            editorPoint.Latitude = point.Latitude;
+            editorPoint.Longitude = point.Longitude;
+        }
+
+        return editorPoint;
+    }
+
+    private static DtoPoint3DGlobalCoordinates? CloneReferencePointForStorage(MathPoint3DGlobalCoordinates point)
+    {
+        return IsEmptyReferencePoint(point)
+            ? null
+            : new DtoPoint3DGlobalCoordinates
+            {
+                RiemannianNorth = point.RiemannianNorth,
+                RiemannianEast = point.RiemannianEast,
+                Latitude = point.Latitude,
+                Longitude = point.Longitude,
+                X = point.RiemannianNorth,
+                Y = point.RiemannianEast,
+                TVD = 0,
+                Z = 0
+            };
+    }
+
+    private static object? BuildReferencePointDirtySnapshot(MathPoint3DGlobalCoordinates point)
+    {
+        return IsEmptyReferencePoint(point)
+            ? null
+            : new
+            {
+                point.RiemannianNorth,
+                point.RiemannianEast,
+                point.Latitude,
+                point.Longitude
+            };
+    }
+
+    private static bool IsEmptyReferencePoint(MathPoint3DGlobalCoordinates point)
+    {
+        return point.RiemannianNorth == null &&
+            point.RiemannianEast == null &&
+            point.Latitude == null &&
+            point.Longitude == null;
+    }
+
+    private void SetReferenceNorth(double? value)
+    {
+        _referencePoint.RiemannianNorth = value;
+        _referencePoint.TVD = 0;
+        _referencePoint.Z = 0;
+        UpdateFieldPositionReferenceSource();
+        _ = RefreshCartographicGridPositionReferenceAsync();
+        StateHasChanged();
+    }
+
+    private void SetReferenceEast(double? value)
+    {
+        _referencePoint.RiemannianEast = value;
+        _referencePoint.TVD = 0;
+        _referencePoint.Z = 0;
+        UpdateFieldPositionReferenceSource();
+        _ = RefreshCartographicGridPositionReferenceAsync();
+        StateHasChanged();
+    }
+
+    private void SetReferenceLatitude(double? value)
+    {
+        _referencePoint.Latitude = value;
+        _referencePoint.TVD = 0;
+        _referencePoint.Z = 0;
+        UpdateFieldPositionReferenceSource();
+        _ = RefreshCartographicGridPositionReferenceAsync();
+        StateHasChanged();
+    }
+
+    private void SetReferenceLongitude(double? value)
+    {
+        _referencePoint.Longitude = value;
+        _referencePoint.TVD = 0;
+        _referencePoint.Z = 0;
+        UpdateFieldPositionReferenceSource();
+        _ = RefreshCartographicGridPositionReferenceAsync();
+        StateHasChanged();
+    }
+
+    private void UpdateFieldPositionReferenceSource()
+    {
+        DataUtils.FieldPositionReferenceSource.FieldNorthPositionReference = -_referencePoint.RiemannianNorth;
+        DataUtils.FieldPositionReferenceSource.FieldEastPositionReference = -_referencePoint.RiemannianEast;
+    }
+
+    private async Task RefreshCartographicGridPositionReferenceAsync()
+    {
+        if (isRefreshingCartographicGridReference_)
+        {
+            hasPendingCartographicGridReferenceRefresh_ = true;
+            return;
+        }
+
+        try
+        {
+            isRefreshingCartographicGridReference_ = true;
+            if (CurrentField?.MetaInfo?.ID is not Guid fieldId || fieldId == Guid.Empty)
+            {
+                ClearCartographicReferences();
+                ClearMeanSeaLevelDepthReference();
+                return;
+            }
+
+            ReferencePositionSample? sample = await ResolveCartographicReferenceSampleAsync(fieldId);
+            if (sample == null)
+            {
+                ClearCartographicReferences();
+                ClearMeanSeaLevelDepthReference();
+                return;
+            }
+
+            await RefreshMeanSeaLevelDepthReferenceAsync(sample.Value);
+
+            CartographicCoordinate? cartographicCoordinate = await ConvertReferenceSampleToCartographicAsync(fieldId, sample.Value);
+            if (cartographicCoordinate?.Northing == null || cartographicCoordinate.Easting == null)
+            {
+                ClearCartographicReferences();
+                return;
+            }
+
+            DataUtils.CartographicGridPositionReferenceSource.CartographicGridNorthPositionReference =
+                cartographicCoordinate.Northing.Value - sample.Value.RiemannianNorth;
+            DataUtils.CartographicGridPositionReferenceSource.CartographicGridEastPositionReference =
+                cartographicCoordinate.Easting.Value - sample.Value.RiemannianEast;
+            DataUtils.CartographicProjectionDatumGeodeticReferenceSource.CartographicProjectionDatumLatitudeReference =
+                cartographicCoordinate.GeodeticCoordinate?.LatitudeDatum == null
+                    ? null
+                    : cartographicCoordinate.GeodeticCoordinate.LatitudeDatum.Value - sample.Value.Latitude;
+            DataUtils.CartographicProjectionDatumGeodeticReferenceSource.CartographicProjectionDatumLongitudeReference =
+                cartographicCoordinate.GeodeticCoordinate?.LongitudeDatum == null
+                    ? null
+                    : cartographicCoordinate.GeodeticCoordinate.LongitudeDatum.Value - sample.Value.Longitude;
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Unable to update the cartographic grid position reference for the field");
+            ClearCartographicReferences();
+        }
+        finally
+        {
+            isRefreshingCartographicGridReference_ = false;
+            await InvokeAsync(StateHasChanged);
+            if (hasPendingCartographicGridReferenceRefresh_)
+            {
+                hasPendingCartographicGridReferenceRefresh_ = false;
+                _ = RefreshCartographicGridPositionReferenceAsync();
+            }
+        }
+    }
+
+    private async Task RefreshMeanSeaLevelDepthReferenceAsync(ReferencePositionSample sample)
+    {
+        try
+        {
+            DataUtils.MeanSeaLevelDepthReferenceSource.MeanSeaLevelDepthReference =
+                await FieldReferenceDatumUtils.CalculateMeanSeaLevelDepthReferenceAsync(Api, sample.Latitude, sample.Longitude);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Unable to update the mean sea level depth reference for the field");
+            ClearMeanSeaLevelDepthReference();
+        }
+    }
+
+    private async Task<ReferencePositionSample?> ResolveCartographicReferenceSampleAsync(Guid fieldId)
+    {
+        ReferencePositionSample? explicitReference = TryBuildReferenceSample(
+            _referencePoint.RiemannianNorth,
+            _referencePoint.RiemannianEast,
+            _referencePoint.Latitude,
+            _referencePoint.Longitude);
+        if (explicitReference != null)
+        {
+            return explicitReference;
+        }
+
+        ReferencePositionSample? delineationReference = TryBuildDelineationBarycenterSample();
+        if (delineationReference != null)
+        {
+            return delineationReference;
+        }
+
+        ReferencePositionSample? clusterReference = await TryBuildClusterBarycenterSampleAsync(fieldId);
+        if (clusterReference != null)
+        {
+            return clusterReference;
+        }
+
+        return await TryBuildTrajectoryBarycenterSampleAsync(fieldId);
+    }
+
+    private ReferencePositionSample? TryBuildDelineationBarycenterSample()
+    {
+        IEnumerable<DtoPoint3DGlobalCoordinates> points = _delineationLines
+            .SelectMany(line => line.Points ?? []);
+
+        return TryBuildBarycenterSample(points.Select(point => (
+            North: point.RiemannianNorth ?? point.X,
+            East: point.RiemannianEast ?? point.Y,
+            Latitude: point.Latitude,
+            Longitude: point.Longitude)));
+    }
+
+    private async Task<ReferencePositionSample?> TryBuildTrajectoryBarycenterSampleAsync(Guid fieldId)
+    {
+        ICollection<TrajectoryLight> trajectoryLights = await Api.ClientTrajectory.GetAllTrajectoryLightAsync(fieldId: fieldId);
+        List<Guid> trajectoryIds = trajectoryLights
+            .Where(trajectory => trajectory?.MetaInfo?.ID != null && trajectory.MetaInfo.ID != Guid.Empty)
+            .Take(20)
+            .Select(trajectory => trajectory.MetaInfo.ID)
+            .ToList();
+
+        List<(double? North, double? East, double? Latitude, double? Longitude)> samples = [];
+        foreach (Guid trajectoryId in trajectoryIds)
+        {
+            samples.AddRange(await LoadTrajectoryPositionSamplesAsync(trajectoryId));
+        }
+
+        return TryBuildBarycenterSample(samples);
+    }
+
+    private async Task<ReferencePositionSample?> TryBuildClusterBarycenterSampleAsync(Guid fieldId)
+    {
+        ICollection<Cluster> clusters = await Api.ClientCluster.GetAllClusterAsync();
+        List<(double? North, double? East, double? Latitude, double? Longitude)> clusterSamples = clusters
+            .Where(cluster => cluster?.FieldID == fieldId)
+            .Select(TryBuildClusterReferenceSample)
+            .Where(sample => sample != null)
+            .Select(sample => (
+                North: (double?)sample!.Value.RiemannianNorth,
+                East: (double?)sample.Value.RiemannianEast,
+                Latitude: (double?)sample.Value.Latitude,
+                Longitude: (double?)sample.Value.Longitude))
+            .ToList();
+
+        return TryBuildBarycenterSample(clusterSamples);
+    }
+
+    private static ReferencePositionSample? TryBuildClusterReferenceSample(Cluster cluster)
+    {
+        ReferencePositionSample? referenceSample = TryBuildReferenceSample(
+            null,
+            null,
+            cluster.ReferenceLatitude?.GaussianValue?.Mean,
+            cluster.ReferenceLongitude?.GaussianValue?.Mean);
+        if (referenceSample != null)
+        {
+            return referenceSample;
+        }
+
+        IEnumerable<Slot> slots = cluster.Slots?.Values ?? [];
+        return TryBuildBarycenterSample(slots.Select(slot => (
+            North: (double?)null,
+            East: (double?)null,
+            Latitude: slot.Latitude?.GaussianValue?.Mean,
+            Longitude: slot.Longitude?.GaussianValue?.Mean)));
+    }
+
+    private async Task<List<(double? North, double? East, double? Latitude, double? Longitude)>> LoadTrajectoryPositionSamplesAsync(Guid trajectoryId)
+    {
+        List<(double? North, double? East, double? Latitude, double? Longitude)> samples = [];
+        int chunkCount = await Api.HttpClientTrajectory.GetFromJsonAsync<int>($"Trajectory/{trajectoryId}/SurveyStations/ChunkCount");
+        for (int chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++)
+        {
+            SurveyStationChunk? chunk = await Api.HttpClientTrajectory.GetFromJsonAsync<SurveyStationChunk>($"Trajectory/{trajectoryId}/SurveyStations/Chunks/{chunkIndex}");
+            if (chunk?.SurveyStationList == null)
+            {
+                continue;
+            }
+
+            samples.AddRange(chunk.SurveyStationList.Select(station => (
+                North: station.RiemannianNorth ?? station.X,
+                East: station.RiemannianEast ?? station.Y,
+                Latitude: station.Latitude,
+                Longitude: station.Longitude)));
+        }
+
+        return samples;
+    }
+
+    private static ReferencePositionSample? TryBuildBarycenterSample(IEnumerable<(double? North, double? East, double? Latitude, double? Longitude)> points)
+    {
+        List<(double North, double East)> northEastPoints = points
+            .Where(point => point.North != null && point.East != null)
+            .Select(point => (point.North!.Value, point.East!.Value))
+            .ToList();
+
+        if (northEastPoints.Count == 0)
+        {
+            return null;
+        }
+
+        double north = northEastPoints.Average(point => point.North);
+        double east = northEastPoints.Average(point => point.East);
+        return TryBuildReferenceSample(north, east, null, null);
+    }
+
+    private static ReferencePositionSample? TryBuildReferenceSample(double? north, double? east, double? latitude, double? longitude)
+    {
+        DtoPoint3DGlobalCoordinates point = new()
+        {
+            RiemannianNorth = north,
+            RiemannianEast = east,
+            Latitude = latitude,
+            Longitude = longitude,
+            TVD = 0,
+            Z = 0
+        };
+
+        if ((point.Latitude == null || point.Longitude == null) && point.RiemannianNorth != null && point.RiemannianEast != null)
+        {
+            SetLatitudeLongitudeFromNorthEast(point);
+        }
+        else if ((point.RiemannianNorth == null || point.RiemannianEast == null) && point.Latitude != null && point.Longitude != null)
+        {
+            SetNorthEastFromLatitudeLongitude(point);
+        }
+
+        if (point.RiemannianNorth == null || point.RiemannianEast == null || point.Latitude == null || point.Longitude == null)
+        {
+            return null;
+        }
+
+        return new ReferencePositionSample(
+            point.RiemannianNorth.Value,
+            point.RiemannianEast.Value,
+            point.Latitude.Value,
+            point.Longitude.Value);
+    }
+
+    private async Task<CartographicCoordinate?> ConvertReferenceSampleToCartographicAsync(Guid fieldId, ReferencePositionSample sample)
+    {
+        Guid conversionId = Guid.NewGuid();
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        FieldCartographicConversionSet conversionSet = new()
+        {
+            MetaInfo = new MetaInfo
+            {
+                ID = conversionId,
+                HttpHostName = Api.HostNameField,
+                HttpHostBasePath = Api.HostBasePathField,
+                HttpEndPoint = "FieldCartographicConversionSet/"
+            },
+            Name = DataUtils.DEFAULT_NAME_CartographicConversionSet,
+            Description = "Temporary conversion for cartographic position reference.",
+            CreationDate = now,
+            LastModificationDate = now,
+            FieldID = fieldId,
+            CartographicCoordinateList =
+            [
+                new CartographicCoordinate
+                {
+                    GeodeticCoordinate = new GeodeticCoordinate
+                    {
+                        LatitudeWGS84 = sample.Latitude,
+                        LongitudeWGS84 = sample.Longitude,
+                        VerticalDepthWGS84 = 0
+                    }
+                }
+            ]
+        };
+
+        try
+        {
+            await Api.ClientField.PostFieldCartographicConversionSetAsync(conversionSet);
+            FieldCartographicConversionSet calculated = await Api.ClientField.GetFieldCartographicConversionSetByIdAsync(conversionId);
+            return calculated.CartographicCoordinateList?.FirstOrDefault();
+        }
+        finally
+        {
+            try
+            {
+                await Api.ClientField.DeleteFieldCartographicConversionSetByIdAsync(conversionId);
+            }
+            catch
+            {
+            }
+        }
+    }
+
+    private static void ClearCartographicReferences()
+    {
+        DataUtils.CartographicGridPositionReferenceSource.CartographicGridNorthPositionReference = null;
+        DataUtils.CartographicGridPositionReferenceSource.CartographicGridEastPositionReference = null;
+        DataUtils.CartographicProjectionDatumGeodeticReferenceSource.CartographicProjectionDatumLatitudeReference = null;
+        DataUtils.CartographicProjectionDatumGeodeticReferenceSource.CartographicProjectionDatumLongitudeReference = null;
+    }
+
+    private static void ClearMeanSeaLevelDepthReference()
+    {
+        DataUtils.MeanSeaLevelDepthReferenceSource.MeanSeaLevelDepthReference = null;
+    }
+
+    private readonly record struct ReferencePositionSample(
+        double RiemannianNorth,
+        double RiemannianEast,
+        double Latitude,
+        double Longitude);
+
+    private static List<FieldFeatureAssignment> CloneFeatureAssignments(IEnumerable<FieldFeatureAssignment>? assignments)
+    {
+        return assignments?
+            .Select(assignment => new FieldFeatureAssignment
+            {
+                ID = assignment.ID == Guid.Empty ? Guid.NewGuid() : assignment.ID,
+                FieldFeatureCategoryID = assignment.FieldFeatureCategoryID,
+                FieldFeatureOptionID = assignment.FieldFeatureOptionID,
+                FromDate = assignment.FromDate,
+                ToDate = assignment.ToDate
+            })
+            .ToList() ?? [];
+    }
+
+    private static object BuildFeatureAssignmentDirtySnapshot(IEnumerable<FieldFeatureAssignment> assignments)
+    {
+        return assignments.Select(assignment => new
+        {
+            assignment.ID,
+            assignment.FieldFeatureCategoryID,
+            assignment.FieldFeatureOptionID,
+            assignment.FromDate,
+            assignment.ToDate
+        }).ToList();
+    }
+
+    private static List<FieldIdentityAssignment> CloneIdentityAssignments(IEnumerable<FieldIdentityAssignment>? assignments)
+    {
+        return assignments?
+            .Select(assignment => new FieldIdentityAssignment
+            {
+                ID = assignment.ID == Guid.Empty ? Guid.NewGuid() : assignment.ID,
+                FieldIdentityID = assignment.FieldIdentityID,
+                Value = assignment.Value
+            })
+            .ToList() ?? [];
+    }
+
+    private static object BuildIdentityAssignmentDirtySnapshot(IEnumerable<FieldIdentityAssignment> assignments)
+    {
+        return assignments.Select(assignment => new
+        {
+            assignment.ID,
+            assignment.FieldIdentityID,
+            assignment.Value
+        }).ToList();
+    }
+
+    private static List<FieldMembershipAssignment> CloneMembershipAssignments(IEnumerable<FieldMembershipAssignment>? assignments)
+    {
+        return assignments?
+            .Select(assignment => new FieldMembershipAssignment
+            {
+                ID = assignment.ID == Guid.Empty ? Guid.NewGuid() : assignment.ID,
+                FieldMembershipCategoryID = assignment.FieldMembershipCategoryID,
+                FieldMembershipOptionID = assignment.FieldMembershipOptionID,
+                FromDate = assignment.FromDate,
+                ToDate = assignment.ToDate
+            })
+            .ToList() ?? [];
+    }
+
+    private static object BuildMembershipAssignmentDirtySnapshot(IEnumerable<FieldMembershipAssignment> assignments)
+    {
+        return assignments.Select(assignment => new
+        {
+            assignment.ID,
+            assignment.FieldMembershipCategoryID,
+            assignment.FieldMembershipOptionID,
+            assignment.FromDate,
+            assignment.ToDate
+        }).ToList();
+    }
+
+    private string GetCategoryDisplayName(FieldFeatureCategory category)
+    {
+        string name = category.Name ?? "Unnamed category";
+        string mode = category.IsExclusive ? "exclusive" : "multiple";
+        string validity = category.HasValidityPeriod ? ", dated" : string.Empty;
+        return $"{name} ({mode}{validity})";
+    }
+
+    private Variant GetOptionButtonVariant(FieldFeatureCategory category, FieldFeatureOption option)
+    {
+        return category.MetaInfo?.ID == _selectedFeatureCategoryId && option.ID == _selectedFeatureOptionId
+            ? Variant.Filled
+            : Variant.Outlined;
+    }
+
+    private Color GetOptionButtonColor(FieldFeatureCategory category, FieldFeatureOption option)
+    {
+        return category.MetaInfo?.ID == _selectedFeatureCategoryId && option.ID == _selectedFeatureOptionId
+            ? Color.Primary
+            : Color.Default;
+    }
+
+    private bool IsOptionUnavailable(FieldFeatureCategory category)
+    {
+        return category.IsExclusive &&
+            !category.HasValidityPeriod &&
+            category.MetaInfo?.ID is Guid categoryId &&
+            _fieldFeatureAssignments.Any(assignment => assignment.FieldFeatureCategoryID == categoryId);
+    }
+
+    private void SelectFeatureOption(FieldFeatureCategory category, FieldFeatureOption option)
+    {
+        if (category.MetaInfo?.ID is not Guid categoryId || categoryId == Guid.Empty || option.ID == Guid.Empty)
+        {
+            return;
+        }
+
+        _selectedFeatureCategoryId = categoryId;
+        _selectedFeatureOptionId = option.ID;
+    }
+
+    private bool CanAssignSelectedOption()
+    {
+        if (_selectedFeatureCategoryId is not Guid categoryId || _selectedFeatureOptionId is not Guid optionId)
+        {
+            return false;
+        }
+
+        FieldFeatureCategory? category = FindFeatureCategory(categoryId);
+        if (category == null || !CategoryContainsOption(category, optionId))
+        {
+            return false;
+        }
+
+        return !IsOptionUnavailable(category);
+    }
+
+    private void AssignSelectedOption()
+    {
+        if (!CanAssignSelectedOption())
+        {
+            return;
+        }
+
+        _fieldFeatureAssignments.Add(new FieldFeatureAssignment
+        {
+            ID = Guid.NewGuid(),
+            FieldFeatureCategoryID = _selectedFeatureCategoryId,
+            FieldFeatureOptionID = _selectedFeatureOptionId
+        });
+    }
+
+    private void UnassignSelectedFeature()
+    {
+        if (_selectedFeatureAssignmentId is not Guid assignmentId)
+        {
+            return;
+        }
+
+        FieldFeatureAssignment? assignment = _fieldFeatureAssignments.FirstOrDefault(item => item.ID == assignmentId);
+        if (assignment != null)
+        {
+            _fieldFeatureAssignments.Remove(assignment);
+        }
+        _selectedFeatureAssignment = null;
+        _selectedFeatureAssignmentId = null;
+    }
+
+    private void SetSelectedFeatureAssignment(FieldFeatureAssignment? assignment)
+    {
+        _selectedFeatureAssignment = assignment;
+        _selectedFeatureAssignmentId = assignment?.ID;
+    }
+
+    private string GetAssignmentDisplayName(FieldFeatureAssignment assignment)
+    {
+        FieldFeatureCategory? category = assignment.FieldFeatureCategoryID is Guid categoryId ? FindFeatureCategory(categoryId) : null;
+        FieldFeatureOption? option = assignment.FieldFeatureOptionID is Guid optionId ? FindFeatureOption(category, optionId) : null;
+        return $"{category?.Name ?? "Unknown category"}: {option?.Name ?? "Unknown option"}";
+    }
+
+    private bool CategoryHasValidityPeriod(FieldFeatureAssignment assignment)
+    {
+        return assignment.FieldFeatureCategoryID is Guid categoryId && FindFeatureCategory(categoryId)?.HasValidityPeriod == true;
+    }
+
+    private static DateTime? ToDateTime(DateTimeOffset? value)
+    {
+        return value?.Date;
+    }
+
+    private static DateTimeOffset? ToDateTimeOffset(DateTime? value)
+    {
+        return value == null ? null : new DateTimeOffset(DateTime.SpecifyKind(value.Value.Date, DateTimeKind.Utc));
+    }
+
+    private void SetAssignmentFromDate(FieldFeatureAssignment assignment, DateTime? value)
+    {
+        assignment.FromDate = ToDateTimeOffset(value);
+    }
+
+    private void SetAssignmentToDate(FieldFeatureAssignment assignment, DateTime? value)
+    {
+        assignment.ToDate = ToDateTimeOffset(value);
+    }
+
+    private FieldFeatureCategory? FindFeatureCategory(Guid categoryId)
+    {
+        return _fieldFeatureCategories.FirstOrDefault(category => category.MetaInfo?.ID == categoryId);
+    }
+
+    private static FieldFeatureOption? FindFeatureOption(FieldFeatureCategory? category, Guid optionId)
+    {
+        return category?.Options?.FirstOrDefault(option => option.ID == optionId);
+    }
+
+    private static bool CategoryContainsOption(FieldFeatureCategory category, Guid optionId)
+    {
+        return category.Options?.Any(option => option.ID == optionId) == true;
+    }
+
+    private bool TryValidateFeatureAssignments()
+    {
+        foreach (FieldFeatureAssignment assignment in _fieldFeatureAssignments)
+        {
+            if (assignment.FieldFeatureCategoryID is not Guid categoryId || assignment.FieldFeatureOptionID is not Guid optionId)
+            {
+                Snackbar.Add("Feature assignments must have a category and an option", Severity.Warning);
+                return false;
+            }
+
+            FieldFeatureCategory? category = FindFeatureCategory(categoryId);
+            if (category == null || !CategoryContainsOption(category, optionId))
+            {
+                Snackbar.Add("Feature assignments must reference existing categories and options", Severity.Warning);
+                return false;
+            }
+
+            if (!category.HasValidityPeriod)
+            {
+                assignment.FromDate = null;
+                assignment.ToDate = null;
+            }
+
+            if (assignment.FromDate != null && assignment.ToDate != null && assignment.FromDate > assignment.ToDate)
+            {
+                Snackbar.Add("Feature assignment From date cannot be after To date", Severity.Warning);
+                return false;
+            }
+        }
+
+        foreach (FieldFeatureCategory category in _fieldFeatureCategories.Where(category => category.IsExclusive))
+        {
+            if (category.MetaInfo?.ID is not Guid categoryId)
+            {
+                continue;
+            }
+
+            List<FieldFeatureAssignment> categoryAssignments = _fieldFeatureAssignments
+                .Where(assignment => assignment.FieldFeatureCategoryID == categoryId)
+                .ToList();
+
+            if (!category.HasValidityPeriod && categoryAssignments.Count > 1)
+            {
+                Snackbar.Add($"Only one option can be assigned for '{category.Name}'", Severity.Warning);
+                return false;
+            }
+
+            if (category.HasValidityPeriod && HasOverlappingAssignments(categoryAssignments))
+            {
+                Snackbar.Add($"Feature assignment periods cannot overlap for '{category.Name}'", Severity.Warning);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool HasOverlappingAssignments(List<FieldFeatureAssignment> assignments)
+    {
+        for (int i = 0; i < assignments.Count; i++)
+        {
+            for (int j = i + 1; j < assignments.Count; j++)
+            {
+                if (IntervalsOverlap(assignments[i], assignments[j]))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IntervalsOverlap(FieldFeatureAssignment first, FieldFeatureAssignment second)
+    {
+        DateTimeOffset firstStart = first.FromDate ?? DateTimeOffset.MinValue;
+        DateTimeOffset firstEnd = first.ToDate ?? DateTimeOffset.MaxValue;
+        DateTimeOffset secondStart = second.FromDate ?? DateTimeOffset.MinValue;
+        DateTimeOffset secondEnd = second.ToDate ?? DateTimeOffset.MaxValue;
+        return firstStart <= secondEnd && secondStart <= firstEnd;
+    }
+
+    private Variant GetIdentityButtonVariant(FieldIdentity identity)
+    {
+        return identity.MetaInfo?.ID == _selectedIdentityId
+            ? Variant.Filled
+            : Variant.Outlined;
+    }
+
+    private Color GetIdentityButtonColor(FieldIdentity identity)
+    {
+        return identity.MetaInfo?.ID == _selectedIdentityId
+            ? Color.Primary
+            : Color.Default;
+    }
+
+    private static string GetIdentityDisplayName(FieldIdentity identity)
+    {
+        return identity.Name ?? "Unnamed identity";
+    }
+
+    private bool IsIdentityAssigned(FieldIdentity identity)
+    {
+        return identity.MetaInfo?.ID is Guid identityId &&
+            _fieldIdentityAssignments.Any(assignment => assignment.FieldIdentityID == identityId);
+    }
+
+    private void SelectFieldIdentity(FieldIdentity identity)
+    {
+        if (identity.MetaInfo?.ID is not Guid identityId || identityId == Guid.Empty)
+        {
+            return;
+        }
+
+        _selectedIdentityId = identityId;
+    }
+
+    private bool CanAssignSelectedIdentity()
+    {
+        if (_selectedIdentityId is not Guid identityId)
+        {
+            return false;
+        }
+
+        FieldIdentity? identity = FindFieldIdentity(identityId);
+        return identity != null && !IsIdentityAssigned(identity);
+    }
+
+    private void AssignSelectedIdentity()
+    {
+        if (!CanAssignSelectedIdentity())
+        {
+            return;
+        }
+
+        _fieldIdentityAssignments.Add(new FieldIdentityAssignment
+        {
+            ID = Guid.NewGuid(),
+            FieldIdentityID = _selectedIdentityId
+        });
+    }
+
+    private void UnassignSelectedIdentity()
+    {
+        if (_selectedIdentityAssignmentId is not Guid assignmentId)
+        {
+            return;
+        }
+
+        FieldIdentityAssignment? assignment = _fieldIdentityAssignments.FirstOrDefault(item => item.ID == assignmentId);
+        if (assignment != null)
+        {
+            _fieldIdentityAssignments.Remove(assignment);
+        }
+        _selectedIdentityAssignment = null;
+        _selectedIdentityAssignmentId = null;
+    }
+
+    private void SetSelectedIdentityAssignment(FieldIdentityAssignment? assignment)
+    {
+        _selectedIdentityAssignment = assignment;
+        _selectedIdentityAssignmentId = assignment?.ID;
+    }
+
+    private string GetIdentityAssignmentDisplayName(FieldIdentityAssignment assignment)
+    {
+        return assignment.FieldIdentityID is Guid identityId
+            ? FindFieldIdentity(identityId)?.Name ?? "Unknown identity"
+            : "Unknown identity";
+    }
+
+    private FieldIdentity? FindFieldIdentity(Guid identityId)
+    {
+        return _fieldIdentities.FirstOrDefault(identity => identity.MetaInfo?.ID == identityId);
+    }
+
+    private bool TryValidateIdentityAssignments()
+    {
+        foreach (FieldIdentityAssignment assignment in _fieldIdentityAssignments)
+        {
+            if (assignment.FieldIdentityID is not Guid identityId)
+            {
+                Snackbar.Add("Identity assignments must have an identity", Severity.Warning);
+                return false;
+            }
+
+            if (FindFieldIdentity(identityId) == null)
+            {
+                Snackbar.Add("Identity assignments must reference existing identities", Severity.Warning);
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(assignment.Value))
+            {
+                Snackbar.Add("Identity assignment values cannot be empty", Severity.Warning);
+                return false;
+            }
+        }
+
+        if (_fieldIdentityAssignments
+            .Where(assignment => assignment.FieldIdentityID != null)
+            .GroupBy(assignment => assignment.FieldIdentityID)
+            .Any(group => group.Count() > 1))
+        {
+            Snackbar.Add("Each field identity can only be assigned once", Severity.Warning);
+            return false;
+        }
+
+        return true;
+    }
+
+    private string GetMembershipCategoryDisplayName(FieldMembershipCategory category)
+    {
+        string name = category.Name ?? "Unnamed category";
+        string mode = category.IsExclusive ? "exclusive" : "multiple";
+        string validity = category.HasValidityPeriod ? ", dated" : string.Empty;
+        return $"{name} ({mode}{validity})";
+    }
+
+    private Variant GetMembershipOptionButtonVariant(FieldMembershipCategory category, FieldMembershipOption option)
+    {
+        return category.MetaInfo?.ID == _selectedMembershipCategoryId && option.ID == _selectedMembershipOptionId
+            ? Variant.Filled
+            : Variant.Outlined;
+    }
+
+    private Color GetMembershipOptionButtonColor(FieldMembershipCategory category, FieldMembershipOption option)
+    {
+        return category.MetaInfo?.ID == _selectedMembershipCategoryId && option.ID == _selectedMembershipOptionId
+            ? Color.Primary
+            : Color.Default;
+    }
+
+    private bool IsMembershipOptionUnavailable(FieldMembershipCategory category)
+    {
+        return category.IsExclusive &&
+            !category.HasValidityPeriod &&
+            category.MetaInfo?.ID is Guid categoryId &&
+            _fieldMembershipAssignments.Any(assignment => assignment.FieldMembershipCategoryID == categoryId);
+    }
+
+    private void SelectMembershipOption(FieldMembershipCategory category, FieldMembershipOption option)
+    {
+        if (category.MetaInfo?.ID is not Guid categoryId || categoryId == Guid.Empty || option.ID == Guid.Empty)
+        {
+            return;
+        }
+
+        _selectedMembershipCategoryId = categoryId;
+        _selectedMembershipOptionId = option.ID;
+    }
+
+    private bool CanAssignSelectedMembershipOption()
+    {
+        if (_selectedMembershipCategoryId is not Guid categoryId || _selectedMembershipOptionId is not Guid optionId)
+        {
+            return false;
+        }
+
+        FieldMembershipCategory? category = FindMembershipCategory(categoryId);
+        if (category == null || !MembershipCategoryContainsOption(category, optionId))
+        {
+            return false;
+        }
+
+        return !IsMembershipOptionUnavailable(category);
+    }
+
+    private void AssignSelectedMembershipOption()
+    {
+        if (!CanAssignSelectedMembershipOption())
+        {
+            return;
+        }
+
+        _fieldMembershipAssignments.Add(new FieldMembershipAssignment
+        {
+            ID = Guid.NewGuid(),
+            FieldMembershipCategoryID = _selectedMembershipCategoryId,
+            FieldMembershipOptionID = _selectedMembershipOptionId
+        });
+    }
+
+    private void UnassignSelectedMembership()
+    {
+        if (_selectedMembershipAssignmentId is not Guid assignmentId)
+        {
+            return;
+        }
+
+        FieldMembershipAssignment? assignment = _fieldMembershipAssignments.FirstOrDefault(item => item.ID == assignmentId);
+        if (assignment != null)
+        {
+            _fieldMembershipAssignments.Remove(assignment);
+        }
+        _selectedMembershipAssignment = null;
+        _selectedMembershipAssignmentId = null;
+    }
+
+    private void SetSelectedMembershipAssignment(FieldMembershipAssignment? assignment)
+    {
+        _selectedMembershipAssignment = assignment;
+        _selectedMembershipAssignmentId = assignment?.ID;
+    }
+
+    private string GetMembershipAssignmentDisplayName(FieldMembershipAssignment assignment)
+    {
+        FieldMembershipCategory? category = assignment.FieldMembershipCategoryID is Guid categoryId ? FindMembershipCategory(categoryId) : null;
+        FieldMembershipOption? option = assignment.FieldMembershipOptionID is Guid optionId ? FindMembershipOption(category, optionId) : null;
+        return $"{category?.Name ?? "Unknown category"}: {option?.Name ?? "Unknown option"}";
+    }
+
+    private bool MembershipCategoryHasValidityPeriod(FieldMembershipAssignment assignment)
+    {
+        return assignment.FieldMembershipCategoryID is Guid categoryId && FindMembershipCategory(categoryId)?.HasValidityPeriod == true;
+    }
+
+    private void SetMembershipAssignmentFromDate(FieldMembershipAssignment assignment, DateTime? value)
+    {
+        assignment.FromDate = ToDateTimeOffset(value);
+    }
+
+    private void SetMembershipAssignmentToDate(FieldMembershipAssignment assignment, DateTime? value)
+    {
+        assignment.ToDate = ToDateTimeOffset(value);
+    }
+
+    private FieldMembershipCategory? FindMembershipCategory(Guid categoryId)
+    {
+        return _fieldMembershipCategories.FirstOrDefault(category => category.MetaInfo?.ID == categoryId);
+    }
+
+    private static FieldMembershipOption? FindMembershipOption(FieldMembershipCategory? category, Guid optionId)
+    {
+        return category?.Options?.FirstOrDefault(option => option.ID == optionId);
+    }
+
+    private static bool MembershipCategoryContainsOption(FieldMembershipCategory category, Guid optionId)
+    {
+        return category.Options?.Any(option => option.ID == optionId) == true;
+    }
+
+    private bool TryValidateMembershipAssignments()
+    {
+        foreach (FieldMembershipAssignment assignment in _fieldMembershipAssignments)
+        {
+            if (assignment.FieldMembershipCategoryID is not Guid categoryId || assignment.FieldMembershipOptionID is not Guid optionId)
+            {
+                Snackbar.Add("Membership assignments must have a category and an option", Severity.Warning);
+                return false;
+            }
+
+            FieldMembershipCategory? category = FindMembershipCategory(categoryId);
+            if (category == null || !MembershipCategoryContainsOption(category, optionId))
+            {
+                Snackbar.Add("Membership assignments must reference existing categories and options", Severity.Warning);
+                return false;
+            }
+
+            if (!category.HasValidityPeriod)
+            {
+                assignment.FromDate = null;
+                assignment.ToDate = null;
+            }
+
+            if (assignment.FromDate != null && assignment.ToDate != null && assignment.FromDate > assignment.ToDate)
+            {
+                Snackbar.Add("Membership assignment From date cannot be after To date", Severity.Warning);
+                return false;
+            }
+        }
+
+        foreach (FieldMembershipCategory category in _fieldMembershipCategories.Where(category => category.IsExclusive))
+        {
+            if (category.MetaInfo?.ID is not Guid categoryId)
+            {
+                continue;
+            }
+
+            List<FieldMembershipAssignment> categoryAssignments = _fieldMembershipAssignments
+                .Where(assignment => assignment.FieldMembershipCategoryID == categoryId)
+                .ToList();
+
+            if (!category.HasValidityPeriod && categoryAssignments.Count > 1)
+            {
+                Snackbar.Add($"Only one membership option can be assigned for '{category.Name}'", Severity.Warning);
+                return false;
+            }
+
+            if (category.HasValidityPeriod && HasOverlappingMembershipAssignments(categoryAssignments))
+            {
+                Snackbar.Add($"Membership assignment periods cannot overlap for '{category.Name}'", Severity.Warning);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool HasOverlappingMembershipAssignments(List<FieldMembershipAssignment> assignments)
+    {
+        for (int i = 0; i < assignments.Count; i++)
+        {
+            for (int j = i + 1; j < assignments.Count; j++)
+            {
+                if (MembershipIntervalsOverlap(assignments[i], assignments[j]))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool MembershipIntervalsOverlap(FieldMembershipAssignment first, FieldMembershipAssignment second)
+    {
+        DateTimeOffset firstStart = first.FromDate ?? DateTimeOffset.MinValue;
+        DateTimeOffset firstEnd = first.ToDate ?? DateTimeOffset.MaxValue;
+        DateTimeOffset secondStart = second.FromDate ?? DateTimeOffset.MinValue;
+        DateTimeOffset secondEnd = second.ToDate ?? DateTimeOffset.MaxValue;
+        return firstStart <= secondEnd && secondStart <= firstEnd;
+    }
+
+    private CartographicProjectionLight? FindCartographicProjection(Guid? cartographicProjectionID)
+    {
+        if (cartographicProjectionID == null || cartographicProjectionID == Guid.Empty || CartographicProjections == null)
+        {
+            return null;
+        }
+
+        return CartographicProjections.FirstOrDefault(projection => projection.MetaInfo?.ID == cartographicProjectionID);
+    }
+
+    private static void UpdateFieldPositionReferenceName(string value)
+    {
+        DataUtils.UnitAndReferenceParameters.PositionReferenceName = value;
+    }
+
+    private bool TryValidateDelineationLines()
+    {
+        foreach (FieldDelineationLine line in _delineationLines)
+        {
+            if (string.IsNullOrWhiteSpace(line.Name))
+            {
+                Snackbar.Add("Delineation line names cannot be empty", Severity.Warning);
+                return false;
+            }
+            if (line.Margin is < 0)
+            {
+                Snackbar.Add("Delineation line margins cannot be negative", Severity.Warning);
+                return false;
+            }
+            if (line.TopDepth != null && line.BottomDepth != null && line.TopDepth > line.BottomDepth)
+            {
+                Snackbar.Add("Delineation line top depth must be smaller than or equal to bottom depth", Severity.Warning);
+                return false;
+            }
+            if (line.Points != null && line.Points.Any(point => point.RiemannianNorth == null || point.RiemannianEast == null))
+            {
+                Snackbar.Add("Delineation line points must have north and east coordinates", Severity.Warning);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static List<FieldDelineationLine> CloneDelineationLines(IEnumerable<FieldDelineationLine>? lines)
+    {
+        return lines?
+            .Select(line => new FieldDelineationLine
+            {
+                ID = line.ID == Guid.Empty ? Guid.NewGuid() : line.ID,
+                DelineationLineTypeID = line.DelineationLineTypeID,
+                LineType = line.LineType,
+                Name = line.Name,
+                Description = line.Description,
+                Margin = line.Margin,
+                TopDepth = line.TopDepth,
+                BottomDepth = line.BottomDepth,
+                Points = ClonePoints(line.Points),
+                CalculatedBoundaryLines = CloneBoundaryLines(line.CalculatedBoundaryLines)
+            })
+            .ToList() ?? new List<FieldDelineationLine>();
+    }
+
+    private static List<FieldDelineationBoundaryLine> CloneBoundaryLines(IEnumerable<FieldDelineationBoundaryLine>? lines)
+    {
+        return lines?
+            .Select(line => new FieldDelineationBoundaryLine
+            {
+                ID = line.ID == Guid.Empty ? Guid.NewGuid() : line.ID,
+                IsInteriorBoundary = line.IsInteriorBoundary,
+                IsClosed = line.IsClosed,
+                Points = ClonePoints(line.Points)
+            })
+            .ToList() ?? new List<FieldDelineationBoundaryLine>();
+    }
+
+    private static List<Point3DGlobalCoordinates> ClonePoints(IEnumerable<Point3DGlobalCoordinates>? points)
+    {
+        return points?
+            .Select(ClonePoint)
+            .ToList() ?? new List<Point3DGlobalCoordinates>();
+    }
+
+    private static Point3DGlobalCoordinates ClonePoint(Point3DGlobalCoordinates point)
+    {
+        Point3DGlobalCoordinates clone = new()
+        {
+            RiemannianNorth = point.RiemannianNorth,
+            RiemannianEast = point.RiemannianEast,
+            Latitude = point.Latitude,
+            Longitude = point.Longitude,
+            TVD = 0,
+            Z = 0
+        };
+
+        if ((clone.Latitude == null || clone.Longitude == null) &&
+            clone.RiemannianNorth != null &&
+            clone.RiemannianEast != null)
+        {
+            SetLatitudeLongitudeFromNorthEast(clone);
+        }
+        else if ((clone.RiemannianNorth == null || clone.RiemannianEast == null) &&
+            clone.Latitude != null &&
+            clone.Longitude != null)
+        {
+            SetNorthEastFromLatitudeLongitude(clone);
+        }
+
+        clone.X = clone.RiemannianNorth;
+        clone.Y = clone.RiemannianEast;
+        clone.TVD = 0;
+        clone.Z = 0;
+        return clone;
+    }
+
+    private static void SetLatitudeLongitudeFromNorthEast(Point3DGlobalCoordinates point)
+    {
+        if (point.RiemannianNorth == null || point.RiemannianEast == null)
+        {
+            return;
+        }
+
+        double latitude = LatitudeFromMeridianDistance(point.RiemannianNorth.Value);
+        double parallelRadius = ParallelRadius(latitude);
+        point.Latitude = latitude;
+        point.Longitude = Math.Abs(parallelRadius) < 1e-12 ? null : point.RiemannianEast.Value / parallelRadius;
+    }
+
+    private static void SetNorthEastFromLatitudeLongitude(Point3DGlobalCoordinates point)
+    {
+        if (point.Latitude == null || point.Longitude == null)
+        {
+            return;
+        }
+
+        point.RiemannianNorth = MeridianDistance(point.Latitude.Value);
+        point.RiemannianEast = ParallelRadius(point.Latitude.Value) * point.Longitude.Value;
+        point.X = point.RiemannianNorth;
+        point.Y = point.RiemannianEast;
+    }
+
+    private static double LatitudeFromMeridianDistance(double meridianDistance)
+    {
+        double latitude = meridianDistance / EarthSemiMajorAxisWGS84;
+        for (int i = 0; i < 12; i++)
+        {
+            double residual = MeridianDistance(latitude) - meridianDistance;
+            double derivative = MeridianRadiusOfCurvature(latitude);
+            if (Math.Abs(derivative) < 1e-12)
+            {
+                break;
+            }
+
+            double correction = residual / derivative;
+            latitude -= correction;
+            if (Math.Abs(correction) < 1e-13)
+            {
+                break;
+            }
+        }
+
+        return latitude;
+    }
+
+    private static double MeridianDistance(double latitude)
+    {
+        double e2 = EarthFirstEccentricitySquaredWGS84;
+        double e4 = e2 * e2;
+        double e6 = e4 * e2;
+        double a0 = 1.0 - e2 / 4.0 - 3.0 * e4 / 64.0 - 5.0 * e6 / 256.0;
+        double a2 = 3.0 / 8.0 * (e2 + e4 / 4.0 + 15.0 * e6 / 128.0);
+        double a4 = 15.0 / 256.0 * (e4 + 3.0 * e6 / 4.0);
+        double a6 = 35.0 * e6 / 3072.0;
+        return EarthSemiMajorAxisWGS84 * (a0 * latitude - a2 * Math.Sin(2.0 * latitude) + a4 * Math.Sin(4.0 * latitude) - a6 * Math.Sin(6.0 * latitude));
+    }
+
+    private static double MeridianRadiusOfCurvature(double latitude)
+    {
+        double e2 = EarthFirstEccentricitySquaredWGS84;
+        double sinLatitude = Math.Sin(latitude);
+        return EarthSemiMajorAxisWGS84 * (1.0 - e2) / Math.Pow(1.0 - e2 * sinLatitude * sinLatitude, 1.5);
+    }
+
+    private static double ParallelRadius(double latitude)
+    {
+        double e2 = EarthFirstEccentricitySquaredWGS84;
+        double sinLatitude = Math.Sin(latitude);
+        double cosLatitude = Math.Cos(latitude);
+        return EarthSemiMajorAxisWGS84 * cosLatitude / Math.Sqrt(1.0 - e2 * sinLatitude * sinLatitude);
+    }
+
+    private const double EarthSemiMajorAxisWGS84 = 6378137.0;
+    private const double EarthFirstEccentricitySquaredWGS84 = 6.6943799901413165e-3;
+
+    private static object BuildDelineationDirtySnapshot(IEnumerable<FieldDelineationLine> lines)
+    {
+        return lines.Select(line => new
+        {
+            line.ID,
+            line.DelineationLineTypeID,
+            line.LineType,
+            line.Name,
+            line.Description,
+            line.Margin,
+            line.TopDepth,
+            line.BottomDepth,
+            Points = BuildPointDirtySnapshot(line.Points),
+            Boundaries = line.CalculatedBoundaryLines?.Select(boundary => new
+            {
+                boundary.ID,
+                boundary.IsInteriorBoundary,
+                boundary.IsClosed,
+                Points = BuildPointDirtySnapshot(boundary.Points)
+            }).ToList()
+        }).ToList();
+    }
+
+    private static object BuildPointDirtySnapshot(IEnumerable<Point3DGlobalCoordinates>? points)
+    {
+        if (points == null)
+        {
+            return new List<object>();
+        }
+
+        return points.Select(point => new
+        {
+            point.RiemannianNorth,
+            point.RiemannianEast,
+            point.Latitude,
+            point.Longitude
+        }).ToList();
+    }
+
+    private async Task DownloadJsonAsync<T>(T value, string fileName)
+    {
+        string json = System.Text.Json.JsonSerializer.Serialize(value, new System.Text.Json.JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        });
+        string base64 = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(json));
+        string encodedFileName = System.Text.Json.JsonEncodedText.Encode(fileName).ToString();
+        string script =
+            "(() => {" +
+            $"const binary = atob(\"{base64}\");" +
+            "const bytes = new Uint8Array(binary.length);" +
+            "for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);" +
+            "const blob = new Blob([bytes], { type: \"application/json;charset=utf-8\" });" +
+            "const url = URL.createObjectURL(blob);" +
+            "const anchor = document.createElement(\"a\");" +
+            "anchor.href = url;" +
+            $"anchor.download = \"{encodedFileName}\";" +
+            "document.body.appendChild(anchor);" +
+            "anchor.click();" +
+            "anchor.remove();" +
+            "URL.revokeObjectURL(url);" +
+            "})()";
+        await JSRuntime.InvokeVoidAsync("eval", script);
+    }
+
+    private static string SanitizeFileName(string fileName)
+    {
+        char[] invalidChars = Path.GetInvalidFileNameChars();
+        string sanitized = new(fileName.Select(character => invalidChars.Contains(character) ? '_' : character).ToArray());
+        return string.IsNullOrWhiteSpace(sanitized) ? "field.json" : sanitized;
     }
 
     private async Task<bool> ConfirmCloseWithoutSavingAsync()

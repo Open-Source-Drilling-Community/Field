@@ -13,6 +13,7 @@
     [Parameter] public List<string>? NameList { get; set; }
     [Parameter] public List<int>? ModeFlagList { get; set; }
     [Parameter] public List<string>? ColorList { get; set; }
+    [Parameter] public List<string>? LineDashList { get; set; }
     [Parameter] public List<bool>? ShowLegends { get; set; }
     [Parameter] public List<List<object>>? XValuesList { get; set; }
     [Parameter] public List<List<object>>? YValuesList { get; set; }
@@ -191,6 +192,11 @@
             Marker marker = ColorList != null && i < ColorList.Count
                 ? new Marker { Color = ColorList[i] }
                 : new Marker { AutoColorScale = true };
+            Plotly.Blazor.Traces.ScatterLib.Line line = new()
+            {
+                Color = ColorList != null && i < ColorList.Count ? ColorList[i] : null,
+                Dash = LineDashList != null && i < LineDashList.Count ? LineDashList[i] : null
+            };
 
             data.Add(new Scatter
             {
@@ -198,6 +204,7 @@
                 ShowLegend = showLegend,
                 Mode = mode,
                 Marker = marker,
+                Line = line,
                 X = xValues,
                 Y = yValues
             });
@@ -301,6 +308,7 @@
         AppendListSignature(builder, NameList);
         AppendListSignature(builder, ModeFlagList);
         AppendListSignature(builder, ColorList);
+        AppendListSignature(builder, LineDashList);
         AppendListSignature(builder, ShowLegends);
         AppendNestedListSignature(builder, XValuesList);
         AppendNestedListSignature(builder, YValuesList);

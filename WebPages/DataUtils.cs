@@ -15,6 +15,7 @@ public static class DataUtils
         public static string? UnitSystemName { get; set; } = "Metric";
         public static string? DepthReferenceName { get; set; } = "WGS84";
         public static string? PositionReferenceName { get; set; } = "WGS84";
+        public static string? GeodeticReferenceName { get; set; } = "WGS84";
         public static string? AzimuthReferenceName { get; set; }
         public static string? PressureReferenceName { get; set; }
         public static string? DateReferenceName { get; set; }
@@ -35,13 +36,19 @@ public static class DataUtils
         UnitAndReferenceParameters.PositionReferenceName = value;
     }
 
+    public static void UpdateGeodeticReferenceName(string value)
+    {
+        UnitAndReferenceParameters.GeodeticReferenceName = value;
+    }
+
     public static GroundMudLineDepthReferenceSource GroundMudLineDepthReferenceSource { get; } = new();
     public static SeaWaterLevelDepthReferenceSource SeaWaterLevelDepthReferenceSource { get; } = new();
     public static MeanSeaLevelDepthReferenceSource MeanSeaLevelDepthReferenceSource { get; } = new();
     public static RotaryTableDepthReferenceSource RotaryTableDepthReferenceSource { get; } = new();
     public static WellHeadPositionReferenceSource WellHeadPositionReferenceSource { get; } = new();
     public static CartographicGridPositionReferenceSource CartographicGridPositionReferenceSource { get; } = new();
-    public static LeaseLinePositionReferenceSource LeaseLinePositionReferenceSource { get; } = new();
+    public static CartographicProjectionDatumGeodeticReferenceSource CartographicProjectionDatumGeodeticReferenceSource { get; } = new();
+    public static FieldPositionReferenceSource FieldPositionReferenceSource { get; } = new();
     public static ClusterPositionReferenceSource ClusterPositionReferenceSource { get; } = new();
 
     public static readonly string FieldOutputParamLabel = "FieldOutputParam";
@@ -82,10 +89,16 @@ public class CartographicGridPositionReferenceSource : ICartographicGridPosition
     public double? CartographicGridEastPositionReference { get; set; }
 }
 
-public class LeaseLinePositionReferenceSource : ILeaseLinePositionReferenceSource
+public class CartographicProjectionDatumGeodeticReferenceSource : ICartographicProjectionDatumGeodeticReferenceSource
 {
-    public double? LeaseLineNorthPositionReference { get; set; }
-    public double? LeaseLineEastPositionReference { get; set; }
+    public double? CartographicProjectionDatumLatitudeReference { get; set; }
+    public double? CartographicProjectionDatumLongitudeReference { get; set; }
+}
+
+public class FieldPositionReferenceSource : IFieldPositionReferenceSource
+{
+    public double? FieldNorthPositionReference { get; set; }
+    public double? FieldEastPositionReference { get; set; }
 }
 
 public class ClusterPositionReferenceSource : IClusterPositionReferenceSource

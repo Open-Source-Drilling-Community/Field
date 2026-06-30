@@ -56,7 +56,13 @@ class Program
     static async Task Main()
     {
         bool finished = false;
-        Console.Clear();
+        try
+        {
+            Console.Clear();
+        }
+        catch (IOException)
+        {
+        }
         Console.BackgroundColor = ConsoleColor.Black;
         do
         {
@@ -98,7 +104,9 @@ class Program
                             //// option 2: activate the following line in case of online dependency discovery
                             //$"\t\t- backups of the individual OpenApi documents (.\\json-schemas\\microserviceDependency.json)\n" +
                             "\tType Y for YES, or any other key for NO");
-                res = Console.ReadLine();
+                res = string.Equals(Environment.GetEnvironmentVariable("MODEL_SHARED_GENERATOR_CONFIRM"), "Y", StringComparison.OrdinalIgnoreCase)
+                    ? "Y"
+                    : Console.ReadLine();
             }
             if (res == "Y")
             {

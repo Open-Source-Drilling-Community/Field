@@ -289,6 +289,7 @@ namespace NORCE.Drilling.Field.Service.Managers
         {
             if (field != null && field.MetaInfo != null && field.MetaInfo.ID != Guid.Empty)
             {
+                FieldDelineationCalculator.Calculate(field);
                 //if successful, check if another parent data with the same ID was calculated/added during the calculation time
                 Model.Field? newField = GetFieldById(field.MetaInfo.ID);
                 if (newField == null)
@@ -367,6 +368,7 @@ namespace NORCE.Drilling.Field.Service.Managers
             bool success = true;
             if (guid != Guid.Empty && field != null && field.MetaInfo != null && field.MetaInfo.ID == guid)
             {
+                FieldDelineationCalculator.Calculate(field);
                 //update FieldTable
                 var connection = _connectionManager.GetConnection();
                 if (connection != null)

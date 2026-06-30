@@ -79,7 +79,13 @@ class Program
     {
         try
         {
+        try
+        {
             Console.Clear();
+        }
+        catch (IOException)
+        {
+        }
         }
         catch (IOException)
         {
@@ -112,7 +118,9 @@ class Program
                             //// option 2: activate the following line in case of online dependency discovery
                             //$"\t\t- backups of the individual OpenApi documents (.\\json-schemas\\microserviceDependency.json)\n" +
                             "\tType Y for YES, or any other key for NO");
-                res = Console.ReadLine();
+                res = string.Equals(Environment.GetEnvironmentVariable("MODEL_SHARED_GENERATOR_CONFIRM"), "Y", StringComparison.OrdinalIgnoreCase)
+                    ? "Y"
+                    : Console.ReadLine();
             }
             if (res == "Y")
             {
@@ -154,7 +162,10 @@ class Program
                         };
 
                         // Reading locally stored dependencies
-                        IEnumerable<string> files = Directory.EnumerateFiles(jsonInputsDirectory, "*.json");
+                        IEnumerable<string> files = Directory
+                            .EnumerateFiles(jsonInputsDirectory, "*.json")
+                            .OrderBy(file => Path.GetFileName(file).Equals("FieldFullName.json", StringComparison.OrdinalIgnoreCase))
+                            .ThenBy(file => file, StringComparer.OrdinalIgnoreCase);
                         foreach (string file in files)
                         {
                             PrettyPrint(file, "Processing Open Api doc into API client...");

@@ -1,0 +1,1153 @@
+@using System.Globalization
+@using System.Text
+@using System.Text.Encodings.Web
+@using System.Text.Json
+@using System.Text.RegularExpressions
+@using OSDC.UnitConversion.Conversion
+@using OSDC.UnitConversion.Conversion.DrillingEngineering
+
+<style>
+    .delineation-point-cell .mud-input-adornment {
+        display: none;
+    }
+</style>
+
+<MudContainer Class="d-flex flex-row pa-0 mb-2">
+    <MudButton Class="me-1" Variant="Variant.Filled" Color="Color.Success" Size="Size.Small" OnClick="AddLine">Add</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Disabled="@(SelectedLine == null)" OnClick="DeleteSelectedLine">Delete</MudButton>
+    <MudButton Class="ms-1 me-1" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Disabled="@(!Lines.Any())" OnClick="ExportLinesAsync">Export</MudButton>
+    <label class="mud-button-root mud-button mud-button-filled mud-button-filled-primary mud-button-filled-size-small">
+        Import
+        <InputFile OnChange="ImportLinesAsync" style="display:none" />
+    </label>
+</MudContainer>
+
+<MudGrid>
+        <MudItem xs="12">
+            <MudTable Items="@Lines" Dense="true" Hover="true" Elevation="0" Breakpoint="Breakpoint.Sm">
+                <HeaderContent>
+                    <MudTh>Show</MudTh>
+                    <MudTh>Name</MudTh>
+                    <MudTh>Type</MudTh>
+                    <MudTh>@TopDepthColumnTitle</MudTh>
+                    <MudTh>@BottomDepthColumnTitle</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>
+                        <MudCheckBox T="bool" Value="@IsLineVisible(context)" ValueChanged="@((bool selected) => SetLineVisible(context, selected))" />
+                    </MudTd>
+                    <MudTd>
+                        <MudButton Variant="Variant.Text" Color="@(SelectedLine == context ? Color.Primary : Color.Default)" OnClick="@(() => SelectLine(context))">@GetLineDisplayName(context)</MudButton>
+                    </MudTd>
+                    <MudTd>@GetLineTypeDisplayName(context)</MudTd>
+                    <MudTd>@FormatDepth(context.TopDepth)</MudTd>
+                    <MudTd>@FormatDepth(context.BottomDepth)</MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudItem>
+
+        <MudItem xs="12">
+            @if (SelectedLine != null)
+            {
+                <MudDivider Class="mt-3 mb-3" />
+                <MudGrid>
+                    <MudItem xs="12" md="4">
+                        <MudTextField @bind-Value="SelectedLine.Name" Label="Name" ShrinkLabel Required="true" />
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudSelect T="Guid?" Value="@SelectedLine.DelineationLineTypeID" ValueChanged="@SetSelectedLineType" Label="Type" ShrinkLabel Clearable="true">
+                            @foreach (FieldDelineationLineType lineType in GetSelectableLineTypes())
+                            {
+                                <MudSelectItem T="Guid?" Value="@lineType.MetaInfo!.ID">@lineType.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudInputWithUnitAdornment QuantityName="PositionDrilling"
+                                                   QuantityLabel="Margin"
+                                                   SIValueNullable="SelectedLine.Margin"
+                                                   SIValueNullableChanged="@SetSelectedLineMargin" />
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudInputWithUnitAdornment QuantityName="DepthDrilling"
+                                                   QuantityLabel="Top"
+                                                   DrillingSignalReference="@DrillingSignalReferenceType.Depth"
+                                                   SIValueNullable="SelectedLine.TopDepth"
+                                                   SIValueNullableChanged="@SetSelectedLineTopDepth" />
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudInputWithUnitAdornment QuantityName="DepthDrilling"
+                                                   QuantityLabel="Bottom"
+                                                   DrillingSignalReference="@DrillingSignalReferenceType.Depth"
+                                                   SIValueNullable="SelectedLine.BottomDepth"
+                                                   SIValueNullableChanged="@SetSelectedLineBottomDepth" />
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudTextField @bind-Value="SelectedLine.Description" Label="Description" ShrinkLabel />
+                    </MudItem>
+                    <MudItem xs="12" md="4" Class="d-flex flex-row align-end">
+                        <MudButton Class="me-1" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="ExportSelectedLineAsync">Export</MudButton>
+                        <label class="mud-button-root mud-button mud-button-filled mud-button-filled-primary mud-button-filled-size-small">
+                            Import
+                            <InputFile OnChange="ImportSelectedLineAsync" style="display:none" />
+                        </label>
+                    </MudItem>
+                </MudGrid>
+
+                <MudContainer Class="d-flex flex-row pa-0 mt-3 mb-2">
+                    <MudButton Class="me-1" Variant="Variant.Filled" Color="Color.Success" Size="Size.Small" OnClick="AddPoint">Add point</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Disabled="@(!_selectedPointIds.Any())" OnClick="DeleteSelectedPoints">Delete points</MudButton>
+                </MudContainer>
+
+                <MudGrid Class="mt-1">
+                    <MudItem xs="1" Class="d-flex align-center">
+                        <MudCheckBox T="bool" Value="@AreAllPointsSelected()" ValueChanged="SetAllPointsSelected" />
+                    </MudItem>
+                    <MudItem xs="3"><MudText Typo="Typo.subtitle2">@NorthColumnTitle</MudText></MudItem>
+                    <MudItem xs="3"><MudText Typo="Typo.subtitle2">@EastColumnTitle</MudText></MudItem>
+                    <MudItem xs="2"><MudText Typo="Typo.subtitle2">@LatitudeColumnTitle</MudText></MudItem>
+                    <MudItem xs="3"><MudText Typo="Typo.subtitle2">@LongitudeColumnTitle</MudText></MudItem>
+                </MudGrid>
+                @foreach (Point3DGlobalCoordinates point in GetSelectedPoints())
+                {
+                    <MudGrid Class="mt-1" @key="point">
+                        <MudItem xs="1" Class="d-flex align-center">
+                            <MudCheckBox T="bool" Value="@IsPointSelected(point)" ValueChanged="@((bool selected) => SetPointSelected(point, selected))" />
+                        </MudItem>
+                        <MudItem xs="3" Class="delineation-point-cell">
+                            <MudInputWithUnitAdornment QuantityName="PositionDrilling"
+                                                       QuantityLabel=""
+                                                       DrillingSignalReference="@DrillingSignalReferenceType.Position"
+                                                       PositionDirection="@PositionDirectionType.North"
+                                                       SIValueNullable="@point.RiemannianNorth"
+                                                       SIValueNullableChanged="@((double? value) => SetPointNorth(point, value))"
+                                                       Immediate="true" />
+                        </MudItem>
+                        <MudItem xs="3" Class="delineation-point-cell">
+                            <MudInputWithUnitAdornment QuantityName="PositionDrilling"
+                                                       QuantityLabel=""
+                                                       DrillingSignalReference="@DrillingSignalReferenceType.Position"
+                                                       PositionDirection="@PositionDirectionType.East"
+                                                       SIValueNullable="@point.RiemannianEast"
+                                                       SIValueNullableChanged="@((double? value) => SetPointEast(point, value))"
+                                                       Immediate="true" />
+                        </MudItem>
+                        <MudItem xs="2" Class="delineation-point-cell">
+                            <MudInputWithUnitAdornment QuantityName="PlaneAngleGeodesic"
+                                                       QuantityLabel=""
+                                                       DrillingSignalReference="@DrillingSignalReferenceType.Geodetic"
+                                                       PositionDirection="@PositionDirectionType.North"
+                                                       SIValueNullable="@point.Latitude"
+                                                       SIValueNullableChanged="@((double? value) => SetPointLatitude(point, value))"
+                                                       Immediate="true" />
+                        </MudItem>
+                        <MudItem xs="3" Class="delineation-point-cell">
+                            <MudInputWithUnitAdornment QuantityName="PlaneAngleGeodesic"
+                                                       QuantityLabel=""
+                                                       DrillingSignalReference="@DrillingSignalReferenceType.Geodetic"
+                                                       PositionDirection="@PositionDirectionType.East"
+                                                       SIValueNullable="@point.Longitude"
+                                                       SIValueNullableChanged="@((double? value) => SetPointLongitude(point, value))"
+                                                       Immediate="true" />
+                        </MudItem>
+                    </MudGrid>
+                }
+
+                <MudDivider Class="mt-4 mb-3" />
+                <MudText Typo="Typo.subtitle1" Class="mb-2">Import</MudText>
+                <MudGrid>
+                    <MudItem xs="12" md="4">
+                        <InputFile OnChange="OnImportFileChanged" />
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudSelect @bind-Value="selectedImportCoordinateMode_" Label="Coordinates" ShrinkLabel>
+                            @foreach (string mode in ImportCoordinateModes)
+                            {
+                                <MudSelectItem Value="@mode">@mode</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudSelect @bind-Value="selectedImportSeparator_" Label="Separator" ShrinkLabel>
+                            @foreach (string separator in ImportSeparators)
+                            {
+                                <MudSelectItem Value="@separator">@separator</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    @if (selectedImportCoordinateMode_ == NorthEastMode)
+                    {
+                        <MudItem xs="6" md="2">
+                            <MudNumericField @bind-Value="importNorthColumn_" Label="North column" Min="1" />
+                        </MudItem>
+                        <MudItem xs="6" md="2">
+                            <MudNumericField @bind-Value="importEastColumn_" Label="East column" Min="1" />
+                        </MudItem>
+                    }
+                    else
+                    {
+                        <MudItem xs="6" md="2">
+                            <MudNumericField @bind-Value="importLatitudeColumn_" Label="Latitude column" Min="1" />
+                        </MudItem>
+                        <MudItem xs="6" md="2">
+                            <MudNumericField @bind-Value="importLongitudeColumn_" Label="Longitude column" Min="1" />
+                        </MudItem>
+                    }
+                    <MudItem xs="6" md="2">
+                        <MudSelect @bind-Value="selectedImportPositionUnit_" Label="Position unit" ShrinkLabel Disabled="@(selectedImportCoordinateMode_ != NorthEastMode)">
+                            @foreach (string unit in AvailablePositionUnits)
+                            {
+                                <MudSelectItem Value="@unit">@unit</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="6" md="2">
+                        <MudSelect @bind-Value="selectedImportAngleUnit_" Label="Angle unit" ShrinkLabel Disabled="@(selectedImportCoordinateMode_ == NorthEastMode)">
+                            @foreach (string unit in AvailableAngleUnits)
+                            {
+                                <MudSelectItem Value="@unit">@unit</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="12" md="2" Class="d-flex align-end">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="ImportAsync">Import</MudButton>
+                    </MudItem>
+                </MudGrid>
+            }
+        </MudItem>
+</MudGrid>
+
+@if (PlotNameList.Count > 0)
+{
+    <MudDivider Class="mt-4 mb-3" />
+    <ScatterPlot NameList="@PlotNameList"
+                 ModeFlagList="@PlotModeList"
+                 ColorList="@PlotColorList"
+                 LineDashList="@PlotDashList"
+                 ShowLegends="@PlotLegendList"
+                 XValuesList="@PlotEastValuesList"
+                 YValuesList="@PlotNorthValuesList"
+                 XUnit="PositionDrilling"
+                 YUnit="PositionDrilling"
+                 XAxisTitle="East"
+                 YAxisTitle="North"
+                 XAxisUsesPositionReference="true"
+                 YAxisUsesPositionReference="true"
+                 XAxisPositionDirection="PositionDirectionType.East"
+                 YAxisPositionDirection="PositionDirectionType.North"
+                 PlotHeight="420"
+                 AspectRatio="1" />
+}
+@code {
+    [Inject] public ISnackbar Snackbar { get; set; } = null!;
+    [Inject] public IJSRuntime JSRuntime { get; set; } = null!;
+
+    [Parameter] public List<FieldDelineationLine> Lines { get; set; } = [];
+    [Parameter] public List<FieldDelineationLineType> LineTypes { get; set; } = [];
+    [Parameter] public EventCallback LinesChanged { get; set; }
+
+    private const string NorthEastMode = "North-East";
+    private const string LatitudeLongitudeMode = "Latitude-Longitude";
+    private static readonly string[] ImportCoordinateModes = [NorthEastMode, LatitudeLongitudeMode];
+    private static readonly string[] ImportSeparators = ["Semicolon (;)", "Comma (,)", "Tab", "Space"];
+    private static readonly string[] Colors = ["#1f77b4", "#d62728", "#2ca02c", "#9467bd", "#ff7f0e", "#17becf", "#8c564b"];
+
+    [CascadingParameter] private MudUnitAndReferenceChoiceTag? unitReferenceTag_ { get; set; }
+    private FieldDelineationLine? SelectedLine { get; set; }
+    private readonly HashSet<Guid> visibleLineIds_ = [];
+    private readonly HashSet<Point3DGlobalCoordinates> _selectedPointIds = [];
+    private IBrowserFile? importFile_;
+    private string selectedImportCoordinateMode_ = NorthEastMode;
+    private string selectedImportSeparator_ = "Semicolon (;)";
+    private string selectedImportPositionUnit_ = PositionDrillingQuantity.Instance.GetUnitChoice(PositionDrillingQuantity.UnitChoicesEnum.Metre).UnitName;
+    private string selectedImportAngleUnit_ = PlaneAngleGeodesicQuantity.Instance.GetUnitChoice(PlaneAngleGeodesicQuantity.UnitChoicesEnum.Degree).UnitName;
+    private int importNorthColumn_ = 1;
+    private int importEastColumn_ = 2;
+    private int importLatitudeColumn_ = 1;
+    private int importLongitudeColumn_ = 2;
+
+    private List<string> AvailablePositionUnits => GetUnitNames(PositionDrillingQuantity.UnitChoiceDescriptions);
+    private List<string> AvailableAngleUnits => GetUnitNames(PlaneAngleGeodesicQuantity.UnitChoiceDescriptions);
+
+    private string NorthColumnTitle => WithUnit("North", GetPositionUnitLabel());
+    private string EastColumnTitle => WithUnit("East", GetPositionUnitLabel());
+    private string LatitudeColumnTitle => WithUnit("Latitude", GetAngleUnitLabel());
+    private string LongitudeColumnTitle => WithUnit("Longitude", GetAngleUnitLabel());
+    private string TopDepthColumnTitle => WithUnit("Top", GetDepthUnitLabel());
+    private string BottomDepthColumnTitle => WithUnit("Bottom", GetDepthUnitLabel());
+
+    private List<string> PlotNameList => BuildPlotData().Names;
+    private List<int> PlotModeList => BuildPlotData().Modes;
+    private List<string> PlotColorList => BuildPlotData().Colors;
+    private List<string> PlotDashList => BuildPlotData().Dashes;
+    private List<bool> PlotLegendList => BuildPlotData().Legends;
+    private List<List<object>> PlotEastValuesList => BuildPlotData().EastValues;
+    private List<List<object>> PlotNorthValuesList => BuildPlotData().NorthValues;
+
+    protected override void OnParametersSet()
+    {
+        foreach (FieldDelineationLine line in Lines)
+        {
+            NormalizeLinePoints(line);
+            if (line.ID != Guid.Empty)
+            {
+                visibleLineIds_.Add(line.ID);
+            }
+        }
+
+        if (SelectedLine != null && !Lines.Contains(SelectedLine))
+        {
+            SelectedLine = SelectedLine.ID == Guid.Empty
+                ? null
+                : Lines.FirstOrDefault(line => line.ID == SelectedLine.ID);
+            _selectedPointIds.Clear();
+        }
+    }
+
+    private void AddLine()
+    {
+        FieldDelineationLine line = new()
+        {
+            ID = Guid.NewGuid(),
+            DelineationLineTypeID = GetDefaultLineTypeId(),
+            LineType = GetDefaultLineTypeName(),
+            Name = "New delineation line",
+            Points = [],
+            CalculatedBoundaryLines = []
+        };
+        Lines.Add(line);
+        visibleLineIds_.Add(line.ID);
+        SelectLine(line);
+        NotifyLinesChanged();
+    }
+
+    private void DeleteSelectedLine()
+    {
+        if (SelectedLine == null)
+        {
+            return;
+        }
+
+        Lines.Remove(SelectedLine);
+        visibleLineIds_.Remove(SelectedLine.ID);
+        SelectedLine = Lines.FirstOrDefault();
+        _selectedPointIds.Clear();
+        NotifyLinesChanged();
+    }
+
+    private void SelectLine(FieldDelineationLine line)
+    {
+        SelectedLine = line;
+        _selectedPointIds.Clear();
+    }
+
+    private void SetSelectedLineType(Guid? value)
+    {
+        if (SelectedLine == null)
+        {
+            return;
+        }
+
+        SelectedLine.DelineationLineTypeID = value;
+        SelectedLine.LineType = value == null ? null : LineTypes.FirstOrDefault(lineType => lineType.MetaInfo?.ID == value)?.Name;
+        SelectedLine.CalculatedBoundaryLines = [];
+    }
+
+    private async Task ExportLinesAsync()
+    {
+        List<FieldDelineationLine> lines = Lines.Select(CloneLine).ToList();
+        await DownloadJsonAsync(lines, "delineation-lines.json");
+        Snackbar.Add("Exported delineation lines", Severity.Success);
+    }
+
+    private async Task ImportLinesAsync(InputFileChangeEventArgs args)
+    {
+        try
+        {
+            string content = await ReadBrowserFileAsync(args.File);
+            List<FieldDelineationLine>? importedLines = TryDeserializeJson<List<FieldDelineationLine>>(content);
+            if (importedLines == null)
+            {
+                FieldDelineationLine? singleLine = TryDeserializeJson<FieldDelineationLine>(content);
+                importedLines = singleLine == null ? null : [singleLine];
+            }
+
+            if (importedLines == null || importedLines.Count == 0)
+            {
+                Snackbar.Add("The selected file does not contain delineation lines", Severity.Warning);
+                return;
+            }
+
+            Lines.Clear();
+            visibleLineIds_.Clear();
+            foreach (FieldDelineationLine line in importedLines.Select(CloneLine))
+            {
+                EnsureLineId(line);
+                NormalizeLinePoints(line);
+                line.CalculatedBoundaryLines = [];
+                Lines.Add(line);
+                visibleLineIds_.Add(line.ID);
+            }
+
+            SelectLine(Lines.First());
+            await LinesChanged.InvokeAsync();
+            Snackbar.Add($"Imported {Lines.Count} delineation lines. Save to recalculate boundaries.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Error importing delineation lines: " + ex.Message, Severity.Error);
+        }
+    }
+
+    private async Task ExportSelectedLineAsync()
+    {
+        if (SelectedLine == null)
+        {
+            return;
+        }
+
+        await DownloadJsonAsync(CloneLine(SelectedLine), SanitizeFileName($"{GetLineDisplayName(SelectedLine)}.json"));
+        Snackbar.Add("Exported delineation line", Severity.Success);
+    }
+
+    private async Task ImportSelectedLineAsync(InputFileChangeEventArgs args)
+    {
+        try
+        {
+            string content = await ReadBrowserFileAsync(args.File);
+            FieldDelineationLine? imported = TryDeserializeJson<FieldDelineationLine>(content);
+            if (imported == null)
+            {
+                Snackbar.Add("The selected file does not contain a delineation line", Severity.Warning);
+                return;
+            }
+
+            FieldDelineationLine line = CloneLine(imported);
+            NormalizeLinePoints(line);
+            line.CalculatedBoundaryLines = [];
+
+            if (SelectedLine == null)
+            {
+                EnsureLineId(line);
+                Lines.Add(line);
+            }
+            else
+            {
+                int index = Lines.IndexOf(SelectedLine);
+                line.ID = SelectedLine.ID == Guid.Empty ? Guid.NewGuid() : SelectedLine.ID;
+                if (index >= 0)
+                {
+                    Lines[index] = line;
+                }
+                else
+                {
+                    Lines.Add(line);
+                }
+            }
+
+            visibleLineIds_.Add(line.ID);
+            SelectLine(line);
+            await LinesChanged.InvokeAsync();
+            Snackbar.Add("Imported delineation line. Save to recalculate boundaries.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Error importing delineation line: " + ex.Message, Severity.Error);
+        }
+    }
+
+    private async Task DownloadJsonAsync<T>(T value, string fileName)
+    {
+        string json = JsonSerializer.Serialize(value, new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        });
+        string base64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+        string encodedFileName = JsonEncodedText.Encode(fileName).ToString();
+        string script =
+            "(() => {" +
+            $"const binary = atob(\"{base64}\");" +
+            "const bytes = new Uint8Array(binary.length);" +
+            "for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);" +
+            "const blob = new Blob([bytes], { type: \"application/json;charset=utf-8\" });" +
+            "const url = URL.createObjectURL(blob);" +
+            "const anchor = document.createElement(\"a\");" +
+            "anchor.href = url;" +
+            $"anchor.download = \"{encodedFileName}\";" +
+            "document.body.appendChild(anchor);" +
+            "anchor.click();" +
+            "anchor.remove();" +
+            "URL.revokeObjectURL(url);" +
+            "})()";
+        await JSRuntime.InvokeVoidAsync("eval", script);
+    }
+
+    private static async Task<string> ReadBrowserFileAsync(IBrowserFile file)
+    {
+        using System.IO.Stream stream = file.OpenReadStream(128 * 1024 * 1024);
+        using System.IO.StreamReader reader = new(stream);
+        return await reader.ReadToEndAsync();
+    }
+
+    private static T? TryDeserializeJson<T>(string content)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<T>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        catch (JsonException)
+        {
+            return default;
+        }
+    }
+
+    private List<FieldDelineationLineType> GetSelectableLineTypes()
+    {
+        return LineTypes
+            .Where(lineType => lineType.MetaInfo?.ID != null && !string.IsNullOrWhiteSpace(lineType.Name))
+            .OrderBy(lineType => lineType.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    private string? GetDefaultLineTypeName()
+    {
+        return GetSelectableLineTypes().FirstOrDefault()?.Name ?? "lease line";
+    }
+
+    private Guid? GetDefaultLineTypeId()
+    {
+        return GetSelectableLineTypes().FirstOrDefault()?.MetaInfo?.ID;
+    }
+
+    private static string SanitizeFileName(string fileName)
+    {
+        char[] invalidChars = Path.GetInvalidFileNameChars();
+        string sanitized = new(fileName.Select(character => invalidChars.Contains(character) ? '_' : character).ToArray());
+        return string.IsNullOrWhiteSpace(sanitized) ? "delineation-line.json" : sanitized;
+    }
+
+    private static FieldDelineationLine CloneLine(FieldDelineationLine line)
+    {
+        return new FieldDelineationLine
+        {
+            ID = line.ID == Guid.Empty ? Guid.NewGuid() : line.ID,
+            DelineationLineTypeID = line.DelineationLineTypeID,
+            LineType = line.LineType,
+            Name = line.Name,
+            Description = line.Description,
+            Margin = line.Margin,
+            TopDepth = line.TopDepth,
+            BottomDepth = line.BottomDepth,
+            Points = ClonePoints(line.Points),
+            CalculatedBoundaryLines = CloneBoundaryLines(line.CalculatedBoundaryLines)
+        };
+    }
+
+    private static List<FieldDelineationBoundaryLine> CloneBoundaryLines(IEnumerable<FieldDelineationBoundaryLine>? lines)
+    {
+        return lines?
+            .Select(line => new FieldDelineationBoundaryLine
+            {
+                ID = line.ID == Guid.Empty ? Guid.NewGuid() : line.ID,
+                IsInteriorBoundary = line.IsInteriorBoundary,
+                IsClosed = line.IsClosed,
+                Points = ClonePoints(line.Points)
+            })
+            .ToList() ?? [];
+    }
+
+    private static List<Point3DGlobalCoordinates> ClonePoints(IEnumerable<Point3DGlobalCoordinates>? points)
+    {
+        return points?
+            .Select(point =>
+            {
+                Point3DGlobalCoordinates clone = new()
+                {
+                    RiemannianNorth = point.RiemannianNorth,
+                    RiemannianEast = point.RiemannianEast,
+                    Latitude = point.Latitude,
+                    Longitude = point.Longitude,
+                    TVD = 0,
+                    Z = 0
+                };
+                NormalizePoint(clone);
+                clone.X = clone.RiemannianNorth;
+                clone.Y = clone.RiemannianEast;
+                return clone;
+            })
+            .ToList() ?? [];
+    }
+
+    private static void EnsureLineId(FieldDelineationLine line)
+    {
+        if (line.ID == Guid.Empty)
+        {
+            line.ID = Guid.NewGuid();
+        }
+    }
+
+    private void SetSelectedLineMargin(double? value)
+    {
+        if (SelectedLine == null)
+        {
+            return;
+        }
+
+        SelectedLine.Margin = value;
+        SelectedLine.CalculatedBoundaryLines = [];
+    }
+
+    private void SetSelectedLineTopDepth(double? value)
+    {
+        if (SelectedLine == null)
+        {
+            return;
+        }
+
+        SelectedLine.TopDepth = value;
+    }
+
+    private void SetSelectedLineBottomDepth(double? value)
+    {
+        if (SelectedLine == null)
+        {
+            return;
+        }
+
+        SelectedLine.BottomDepth = value;
+    }
+
+    private void AddPoint()
+    {
+        if (SelectedLine == null)
+        {
+            return;
+        }
+
+        SelectedLine.Points ??= [];
+        Point3DGlobalCoordinates point = new() { RiemannianNorth = 0, RiemannianEast = 0, TVD = 0, Z = 0, X = 0, Y = 0 };
+        SetLatitudeLongitudeFromNorthEast(point);
+        SelectedLine.Points.Add(point);
+        SelectedLine.CalculatedBoundaryLines = [];
+        NotifyLinesChanged();
+    }
+
+    private List<Point3DGlobalCoordinates> GetSelectedPoints() => SelectedLine?.Points?.ToList() ?? [];
+
+    private bool IsPointSelected(Point3DGlobalCoordinates point) => _selectedPointIds.Contains(point);
+
+    private void SetPointSelected(Point3DGlobalCoordinates point, bool selected)
+    {
+        if (selected)
+        {
+            _selectedPointIds.Add(point);
+        }
+        else
+        {
+            _selectedPointIds.Remove(point);
+        }
+    }
+
+    private bool AreAllPointsSelected()
+    {
+        List<Point3DGlobalCoordinates> points = GetSelectedPoints();
+        return points.Count > 0 && points.All(_selectedPointIds.Contains);
+    }
+
+    private void SetAllPointsSelected(bool selected)
+    {
+        _selectedPointIds.Clear();
+        if (selected)
+        {
+            foreach (Point3DGlobalCoordinates point in GetSelectedPoints())
+            {
+                _selectedPointIds.Add(point);
+            }
+        }
+    }
+
+    private void DeleteSelectedPoints()
+    {
+        if (SelectedLine?.Points == null)
+        {
+            return;
+        }
+
+        SelectedLine.Points = SelectedLine.Points.Where(point => !_selectedPointIds.Contains(point)).ToList();
+        SelectedLine.CalculatedBoundaryLines = [];
+        _selectedPointIds.Clear();
+        NotifyLinesChanged();
+    }
+
+    private void SetPointNorth(Point3DGlobalCoordinates point, double? value)
+    {
+        point.RiemannianNorth = value;
+        point.TVD = 0;
+        SetLatitudeLongitudeFromNorthEast(point);
+        NotifyLinesChanged();
+    }
+
+    private void SetPointEast(Point3DGlobalCoordinates point, double? value)
+    {
+        point.RiemannianEast = value;
+        point.TVD = 0;
+        SetLatitudeLongitudeFromNorthEast(point);
+        NotifyLinesChanged();
+    }
+
+    private void SetPointLatitude(Point3DGlobalCoordinates point, double? value)
+    {
+        point.Latitude = value;
+        point.TVD = 0;
+        SetNorthEastFromLatitudeLongitude(point);
+        NotifyLinesChanged();
+    }
+
+    private void SetPointLongitude(Point3DGlobalCoordinates point, double? value)
+    {
+        point.Longitude = value;
+        point.TVD = 0;
+        SetNorthEastFromLatitudeLongitude(point);
+        NotifyLinesChanged();
+    }
+
+    private void NotifyLinesChanged()
+    {
+        _ = LinesChanged.InvokeAsync();
+    }
+
+    private bool IsLineVisible(FieldDelineationLine line) => line.ID != Guid.Empty && visibleLineIds_.Contains(line.ID);
+
+    private void SetLineVisible(FieldDelineationLine line, bool selected)
+    {
+        if (line.ID == Guid.Empty)
+        {
+            line.ID = Guid.NewGuid();
+        }
+        if (selected)
+        {
+            visibleLineIds_.Add(line.ID);
+        }
+        else
+        {
+            visibleLineIds_.Remove(line.ID);
+        }
+    }
+
+    private void OnImportFileChanged(InputFileChangeEventArgs args)
+    {
+        importFile_ = args.File;
+    }
+
+    private async Task ImportAsync()
+    {
+        if (SelectedLine == null || importFile_ == null)
+        {
+            Snackbar.Add("Select a delineation line and a file before importing", Severity.Warning);
+            return;
+        }
+
+        try
+        {
+            using System.IO.Stream stream = importFile_.OpenReadStream(128 * 1024 * 1024);
+            using System.IO.StreamReader reader = new(stream);
+            string content = await reader.ReadToEndAsync();
+            List<Point3DGlobalCoordinates> imported = [];
+            int skipped = 0;
+
+            foreach (string line in content.Split(["\r\n", "\n", "\r"], StringSplitOptions.None))
+            {
+                if (TryParsePoint(line, out Point3DGlobalCoordinates? point) && point != null)
+                {
+                    imported.Add(point);
+                }
+                else if (!string.IsNullOrWhiteSpace(line))
+                {
+                    skipped++;
+                }
+            }
+
+            if (imported.Count == 0)
+            {
+                Snackbar.Add("No delineation points could be imported", Severity.Warning);
+                return;
+            }
+
+            SelectedLine.Points = imported;
+            SelectedLine.CalculatedBoundaryLines = [];
+            await LinesChanged.InvokeAsync();
+            Snackbar.Add($"Imported {imported.Count} points. Skipped {skipped} lines.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Error importing delineation line: " + ex.Message, Severity.Error);
+        }
+    }
+
+    private bool TryParsePoint(string line, out Point3DGlobalCoordinates? point)
+    {
+        point = null;
+        if (string.IsNullOrWhiteSpace(line))
+        {
+            return false;
+        }
+
+        List<string> columns = SplitColumns(line);
+        if (selectedImportCoordinateMode_ == NorthEastMode)
+        {
+            if (!TryParseImportedNumber(ReadColumnToken(columns, importNorthColumn_), out double north) ||
+                !TryParseImportedNumber(ReadColumnToken(columns, importEastColumn_), out double east))
+            {
+                return false;
+            }
+
+            double northSi = ConvertPositionToSI(north, selectedImportPositionUnit_, PositionDirectionType.North);
+            double eastSi = ConvertPositionToSI(east, selectedImportPositionUnit_, PositionDirectionType.East);
+            point = new Point3DGlobalCoordinates { RiemannianNorth = northSi, RiemannianEast = eastSi, TVD = 0, Z = 0, X = northSi, Y = eastSi };
+            SetLatitudeLongitudeFromNorthEast(point);
+        }
+        else
+        {
+            if (!TryParseImportedNumber(ReadColumnToken(columns, importLatitudeColumn_), out double latitude) ||
+                !TryParseImportedNumber(ReadColumnToken(columns, importLongitudeColumn_), out double longitude))
+            {
+                return false;
+            }
+
+            double latitudeSi = ConvertAngleToSI(latitude, selectedImportAngleUnit_);
+            double longitudeSi = ConvertAngleToSI(longitude, selectedImportAngleUnit_);
+            point = new Point3DGlobalCoordinates
+            {
+                Latitude = latitudeSi,
+                Longitude = longitudeSi,
+                TVD = 0,
+                Z = 0
+            };
+            SetNorthEastFromLatitudeLongitude(point);
+        }
+
+        point.TVD = 0;
+        point.Z = 0;
+        point.X = point.RiemannianNorth;
+        point.Y = point.RiemannianEast;
+        return true;
+    }
+
+    private List<string> SplitColumns(string line)
+    {
+        return selectedImportSeparator_ switch
+        {
+            "Comma (,)" => line.Split(',').Select(value => value.Trim()).ToList(),
+            "Tab" => line.Split('\t').Select(value => value.Trim()).ToList(),
+            "Space" => Regex.Split(line.Trim(), @"\s+").Where(value => !string.IsNullOrWhiteSpace(value)).ToList(),
+            _ => line.Split(';').Select(value => value.Trim()).ToList()
+        };
+    }
+
+    private static string? ReadColumnToken(List<string> columns, int columnIndex)
+    {
+        return columnIndex < 1 || columnIndex > columns.Count ? null : columns[columnIndex - 1];
+    }
+
+    private static bool TryParseImportedNumber(string? token, out double value)
+    {
+        value = 0;
+        return !string.IsNullOrWhiteSpace(token) &&
+            double.TryParse(NormalizeAutoDecimalNumber(token.Trim()), NumberStyles.Float | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out value);
+    }
+
+    private static string NormalizeAutoDecimalNumber(string token)
+    {
+        int lastComma = token.LastIndexOf(',');
+        int lastDot = token.LastIndexOf('.');
+        if (lastComma >= 0 && lastDot >= 0)
+        {
+            return lastComma > lastDot
+                ? token.Replace(".", string.Empty).Replace(',', '.')
+                : token.Replace(",", string.Empty);
+        }
+        return lastComma >= 0 ? token.Replace(',', '.') : token;
+    }
+
+    private double ConvertPositionToSI(double value, string unit, PositionDirectionType direction)
+    {
+        OSDC.UnitConversion.Conversion.UnitChoice? unitChoice = PositionDrillingQuantity.UnitChoiceDescriptions.FirstOrDefault(choice => choice?.UnitName == unit);
+        value = unitChoice == null ? value : PositionDrillingQuantity.Instance.ToSI(value, unitChoice.ID);
+        return unitReferenceTag_?.ToWGS84PositionSI(value, "PositionDrilling", direction) ?? value;
+    }
+
+    private static double ConvertAngleToSI(double value, string unit)
+    {
+        OSDC.UnitConversion.Conversion.UnitChoice? unitChoice = PlaneAngleGeodesicQuantity.UnitChoiceDescriptions.FirstOrDefault(choice => choice?.UnitName == unit);
+        return unitChoice == null ? value : PlaneAngleGeodesicQuantity.Instance.ToSI(value, unitChoice.ID);
+    }
+
+    private string GetPositionUnitLabel()
+    {
+        return unitReferenceTag_?.GetPositionUnitLabel("PositionDrilling") ?? string.Empty;
+    }
+
+    private string GetAngleUnitLabel()
+    {
+        return unitReferenceTag_?.GetUnitLabel("PlaneAngleGeodesic") ?? string.Empty;
+    }
+
+    private string GetDepthUnitLabel()
+    {
+        return unitReferenceTag_?.GetDepthUnitLabel("DepthDrilling") ?? string.Empty;
+    }
+
+    private string FormatDepth(double? value)
+    {
+        if (value == null)
+        {
+            return string.Empty;
+        }
+
+        return unitReferenceTag_?.FromWGS84DepthSI(value.Value, "DepthDrilling", false) ??
+            value.Value.ToString("G6", CultureInfo.CurrentCulture);
+    }
+
+    private static string WithUnit(string label, string unit)
+    {
+        return string.IsNullOrWhiteSpace(unit) ? label : $"{label} [{unit}]";
+    }
+
+    private static void NormalizeLinePoints(FieldDelineationLine line)
+    {
+        if (line.Points != null)
+        {
+            foreach (Point3DGlobalCoordinates point in line.Points)
+            {
+                NormalizePoint(point);
+            }
+        }
+
+        if (line.CalculatedBoundaryLines != null)
+        {
+            foreach (FieldDelineationBoundaryLine boundary in line.CalculatedBoundaryLines)
+            {
+                if (boundary.Points == null)
+                {
+                    continue;
+                }
+                foreach (Point3DGlobalCoordinates point in boundary.Points)
+                {
+                    NormalizePoint(point);
+                }
+            }
+        }
+    }
+
+    private static void NormalizePoint(Point3DGlobalCoordinates point)
+    {
+        point.TVD = 0;
+        point.Z = 0;
+        if ((point.Latitude == null || point.Longitude == null) &&
+            point.RiemannianNorth != null &&
+            point.RiemannianEast != null)
+        {
+            SetLatitudeLongitudeFromNorthEast(point);
+        }
+        else if ((point.RiemannianNorth == null || point.RiemannianEast == null) &&
+            point.Latitude != null &&
+            point.Longitude != null)
+        {
+            SetNorthEastFromLatitudeLongitude(point);
+        }
+    }
+
+    private static void SetLatitudeLongitudeFromNorthEast(Point3DGlobalCoordinates point)
+    {
+        if (point.RiemannianNorth == null || point.RiemannianEast == null)
+        {
+            point.Latitude = null;
+            point.Longitude = null;
+            return;
+        }
+
+        double latitude = LatitudeFromMeridianDistance(point.RiemannianNorth.Value);
+        double parallelRadius = ParallelRadius(latitude);
+        point.Latitude = latitude;
+        point.Longitude = Math.Abs(parallelRadius) < 1e-12 ? null : point.RiemannianEast.Value / parallelRadius;
+    }
+
+    private static void SetNorthEastFromLatitudeLongitude(Point3DGlobalCoordinates point)
+    {
+        if (point.Latitude == null || point.Longitude == null)
+        {
+            point.RiemannianNorth = null;
+            point.RiemannianEast = null;
+            point.X = null;
+            point.Y = null;
+            return;
+        }
+
+        point.RiemannianNorth = MeridianDistance(point.Latitude.Value);
+        point.RiemannianEast = ParallelRadius(point.Latitude.Value) * point.Longitude.Value;
+        point.X = point.RiemannianNorth;
+        point.Y = point.RiemannianEast;
+    }
+
+    private static double LatitudeFromMeridianDistance(double meridianDistance)
+    {
+        double latitude = meridianDistance / EarthSemiMajorAxisWGS84;
+        for (int i = 0; i < 12; i++)
+        {
+            double residual = MeridianDistance(latitude) - meridianDistance;
+            double derivative = MeridianRadiusOfCurvature(latitude);
+            double delta = residual / derivative;
+            latitude -= delta;
+            if (Math.Abs(delta) < 1e-14)
+            {
+                break;
+            }
+        }
+
+        return latitude;
+    }
+
+    private static List<string> GetUnitNames(List<OSDC.UnitConversion.Conversion.UnitChoice> unitChoices)
+    {
+        return unitChoices
+            .Where(choice => !string.IsNullOrWhiteSpace(choice?.UnitName))
+            .Select(choice => choice.UnitName)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(unit => unit)
+            .ToList();
+    }
+
+    private PlotData BuildPlotData()
+    {
+        PlotData plot = new();
+        int colorIndex = 0;
+        foreach (FieldDelineationLine line in Lines.Where(IsLineVisible))
+        {
+            string color = Colors[colorIndex % Colors.Length];
+            colorIndex++;
+            AddTrace(plot, GetLineDisplayName(line), line.Points, color, "solid", true);
+            if (line.CalculatedBoundaryLines != null)
+            {
+                int boundaryIndex = 1;
+                foreach (FieldDelineationBoundaryLine boundary in line.CalculatedBoundaryLines)
+                {
+                    AddTrace(plot, $"{GetLineDisplayName(line)} boundary {boundaryIndex}", boundary.Points, color, "dash", true);
+                    boundaryIndex++;
+                }
+            }
+        }
+
+        return plot;
+    }
+
+    private static void AddTrace(PlotData plot, string name, ICollection<Point3DGlobalCoordinates>? points, string color, string dash, bool showLegend)
+    {
+        if (points == null)
+        {
+            return;
+        }
+
+        List<object> east = [];
+        List<object> north = [];
+        foreach (Point3DGlobalCoordinates point in points)
+        {
+            if (point.RiemannianEast != null && point.RiemannianNorth != null)
+            {
+                east.Add(point.RiemannianEast.Value);
+                north.Add(point.RiemannianNorth.Value);
+            }
+        }
+
+        if (east.Count < 2)
+        {
+            return;
+        }
+
+        plot.Names.Add(name);
+        plot.Modes.Add((int)Plotly.Blazor.Traces.ScatterLib.ModeFlag.Lines);
+        plot.Colors.Add(color);
+        plot.Dashes.Add(dash);
+        plot.Legends.Add(showLegend);
+        plot.EastValues.Add(east);
+        plot.NorthValues.Add(north);
+    }
+
+    private static string GetLineDisplayName(FieldDelineationLine line)
+    {
+        return !string.IsNullOrWhiteSpace(line.Name)
+            ? line.Name
+            : !string.IsNullOrWhiteSpace(line.LineType)
+                ? line.LineType
+            : "Unnamed line";
+    }
+
+    private string GetLineTypeDisplayName(FieldDelineationLine line)
+    {
+        if (line.DelineationLineTypeID is Guid lineTypeId && lineTypeId != Guid.Empty)
+        {
+            FieldDelineationLineType? lineType = LineTypes.FirstOrDefault(candidate => candidate.MetaInfo?.ID == lineTypeId);
+            if (!string.IsNullOrWhiteSpace(lineType?.Name))
+            {
+                return lineType.Name;
+            }
+        }
+
+        return line.LineType ?? string.Empty;
+    }
+
+    private static double MeridianDistance(double latitude)
+    {
+        if (Math.Abs(latitude) < 1e-15)
+        {
+            return 0;
+        }
+
+        const int intervals = 200;
+        double step = latitude / intervals;
+        double sum = 0;
+        for (int i = 0; i <= intervals; i++)
+        {
+            double phi = i * step;
+            double weight = i == 0 || i == intervals ? 1 : (i % 2 == 0 ? 2 : 4);
+            sum += weight * MeridianRadiusOfCurvature(phi);
+        }
+
+        return sum * step / 3.0;
+    }
+
+    private static double MeridianRadiusOfCurvature(double latitude)
+    {
+        double e2 = FirstEccentricitySquared();
+        double sinLatitude = Math.Sin(latitude);
+        return EarthSemiMajorAxisWGS84 * (1.0 - e2) / Math.Pow(1.0 - e2 * sinLatitude * sinLatitude, 1.5);
+    }
+
+    private static double ParallelRadius(double latitude)
+    {
+        double e2 = FirstEccentricitySquared();
+        double sinLatitude = Math.Sin(latitude);
+        double cosLatitude = Math.Cos(latitude);
+        return EarthSemiMajorAxisWGS84 * cosLatitude / Math.Sqrt(1.0 - e2 * sinLatitude * sinLatitude);
+    }
+
+    private static double FirstEccentricitySquared()
+    {
+        double flattening = 1.0 / EarthInverseFlatteningWGS84;
+        return 2.0 * flattening - flattening * flattening;
+    }
+
+    private const double EarthSemiMajorAxisWGS84 = 6378137.0;
+    private const double EarthInverseFlatteningWGS84 = 298.257223563;
+
+    private sealed class PlotData
+    {
+        public List<string> Names { get; } = [];
+        public List<int> Modes { get; } = [];
+        public List<string> Colors { get; } = [];
+        public List<string> Dashes { get; } = [];
+        public List<bool> Legends { get; } = [];
+        public List<List<object>> EastValues { get; } = [];
+        public List<List<object>> NorthValues { get; } = [];
+    }
+}
