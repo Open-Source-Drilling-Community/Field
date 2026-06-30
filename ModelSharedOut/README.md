@@ -32,6 +32,14 @@ Outputs:
 
 Note: In Debug builds, `Service/Service.csproj` also invokes `dotnet swagger tofile` to emit `ModelSharedOut/json-schemas/FieldFullName.json`, which feeds into the merge.
 
+After changing Model or Service API contracts, use the full generation sequence:
+
+```bash
+dotnet run --project ModelSharedIn
+dotnet build Service\Service.csproj
+dotnet run --project ModelSharedOut
+```
+
 ## Usage Examples
 
 Create the NSwag client and call the Service:
@@ -52,7 +60,7 @@ var ids = await client.GetAllFieldIdAsync();
 var field = await client.GetFieldByIdAsync(fieldId);
 ```
 
-The generated DTOs include types like `Field`, `MetaInfo`, `FieldCartographicConversionSet`, etc., aligned with the Service controllers.
+The generated DTOs include types like `Field`, `MetaInfo`, `FieldCartographicConversionSet`, `FieldFeatureCategory`, `FieldMembershipCategory`, `FieldIdentity`, `FieldDelineationLineType`, and the associated Field assignment/delineation DTOs, aligned with the Service controllers.
 
 ## Dependencies
 

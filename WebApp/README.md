@@ -1,11 +1,12 @@
 # Field Management WebApp
 
-The WebApp is a Blazor Server front end for the Field microservice. It hosts the Field management page, field-level trajectory and survey run displays, contextual data pages, and calculator pages.
+The WebApp is a Blazor Server front end for the Field microservice. It hosts the Field management page, field-level vocabulary pages, field-level trajectory and survey run displays, contextual data pages, and calculator pages.
 
 ## Purpose
 
 - Manage Field records through the Field REST API.
-- Display trajectories and survey runs for a selected field.
+- Manage field features, field memberships, field identities, and delineation line types.
+- Display trajectories and survey runs for a selected field, including delineation line overlays.
 - Configure field-level depth and position references for plotting.
 - Provide calculators for cartographic conversions and single vertical datum conversion.
 - Reuse contextual data pages from the CartographicProjection, GeodeticDatum, and VerticalDatum web page packages.
@@ -61,11 +62,15 @@ The app sets `UsePathBase("/Field/webapp")`, so all pages are rooted under that 
 Field Management:
 
 - `Field` (`/Field/webapp/Field`): create, edit, delete, and search Field records.
+- `Field Features` (`/Field/webapp/FieldFeatures`): manage field feature categories, options, exclusivity, and validity behavior.
+- `Field Memberships` (`/Field/webapp/FieldMemberships`): manage membership categories and options such as basin, play, license, operator, or pipeline network.
+- `Field Identities` (`/Field/webapp/FieldIdentities`): manage symbolic identity definitions such as Official name, WITSML UID, or External database ID.
+- `Delineation Line Types` (`/Field/webapp/FieldDelineationLineTypes`): manage delineation line type names.
 
 Survey Display:
 
-- `Field Trajectories` (`/Field/webapp/FieldTrajectories`): display all trajectories for the selected field in 3D and horizontal projection.
-- `Field Survey Runs` (`/Field/webapp/FieldSurveyRuns`): display all survey runs for the selected field in 3D and horizontal projection.
+- `Field Trajectories` (`/Field/webapp/FieldTrajectories`): display all trajectories for the selected field in 3D and horizontal projection, with field delineation overlays.
+- `Field Survey Runs` (`/Field/webapp/FieldSurveyRuns`): display all survey runs for the selected field in 3D and horizontal projection, with field delineation overlays.
 
 Contextual Data:
 

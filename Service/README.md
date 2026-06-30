@@ -1,13 +1,14 @@
 # Service Project
 
-The Service project hosts the Field microservice (ASP.NET Core, .NET 8). It exposes REST endpoints for managing Field data and Field Cartographic Conversion Sets, persists state in SQLite, and publishes an OpenAPI/Swagger UI.
+The Service project hosts the Field microservice (ASP.NET Core, .NET 8). It exposes REST endpoints for managing Field data, field vocabularies, delineation line types, and Field Cartographic Conversion Sets, persists state in SQLite, and publishes an OpenAPI/Swagger UI.
 
 ## Purpose
 
-- Serve the REST API for Field entities and cartographic conversions.
+- Serve the REST API for Field entities, field feature categories, field membership categories, field identities, delineation line types, and cartographic conversions.
 - Persist data in a local SQLite database under `../home/Field.db`.
 - Expose a merged OpenAPI document and Swagger UI for client generation and testing.
 - Orchestrate calls to the external CartographicProjection microservice for conversion calculations.
+- Calculate delineation boundary lines from field delineation lines and margins during Field create/update.
 
 ## Installation
 
@@ -53,6 +54,16 @@ Endpoints (high level):
   - `POST /Field` — create; body is a Field
   - `PUT /Field/{id}` — update; body is a Field
   - `DELETE /Field/{id}` — delete by ID
+- `FieldFeatureCategory` (controller base path: `/Field/api/FieldFeatureCategory`)
+  - CRUD API for user-managed field feature categories and embedded options.
+  - Supports category exclusivity and optional validity periods used by field feature assignments.
+- `FieldMembershipCategory` (controller base path: `/Field/api/FieldMembershipCategory`)
+  - CRUD API for user-managed field membership categories and embedded options.
+  - Supports category exclusivity and optional validity periods used by field membership assignments.
+- `FieldIdentity` (controller base path: `/Field/api/FieldIdentity`)
+  - CRUD API for symbolic identity definitions, such as Official name, WITSML UID, or External database ID.
+- `FieldDelineationLineType` (controller base path: `/Field/api/FieldDelineationLineType`)
+  - CRUD API for delineation line types such as lease line, border line, protected area, or no drilling zone.
 - `FieldCartographicConversionSet` (controller base path: `/Field/api/FieldCartographicConversionSet`)
   - `GET /FieldCartographicConversionSet` — list of IDs
   - `GET /FieldCartographicConversionSet/MetaInfo` — list of MetaInfo
@@ -105,6 +116,8 @@ Runtime and packages (see `Service/Service.csproj`):
 Service composition:
 - `Program.cs` sets `UsePathBase("/Field/api")`, configures controllers, CORS (allow any), Swagger UI, and reads `CartographicProjectionHostURL`.
 - `Managers/SqlConnectionManager.cs` manages SQLite file lifecycle, schema, and backups.
+- `Managers/FieldManager.cs` persists full Field JSON and invokes delineation boundary calculations on create/update.
+- `Managers/FieldFeatureCategoryManager.cs`, `FieldMembershipCategoryManager.cs`, `FieldIdentityManager.cs`, and `FieldDelineationLineTypeManager.cs` manage default vocabularies and CRUD storage.
 - `Controllers/*Controller.cs` expose REST endpoints and update `UsageStatisticsField` counters in `Model`.
 - `APIUtils.cs` configures an HttpClient + NSwag client to call the external CartographicProjection service.
 

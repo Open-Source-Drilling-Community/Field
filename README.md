@@ -1,11 +1,11 @@
 # Field
 
-The Field solution provides a microservice (REST API), reusable Razor pages, and a Blazor Server web application to manage Field data, display field trajectories and survey runs, and run contextual calculators. It also includes shared models and generators for OpenAPI-based clients used across the solution.
+The Field solution provides a microservice (REST API), reusable Razor pages, and a Blazor Server web application to manage Field data, display field trajectories and survey runs, maintain field-level vocabularies and delineation lines, and run contextual calculators. It also includes shared models and generators for OpenAPI-based clients used across the solution.
 
 ## Purpose
 
-- Expose a REST API to create, read, update, and delete Field data, and to compute cartographic conversion sets associated with a Field.
-- Provide a web UI to browse and edit fields, display field-level trajectories and survey runs, and run cartographic and vertical datum conversions.
+- Expose a REST API to create, read, update, and delete Field data, managed field feature categories, field memberships, field identities, delineation line types, and cartographic conversion sets associated with a Field.
+- Provide a web UI to browse and edit fields, manage field vocabularies, maintain delineation lines, display field-level trajectories and survey runs, and run cartographic and vertical datum conversions.
 - Share OpenAPI-generated clients/DTOs to keep contracts consistent across Service, WebApp, and tests.
 
 ## Installation
@@ -31,6 +31,12 @@ Configuration:
 - Service reads `CartographicProjectionHostURL` (see `Service/appsettings.*.json`).
 - WebApp reads `FieldHostURL`, `ClusterHostURL`, `TrajectoryHostURL`, `CartographicProjectionHostURL`, `GeodeticDatumHostURL`, `VerticalDatumHostURL`, and `UnitConversionHostURL` (see `WebApp/appsettings.*.json`).
 
+Code generation:
+- When model or controller contracts change, regenerate DTOs in this order:
+  - `dotnet run --project ModelSharedIn`
+  - `dotnet build Service\Service.csproj` to refresh `ModelSharedOut/json-schemas/FieldFullName.json`
+  - `dotnet run --project ModelSharedOut`
+
 ## Usage Examples
 
 Swagger UI (Service):
@@ -51,6 +57,11 @@ curl -k -X POST "https://localhost:5001/Field/api/Field" \
 WebApp (UI):
 - Local Field page: `https://localhost:5011/Field/webapp/Field`
 - Dev example: `https://dev.digiwells.no/Field/webapp/Field`
+- Managed vocabulary pages:
+  - `/Field/webapp/FieldFeatures`
+  - `/Field/webapp/FieldMemberships`
+  - `/Field/webapp/FieldIdentities`
+  - `/Field/webapp/FieldDelineationLineTypes`
 
 # Solution architecture
 
@@ -64,6 +75,8 @@ The solution is composed of:
   - *dependencies* = BaseModels
 - **Service**
   - defines the proper microservice API
+  - exposes CRUD controllers for fields, cartographic conversion sets, field feature categories, field membership categories, field identities, and delineation line types
+  - computes delineation boundary lines during Field create/update
   - *dependencies* = Model
 - **ModelSharedOut**
   - contains C# auto-generated classes for microservice clients dependencies
@@ -78,11 +91,11 @@ The solution is composed of:
   - *dependencies* = ModelShared
 - **WebApp**
   - Blazor Server webapp named `Field Management`
-  - hosts field management, field trajectory and survey run displays, contextual data pages, and calculator pages
+  - hosts field management, vocabulary management, field trajectory and survey run displays, contextual data pages, and calculator pages
   - *dependencies* = WebPages + reusable CartographicProjection, GeodeticDatum, and VerticalDatum web page packages
 - **WebPages**
   - reusable Razor class library containing the Field web pages
-  - includes field management, field trajectory display, field survey run display, cartographic conversions, and usage statistics pages
+  - includes field management, vocabulary management, delineation editing/import/export, field trajectory display, field survey run display, cartographic conversions, and usage statistics pages
   - *dependencies* = ModelSharedOut + WebAppUtils + DrillingRazorMudComponents
 - **home** (auto-generated)
   - data are persisted in the microservice container using the Sqlite database located at *home/Field.db*

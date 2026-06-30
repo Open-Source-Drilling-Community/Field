@@ -4,13 +4,17 @@ The Model project contains the domain types and supporting utilities for the Fie
 
 ## Purpose
 
-- Provide strongly typed models for the Field microservice (Field, FieldCartographicConversionSet, FieldCartographicConversionSetLight).
+- Provide strongly typed models for the Field microservice (Field, FieldCartographicConversionSet, FieldCartographicConversionSetLight, field features, field memberships, field identities, and delineation lines).
 - Centralize lightweight logic and contracts used across Service, WebApp, and tests.
 - Track per-endpoint usage metrics via UsageStatisticsField, persisted periodically for diagnostics.
 
 ## Key Types
 
-- Field: Represents a field entity with identity (`MetaInfo.ID`), name/description, timestamps, and a reference to a cartographic projection (`CartographicProjectionID`).
+- Field: Represents a field entity with identity (`MetaInfo.ID`), name/description, timestamps, a cartographic projection reference (`CartographicProjectionID`), an optional reference point, feature assignments, identity assignments, membership assignments, and delineation lines.
+- FieldFeatureCategory, FieldFeatureOption, FieldFeatureAssignment: Define user-managed feature categories/options and selected field feature options, with exclusivity and optional validity periods.
+- FieldMembershipCategory, FieldMembershipOption, FieldMembershipAssignment: Define user-managed membership categories/options and selected field membership options, with behavior similar to features.
+- FieldIdentity and FieldIdentityAssignment: Define user-managed symbolic identity names and field-specific identity values such as official names, external database IDs, WITSML UIDs, or report IDs.
+- FieldDelineationLineType, FieldDelineationLine, FieldDelineationBoundaryLine: Define managed delineation line types, input line geometry, optional margin/depth ranges, and calculated boundary lines.
 - FieldCartographicConversionSet: Input/output payload for cartographic ↔ geodetic conversions related to a given Field; includes `FieldID` and a list of `CartographicCoordinate` items (from ModelSharedIn).
 - FieldCartographicConversionSetLight: Lightweight view of conversion set metadata and basic field info.
 - UsageStatisticsField: Aggregates per-day counters for REST endpoints (GET/POST/PUT/DELETE) for both Field and FieldCartographicConversionSet resources, with periodic JSON backup to `../home/history.json`.
@@ -98,7 +102,7 @@ UsageStatisticsField.Instance.IncrementGetAllFieldIdPerDay();
 ## Notes and Conventions
 
 - Serialization: Types are designed for System.Text.Json. Default constructors exist for JSON compatibility.
-- Persistence: Managers serialize full objects into SQLite text columns as JSON, alongside selected scalar columns for querying.
+- Persistence: Managers serialize full objects into SQLite text columns as JSON, alongside selected scalar columns for querying. Field assignments, delineation lines, and calculated boundaries are persisted as part of the serialized Field object.
 - History backup: `UsageStatisticsField` writes to `../home/history.json` every few minutes. Ensure the `home` directory exists with write permissions in the Service runtime context.
 
 ## Building

@@ -36,6 +36,8 @@ Steps:
      ```
 3. Commit the updated `MergedModel.cs` (and optionally `MergedModel.json`).
 
+When changing Field model classes or Service controller contracts, run this project before rebuilding the Service and regenerating `ModelSharedOut`.
+
 Outputs:
 - `ModelSharedIn/MergedModel.cs`
 - `ModelSharedIn/MergedModel.json`
@@ -78,7 +80,7 @@ NuGet packages (see `ModelSharedIn.csproj`):
 
 ## Integration in the Solution
 
-- Model: References these generated DTOs (e.g., `CartographicCoordinate`, `GeodeticCoordinate`, `MetaInfo`) in domain types like `FieldCartographicConversionSet`.
+- Model: References these generated DTOs (e.g., `CartographicCoordinate`, `GeodeticCoordinate`, `MetaInfo`, `Point3DGlobalCoordinates`) in domain types like `Field`, `FieldDelineationLine`, and `FieldCartographicConversionSet`.
 - Service and WebApp: Use types under `NORCE.Drilling.Field.ModelShared` to communicate and to construct payloads consistent with the OpenAPI contracts.
 - ServiceTest: Uses the NSwag `Client` and DTOs from the same namespace to perform end-to-end API tests.
 

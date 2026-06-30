@@ -1,16 +1,34 @@
 # NORCE.Drilling.Field.WebPages
 
-`NORCE.Drilling.Field.WebPages` is a Razor class library that packages the Field-specific web pages together with the API and plotting utilities they require.
+`NORCE.Drilling.Field.WebPages` is a Razor class library that packages the Field-specific web pages together with the API, editing, import/export, and plotting utilities they require.
 
 ## Contents
 
 - `Field`
 - `FieldEdit`
+- `FieldFeatures`
+- `FieldMemberships`
+- `FieldIdentities`
+- `FieldDelineationLineTypes`
+- `FieldDelineationEditor`
 - `FieldTrajectories`
 - `FieldSurveyRuns`
 - `FieldCartographicConverter`
 - `StatisticsField`
-- Field page support classes such as API access helpers, field reference datum helpers, and Plotly-based 2D/3D plotting components
+- Field page support classes such as API access helpers, field reference datum helpers, and Plotly-based 2D/3D plotting components.
+
+Field editing supports:
+
+- reference point editing in north/east and latitude/longitude
+- field feature, membership, and identity assignments
+- delineation line editing, ASCII import, JSON import/export, margin/depth information, and calculated boundary lines
+
+Field trajectory and survey-run displays support:
+
+- 3D and horizontal projection views
+- uncertainty ellipse overlays
+- field delineation overlays in the horizontal projection
+- field delineation overlays in 3D projected to the top or bottom plane depending on camera angle
 
 ## Dependencies
 
@@ -57,6 +75,10 @@ Example routing:
 ## Routes
 
 - `/Field`
+- `/FieldFeatures`
+- `/FieldMemberships`
+- `/FieldIdentities`
+- `/FieldDelineationLineTypes`
 - `/FieldTrajectories`
 - `/FieldSurveyRuns`
 - `/FieldCartographicConverter`
