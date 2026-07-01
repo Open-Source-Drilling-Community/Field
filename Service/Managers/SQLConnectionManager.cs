@@ -66,7 +66,6 @@ namespace NORCE.Drilling.Field.Service.Managers
                     "ID text primary key",
                     "MetaInfo text",
                     "Name text",
-                    "Description text",
                     "IsExclusive integer",
                     "HasValidityPeriod integer",
                     "CreationDate text",

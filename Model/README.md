@@ -21,6 +21,26 @@ The Model project contains the domain types and supporting utilities for the Fie
 
 Namespaces: All types live under `NORCE.Drilling.Field.Model`.
 
+## Delineation Line Margins
+
+`FieldDelineationLine` stores the user-entered polyline and its optional margin. The input geometry is expressed as a series of `Point3DGlobalCoordinates`; the margin is a `LengthStandard` value converted and stored in SI. Boundary lines are calculated by the Service when a Field is created or updated, and the calculated result is stored as `FieldDelineationBoundaryLine` entries on the delineation line.
+
+For a closed delineation line, the margin is applied toward the interior of the closed region. A square from `(0, 0)` to `(100, 100)` with a 10 m margin therefore produces an inner square from approximately `(10, 10)` to `(90, 90)`, not an outer square. The original line remains the solid line and the calculated boundary is drawn as a dashed line:
+
+![Square closed delineation line with 10 m internal margin](images/Square-with-10m-margin.png)
+
+For a non-convex closed line, the same inward offset rule is used, but the boundary may no longer be a single simple polygon. Re-entrant shapes can create intersections between offset segments. These intersections are used to split and trim the calculated boundary so that areas where there is no remaining room for the margin are removed. Depending on the geometry and the margin value, this can yield several closed boundary lines, a smaller set of disconnected regions, or no boundary at all if the margin fully consumes the interior:
+
+![Non-convex closed delineation line with 10 m internal margin](images/Non-convex-closed-line-with-10m-margin.png)
+
+For an open delineation line, there is no interior/exterior region. The margin is applied on both sides of the input polyline, producing one offset boundary per side before intersection cleanup. If an offset boundary intersects itself, or if a boundary from one side intersects a boundary from the other side, the algorithm closes the overlapped part into a polygon and trims the remaining open boundary where there is no valid margin corridor. This is why one side of an open non-convex line can become a closed polygon plus a shorter open polyline, while the other side remains one continuous open polyline:
+
+![Open non-convex delineation line with 10 m margin on both sides](images/Open-line-non-convex-with-10m-margin.png)
+
+At each vertex, the boundary is built from offset segments plus, when needed, a circular arc centered on the original vertex. If the two adjacent offset segments intersect in the valid direction, the intersection point is enough and no arc is inserted. If the turn opens away from the offset side, including obtuse-angle cases, a constant-distance boundary cannot be represented by only the two offset segments; a circular arc of radius equal to the margin is discretized into small line segments and inserted between them. Thus arc insertion is decided locally for each pair of adjacent segments, and a single delineation line may contain corners with arcs and corners without arcs.
+
+Top and bottom depth limits are optional. If both are missing, the delineation applies at any depth. If only top is defined, it applies below top; if only bottom is defined, it applies above bottom; if both are defined, it applies between them. Equality between top and bottom is accepted.
+
 ## Dependencies
 
 - .NET: `net8.0`

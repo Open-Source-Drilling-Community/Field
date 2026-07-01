@@ -32131,11 +32131,11 @@ namespace NORCE.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("ID")]
         public System.Guid ID { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("FieldFeatureCategoryID")]
-        public System.Guid? FieldFeatureCategoryID { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("FeatureCategoryID")]
+        public System.Guid? FeatureCategoryID { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("FieldFeatureOptionID")]
-        public System.Guid? FieldFeatureOptionID { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("FeatureOptionID")]
+        public System.Guid? FeatureOptionID { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("FromDate")]
         public System.DateTimeOffset? FromDate { get; set; }
@@ -32163,9 +32163,6 @@ namespace NORCE.Drilling.Field.ModelShared
 
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string Name { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Description")]
-        public string Description { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("IsExclusive")]
         public bool IsExclusive { get; set; }
@@ -32202,9 +32199,6 @@ namespace NORCE.Drilling.Field.ModelShared
 
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string Name { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Description")]
-        public string Description { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -32251,8 +32245,8 @@ namespace NORCE.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("ID")]
         public System.Guid ID { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("FieldIdentityID")]
-        public System.Guid? FieldIdentityID { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("IdentityID")]
+        public System.Guid? IdentityID { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("Value")]
         public string Value { get; set; }
@@ -32275,11 +32269,11 @@ namespace NORCE.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("ID")]
         public System.Guid ID { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("FieldMembershipCategoryID")]
-        public System.Guid? FieldMembershipCategoryID { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("MembershipCategoryID")]
+        public System.Guid? MembershipCategoryID { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("FieldMembershipOptionID")]
-        public System.Guid? FieldMembershipOptionID { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("MembershipOptionID")]
+        public System.Guid? MembershipOptionID { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("FromDate")]
         public System.DateTimeOffset? FromDate { get; set; }

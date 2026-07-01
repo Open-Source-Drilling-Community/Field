@@ -3,7 +3,7 @@ using System;
 
 namespace NORCE.Drilling.Field.Model
 {
-    public class FieldIdentity
+    public class FieldIdentity : IIdentity
     {
         /// <summary>
         /// a MetaInfo for the FieldIdentity

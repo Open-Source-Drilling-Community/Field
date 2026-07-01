@@ -1,8 +1,9 @@
+using OSDC.DotnetLibraries.General.DataManagement;
 using System;
 
 namespace NORCE.Drilling.Field.Model
 {
-    public class FieldFeatureOption
+    public class FieldFeatureOption : IFeatureOption
     {
         /// <summary>
         /// stable identifier for the option inside its category
@@ -13,11 +14,6 @@ namespace NORCE.Drilling.Field.Model
         /// user-defined name of the option
         /// </summary>
         public string? Name { get; set; }
-
-        /// <summary>
-        /// user-defined description of the option
-        /// </summary>
-        public string? Description { get; set; }
 
         /// <summary>
         /// default constructor required for JSON serialization

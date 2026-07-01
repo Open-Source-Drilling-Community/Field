@@ -1518,12 +1518,12 @@
             "type": "string",
             "format": "uuid"
           },
-          "FieldFeatureCategoryID": {
+          "FeatureCategoryID": {
             "type": "string",
             "format": "uuid",
             "nullable": true
           },
-          "FieldFeatureOptionID": {
+          "FeatureOptionID": {
             "type": "string",
             "format": "uuid",
             "nullable": true
@@ -1548,10 +1548,6 @@
             "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
           },
           "Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "Description": {
             "type": "string",
             "nullable": true
           },
@@ -1591,10 +1587,6 @@
           "Name": {
             "type": "string",
             "nullable": true
-          },
-          "Description": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1629,7 +1621,7 @@
             "type": "string",
             "format": "uuid"
           },
-          "FieldIdentityID": {
+          "IdentityID": {
             "type": "string",
             "format": "uuid",
             "nullable": true
@@ -1648,12 +1640,12 @@
             "type": "string",
             "format": "uuid"
           },
-          "FieldMembershipCategoryID": {
+          "MembershipCategoryID": {
             "type": "string",
             "format": "uuid",
             "nullable": true
           },
-          "FieldMembershipOptionID": {
+          "MembershipOptionID": {
             "type": "string",
             "format": "uuid",
             "nullable": true

@@ -1,8 +1,9 @@
+using OSDC.DotnetLibraries.General.DataManagement;
 using System;
 
 namespace NORCE.Drilling.Field.Model
 {
-    public class FieldMembershipAssignment
+    public class FieldMembershipAssignment : IMembershipAssignment
     {
         /// <summary>
         /// stable identifier for the assignment
@@ -12,12 +13,12 @@ namespace NORCE.Drilling.Field.Model
         /// <summary>
         /// the selected field membership category
         /// </summary>
-        public Guid? FieldMembershipCategoryID { get; set; }
+        public Guid? MembershipCategoryID { get; set; }
 
         /// <summary>
         /// the selected field membership option
         /// </summary>
-        public Guid? FieldMembershipOptionID { get; set; }
+        public Guid? MembershipOptionID { get; set; }
 
         /// <summary>
         /// first date for which the assignment is valid

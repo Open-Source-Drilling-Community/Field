@@ -657,24 +657,24 @@ namespace NORCE.Drilling.Field.Service.Managers
                     _logger.LogWarning("Impossible to get the Field of given ID from Field microservice");
                     return null;
                 }
-                CartographicProjection cartographicProjection = await APIUtils.ClientCartographicProjection.GetCartographicProjectionByIdAsync(field.CartographicProjectionID.Value);
-                if (cartographicProjection == null)
-                {
-                    _logger.LogWarning("Impossible to get the CartographicProjection of given ID from CartographicProjection microservice");
-                    return null;
-                }
-                CartographicConversionSet cartographicConversionSet = new()
-                {
-                    MetaInfo = new ModelShared.MetaInfo() { ID = Guid.NewGuid() },
-                    Name = fieldCartographicConversionSet.Name,
-                    Description = fieldCartographicConversionSet.Description,
-                    CreationDate = fieldCartographicConversionSet.CreationDate,
-                    LastModificationDate = fieldCartographicConversionSet.LastModificationDate,
-                    CartographicProjectionID = field.CartographicProjectionID,
-                    CartographicCoordinateList = fieldCartographicConversionSet.CartographicCoordinateList
-                };
                 try
                 {
+                    CartographicProjection cartographicProjection = await APIUtils.ClientCartographicProjection.GetCartographicProjectionByIdAsync(field.CartographicProjectionID.Value);
+                    if (cartographicProjection == null)
+                    {
+                        _logger.LogWarning("Impossible to get the CartographicProjection of given ID from CartographicProjection microservice");
+                        return null;
+                    }
+                    CartographicConversionSet cartographicConversionSet = new()
+                    {
+                        MetaInfo = new ModelShared.MetaInfo() { ID = Guid.NewGuid() },
+                        Name = fieldCartographicConversionSet.Name,
+                        Description = fieldCartographicConversionSet.Description,
+                        CreationDate = fieldCartographicConversionSet.CreationDate,
+                        LastModificationDate = fieldCartographicConversionSet.LastModificationDate,
+                        CartographicProjectionID = field.CartographicProjectionID,
+                        CartographicCoordinateList = fieldCartographicConversionSet.CartographicCoordinateList
+                    };
                     await APIUtils.ClientCartographicProjection.PostCartographicConversionSetAsync(cartographicConversionSet);
                     CartographicConversionSet calculatedCartographicConversionSet = await APIUtils.ClientCartographicProjection.GetCartographicConversionSetByIdAsync(cartographicConversionSet.MetaInfo.ID);
                     await APIUtils.ClientCartographicProjection.DeleteCartographicConversionSetByIdAsync(cartographicConversionSet.MetaInfo.ID);

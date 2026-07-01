@@ -1,8 +1,9 @@
+using OSDC.DotnetLibraries.General.DataManagement;
 using System;
 
 namespace NORCE.Drilling.Field.Model
 {
-    public class FieldMembershipOption
+    public class FieldMembershipOption : IMembershipOption
     {
         /// <summary>
         /// stable identifier for the option inside its category

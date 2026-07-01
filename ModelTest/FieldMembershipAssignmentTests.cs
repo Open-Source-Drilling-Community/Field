@@ -13,8 +13,8 @@ public class FieldMembershipAssignmentTests
         var data = new FieldMembershipAssignment();
 
         Assert.That(data.ID, Is.EqualTo(Guid.Empty));
-        Assert.That(data.FieldMembershipCategoryID, Is.Null);
-        Assert.That(data.FieldMembershipOptionID, Is.Null);
+        Assert.That(data.MembershipCategoryID, Is.Null);
+        Assert.That(data.MembershipOptionID, Is.Null);
         Assert.That(data.FromDate, Is.Null);
         Assert.That(data.ToDate, Is.Null);
     }
@@ -25,8 +25,8 @@ public class FieldMembershipAssignmentTests
         var data = new FieldMembershipAssignment
         {
             ID = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"),
-            FieldMembershipCategoryID = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"),
-            FieldMembershipOptionID = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
+            MembershipCategoryID = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"),
+            MembershipOptionID = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
             FromDate = DateTimeOffset.Parse("2020-01-01T00:00:00Z"),
             ToDate = DateTimeOffset.Parse("2024-01-01T00:00:00Z")
         };
@@ -37,8 +37,8 @@ public class FieldMembershipAssignmentTests
 
         Assert.That(clone, Is.Not.Null);
         Assert.That(clone!.ID, Is.EqualTo(data.ID));
-        Assert.That(clone.FieldMembershipCategoryID, Is.EqualTo(data.FieldMembershipCategoryID));
-        Assert.That(clone.FieldMembershipOptionID, Is.EqualTo(data.FieldMembershipOptionID));
+        Assert.That(clone.MembershipCategoryID, Is.EqualTo(data.MembershipCategoryID));
+        Assert.That(clone.MembershipOptionID, Is.EqualTo(data.MembershipOptionID));
         Assert.That(clone.FromDate, Is.EqualTo(data.FromDate));
         Assert.That(clone.ToDate, Is.EqualTo(data.ToDate));
     }

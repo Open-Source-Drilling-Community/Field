@@ -52,8 +52,8 @@ public class FieldTests
                 new FieldFeatureAssignment
                 {
                     ID = Guid.NewGuid(),
-                    FieldFeatureCategoryID = featureCategoryId,
-                    FieldFeatureOptionID = featureOptionId,
+                    FeatureCategoryID = featureCategoryId,
+                    FeatureOptionID = featureOptionId,
                     FromDate = now,
                     ToDate = later
                 }
@@ -88,8 +88,8 @@ public class FieldTests
         Assert.That(field.ReferencePoint.Latitude, Is.Not.Null);
         Assert.That(field.ReferencePoint.Longitude, Is.Not.Null);
         Assert.That(field.FieldFeatureAssignments, Has.Count.EqualTo(1));
-        Assert.That(field.FieldFeatureAssignments![0].FieldFeatureCategoryID, Is.EqualTo(featureCategoryId));
-        Assert.That(field.FieldFeatureAssignments[0].FieldFeatureOptionID, Is.EqualTo(featureOptionId));
+        Assert.That(field.FieldFeatureAssignments![0].FeatureCategoryID, Is.EqualTo(featureCategoryId));
+        Assert.That(field.FieldFeatureAssignments[0].FeatureOptionID, Is.EqualTo(featureOptionId));
         Assert.That(field.DelineationLines, Has.Count.EqualTo(1));
         Assert.That(field.DelineationLines![0].Name, Is.EqualTo("North lease line"));
         Assert.That(field.DelineationLines[0].DelineationLineTypeID, Is.EqualTo(lineTypeId));
@@ -120,8 +120,8 @@ public class FieldTests
                 new FieldFeatureAssignment
                 {
                     ID = Guid.Parse("11111111-1111-1111-1111-111111111111"),
-                    FieldFeatureCategoryID = Guid.Parse("22222222-2222-2222-2222-222222222222"),
-                    FieldFeatureOptionID = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                    FeatureCategoryID = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                    FeatureOptionID = Guid.Parse("33333333-3333-3333-3333-333333333333"),
                     FromDate = now,
                     ToDate = null
                 }
@@ -176,8 +176,8 @@ public class FieldTests
         Assert.That(clone.ReferencePoint.Longitude!.Value, Is.EqualTo(field.ReferencePoint.Longitude!.Value).Within(1e-12));
         Assert.That(clone.FieldFeatureAssignments, Has.Count.EqualTo(1));
         Assert.That(clone.FieldFeatureAssignments![0].ID, Is.EqualTo(field.FieldFeatureAssignments![0].ID));
-        Assert.That(clone.FieldFeatureAssignments[0].FieldFeatureCategoryID, Is.EqualTo(field.FieldFeatureAssignments[0].FieldFeatureCategoryID));
-        Assert.That(clone.FieldFeatureAssignments[0].FieldFeatureOptionID, Is.EqualTo(field.FieldFeatureAssignments[0].FieldFeatureOptionID));
+        Assert.That(clone.FieldFeatureAssignments[0].FeatureCategoryID, Is.EqualTo(field.FieldFeatureAssignments[0].FeatureCategoryID));
+        Assert.That(clone.FieldFeatureAssignments[0].FeatureOptionID, Is.EqualTo(field.FieldFeatureAssignments[0].FeatureOptionID));
         Assert.That(clone.FieldFeatureAssignments[0].FromDate, Is.EqualTo(field.FieldFeatureAssignments[0].FromDate));
         Assert.That(clone.DelineationLines, Has.Count.EqualTo(1));
         Assert.That(clone.DelineationLines![0].ID, Is.EqualTo(field.DelineationLines![0].ID));

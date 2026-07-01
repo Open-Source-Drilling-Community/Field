@@ -15,7 +15,6 @@ namespace ServiceTest
             {
                 MetaInfo = new MetaInfo { ID = Guid.NewGuid() },
                 Name = "test field feature category",
-                Description = "created by test",
                 IsExclusive = true,
                 HasValidityPeriod = true,
                 Options =
@@ -29,10 +28,10 @@ namespace ServiceTest
             Assert.That(fetched.Name, Is.EqualTo(category.Name));
             Assert.That(fetched.Options, Has.Count.EqualTo(1));
 
-            fetched.Description = "updated by test";
+            fetched.Name = "updated field feature category";
             await api.PutFieldFeatureCategoryByIdAsync(fetched.MetaInfo.ID, fetched);
             FieldFeatureCategory updated = await api.GetFieldFeatureCategoryByIdAsync(fetched.MetaInfo.ID);
-            Assert.That(updated.Description, Is.EqualTo("updated by test"));
+            Assert.That(updated.Name, Is.EqualTo("updated field feature category"));
 
             await api.DeleteFieldFeatureCategoryByIdAsync(fetched.MetaInfo.ID);
             Assert.ThrowsAsync<ApiException>(async () => await api.GetFieldFeatureCategoryByIdAsync(fetched.MetaInfo.ID));

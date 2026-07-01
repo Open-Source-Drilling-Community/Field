@@ -1,10 +1,11 @@
 using OSDC.DotnetLibraries.General.DataManagement;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NORCE.Drilling.Field.Model
 {
-    public class FieldMembershipCategory
+    public class FieldMembershipCategory : IMembershipCategory
     {
         /// <summary>
         /// a MetaInfo for the FieldMembershipCategory
@@ -30,6 +31,18 @@ namespace NORCE.Drilling.Field.Model
         /// the possible options for this category
         /// </summary>
         public List<FieldMembershipOption>? Options { get; set; }
+
+        List<IMembershipOption>? IMembershipCategory.Options
+        {
+            get => Options?.Cast<IMembershipOption>().ToList();
+            set => Options = value?.Select(option => option is FieldMembershipOption fieldOption
+                ? fieldOption
+                : new FieldMembershipOption
+                {
+                    ID = option.ID,
+                    Name = option.Name
+                }).ToList();
+        }
 
         /// <summary>
         /// the date when the data was created

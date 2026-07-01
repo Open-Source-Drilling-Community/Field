@@ -1,8 +1,9 @@
+using OSDC.DotnetLibraries.General.DataManagement;
 using System;
 
 namespace NORCE.Drilling.Field.Model
 {
-    public class FieldIdentityAssignment
+    public class FieldIdentityAssignment : IIdentityAssignment
     {
         /// <summary>
         /// unique ID of the assignment
@@ -12,7 +13,7 @@ namespace NORCE.Drilling.Field.Model
         /// <summary>
         /// reference to the selected FieldIdentity
         /// </summary>
-        public Guid? FieldIdentityID { get; set; }
+        public Guid? IdentityID { get; set; }
 
         /// <summary>
         /// field-specific identity value

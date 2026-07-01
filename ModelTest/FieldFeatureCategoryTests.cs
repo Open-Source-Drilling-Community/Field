@@ -15,7 +15,6 @@ public class FieldFeatureCategoryTests
 
         Assert.That(category.MetaInfo, Is.Null);
         Assert.That(category.Name, Is.Null);
-        Assert.That(category.Description, Is.Null);
         Assert.That(category.IsExclusive, Is.False);
         Assert.That(category.HasValidityPeriod, Is.False);
         Assert.That(category.Options, Is.Null);
@@ -33,12 +32,11 @@ public class FieldFeatureCategoryTests
         {
             MetaInfo = new MetaInfo { ID = id },
             Name = "production role",
-            Description = "Role options",
             IsExclusive = true,
             HasValidityPeriod = true,
             Options =
             [
-                new FieldFeatureOption { ID = optionId, Name = "producer", Description = "Producing field" }
+                new FieldFeatureOption { ID = optionId, Name = "producer" }
             ],
             CreationDate = now,
             LastModificationDate = now
@@ -50,7 +48,6 @@ public class FieldFeatureCategoryTests
         Assert.That(clone, Is.Not.Null);
         Assert.That(clone!.MetaInfo?.ID, Is.EqualTo(id));
         Assert.That(clone.Name, Is.EqualTo(category.Name));
-        Assert.That(clone.Description, Is.EqualTo(category.Description));
         Assert.That(clone.IsExclusive, Is.True);
         Assert.That(clone.HasValidityPeriod, Is.True);
         Assert.That(clone.Options, Has.Count.EqualTo(1));

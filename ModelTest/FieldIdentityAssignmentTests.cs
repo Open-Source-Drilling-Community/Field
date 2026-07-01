@@ -13,7 +13,7 @@ public class FieldIdentityAssignmentTests
         var data = new FieldIdentityAssignment();
 
         Assert.That(data.ID, Is.EqualTo(Guid.Empty));
-        Assert.That(data.FieldIdentityID, Is.Null);
+        Assert.That(data.IdentityID, Is.Null);
         Assert.That(data.Value, Is.Null);
     }
 
@@ -23,7 +23,7 @@ public class FieldIdentityAssignmentTests
         var data = new FieldIdentityAssignment
         {
             ID = Guid.Parse("99999999-9999-9999-9999-999999999999"),
-            FieldIdentityID = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+            IdentityID = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
             Value = "12345"
         };
 
@@ -33,7 +33,7 @@ public class FieldIdentityAssignmentTests
 
         Assert.That(clone, Is.Not.Null);
         Assert.That(clone!.ID, Is.EqualTo(data.ID));
-        Assert.That(clone.FieldIdentityID, Is.EqualTo(data.FieldIdentityID));
+        Assert.That(clone.IdentityID, Is.EqualTo(data.IdentityID));
         Assert.That(clone.Value, Is.EqualTo(data.Value));
     }
 }

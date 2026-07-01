@@ -1,10 +1,11 @@
 using OSDC.DotnetLibraries.General.DataManagement;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NORCE.Drilling.Field.Model
 {
-    public class FieldFeatureCategory
+    public class FieldFeatureCategory : IFeatureCategory
     {
         /// <summary>
         /// a MetaInfo for the FieldFeatureCategory
@@ -15,11 +16,6 @@ namespace NORCE.Drilling.Field.Model
         /// user-defined name of the category
         /// </summary>
         public string? Name { get; set; }
-
-        /// <summary>
-        /// user-defined description of the category
-        /// </summary>
-        public string? Description { get; set; }
 
         /// <summary>
         /// whether options from this category are mutually exclusive when assigned to a field
@@ -35,6 +31,18 @@ namespace NORCE.Drilling.Field.Model
         /// the possible options for this category
         /// </summary>
         public List<FieldFeatureOption>? Options { get; set; }
+
+        List<IFeatureOption>? IFeatureCategory.Options
+        {
+            get => Options?.Cast<IFeatureOption>().ToList();
+            set => Options = value?.Select(option => option is FieldFeatureOption fieldOption
+                ? fieldOption
+                : new FieldFeatureOption
+                {
+                    ID = option.ID,
+                    Name = option.Name
+                }).ToList();
+        }
 
         /// <summary>
         /// the date when the data was created

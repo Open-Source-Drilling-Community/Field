@@ -441,9 +441,9 @@ namespace NORCE.Drilling.Field.Service.Managers
                 string? lastModificationDate = data.LastModificationDate?.ToString(SqlConnectionManager.DATE_TIME_FORMAT);
                 var command = connection.CreateCommand();
                 command.CommandText = "INSERT INTO FieldFeatureCategoryTable (" +
-                    "ID, MetaInfo, Name, Description, IsExclusive, HasValidityPeriod, CreationDate, LastModificationDate, FieldFeatureCategory" +
+                    "ID, MetaInfo, Name, IsExclusive, HasValidityPeriod, CreationDate, LastModificationDate, FieldFeatureCategory" +
                     ") VALUES (" +
-                    $"'{data.MetaInfo.ID}', '{metaInfo}', '{data.Name}', '{data.Description}', {(data.IsExclusive ? 1 : 0)}, {(data.HasValidityPeriod ? 1 : 0)}, '{creationDate}', '{lastModificationDate}', '{serialized}')";
+                    $"'{data.MetaInfo.ID}', '{metaInfo}', '{data.Name}', {(data.IsExclusive ? 1 : 0)}, {(data.HasValidityPeriod ? 1 : 0)}, '{creationDate}', '{lastModificationDate}', '{serialized}')";
                 int count = command.ExecuteNonQuery();
                 if (count != 1)
                 {
@@ -487,7 +487,6 @@ namespace NORCE.Drilling.Field.Service.Managers
                 command.CommandText = $"UPDATE FieldFeatureCategoryTable SET " +
                     $"MetaInfo = '{metaInfo}', " +
                     $"Name = '{data.Name}', " +
-                    $"Description = '{data.Description}', " +
                     $"IsExclusive = {(data.IsExclusive ? 1 : 0)}, " +
                     $"HasValidityPeriod = {(data.HasValidityPeriod ? 1 : 0)}, " +
                     $"CreationDate = '{creationDate}', " +
@@ -576,7 +575,6 @@ namespace NORCE.Drilling.Field.Service.Managers
             {
                 MetaInfo = new MetaInfo { ID = Guid.NewGuid() },
                 Name = defaultCategory.Name,
-                Description = defaultCategory.Description,
                 IsExclusive = defaultCategory.IsExclusive,
                 HasValidityPeriod = defaultCategory.HasValidityPeriod,
                 Options = defaultCategory.Options

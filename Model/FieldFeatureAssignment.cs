@@ -1,8 +1,9 @@
 using System;
+using OSDC.DotnetLibraries.General.DataManagement;
 
 namespace NORCE.Drilling.Field.Model
 {
-    public class FieldFeatureAssignment
+    public class FieldFeatureAssignment : IFeatureAssignment
     {
         /// <summary>
         /// stable identifier for the assignment
@@ -12,12 +13,12 @@ namespace NORCE.Drilling.Field.Model
         /// <summary>
         /// the selected field feature category
         /// </summary>
-        public Guid? FieldFeatureCategoryID { get; set; }
+        public Guid? FeatureCategoryID { get; set; }
 
         /// <summary>
         /// the selected field feature option
         /// </summary>
-        public Guid? FieldFeatureOptionID { get; set; }
+        public Guid? FeatureOptionID { get; set; }
 
         /// <summary>
         /// first date for which the assignment is valid

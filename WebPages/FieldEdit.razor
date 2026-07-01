@@ -45,10 +45,10 @@
                 @if (CartographicProjections != null && CartographicProjections.Count > 0)
                 {
                     <MudItem xs="12" md="3">
-                        <MudSelect @bind-Value="@_cartographicProjection" Label="Cartographic projection" ShrinkLabel ToStringFunc="@(s => s?.Name)">
+                        <MudSelect T="CartographicProjectionLight" Value="@_cartographicProjection" ValueChanged="@SetCartographicProjection" Label="Cartographic projection" ShrinkLabel ToStringFunc="@(s => s?.Name)">
                             @foreach (var sph in CartographicProjections)
                             {
-                                <MudSelectItem Value="@sph">@sph.Name</MudSelectItem>
+                                <MudSelectItem T="CartographicProjectionLight" Value="@sph">@sph.Name</MudSelectItem>
                             }
                         </MudSelect>
                     </MudItem>
@@ -324,6 +324,13 @@
         {
             DataUtils.UnitAndReferenceParameters.DepthReferenceName = "WGS84";
         }
+    }
+
+    private Task SetCartographicProjection(CartographicProjectionLight? cartographicProjection)
+    {
+        _cartographicProjection = cartographicProjection;
+        _ = RefreshCartographicGridPositionReferenceAsync();
+        return Task.CompletedTask;
     }
 
     private async Task Save()
@@ -909,6 +916,20 @@
 
     private async Task<CartographicCoordinate?> ConvertReferenceSampleToCartographicAsync(Guid fieldId, ReferencePositionSample sample)
     {
+        Guid? persistedProjectionId = CurrentField?.CartographicProjectionID;
+        Guid? selectedProjectionId = _cartographicProjection?.MetaInfo?.ID;
+        if (persistedProjectionId == null || persistedProjectionId == Guid.Empty)
+        {
+            logger.LogDebug("Skipping cartographic reference update because the field has no saved cartographic projection");
+            return null;
+        }
+
+        if (selectedProjectionId != null && selectedProjectionId != Guid.Empty && selectedProjectionId != persistedProjectionId)
+        {
+            logger.LogDebug("Skipping cartographic reference update because the selected cartographic projection has not been saved yet");
+            return null;
+        }
+
         Guid conversionId = Guid.NewGuid();
         DateTimeOffset now = DateTimeOffset.UtcNow;
         FieldCartographicConversionSet conversionSet = new()
@@ -982,8 +1003,8 @@
             .Select(assignment => new FieldFeatureAssignment
             {
                 ID = assignment.ID == Guid.Empty ? Guid.NewGuid() : assignment.ID,
-                FieldFeatureCategoryID = assignment.FieldFeatureCategoryID,
-                FieldFeatureOptionID = assignment.FieldFeatureOptionID,
+                FeatureCategoryID = assignment.FeatureCategoryID,
+                FeatureOptionID = assignment.FeatureOptionID,
                 FromDate = assignment.FromDate,
                 ToDate = assignment.ToDate
             })
@@ -995,8 +1016,8 @@
         return assignments.Select(assignment => new
         {
             assignment.ID,
-            assignment.FieldFeatureCategoryID,
-            assignment.FieldFeatureOptionID,
+            assignment.FeatureCategoryID,
+            assignment.FeatureOptionID,
             assignment.FromDate,
             assignment.ToDate
         }).ToList();
@@ -1008,7 +1029,7 @@
             .Select(assignment => new FieldIdentityAssignment
             {
                 ID = assignment.ID == Guid.Empty ? Guid.NewGuid() : assignment.ID,
-                FieldIdentityID = assignment.FieldIdentityID,
+                IdentityID = assignment.IdentityID,
                 Value = assignment.Value
             })
             .ToList() ?? [];
@@ -1019,7 +1040,7 @@
         return assignments.Select(assignment => new
         {
             assignment.ID,
-            assignment.FieldIdentityID,
+            assignment.IdentityID,
             assignment.Value
         }).ToList();
     }
@@ -1030,8 +1051,8 @@
             .Select(assignment => new FieldMembershipAssignment
             {
                 ID = assignment.ID == Guid.Empty ? Guid.NewGuid() : assignment.ID,
-                FieldMembershipCategoryID = assignment.FieldMembershipCategoryID,
-                FieldMembershipOptionID = assignment.FieldMembershipOptionID,
+                MembershipCategoryID = assignment.MembershipCategoryID,
+                MembershipOptionID = assignment.MembershipOptionID,
                 FromDate = assignment.FromDate,
                 ToDate = assignment.ToDate
             })
@@ -1043,8 +1064,8 @@
         return assignments.Select(assignment => new
         {
             assignment.ID,
-            assignment.FieldMembershipCategoryID,
-            assignment.FieldMembershipOptionID,
+            assignment.MembershipCategoryID,
+            assignment.MembershipOptionID,
             assignment.FromDate,
             assignment.ToDate
         }).ToList();
@@ -1077,7 +1098,7 @@
         return category.IsExclusive &&
             !category.HasValidityPeriod &&
             category.MetaInfo?.ID is Guid categoryId &&
-            _fieldFeatureAssignments.Any(assignment => assignment.FieldFeatureCategoryID == categoryId);
+            _fieldFeatureAssignments.Any(assignment => assignment.FeatureCategoryID == categoryId);
     }
 
     private void SelectFeatureOption(FieldFeatureCategory category, FieldFeatureOption option)
@@ -1117,8 +1138,8 @@
         _fieldFeatureAssignments.Add(new FieldFeatureAssignment
         {
             ID = Guid.NewGuid(),
-            FieldFeatureCategoryID = _selectedFeatureCategoryId,
-            FieldFeatureOptionID = _selectedFeatureOptionId
+            FeatureCategoryID = _selectedFeatureCategoryId,
+            FeatureOptionID = _selectedFeatureOptionId
         });
     }
 
@@ -1146,14 +1167,14 @@
 
     private string GetAssignmentDisplayName(FieldFeatureAssignment assignment)
     {
-        FieldFeatureCategory? category = assignment.FieldFeatureCategoryID is Guid categoryId ? FindFeatureCategory(categoryId) : null;
-        FieldFeatureOption? option = assignment.FieldFeatureOptionID is Guid optionId ? FindFeatureOption(category, optionId) : null;
+        FieldFeatureCategory? category = assignment.FeatureCategoryID is Guid categoryId ? FindFeatureCategory(categoryId) : null;
+        FieldFeatureOption? option = assignment.FeatureOptionID is Guid optionId ? FindFeatureOption(category, optionId) : null;
         return $"{category?.Name ?? "Unknown category"}: {option?.Name ?? "Unknown option"}";
     }
 
     private bool CategoryHasValidityPeriod(FieldFeatureAssignment assignment)
     {
-        return assignment.FieldFeatureCategoryID is Guid categoryId && FindFeatureCategory(categoryId)?.HasValidityPeriod == true;
+        return assignment.FeatureCategoryID is Guid categoryId && FindFeatureCategory(categoryId)?.HasValidityPeriod == true;
     }
 
     private static DateTime? ToDateTime(DateTimeOffset? value)
@@ -1195,7 +1216,7 @@
     {
         foreach (FieldFeatureAssignment assignment in _fieldFeatureAssignments)
         {
-            if (assignment.FieldFeatureCategoryID is not Guid categoryId || assignment.FieldFeatureOptionID is not Guid optionId)
+            if (assignment.FeatureCategoryID is not Guid categoryId || assignment.FeatureOptionID is not Guid optionId)
             {
                 Snackbar.Add("Feature assignments must have a category and an option", Severity.Warning);
                 return false;
@@ -1229,7 +1250,7 @@
             }
 
             List<FieldFeatureAssignment> categoryAssignments = _fieldFeatureAssignments
-                .Where(assignment => assignment.FieldFeatureCategoryID == categoryId)
+                .Where(assignment => assignment.FeatureCategoryID == categoryId)
                 .ToList();
 
             if (!category.HasValidityPeriod && categoryAssignments.Count > 1)
@@ -1295,7 +1316,7 @@
     private bool IsIdentityAssigned(FieldIdentity identity)
     {
         return identity.MetaInfo?.ID is Guid identityId &&
-            _fieldIdentityAssignments.Any(assignment => assignment.FieldIdentityID == identityId);
+            _fieldIdentityAssignments.Any(assignment => assignment.IdentityID == identityId);
     }
 
     private void SelectFieldIdentity(FieldIdentity identity)
@@ -1329,7 +1350,7 @@
         _fieldIdentityAssignments.Add(new FieldIdentityAssignment
         {
             ID = Guid.NewGuid(),
-            FieldIdentityID = _selectedIdentityId
+            IdentityID = _selectedIdentityId
         });
     }
 
@@ -1357,7 +1378,7 @@
 
     private string GetIdentityAssignmentDisplayName(FieldIdentityAssignment assignment)
     {
-        return assignment.FieldIdentityID is Guid identityId
+        return assignment.IdentityID is Guid identityId
             ? FindFieldIdentity(identityId)?.Name ?? "Unknown identity"
             : "Unknown identity";
     }
@@ -1371,7 +1392,7 @@
     {
         foreach (FieldIdentityAssignment assignment in _fieldIdentityAssignments)
         {
-            if (assignment.FieldIdentityID is not Guid identityId)
+            if (assignment.IdentityID is not Guid identityId)
             {
                 Snackbar.Add("Identity assignments must have an identity", Severity.Warning);
                 return false;
@@ -1391,8 +1412,8 @@
         }
 
         if (_fieldIdentityAssignments
-            .Where(assignment => assignment.FieldIdentityID != null)
-            .GroupBy(assignment => assignment.FieldIdentityID)
+            .Where(assignment => assignment.IdentityID != null)
+            .GroupBy(assignment => assignment.IdentityID)
             .Any(group => group.Count() > 1))
         {
             Snackbar.Add("Each field identity can only be assigned once", Severity.Warning);
@@ -1429,7 +1450,7 @@
         return category.IsExclusive &&
             !category.HasValidityPeriod &&
             category.MetaInfo?.ID is Guid categoryId &&
-            _fieldMembershipAssignments.Any(assignment => assignment.FieldMembershipCategoryID == categoryId);
+            _fieldMembershipAssignments.Any(assignment => assignment.MembershipCategoryID == categoryId);
     }
 
     private void SelectMembershipOption(FieldMembershipCategory category, FieldMembershipOption option)
@@ -1469,8 +1490,8 @@
         _fieldMembershipAssignments.Add(new FieldMembershipAssignment
         {
             ID = Guid.NewGuid(),
-            FieldMembershipCategoryID = _selectedMembershipCategoryId,
-            FieldMembershipOptionID = _selectedMembershipOptionId
+            MembershipCategoryID = _selectedMembershipCategoryId,
+            MembershipOptionID = _selectedMembershipOptionId
         });
     }
 
@@ -1498,14 +1519,14 @@
 
     private string GetMembershipAssignmentDisplayName(FieldMembershipAssignment assignment)
     {
-        FieldMembershipCategory? category = assignment.FieldMembershipCategoryID is Guid categoryId ? FindMembershipCategory(categoryId) : null;
-        FieldMembershipOption? option = assignment.FieldMembershipOptionID is Guid optionId ? FindMembershipOption(category, optionId) : null;
+        FieldMembershipCategory? category = assignment.MembershipCategoryID is Guid categoryId ? FindMembershipCategory(categoryId) : null;
+        FieldMembershipOption? option = assignment.MembershipOptionID is Guid optionId ? FindMembershipOption(category, optionId) : null;
         return $"{category?.Name ?? "Unknown category"}: {option?.Name ?? "Unknown option"}";
     }
 
     private bool MembershipCategoryHasValidityPeriod(FieldMembershipAssignment assignment)
     {
-        return assignment.FieldMembershipCategoryID is Guid categoryId && FindMembershipCategory(categoryId)?.HasValidityPeriod == true;
+        return assignment.MembershipCategoryID is Guid categoryId && FindMembershipCategory(categoryId)?.HasValidityPeriod == true;
     }
 
     private void SetMembershipAssignmentFromDate(FieldMembershipAssignment assignment, DateTime? value)
@@ -1537,7 +1558,7 @@
     {
         foreach (FieldMembershipAssignment assignment in _fieldMembershipAssignments)
         {
-            if (assignment.FieldMembershipCategoryID is not Guid categoryId || assignment.FieldMembershipOptionID is not Guid optionId)
+            if (assignment.MembershipCategoryID is not Guid categoryId || assignment.MembershipOptionID is not Guid optionId)
             {
                 Snackbar.Add("Membership assignments must have a category and an option", Severity.Warning);
                 return false;
@@ -1571,7 +1592,7 @@
             }
 
             List<FieldMembershipAssignment> categoryAssignments = _fieldMembershipAssignments
-                .Where(assignment => assignment.FieldMembershipCategoryID == categoryId)
+                .Where(assignment => assignment.MembershipCategoryID == categoryId)
                 .ToList();
 
             if (!category.HasValidityPeriod && categoryAssignments.Count > 1)
@@ -1899,3 +1920,4 @@
         return result == true;
     }
 }
+
