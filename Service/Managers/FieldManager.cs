@@ -279,6 +279,50 @@ namespace NORCE.Drilling.Field.Service.Managers
             return null;
         }
 
+        /// <summary>
+        /// Returns the list of all FieldLight present in the microservice database
+        /// </summary>
+        /// <returns>the list of FieldLight present in the microservice database</returns>
+        public List<Model.FieldLight>? GetAllFieldLight()
+        {
+            List<Model.FieldLight> vals = [];
+            var connection = _connectionManager.GetConnection();
+            if (connection != null)
+            {
+                var command = connection.CreateCommand();
+                command.CommandText = "SELECT Field FROM FieldTable";
+                try
+                {
+                    using var reader = command.ExecuteReader();
+                    while (reader.Read() && !reader.IsDBNull(0))
+                    {
+                        string data = reader.GetString(0);
+                        Model.Field? field = JsonSerializer.Deserialize<Model.Field>(data, JsonSettings.Options);
+                        if (field != null)
+                        {
+                            vals.Add(new Model.FieldLight(
+                                field.MetaInfo,
+                                field.Name,
+                                field.Description,
+                                field.CreationDate,
+                                field.LastModificationDate));
+                        }
+                    }
+                    _logger.LogInformation("Returning the list of existing FieldLight from FieldTable");
+                    return vals;
+                }
+                catch (SqliteException ex)
+                {
+                    _logger.LogError(ex, "Impossible to get light data from FieldTable");
+                }
+            }
+            else
+            {
+                _logger.LogWarning("Impossible to access the SQLite database");
+            }
+            return null;
+        }
+
 
         /// <summary>
         /// Performs calculation on the given Field and adds it to the microservice database

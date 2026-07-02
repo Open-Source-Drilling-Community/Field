@@ -7867,6 +7867,29 @@
         }
       }
     },
+    "/Field/LightData": {
+      "get": {
+        "tags": [
+          "Field"
+        ],
+        "operationId": "GetAllFieldLight",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FieldLight"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/FieldCartographicConversionSet/FieldID": {
       "get": {
         "tags": [
@@ -18614,6 +18637,32 @@
           },
           "Value": {
             "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "FieldLight": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         }

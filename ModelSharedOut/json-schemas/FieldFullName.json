@@ -199,6 +199,29 @@
         }
       }
     },
+    "/Field/LightData": {
+      "get": {
+        "tags": [
+          "Field"
+        ],
+        "operationId": "GetAllFieldLight",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldLight"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/FieldCartographicConversionSet": {
       "get": {
         "tags": [
@@ -1628,6 +1651,33 @@
           },
           "Value": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Field.Model.FieldLight": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },

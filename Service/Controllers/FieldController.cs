@@ -109,6 +109,25 @@ namespace NORCE.Drilling.Field.Service.Controllers
         }
 
         /// <summary>
+        /// Returns the list of all FieldLight present in the microservice database, at endpoint Field/api/Field/LightData
+        /// </summary>
+        /// <returns>the list of all FieldLight present in the microservice database, at endpoint Field/api/Field/LightData</returns>
+        [HttpGet("LightData", Name = "GetAllFieldLight")]
+        public ActionResult<IEnumerable<Model.FieldLight>> GetAllFieldLight()
+        {
+            UsageStatisticsField.Instance.IncrementGetAllFieldLightPerDay();
+            var vals = _fieldManager.GetAllFieldLight();
+            if (vals != null)
+            {
+                return Ok(vals);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>
         /// Performs calculation on the given Field and adds it to the microservice database, at the endpoint Field/api/Field
         /// </summary>
         /// <param name="field"></param>
