@@ -84,6 +84,40 @@ namespace NORCE.Drilling.Field.Model
         public History PutFieldCartographicConversionSetByIdPerDay { get; set; } = new History();
         public History DeleteFieldCartographicConversionSetByIdPerDay { get; set; } = new History();
 
+        public History GetAllFieldDelineationLineTypeIdPerDay { get; set; } = new History();
+        public History GetAllFieldDelineationLineTypeMetaInfoPerDay { get; set; } = new History();
+        public History GetFieldDelineationLineTypeByIdPerDay { get; set; } = new History();
+        public History GetAllFieldDelineationLineTypePerDay { get; set; } = new History();
+        public History PostFieldDelineationLineTypePerDay { get; set; } = new History();
+        public History PutFieldDelineationLineTypeByIdPerDay { get; set; } = new History();
+        public History DeleteFieldDelineationLineTypeByIdPerDay { get; set; } = new History();
+
+        public History GetAllFieldFeatureCategoryIdPerDay { get; set; } = new History();
+        public History GetAllFieldFeatureCategoryMetaInfoPerDay { get; set; } = new History();
+        public History GetFieldFeatureCategoryByIdPerDay { get; set; } = new History();
+        public History GetAllFieldFeatureCategoryPerDay { get; set; } = new History();
+        public History PostFieldFeatureCategoryPerDay { get; set; } = new History();
+        public History PutFieldFeatureCategoryByIdPerDay { get; set; } = new History();
+        public History DeleteFieldFeatureCategoryByIdPerDay { get; set; } = new History();
+
+        public History GetAllFieldIdentityIdPerDay { get; set; } = new History();
+        public History GetAllFieldIdentityMetaInfoPerDay { get; set; } = new History();
+        public History GetFieldIdentityByIdPerDay { get; set; } = new History();
+        public History GetAllFieldIdentityPerDay { get; set; } = new History();
+        public History PostFieldIdentityPerDay { get; set; } = new History();
+        public History PutFieldIdentityByIdPerDay { get; set; } = new History();
+        public History DeleteFieldIdentityByIdPerDay { get; set; } = new History();
+
+        public History GetAllFieldMembershipCategoryIdPerDay { get; set; } = new History();
+        public History GetAllFieldMembershipCategoryMetaInfoPerDay { get; set; } = new History();
+        public History GetFieldMembershipCategoryByIdPerDay { get; set; } = new History();
+        public History GetAllFieldMembershipCategoryPerDay { get; set; } = new History();
+        public History PostFieldMembershipCategoryPerDay { get; set; } = new History();
+        public History PutFieldMembershipCategoryByIdPerDay { get; set; } = new History();
+        public History DeleteFieldMembershipCategoryByIdPerDay { get; set; } = new History();
+
+        public History GetFieldUsageStatisticsPerDay { get; set; } = new History();
+
         private static object lock_ = new object();
 
         private static UsageStatisticsField? instance_ = null;
@@ -327,6 +361,56 @@ namespace NORCE.Drilling.Field.Model
                     DeleteFieldCartographicConversionSetByIdPerDay = new History();
                 }
                 DeleteFieldCartographicConversionSetByIdPerDay.Increment();
+                ManageBackup();
+            }
+        }
+
+        public void IncrementGetAllFieldDelineationLineTypeIdPerDay() => IncrementHistory(() => GetAllFieldDelineationLineTypeIdPerDay, value => GetAllFieldDelineationLineTypeIdPerDay = value);
+        public void IncrementGetAllFieldDelineationLineTypeMetaInfoPerDay() => IncrementHistory(() => GetAllFieldDelineationLineTypeMetaInfoPerDay, value => GetAllFieldDelineationLineTypeMetaInfoPerDay = value);
+        public void IncrementGetFieldDelineationLineTypeByIdPerDay() => IncrementHistory(() => GetFieldDelineationLineTypeByIdPerDay, value => GetFieldDelineationLineTypeByIdPerDay = value);
+        public void IncrementGetAllFieldDelineationLineTypePerDay() => IncrementHistory(() => GetAllFieldDelineationLineTypePerDay, value => GetAllFieldDelineationLineTypePerDay = value);
+        public void IncrementPostFieldDelineationLineTypePerDay() => IncrementHistory(() => PostFieldDelineationLineTypePerDay, value => PostFieldDelineationLineTypePerDay = value);
+        public void IncrementPutFieldDelineationLineTypeByIdPerDay() => IncrementHistory(() => PutFieldDelineationLineTypeByIdPerDay, value => PutFieldDelineationLineTypeByIdPerDay = value);
+        public void IncrementDeleteFieldDelineationLineTypeByIdPerDay() => IncrementHistory(() => DeleteFieldDelineationLineTypeByIdPerDay, value => DeleteFieldDelineationLineTypeByIdPerDay = value);
+
+        public void IncrementGetAllFieldFeatureCategoryIdPerDay() => IncrementHistory(() => GetAllFieldFeatureCategoryIdPerDay, value => GetAllFieldFeatureCategoryIdPerDay = value);
+        public void IncrementGetAllFieldFeatureCategoryMetaInfoPerDay() => IncrementHistory(() => GetAllFieldFeatureCategoryMetaInfoPerDay, value => GetAllFieldFeatureCategoryMetaInfoPerDay = value);
+        public void IncrementGetFieldFeatureCategoryByIdPerDay() => IncrementHistory(() => GetFieldFeatureCategoryByIdPerDay, value => GetFieldFeatureCategoryByIdPerDay = value);
+        public void IncrementGetAllFieldFeatureCategoryPerDay() => IncrementHistory(() => GetAllFieldFeatureCategoryPerDay, value => GetAllFieldFeatureCategoryPerDay = value);
+        public void IncrementPostFieldFeatureCategoryPerDay() => IncrementHistory(() => PostFieldFeatureCategoryPerDay, value => PostFieldFeatureCategoryPerDay = value);
+        public void IncrementPutFieldFeatureCategoryByIdPerDay() => IncrementHistory(() => PutFieldFeatureCategoryByIdPerDay, value => PutFieldFeatureCategoryByIdPerDay = value);
+        public void IncrementDeleteFieldFeatureCategoryByIdPerDay() => IncrementHistory(() => DeleteFieldFeatureCategoryByIdPerDay, value => DeleteFieldFeatureCategoryByIdPerDay = value);
+
+        public void IncrementGetAllFieldIdentityIdPerDay() => IncrementHistory(() => GetAllFieldIdentityIdPerDay, value => GetAllFieldIdentityIdPerDay = value);
+        public void IncrementGetAllFieldIdentityMetaInfoPerDay() => IncrementHistory(() => GetAllFieldIdentityMetaInfoPerDay, value => GetAllFieldIdentityMetaInfoPerDay = value);
+        public void IncrementGetFieldIdentityByIdPerDay() => IncrementHistory(() => GetFieldIdentityByIdPerDay, value => GetFieldIdentityByIdPerDay = value);
+        public void IncrementGetAllFieldIdentityPerDay() => IncrementHistory(() => GetAllFieldIdentityPerDay, value => GetAllFieldIdentityPerDay = value);
+        public void IncrementPostFieldIdentityPerDay() => IncrementHistory(() => PostFieldIdentityPerDay, value => PostFieldIdentityPerDay = value);
+        public void IncrementPutFieldIdentityByIdPerDay() => IncrementHistory(() => PutFieldIdentityByIdPerDay, value => PutFieldIdentityByIdPerDay = value);
+        public void IncrementDeleteFieldIdentityByIdPerDay() => IncrementHistory(() => DeleteFieldIdentityByIdPerDay, value => DeleteFieldIdentityByIdPerDay = value);
+
+        public void IncrementGetAllFieldMembershipCategoryIdPerDay() => IncrementHistory(() => GetAllFieldMembershipCategoryIdPerDay, value => GetAllFieldMembershipCategoryIdPerDay = value);
+        public void IncrementGetAllFieldMembershipCategoryMetaInfoPerDay() => IncrementHistory(() => GetAllFieldMembershipCategoryMetaInfoPerDay, value => GetAllFieldMembershipCategoryMetaInfoPerDay = value);
+        public void IncrementGetFieldMembershipCategoryByIdPerDay() => IncrementHistory(() => GetFieldMembershipCategoryByIdPerDay, value => GetFieldMembershipCategoryByIdPerDay = value);
+        public void IncrementGetAllFieldMembershipCategoryPerDay() => IncrementHistory(() => GetAllFieldMembershipCategoryPerDay, value => GetAllFieldMembershipCategoryPerDay = value);
+        public void IncrementPostFieldMembershipCategoryPerDay() => IncrementHistory(() => PostFieldMembershipCategoryPerDay, value => PostFieldMembershipCategoryPerDay = value);
+        public void IncrementPutFieldMembershipCategoryByIdPerDay() => IncrementHistory(() => PutFieldMembershipCategoryByIdPerDay, value => PutFieldMembershipCategoryByIdPerDay = value);
+        public void IncrementDeleteFieldMembershipCategoryByIdPerDay() => IncrementHistory(() => DeleteFieldMembershipCategoryByIdPerDay, value => DeleteFieldMembershipCategoryByIdPerDay = value);
+
+        public void IncrementGetFieldUsageStatisticsPerDay() => IncrementHistory(() => GetFieldUsageStatisticsPerDay, value => GetFieldUsageStatisticsPerDay = value);
+
+        private void IncrementHistory(Func<History?> getHistory, Action<History> setHistory)
+        {
+            lock (lock_)
+            {
+                History? history = getHistory();
+                if (history == null)
+                {
+                    history = new History();
+                    setHistory(history);
+                }
+
+                history.Increment();
                 ManageBackup();
             }
         }

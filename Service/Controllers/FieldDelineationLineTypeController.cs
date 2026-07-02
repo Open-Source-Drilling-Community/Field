@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NORCE.Drilling.Field.Model;
 using NORCE.Drilling.Field.Service.Managers;
 using OSDC.DotnetLibraries.General.DataManagement;
 using System;
@@ -25,6 +26,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet(Name = "GetAllFieldDelineationLineTypeId")]
         public ActionResult<IEnumerable<Guid>> GetAllFieldDelineationLineTypeId()
         {
+            UsageStatisticsField.Instance.IncrementGetAllFieldDelineationLineTypeIdPerDay();
             var ids = _manager.GetAllFieldDelineationLineTypeId();
             return ids != null ? Ok(ids) : StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -32,6 +34,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet("MetaInfo", Name = "GetAllFieldDelineationLineTypeMetaInfo")]
         public ActionResult<IEnumerable<MetaInfo?>> GetAllFieldDelineationLineTypeMetaInfo()
         {
+            UsageStatisticsField.Instance.IncrementGetAllFieldDelineationLineTypeMetaInfoPerDay();
             var metaInfos = _manager.GetAllFieldDelineationLineTypeMetaInfo();
             return metaInfos != null ? Ok(metaInfos) : StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -39,6 +42,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet("{id}", Name = "GetFieldDelineationLineTypeById")]
         public ActionResult<Model.FieldDelineationLineType?> GetFieldDelineationLineTypeById(Guid id)
         {
+            UsageStatisticsField.Instance.IncrementGetFieldDelineationLineTypeByIdPerDay();
             if (id == Guid.Empty)
             {
                 return BadRequest();
@@ -51,6 +55,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet("HeavyData", Name = "GetAllFieldDelineationLineType")]
         public ActionResult<IEnumerable<Model.FieldDelineationLineType?>> GetAllFieldDelineationLineType()
         {
+            UsageStatisticsField.Instance.IncrementGetAllFieldDelineationLineTypePerDay();
             var data = _manager.GetAllFieldDelineationLineType();
             return data != null ? Ok(data) : StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -58,6 +63,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpPost(Name = "PostFieldDelineationLineType")]
         public ActionResult PostFieldDelineationLineType([FromBody] Model.FieldDelineationLineType? data)
         {
+            UsageStatisticsField.Instance.IncrementPostFieldDelineationLineTypePerDay();
             if (data?.MetaInfo == null || data.MetaInfo.ID == Guid.Empty)
             {
                 return BadRequest();
@@ -76,6 +82,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpPut("{id}", Name = "PutFieldDelineationLineTypeById")]
         public ActionResult PutFieldDelineationLineTypeById(Guid id, [FromBody] Model.FieldDelineationLineType? data)
         {
+            UsageStatisticsField.Instance.IncrementPutFieldDelineationLineTypeByIdPerDay();
             if (data?.MetaInfo == null || data.MetaInfo.ID != id)
             {
                 return BadRequest();
@@ -94,6 +101,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpDelete("{id}", Name = "DeleteFieldDelineationLineTypeById")]
         public ActionResult DeleteFieldDelineationLineTypeById(Guid id)
         {
+            UsageStatisticsField.Instance.IncrementDeleteFieldDelineationLineTypeByIdPerDay();
             if (_manager.GetFieldDelineationLineTypeById(id) == null)
             {
                 return NotFound();

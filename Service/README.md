@@ -5,6 +5,7 @@ The Service project hosts the Field microservice (ASP.NET Core, .NET 8). It expo
 ## Purpose
 
 - Serve the REST API for Field entities, field feature categories, field membership categories, field identities, delineation line types, and cartographic conversions.
+- Expose an MCP endpoint with tools mirroring the REST API, plus optional MCP hub registration.
 - Persist data in a local SQLite database under `../home/Field.db`.
 - Expose a merged OpenAPI document and Swagger UI for client generation and testing.
 - Orchestrate calls to the external CartographicProjection microservice for conversion calculations.
@@ -20,6 +21,25 @@ Configuration:
 - `CartographicProjectionHostURL`: base URL of the CartographicProjection microservice.
   - Set in `Service/appsettings.Development.json` or environment (e.g., `https://dev.digiwells.no/` for dev).
   - Can also be provided via environment variable at runtime.
+- Optional external service configuration is loaded from `../home/Field.Service.json`, or from the path specified by `FIELD_EXTERNAL_CONFIG`.
+- In Docker, the image reads optional external configuration from `/home/Field.Service.json`.
+
+External configuration example:
+
+```json
+{
+  "McpHub": {
+    "Enabled": true,
+    "HubBaseUrl": "https://mcp-hub.example.com/api",
+    "RegistrationEndpoint": "McpMicroservice",
+    "RetryIntervalSeconds": 60,
+    "PublicBaseUrl": "https://dev.digiwells.no",
+    "ServiceName": "Field",
+    "InstanceId": "",
+    "UnregisterOnShutdown": true
+  }
+}
+```
 
 Build and run (dev):
 ```bash
@@ -38,6 +58,7 @@ The service uses a Path Base of `/Field/api`, so all routes are rooted there.
 SQLite storage:
 - A writable folder `home` is expected at the solution root; the database file is `home/Field.db`.
 - The service creates `home` if missing and manages schema migrations and backups automatically.
+- The same shared folder can hold `Field.Service.json` and the generated MCP hub instance id.
 
 ## Usage
 
@@ -75,6 +96,33 @@ Endpoints (high level):
   - `DELETE /FieldCartographicConversionSet/{id}` — delete by ID
 - `FieldUsageStatistics` (controller base path: `/Field/api/FieldUsageStatistics`)
   - `GET /FieldUsageStatistics` — aggregate per-endpoint counters
+
+## MCP Server
+
+The service exposes a Model Context Protocol endpoint alongside the REST API:
+
+- Streamable HTTP transport: `/Field/api/mcp`
+- WebSocket transport: `/Field/api/mcp/ws`
+
+The MCP tool surface mirrors the REST API:
+
+- `ping`
+- Field: `field.get_all_ids`, `field.get_all_meta_info`, `field.get_by_id`, `field.get_all`, `field.get_all_light`, `field.create`, `field.update_by_id`, `field.delete_by_id`
+- FieldCartographicConversionSet: `field_cartographic_conversion_set.get_all_ids`, `field_cartographic_conversion_set.get_all_meta_info`, `field_cartographic_conversion_set.get_by_id`, `field_cartographic_conversion_set.get_all_by_field_id`, `field_cartographic_conversion_set.get_all_light`, `field_cartographic_conversion_set.get_all`, `field_cartographic_conversion_set.create`, `field_cartographic_conversion_set.update_by_id`, `field_cartographic_conversion_set.delete_by_id`
+- FieldFeatureCategory: `field_feature_category.*`
+- FieldMembershipCategory: `field_membership_category.*`
+- FieldIdentity: `field_identity.*`
+- FieldDelineationLineType: `field_delineation_line_type.*`
+- Usage statistics: `field_usage_statistics.get`
+
+The `create` and `update_by_id` tools expect the same JSON object body as the corresponding REST endpoints, wrapped in an argument named after the entity, for example `field`, `fieldFeatureCategory`, or `fieldCartographicConversionSet`.
+
+When `McpHub:Enabled` is true, the service registers itself on the configured MCP hub with a fixed service type id, a configured or persisted instance id, and MCP endpoint URLs derived from `PublicBaseUrl`:
+
+- `PublicBaseUrl + "/Field/api/mcp"`
+- `PublicBaseUrl` converted to `ws`/`wss` plus `"/Field/api/mcp/ws"`
+
+If `HubBaseUrl` or `PublicBaseUrl` is missing, registration is skipped. If the hub is configured but unreachable, registration is retried every `RetryIntervalSeconds` seconds. On graceful shutdown, the service attempts to unregister its instance when `UnregisterOnShutdown` is true.
 
 Quick examples (curl):
 ```bash
@@ -132,7 +180,7 @@ Service composition:
 
 Build:
 ```bash
- docker build -t field-service ./Service 
+ docker build -t field-service -f Service/Dockerfile .
 ```
 
 Run (mapping HTTPS and HTTP, provide external service URL):
@@ -140,6 +188,7 @@ Run (mapping HTTPS and HTTP, provide external service URL):
  docker run --rm -p 5001:5001 -p 5002:5002 \
   -e ASPNETCORE_URLS="https://+:5001;http://+:5002" \
   -e CartographicProjectionHostURL="https://dev.your-host/" \
+  -v %CD%/home:/home \
   field-service
 ```
 

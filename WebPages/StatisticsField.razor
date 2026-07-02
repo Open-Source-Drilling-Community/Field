@@ -5,233 +5,143 @@
 
 @if (statistics_ == null)
 {
-    <p><em>Loading...</em></p>
+    <MudProgressCircular Indeterminate="true" />
 }
 else
 {
-    <div hidden="@isHiddenMainPanel">
-        <MudText Class="mt-4 mb-4" Typo="Typo.h5"><strong>Usage Statistics</strong></MudText>
-        <div style="width: 90%; margin: auto">
-            <MudGrid>
-                <MudItem xs="6">
-                    <MudText Typo="Typo.h6">Total count:</MudText>
-                </MudItem>
-                <MudItem xs="6">
-                    <MudText Typo="Typo.body1">@totalCount_</MudText>
-                </MudItem>
-                <MudItem xs="6">
-                    <MudText Typo="Typo.h6">Field Count:</MudText>
-                </MudItem>
-                <MudItem xs="6">
-                    <MudText Typo="Typo.body1">@fieldCount_</MudText>
-                </MudItem>
-                <MudItem xs="6">
-                    <MudText Typo="Typo.h6">Field Conversion Set count:</MudText>
-                </MudItem>
-                <MudItem xs="6">
-                    <MudText Typo="Typo.body1">@fieldConversionSetCount_</MudText>
-                </MudItem>
-            </MudGrid>
-        </div>
-    </div>
+    <MudText Class="mt-4 mb-4" Typo="Typo.h5"><strong>Usage Statistics</strong></MudText>
+
+    <MudGrid Class="mb-4">
+        <MudItem xs="12" sm="4">
+            <MudText Typo="Typo.subtitle2">Total count</MudText>
+            <MudText Typo="Typo.h6">@totalCount_</MudText>
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudText Typo="Typo.subtitle2">Tracked endpoints</MudText>
+            <MudText Typo="Typo.h6">@rows_.Count</MudText>
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudText Typo="Typo.subtitle2">Last saved</MudText>
+            <MudText Typo="Typo.h6">@FormatDate(statistics_.LastSaved)</MudText>
+        </MudItem>
+    </MudGrid>
+
+    <MudTable Items="rows_" Dense="true" Hover="true" Bordered="true" SortLabel="Sort by">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<UsageRow, string>(row => row.Endpoint)">Endpoint</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UsageRow, string>(row => row.Area)">Area</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UsageRow, object>(row => row.Total)">Total</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<UsageRow, object>(row => row.LastUsed ?? DateTimeOffset.MinValue)">Last used</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Endpoint">@context.Endpoint</MudTd>
+            <MudTd DataLabel="Area">@context.Area</MudTd>
+            <MudTd DataLabel="Total">@context.Total</MudTd>
+            <MudTd DataLabel="Last used">@FormatDate(context.LastUsed)</MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText>No usage counters were returned by the Field service.</MudText>
+        </NoRecordsContent>
+    </MudTable>
 }
 
 @code {
-    private UsageStatisticsField statistics_ = null!;
-    private long totalCount_ = 0;
-    private long fieldCount_ = 0;
-    private long fieldConversionSetCount_ = 0;
-
-    private bool isHiddenMainPanel = true;
+    private UsageStatisticsField? statistics_;
+    private readonly List<UsageRow> rows_ = [];
+    private long totalCount_;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             statistics_ = await Api.ClientField.GetFieldUsageStatisticsAsync();
-            if (statistics_ != null)
-            {
-                totalCount_ = 0;
-                fieldCount_ = 0;
-                fieldConversionSetCount_ = 0;
-
-                if (statistics_.GetAllFieldIdPerDay != null && statistics_.GetAllFieldIdPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.GetAllFieldIdPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldCount_ += count.Count;
-                        }
-                    }
-                }
-                if (statistics_.GetAllFieldMetaInfoPerDay != null && statistics_.GetAllFieldMetaInfoPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.GetAllFieldMetaInfoPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldCount_ += count.Count;
-                        }
-                    }
-                }
-                if (statistics_.GetFieldByIdPerDay != null && statistics_.GetFieldByIdPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.GetFieldByIdPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldCount_ += count.Count;
-                        }
-                    }
-                }
-                if (statistics_.GetAllFieldPerDay != null && statistics_.GetAllFieldPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.GetAllFieldPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldCount_ += count.Count;
-                        }
-                    }
-                }
-                if (statistics_.PostFieldPerDay != null && statistics_.PostFieldPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.PostFieldPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldCount_ += count.Count;
-                        }
-                    }
-                }
-                if (statistics_.PutFieldByIdPerDay != null && statistics_.PutFieldByIdPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.PutFieldByIdPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldCount_ += count.Count;
-                        }
-                    }
-                }
-                if (statistics_.DeleteFieldByIdPerDay != null && statistics_.DeleteFieldByIdPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.DeleteFieldByIdPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldCount_ += count.Count;
-                        }
-                    }
-                }
-
-                if (statistics_.GetAllFieldCartographicConversionSetIdPerDay != null && statistics_.GetAllFieldCartographicConversionSetIdPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.GetAllFieldCartographicConversionSetIdPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldConversionSetCount_ += count.Count;
-                        }
-                    }
-                }
-                if (statistics_.GetAllFieldCartographicConversionSetMetaInfoPerDay != null && statistics_.GetAllFieldCartographicConversionSetMetaInfoPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.GetAllFieldCartographicConversionSetMetaInfoPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldConversionSetCount_ += count.Count;
-                        }
-                    }
-                }
-                if (statistics_.GetFieldCartographicConversionSetByIdPerDay != null && statistics_.GetFieldCartographicConversionSetByIdPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.GetFieldCartographicConversionSetByIdPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldConversionSetCount_ += count.Count;
-                        }
-                    }
-                }
-                if (statistics_.GetAllFieldCartographicConversionSetLightPerDay != null && statistics_.GetAllFieldCartographicConversionSetLightPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.GetAllFieldCartographicConversionSetLightPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldConversionSetCount_ += count.Count;
-                        }
-                    }
-                }
-                if (statistics_.GetAllFieldCartographicConversionSetPerDay != null && statistics_.GetAllFieldCartographicConversionSetPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.GetAllFieldCartographicConversionSetPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldConversionSetCount_ += count.Count;
-                        }
-                    }
-                }
-                if (statistics_.PostFieldCartographicConversionSetPerDay != null && statistics_.PostFieldCartographicConversionSetPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.PostFieldCartographicConversionSetPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldConversionSetCount_ += count.Count;
-                        }
-                    }
-                }
-
-                if (statistics_.PutFieldCartographicConversionSetByIdPerDay != null && statistics_.PutFieldCartographicConversionSetByIdPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.PutFieldCartographicConversionSetByIdPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldConversionSetCount_ += count.Count;
-                        }
-                    }
-                }
-                if (statistics_.DeleteFieldCartographicConversionSetByIdPerDay != null && statistics_.DeleteFieldCartographicConversionSetByIdPerDay.Data != null)
-                {
-                    foreach (CountPerDay count in statistics_.DeleteFieldCartographicConversionSetByIdPerDay.Data)
-                    {
-                        if (count != null)
-                        {
-                            totalCount_ += count.Count;
-                            fieldConversionSetCount_ += count.Count;
-                        }
-                    }
-                }
-            }
-            // Show main panel
-            isHiddenMainPanel = false;
+            BuildRows();
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Problem UsageStatistics initialization");
+            Snackbar.Add("Unable to load Field usage statistics.", Severity.Error);
         }
-        await InvokeAsync(() => { StateHasChanged(); });
     }
 
-}
+    private void BuildRows()
+    {
+        rows_.Clear();
+        totalCount_ = 0;
 
+        if (statistics_ == null)
+        {
+            return;
+        }
+
+        foreach (var property in typeof(UsageStatisticsField).GetProperties()
+                     .Where(property => property.PropertyType == typeof(History) && property.Name.EndsWith("PerDay", StringComparison.Ordinal))
+                     .OrderBy(property => property.Name, StringComparer.Ordinal))
+        {
+            if (property.GetValue(statistics_) is not History history)
+            {
+                continue;
+            }
+
+            long total = history.Data?.Sum(entry => entry?.Count ?? 0) ?? 0;
+            DateTimeOffset? lastUsed = history.Data?
+                .Where(entry => entry != null && entry.Count > 0)
+                .Select(entry => (DateTimeOffset?)entry.Date)
+                .OrderByDescending(date => date)
+                .FirstOrDefault();
+
+            totalCount_ += total;
+            string endpoint = CleanEndpointName(property.Name);
+            rows_.Add(new UsageRow(endpoint, GuessArea(endpoint), total, lastUsed));
+        }
+    }
+
+    private static string CleanEndpointName(string propertyName)
+    {
+        string value = propertyName.EndsWith("PerDay", StringComparison.Ordinal)
+            ? propertyName[..^"PerDay".Length]
+            : propertyName;
+
+        return string.Concat(value.Select((ch, index) =>
+            index > 0 && char.IsUpper(ch) && !char.IsUpper(value[index - 1])
+                ? " " + ch
+                : ch.ToString()));
+    }
+
+    private static string GuessArea(string endpoint)
+    {
+        if (endpoint.Contains("Cartographic Conversion Set", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Cartographic conversion sets";
+        }
+        if (endpoint.Contains("Delineation Line Type", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Delineation line types";
+        }
+        if (endpoint.Contains("Feature Category", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Field features";
+        }
+        if (endpoint.Contains("Identity", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Field identities";
+        }
+        if (endpoint.Contains("Membership Category", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Field memberships";
+        }
+        if (endpoint.Contains("Usage Statistics", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Monitoring";
+        }
+
+        return "Fields";
+    }
+
+    private static string FormatDate(DateTimeOffset? value) =>
+        value.HasValue && value.Value != default
+            ? value.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+            : "-";
+
+    private sealed record UsageRow(string Endpoint, string Area, long Total, DateTimeOffset? LastUsed);
+}

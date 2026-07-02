@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NORCE.Drilling.Field.Model;
 using NORCE.Drilling.Field.Service.Managers;
 using OSDC.DotnetLibraries.General.DataManagement;
 using System;
@@ -25,6 +26,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet(Name = "GetAllFieldFeatureCategoryId")]
         public ActionResult<IEnumerable<Guid>> GetAllFieldFeatureCategoryId()
         {
+            UsageStatisticsField.Instance.IncrementGetAllFieldFeatureCategoryIdPerDay();
             var ids = _manager.GetAllFieldFeatureCategoryId();
             return ids != null ? Ok(ids) : StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -32,6 +34,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet("MetaInfo", Name = "GetAllFieldFeatureCategoryMetaInfo")]
         public ActionResult<IEnumerable<MetaInfo?>> GetAllFieldFeatureCategoryMetaInfo()
         {
+            UsageStatisticsField.Instance.IncrementGetAllFieldFeatureCategoryMetaInfoPerDay();
             var metaInfos = _manager.GetAllFieldFeatureCategoryMetaInfo();
             return metaInfos != null ? Ok(metaInfos) : StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -39,6 +42,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet("{id}", Name = "GetFieldFeatureCategoryById")]
         public ActionResult<Model.FieldFeatureCategory?> GetFieldFeatureCategoryById(Guid id)
         {
+            UsageStatisticsField.Instance.IncrementGetFieldFeatureCategoryByIdPerDay();
             if (id == Guid.Empty)
             {
                 return BadRequest();
@@ -51,6 +55,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet("HeavyData", Name = "GetAllFieldFeatureCategory")]
         public ActionResult<IEnumerable<Model.FieldFeatureCategory?>> GetAllFieldFeatureCategory()
         {
+            UsageStatisticsField.Instance.IncrementGetAllFieldFeatureCategoryPerDay();
             var data = _manager.GetAllFieldFeatureCategory();
             return data != null ? Ok(data) : StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -58,6 +63,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpPost(Name = "PostFieldFeatureCategory")]
         public ActionResult PostFieldFeatureCategory([FromBody] Model.FieldFeatureCategory? data)
         {
+            UsageStatisticsField.Instance.IncrementPostFieldFeatureCategoryPerDay();
             if (data?.MetaInfo == null || data.MetaInfo.ID == Guid.Empty)
             {
                 return BadRequest();
@@ -76,6 +82,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpPut("{id}", Name = "PutFieldFeatureCategoryById")]
         public ActionResult PutFieldFeatureCategoryById(Guid id, [FromBody] Model.FieldFeatureCategory? data)
         {
+            UsageStatisticsField.Instance.IncrementPutFieldFeatureCategoryByIdPerDay();
             if (data?.MetaInfo == null || data.MetaInfo.ID != id)
             {
                 return BadRequest();
@@ -94,6 +101,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpDelete("{id}", Name = "DeleteFieldFeatureCategoryById")]
         public ActionResult DeleteFieldFeatureCategoryById(Guid id)
         {
+            UsageStatisticsField.Instance.IncrementDeleteFieldFeatureCategoryByIdPerDay();
             if (_manager.GetFieldFeatureCategoryById(id) == null)
             {
                 return NotFound();

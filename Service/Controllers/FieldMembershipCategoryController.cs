@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NORCE.Drilling.Field.Model;
 using NORCE.Drilling.Field.Service.Managers;
 using OSDC.DotnetLibraries.General.DataManagement;
 using System;
@@ -25,6 +26,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet(Name = "GetAllFieldMembershipCategoryId")]
         public ActionResult<IEnumerable<Guid>> GetAllFieldMembershipCategoryId()
         {
+            UsageStatisticsField.Instance.IncrementGetAllFieldMembershipCategoryIdPerDay();
             var ids = _manager.GetAllFieldMembershipCategoryId();
             return ids != null ? Ok(ids) : StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -32,6 +34,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet("MetaInfo", Name = "GetAllFieldMembershipCategoryMetaInfo")]
         public ActionResult<IEnumerable<MetaInfo?>> GetAllFieldMembershipCategoryMetaInfo()
         {
+            UsageStatisticsField.Instance.IncrementGetAllFieldMembershipCategoryMetaInfoPerDay();
             var metaInfos = _manager.GetAllFieldMembershipCategoryMetaInfo();
             return metaInfos != null ? Ok(metaInfos) : StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -39,6 +42,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet("{id}", Name = "GetFieldMembershipCategoryById")]
         public ActionResult<Model.FieldMembershipCategory?> GetFieldMembershipCategoryById(Guid id)
         {
+            UsageStatisticsField.Instance.IncrementGetFieldMembershipCategoryByIdPerDay();
             if (id == Guid.Empty)
             {
                 return BadRequest();
@@ -51,6 +55,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet("HeavyData", Name = "GetAllFieldMembershipCategory")]
         public ActionResult<IEnumerable<Model.FieldMembershipCategory?>> GetAllFieldMembershipCategory()
         {
+            UsageStatisticsField.Instance.IncrementGetAllFieldMembershipCategoryPerDay();
             var data = _manager.GetAllFieldMembershipCategory();
             return data != null ? Ok(data) : StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -58,6 +63,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpPost(Name = "PostFieldMembershipCategory")]
         public ActionResult PostFieldMembershipCategory([FromBody] Model.FieldMembershipCategory? data)
         {
+            UsageStatisticsField.Instance.IncrementPostFieldMembershipCategoryPerDay();
             if (data?.MetaInfo == null || data.MetaInfo.ID == Guid.Empty)
             {
                 return BadRequest();
@@ -76,6 +82,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpPut("{id}", Name = "PutFieldMembershipCategoryById")]
         public ActionResult PutFieldMembershipCategoryById(Guid id, [FromBody] Model.FieldMembershipCategory? data)
         {
+            UsageStatisticsField.Instance.IncrementPutFieldMembershipCategoryByIdPerDay();
             if (data?.MetaInfo == null || data.MetaInfo.ID != id)
             {
                 return BadRequest();
@@ -94,6 +101,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpDelete("{id}", Name = "DeleteFieldMembershipCategoryById")]
         public ActionResult DeleteFieldMembershipCategoryById(Guid id)
         {
+            UsageStatisticsField.Instance.IncrementDeleteFieldMembershipCategoryByIdPerDay();
             if (_manager.GetFieldMembershipCategoryById(id) == null)
             {
                 return NotFound();

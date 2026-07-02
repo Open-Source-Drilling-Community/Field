@@ -26,6 +26,39 @@ internal static class McpToolArgumentHelpers
         };
     }
 
+    public static JsonObject CreateObjectSchema(string key, bool includeId = false)
+    {
+        var properties = new JsonObject
+        {
+            [key] = new JsonObject
+            {
+                ["type"] = "object"
+            }
+        };
+        var required = new JsonArray
+        {
+            key
+        };
+
+        if (includeId)
+        {
+            properties["id"] = new JsonObject
+            {
+                ["type"] = "string",
+                ["format"] = "uuid"
+            };
+            required.Add("id");
+        }
+
+        return new JsonObject
+        {
+            ["type"] = "object",
+            ["properties"] = properties,
+            ["required"] = required,
+            ["additionalProperties"] = false
+        };
+    }
+
     public static bool TryParseGuid(JsonObject? arguments, string key, out Guid value, out JsonNode? error)
     {
         value = Guid.Empty;

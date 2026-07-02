@@ -96,7 +96,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet("FieldID", Name = "GetAllFieldCartographicConversionSetByFieldId")]
         public ActionResult<Model.FieldCartographicConversionSet?> GetAllFieldCartographicConversionSetByFieldId(Guid fieldId)
         {
-            UsageStatisticsField.Instance.IncrementGetFieldCartographicConversionSetByIdPerDay();
+            UsageStatisticsField.Instance.IncrementGetFieldCartographicConversionSetByFieldIdPerDay();
             if (!fieldId.Equals(Guid.Empty))
             {
                 var val = _fieldCartographicConversionSetManager.GetAllFieldCartographicConversionSetByFieldId(fieldId);

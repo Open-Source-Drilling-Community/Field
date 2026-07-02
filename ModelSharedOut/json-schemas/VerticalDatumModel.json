@@ -1,8 +1,7 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.0.4",
   "info": {
-    "title": "ModelShared (Service)",
-    "description": "Data model containing model dependencies of the clients of the current microservice (WebApp, ServiceTest)",
+    "title": "Service, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
     "version": "1.0"
   },
   "paths": {
@@ -38,17 +37,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VerticalDatum"
+                "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatum"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/VerticalDatum"
+                "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatum"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/VerticalDatum"
+                "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatum"
               }
             }
           }
@@ -74,7 +73,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/MetaInfo"
+                    "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
                   }
                 }
               }
@@ -106,7 +105,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VerticalDatum"
+                  "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatum"
                 }
               }
             }
@@ -133,17 +132,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VerticalDatum"
+                "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatum"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/VerticalDatum"
+                "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatum"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/VerticalDatum"
+                "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatum"
               }
             }
           }
@@ -191,7 +190,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/VerticalDatum"
+                    "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatum"
                   }
                 }
               }
@@ -223,7 +222,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/VerticalDatum"
+                    "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatum"
                   }
                 }
               }
@@ -264,17 +263,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VerticalDatumOrder"
+                "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatumOrder"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/VerticalDatumOrder"
+                "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatumOrder"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/VerticalDatumOrder"
+                "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatumOrder"
               }
             }
           }
@@ -300,7 +299,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/MetaInfo"
+                    "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
                   }
                 }
               }
@@ -332,7 +331,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VerticalDatumOrder"
+                  "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatumOrder"
                 }
               }
             }
@@ -359,17 +358,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VerticalDatumOrder"
+                "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatumOrder"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/VerticalDatumOrder"
+                "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatumOrder"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/VerticalDatumOrder"
+                "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatumOrder"
               }
             }
           }
@@ -417,7 +416,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/VerticalDatumOrderLight"
+                    "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatumOrderLight"
                   }
                 }
               }
@@ -440,7 +439,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/VerticalDatumOrder"
+                    "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatumOrder"
                   }
                 }
               }
@@ -452,11 +451,11 @@
   },
   "components": {
     "schemas": {
-      "VerticalDatum": {
+      "NORCE.Drilling.VerticalDatum.Model.VerticalDatum": {
         "type": "object",
         "properties": {
           "MetaInfo": {
-            "$ref": "#/components/schemas/MetaInfo"
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
           },
           "Name": {
             "type": "string",
@@ -479,19 +478,20 @@
           "DatumSet": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/VerticalDatumSet"
+              "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatumSet"
             },
             "nullable": true
           },
           "ConversionFrom": {
-            "$ref": "#/components/schemas/VerticalDatumConversion"
+            "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatumConversion"
           },
           "Type": {
-            "$ref": "#/components/schemas/VerticalDatumType"
+            "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatumType"
           }
-        }
+        },
+        "additionalProperties": false
       },
-      "VerticalDatumConversion": {
+      "NORCE.Drilling.VerticalDatum.Model.VerticalDatumConversion": {
         "enum": [
           "FromMeanSeaLevel",
           "FromMeanHighWater",
@@ -503,11 +503,11 @@
         ],
         "type": "string"
       },
-      "VerticalDatumOrder": {
+      "NORCE.Drilling.VerticalDatum.Model.VerticalDatumOrder": {
         "type": "object",
         "properties": {
           "MetaInfo": {
-            "$ref": "#/components/schemas/MetaInfo"
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
           },
           "Name": {
             "type": "string",
@@ -528,15 +528,16 @@
             "nullable": true
           },
           "VerticalDatum": {
-            "$ref": "#/components/schemas/VerticalDatum"
+            "$ref": "#/components/schemas/NORCE.Drilling.VerticalDatum.Model.VerticalDatum"
           }
-        }
+        },
+        "additionalProperties": false
       },
-      "VerticalDatumOrderLight": {
+      "NORCE.Drilling.VerticalDatum.Model.VerticalDatumOrderLight": {
         "type": "object",
         "properties": {
           "MetaInfo": {
-            "$ref": "#/components/schemas/MetaInfo"
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
           },
           "Name": {
             "type": "string",
@@ -556,9 +557,10 @@
             "format": "date-time",
             "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
-      "VerticalDatumSet": {
+      "NORCE.Drilling.VerticalDatum.Model.VerticalDatumSet": {
         "type": "object",
         "properties": {
           "Latitude": {
@@ -578,16 +580,17 @@
             "type": "number",
             "format": "double"
           }
-        }
+        },
+        "additionalProperties": false
       },
-      "VerticalDatumType": {
+      "NORCE.Drilling.VerticalDatum.Model.VerticalDatumType": {
         "enum": [
-          "Completed",
-          "Raw"
+          "Raw",
+          "Completed"
         ],
         "type": "string"
       },
-      "MetaInfo": {
+      "OSDC.DotnetLibraries.General.DataManagement.MetaInfo": {
         "type": "object",
         "properties": {
           "ID": {
@@ -606,7 +609,8 @@
             "type": "string",
             "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       }
     }
   }

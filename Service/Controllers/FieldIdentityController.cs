@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NORCE.Drilling.Field.Model;
 using NORCE.Drilling.Field.Service.Managers;
 using OSDC.DotnetLibraries.General.DataManagement;
 using System;
@@ -25,6 +26,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet(Name = "GetAllFieldIdentityId")]
         public ActionResult<IEnumerable<Guid>> GetAllFieldIdentityId()
         {
+            UsageStatisticsField.Instance.IncrementGetAllFieldIdentityIdPerDay();
             var ids = _manager.GetAllFieldIdentityId();
             return ids != null ? Ok(ids) : StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -32,6 +34,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet("MetaInfo", Name = "GetAllFieldIdentityMetaInfo")]
         public ActionResult<IEnumerable<MetaInfo?>> GetAllFieldIdentityMetaInfo()
         {
+            UsageStatisticsField.Instance.IncrementGetAllFieldIdentityMetaInfoPerDay();
             var metaInfos = _manager.GetAllFieldIdentityMetaInfo();
             return metaInfos != null ? Ok(metaInfos) : StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -39,6 +42,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet("{id}", Name = "GetFieldIdentityById")]
         public ActionResult<Model.FieldIdentity?> GetFieldIdentityById(Guid id)
         {
+            UsageStatisticsField.Instance.IncrementGetFieldIdentityByIdPerDay();
             if (id == Guid.Empty)
             {
                 return BadRequest();
@@ -51,6 +55,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet("HeavyData", Name = "GetAllFieldIdentity")]
         public ActionResult<IEnumerable<Model.FieldIdentity?>> GetAllFieldIdentity()
         {
+            UsageStatisticsField.Instance.IncrementGetAllFieldIdentityPerDay();
             var data = _manager.GetAllFieldIdentity();
             return data != null ? Ok(data) : StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -58,6 +63,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpPost(Name = "PostFieldIdentity")]
         public ActionResult PostFieldIdentity([FromBody] Model.FieldIdentity? data)
         {
+            UsageStatisticsField.Instance.IncrementPostFieldIdentityPerDay();
             if (data?.MetaInfo == null || data.MetaInfo.ID == Guid.Empty)
             {
                 return BadRequest();
@@ -76,6 +82,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpPut("{id}", Name = "PutFieldIdentityById")]
         public ActionResult PutFieldIdentityById(Guid id, [FromBody] Model.FieldIdentity? data)
         {
+            UsageStatisticsField.Instance.IncrementPutFieldIdentityByIdPerDay();
             if (data?.MetaInfo == null || data.MetaInfo.ID != id)
             {
                 return BadRequest();
@@ -94,6 +101,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpDelete("{id}", Name = "DeleteFieldIdentityById")]
         public ActionResult DeleteFieldIdentityById(Guid id)
         {
+            UsageStatisticsField.Instance.IncrementDeleteFieldIdentityByIdPerDay();
             if (_manager.GetFieldIdentityById(id) == null)
             {
                 return NotFound();

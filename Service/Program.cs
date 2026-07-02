@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -9,8 +10,13 @@ using NORCE.Drilling.Field.Service.Managers;
 using NORCE.Drilling.Field.Service.Mcp;
 using NORCE.Drilling.Field.Service.Mcp.Tools;
 using System;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
+
+string externalConfigPath = builder.Configuration["FIELD_EXTERNAL_CONFIG"]
+    ?? Path.Combine(SqlConnectionManager.HOME_DIRECTORY, "Field.Service.json");
+builder.Configuration.AddJsonFile(externalConfigPath, optional: true, reloadOnChange: true);
 
 // registering the manager of SQLite connections through dependency injection
 builder.Services.AddSingleton(sp =>
@@ -32,6 +38,10 @@ builder.Services.AddSwaggerGen(config =>
     config.CustomSchemaIds(type => type.FullName);
 });
 
+builder.Services.Configure<McpHubOptions>(builder.Configuration.GetSection(McpHubOptions.SectionName));
+builder.Services.AddHttpClient(nameof(McpHubRegistrationService));
+builder.Services.AddHostedService<McpHubRegistrationService>();
+
 // MCP server registrations
 var serverVersion = typeof(SqlConnectionManager).Assembly.GetName().Version?.ToString() ?? "1.0.0";
 
@@ -49,6 +59,7 @@ builder.Services.AddMcpServer(options =>
 }).WithHttpTransport();
 
 builder.Services.AddLegacyMcpTool<PingMcpTool>();
+builder.Services.AddFieldRestMcpTools();
 
 // end MCP server
 

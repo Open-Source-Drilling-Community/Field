@@ -23578,6 +23578,93 @@ namespace NORCE.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("DeleteFieldCartographicConversionSetByIdPerDay")]
         public History DeleteFieldCartographicConversionSetByIdPerDay { get; set; }
 
+        [System.Text.Json.Serialization.JsonPropertyName("GetAllFieldDelineationLineTypeIdPerDay")]
+        public History GetAllFieldDelineationLineTypeIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetAllFieldDelineationLineTypeMetaInfoPerDay")]
+        public History GetAllFieldDelineationLineTypeMetaInfoPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetFieldDelineationLineTypeByIdPerDay")]
+        public History GetFieldDelineationLineTypeByIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetAllFieldDelineationLineTypePerDay")]
+        public History GetAllFieldDelineationLineTypePerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PostFieldDelineationLineTypePerDay")]
+        public History PostFieldDelineationLineTypePerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PutFieldDelineationLineTypeByIdPerDay")]
+        public History PutFieldDelineationLineTypeByIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("DeleteFieldDelineationLineTypeByIdPerDay")]
+        public History DeleteFieldDelineationLineTypeByIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetAllFieldFeatureCategoryIdPerDay")]
+        public History GetAllFieldFeatureCategoryIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetAllFieldFeatureCategoryMetaInfoPerDay")]
+        public History GetAllFieldFeatureCategoryMetaInfoPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetFieldFeatureCategoryByIdPerDay")]
+        public History GetFieldFeatureCategoryByIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetAllFieldFeatureCategoryPerDay")]
+        public History GetAllFieldFeatureCategoryPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PostFieldFeatureCategoryPerDay")]
+        public History PostFieldFeatureCategoryPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PutFieldFeatureCategoryByIdPerDay")]
+        public History PutFieldFeatureCategoryByIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("DeleteFieldFeatureCategoryByIdPerDay")]
+        public History DeleteFieldFeatureCategoryByIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetAllFieldIdentityIdPerDay")]
+        public History GetAllFieldIdentityIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetAllFieldIdentityMetaInfoPerDay")]
+        public History GetAllFieldIdentityMetaInfoPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetFieldIdentityByIdPerDay")]
+        public History GetFieldIdentityByIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetAllFieldIdentityPerDay")]
+        public History GetAllFieldIdentityPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PostFieldIdentityPerDay")]
+        public History PostFieldIdentityPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PutFieldIdentityByIdPerDay")]
+        public History PutFieldIdentityByIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("DeleteFieldIdentityByIdPerDay")]
+        public History DeleteFieldIdentityByIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetAllFieldMembershipCategoryIdPerDay")]
+        public History GetAllFieldMembershipCategoryIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetAllFieldMembershipCategoryMetaInfoPerDay")]
+        public History GetAllFieldMembershipCategoryMetaInfoPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetFieldMembershipCategoryByIdPerDay")]
+        public History GetFieldMembershipCategoryByIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetAllFieldMembershipCategoryPerDay")]
+        public History GetAllFieldMembershipCategoryPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PostFieldMembershipCategoryPerDay")]
+        public History PostFieldMembershipCategoryPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PutFieldMembershipCategoryByIdPerDay")]
+        public History PutFieldMembershipCategoryByIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("DeleteFieldMembershipCategoryByIdPerDay")]
+        public History DeleteFieldMembershipCategoryByIdPerDay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GetFieldUsageStatisticsPerDay")]
+        public History GetFieldUsageStatisticsPerDay { get; set; }
+
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
         [System.Text.Json.Serialization.JsonExtensionData]

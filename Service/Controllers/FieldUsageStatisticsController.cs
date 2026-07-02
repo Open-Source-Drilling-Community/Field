@@ -23,6 +23,7 @@ namespace NORCE.Drilling.Field.Service.Controllers
         [HttpGet(Name = "GetFieldUsageStatistics")]
         public ActionResult<UsageStatisticsField> GetFieldUsageStatistics()
         {
+            UsageStatisticsField.Instance.IncrementGetFieldUsageStatisticsPerDay();
             if (UsageStatisticsField.Instance != null)
             {
                 return Ok(UsageStatisticsField.Instance);

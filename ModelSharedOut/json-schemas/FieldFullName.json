@@ -1837,6 +1837,93 @@
           },
           "DeleteFieldCartographicConversionSetByIdPerDay": {
             "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetAllFieldDelineationLineTypeIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetAllFieldDelineationLineTypeMetaInfoPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetFieldDelineationLineTypeByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetAllFieldDelineationLineTypePerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "PostFieldDelineationLineTypePerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "PutFieldDelineationLineTypeByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "DeleteFieldDelineationLineTypeByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetAllFieldFeatureCategoryIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetAllFieldFeatureCategoryMetaInfoPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetFieldFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetAllFieldFeatureCategoryPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "PostFieldFeatureCategoryPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "PutFieldFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "DeleteFieldFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetAllFieldIdentityIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetAllFieldIdentityMetaInfoPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetFieldIdentityByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetAllFieldIdentityPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "PostFieldIdentityPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "PutFieldIdentityByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "DeleteFieldIdentityByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetAllFieldMembershipCategoryIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetAllFieldMembershipCategoryMetaInfoPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetFieldMembershipCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetAllFieldMembershipCategoryPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "PostFieldMembershipCategoryPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "PutFieldMembershipCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "DeleteFieldMembershipCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
+          },
+          "GetFieldUsageStatisticsPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
           }
         },
         "additionalProperties": false

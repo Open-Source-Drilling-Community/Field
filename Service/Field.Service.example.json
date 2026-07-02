@@ -1,16 +1,10 @@
 {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
   "McpHub": {
-    "Enabled": false,
-    "HubBaseUrl": "",
+    "Enabled": true,
+    "HubBaseUrl": "https://mcp-hub.example.com/api",
     "RegistrationEndpoint": "McpMicroservice",
     "RetryIntervalSeconds": 60,
-    "PublicBaseUrl": "",
+    "PublicBaseUrl": "https://dev.digiwells.no",
     "ServiceName": "Field",
     "InstanceId": "",
     "UnregisterOnShutdown": true

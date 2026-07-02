@@ -83,6 +83,10 @@ Calculators:
 - `Cartographic Conversions` (`/Field/webapp/FieldCartographicConverter`)
 - `Vertical Datum Single Conversion` (`/Field/webapp/VerticalDatumConversion`)
 
+Monitoring:
+
+- `Usage Statistics` (`/Field/webapp/StatisticsField`): display per-endpoint usage counters returned by the Field service.
+
 ## Dependencies
 
 Runtime and packages:

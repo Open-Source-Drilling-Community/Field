@@ -10170,6 +10170,93 @@
           },
           "DeleteFieldCartographicConversionSetByIdPerDay": {
             "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldDelineationLineTypeIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldDelineationLineTypeMetaInfoPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetFieldDelineationLineTypeByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldDelineationLineTypePerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "PostFieldDelineationLineTypePerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "PutFieldDelineationLineTypeByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "DeleteFieldDelineationLineTypeByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldFeatureCategoryIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldFeatureCategoryMetaInfoPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetFieldFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldFeatureCategoryPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "PostFieldFeatureCategoryPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "PutFieldFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "DeleteFieldFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldIdentityIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldIdentityMetaInfoPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetFieldIdentityByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldIdentityPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "PostFieldIdentityPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "PutFieldIdentityByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "DeleteFieldIdentityByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldMembershipCategoryIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldMembershipCategoryMetaInfoPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetFieldMembershipCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetAllFieldMembershipCategoryPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "PostFieldMembershipCategoryPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "PutFieldMembershipCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "DeleteFieldMembershipCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/History"
+          },
+          "GetFieldUsageStatisticsPerDay": {
+            "$ref": "#/components/schemas/History"
           }
         }
       },
