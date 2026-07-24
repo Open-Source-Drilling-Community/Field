@@ -32,7 +32,7 @@ internal sealed class LegacyMcpServerToolAdapter : McpServerTool
 
         _protocolTool = new Tool
         {
-            Name = tool.Name,
+            Name = NormalizeToolName(tool.Name),
             Description = tool.Description
         };
 
@@ -45,6 +45,11 @@ internal sealed class LegacyMcpServerToolAdapter : McpServerTool
     public override Tool ProtocolTool => _protocolTool;
 
     public override IReadOnlyList<object> Metadata => _metadata;
+
+    private static string NormalizeToolName(string name)
+    {
+        return name.Replace('.', '_').Replace('/', '_');
+    }
 
     public override async ValueTask<CallToolResult> InvokeAsync(
         RequestContext<CallToolRequestParams> request,

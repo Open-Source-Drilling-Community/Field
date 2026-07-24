@@ -75,6 +75,23 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedProto
 });
 
+app.Use(async (context, next) =>
+{
+    string path = context.Request.Path.Value ?? string.Empty;
+    if (path.Contains("/.well-known/oauth-protected-resource", System.StringComparison.OrdinalIgnoreCase) ||
+        path.Contains("/.well-known/oauth-authorization-server", System.StringComparison.OrdinalIgnoreCase))
+    {
+        context.Response.StatusCode = 404;
+        context.Response.ContentType = "application/json";
+        context.Response.Headers.CacheControl = "no-store";
+        string body = "{\"error\":\"oauth_not_configured\",\"error_description\":\"This MCP server does not require OAuth. Connect directly to the MCP endpoint.\",\"authentication\":\"none\"}";
+        await context.Response.Body.WriteAsync(System.Text.Encoding.UTF8.GetBytes(body));
+        return;
+    }
+
+    await next();
+});
+
 if (!String.IsNullOrEmpty(builder.Configuration["CartographicProjectionHostURL"]))
     Configuration.CartographicProjectionHostURL = builder.Configuration["CartographicProjectionHostURL"];
 
