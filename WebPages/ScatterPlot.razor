@@ -2,6 +2,7 @@
 @implements IDisposable
 @using System.Globalization
 @using System.Text
+@inject IJSRuntime JSRuntime
 <PlotlyChart Config="config" Layout="layout" Data="data" @ref="chart" />
 
 @code {
@@ -15,6 +16,9 @@
     [Parameter] public List<string>? ColorList { get; set; }
     [Parameter] public List<string>? LineDashList { get; set; }
     [Parameter] public List<bool>? ShowLegends { get; set; }
+    [Parameter] public List<string?> LegendLinkedTraceIds { get; set; } = [];
+    [Parameter] public List<bool> LegendControlsLinkedTraces { get; set; } = [];
+    [Parameter] public List<string> LegendTraceKinds { get; set; } = [];
     [Parameter] public List<List<object>>? XValuesList { get; set; }
     [Parameter] public List<List<object>>? YValuesList { get; set; }
     [Parameter] public int PlotHeight { get; set; }
@@ -39,6 +43,8 @@
     private readonly SemaphoreSlim _plotSemaphore = new(1, 1);
     private string? _lastPlotSignature;
     private bool _forceReplot = true;
+    private IJSObjectReference? _legendLinksModule;
+    private string? _legendLinksChartId;
 
     private readonly Config config = new() { Responsive = true };
     private readonly Layout layout = new()
@@ -67,6 +73,7 @@
         {
             _plotlyReady = true;
             await PlotAsync();
+            await EnsureLegendLinksAsync();
         }
     }
 
@@ -78,6 +85,7 @@
     public void Dispose()
     {
         _disposed = true;
+        _ = DisposeLegendLinksAsync();
     }
 
     public void ManageUnits()
@@ -116,6 +124,7 @@
             catch
             {
             }
+            await EnsureLegendLinksAsync();
 
             _lastPlotSignature = plotSignature;
             _forceReplot = false;
@@ -123,6 +132,64 @@
         finally
         {
             _plotSemaphore.Release();
+        }
+    }
+
+    private async Task EnsureLegendLinksAsync()
+    {
+        if (_disposed || !_plotlyReady || chart?.Id == null)
+        {
+            return;
+        }
+
+        try
+        {
+            _legendLinksModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>(
+                "import",
+                "./_content/NORCE.Drilling.Field.WebPages/scatterPlotLegendLinks.js?v=20260804-linked-legend");
+
+            if (_legendLinksChartId != chart.Id)
+            {
+                _legendLinksChartId = chart.Id;
+                await _legendLinksModule.InvokeVoidAsync("install", chart.Id);
+            }
+
+            await _legendLinksModule.InvokeVoidAsync(
+                "setLegendLinks",
+                chart.Id,
+                LegendLinkedTraceIds,
+                LegendControlsLinkedTraces,
+                LegendTraceKinds);
+        }
+        catch (JSException)
+        {
+        }
+        catch (InvalidOperationException)
+        {
+        }
+    }
+
+    private async Task DisposeLegendLinksAsync()
+    {
+        if (_legendLinksModule == null)
+        {
+            return;
+        }
+
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(_legendLinksChartId))
+            {
+                await _legendLinksModule.InvokeVoidAsync("uninstall", _legendLinksChartId);
+            }
+
+            await _legendLinksModule.DisposeAsync();
+        }
+        catch (JSException)
+        {
+        }
+        catch (InvalidOperationException)
+        {
         }
     }
 
@@ -310,6 +377,9 @@
         AppendListSignature(builder, ColorList);
         AppendListSignature(builder, LineDashList);
         AppendListSignature(builder, ShowLegends);
+        AppendListSignature(builder, LegendLinkedTraceIds);
+        AppendListSignature(builder, LegendControlsLinkedTraces);
+        AppendListSignature(builder, LegendTraceKinds);
         AppendNestedListSignature(builder, XValuesList);
         AppendNestedListSignature(builder, YValuesList);
         return builder.ToString();
