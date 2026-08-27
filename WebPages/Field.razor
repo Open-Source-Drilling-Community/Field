@@ -77,7 +77,7 @@ else
             // Starting all loading tasks asynchronously
             logger.LogInformation("Trying to load list of Fields from client: " + Api.HostNameField);
             var fieldTask = Api.ClientField.GetAllFieldAsync();
-            var cartographicProjectionTask = Api.ClientEarthCartographicProjection.SummariesAsync(false);
+            var cartographicProjectionTask = Api.GetProjectionDefinitionSummariesAsync();
 
             List<Task> loadingTaskList = new List<Task> { fieldTask, cartographicProjectionTask };
 
@@ -109,11 +109,10 @@ else
                 {
                     try
                     {
-                        List<ProjectionDefinitionSummary>? cartographicProjections = (List<ProjectionDefinitionSummary>)await cartographicProjectionTask; // awaiting the finished task allows to retrieve its result and throw exception if needed
+                        IReadOnlyList<ProjectionDefinitionSummary>? cartographicProjections = await cartographicProjectionTask; // awaiting the finished task allows to retrieve its result and throw exception if needed
                         if (cartographicProjections != null)
                         {
-                            cartographicProjectionList = cartographicProjections;
-                            cartographicProjectionList.Sort((t1, t2) => t1.Name.CompareTo(t2.Name));
+                            cartographicProjectionList = cartographicProjections.ToList();
                         }
                         else
                         {

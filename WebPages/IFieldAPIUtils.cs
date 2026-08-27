@@ -23,6 +23,7 @@ public interface IFieldAPIUtils
     string HostBasePathEarthCartographicProjection { get; }
     HttpClient HttpClientEarthCartographicProjection { get; }
     FieldModelShared.Client ClientEarthCartographicProjection { get; }
+    Task<IReadOnlyList<FieldModelShared.ProjectionDefinitionSummary>> GetProjectionDefinitionSummariesAsync(CancellationToken cancellationToken = default);
 
     string HostNameUnitConversion { get; }
     string HostBasePathUnitConversion { get; }

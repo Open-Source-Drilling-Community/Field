@@ -5,6 +5,11 @@ namespace NORCE.Drilling.Field.WebPages;
 
 public class FieldAPIUtils : APIUtils, IFieldAPIUtils
 {
+    private static readonly TimeSpan ProjectionDefinitionCacheLifetime = TimeSpan.FromMinutes(15);
+    private readonly SemaphoreSlim projectionDefinitionCacheLock = new(1, 1);
+    private IReadOnlyList<FieldModelShared.ProjectionDefinitionSummary> projectionDefinitionCache = [];
+    private DateTimeOffset projectionDefinitionCacheExpiresUtc = DateTimeOffset.MinValue;
+
     public FieldAPIUtils(IFieldWebPagesConfiguration configuration)
     {
         HostNameField = Require(configuration.FieldHostURL, nameof(configuration.FieldHostURL));
@@ -59,6 +64,47 @@ public class FieldAPIUtils : APIUtils, IFieldAPIUtils
     public string HostBasePathEarthCartographicProjection { get; } = "EarthCartographicProjection/api/";
     public HttpClient HttpClientEarthCartographicProjection { get; }
     public FieldModelShared.Client ClientEarthCartographicProjection { get; }
+
+    public async Task<IReadOnlyList<FieldModelShared.ProjectionDefinitionSummary>> GetProjectionDefinitionSummariesAsync(CancellationToken cancellationToken = default)
+    {
+        IReadOnlyList<FieldModelShared.ProjectionDefinitionSummary> current = projectionDefinitionCache;
+        if (current.Count > 0 && DateTimeOffset.UtcNow < projectionDefinitionCacheExpiresUtc)
+        {
+            return current;
+        }
+
+        await projectionDefinitionCacheLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            current = projectionDefinitionCache;
+            if (current.Count > 0 && DateTimeOffset.UtcNow < projectionDefinitionCacheExpiresUtc)
+            {
+                return current;
+            }
+
+            try
+            {
+                ICollection<FieldModelShared.ProjectionDefinitionSummary> summaries =
+                    await ClientEarthCartographicProjection.SummariesAsync(false, cancellationToken).ConfigureAwait(false);
+                projectionDefinitionCache = summaries
+                    .OrderBy(summary => summary.Name, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+                projectionDefinitionCacheExpiresUtc = DateTimeOffset.UtcNow.Add(ProjectionDefinitionCacheLifetime);
+            }
+            catch (Exception exception) when (current.Count > 0 && exception is not OperationCanceledException)
+            {
+                // A stale catalog still permits editing during a transient dependency failure.
+                // Leave it expired so the next request attempts to refresh it again.
+                projectionDefinitionCacheExpiresUtc = DateTimeOffset.UtcNow;
+            }
+
+            return projectionDefinitionCache;
+        }
+        finally
+        {
+            projectionDefinitionCacheLock.Release();
+        }
+    }
 
     public string HostNameUnitConversion { get; }
     public string HostBasePathUnitConversion { get; } = "UnitConversion/api/";

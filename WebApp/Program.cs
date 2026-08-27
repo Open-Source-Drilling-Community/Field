@@ -32,6 +32,7 @@ builder.Services.AddMudServices(config =>
 });
 builder.Services.AddSingleton<IFieldWebPagesConfiguration>(webPagesConfiguration);
 builder.Services.AddSingleton<IFieldAPIUtils, FieldAPIUtils>();
+builder.Services.AddHostedService<ProjectionDefinitionCatalogWarmupService>();
 builder.Services.AddExternalWebPages(webPagesConfiguration);
 
 var app = builder.Build();

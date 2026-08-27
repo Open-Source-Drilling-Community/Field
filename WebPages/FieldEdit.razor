@@ -45,12 +45,30 @@
                 @if (CartographicProjections != null && CartographicProjections.Count > 0)
                 {
                     <MudItem xs="12" md="3">
-                        <MudSelect T="ProjectionDefinitionSummary" Value="@_cartographicProjection" ValueChanged="@SetCartographicProjection" Label="Cartographic projection" ShrinkLabel ToStringFunc="@(s => s?.Name)">
-                            @foreach (var sph in CartographicProjections)
-                            {
-                                <MudSelectItem T="ProjectionDefinitionSummary" Value="@sph">@sph.Name</MudSelectItem>
-                            }
-                        </MudSelect>
+                        <MudAutocomplete T="ProjectionDefinitionSummary"
+                                         Value="@_cartographicProjection"
+                                         ValueChanged="@SetCartographicProjection"
+                                         SearchFunc="SearchCartographicProjectionsAsync"
+                                         ToStringFunc="GetCartographicProjectionDisplayName"
+                                         Label="Cartographic projection"
+                                         Placeholder="Search by name, EPSG code, datum or area"
+                                         Clearable="true"
+                                         ResetValueOnEmptyText="false"
+                                         CoerceText="false"
+                                         MinCharacters="0"
+                                         DebounceInterval="300"
+                                         MaxItems="50"
+                                         ShrinkLabel>
+                            <ItemTemplate Context="projection">
+                                <div>
+                                    <MudText Typo="Typo.body2">@GetCartographicProjectionDisplayName(projection)</MudText>
+                                    @if (!string.IsNullOrWhiteSpace(projection.AreaOfUseName))
+                                    {
+                                        <MudText Typo="Typo.caption">@projection.AreaOfUseName</MudText>
+                                    }
+                                </div>
+                            </ItemTemplate>
+                        </MudAutocomplete>
                     </MudItem>
                 }
                 <MudItem xs="12" md="3">
@@ -331,6 +349,56 @@
         _cartographicProjection = cartographicProjection;
         _ = RefreshCartographicGridPositionReferenceAsync();
         return Task.CompletedTask;
+    }
+
+    private Task<IEnumerable<ProjectionDefinitionSummary>> SearchCartographicProjectionsAsync(string? value, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        IEnumerable<ProjectionDefinitionSummary> projections = CartographicProjections ?? [];
+        string query = value?.Trim() ?? string.Empty;
+        if (!string.IsNullOrEmpty(query))
+        {
+            projections = projections.Where(projection => ProjectionMatches(projection, query));
+        }
+
+        return Task.FromResult(projections.Take(50));
+    }
+
+    private static bool ProjectionMatches(ProjectionDefinitionSummary projection, string query)
+    {
+        return Contains(projection.Name, query) ||
+               Contains(projection.Description, query) ||
+               Contains(projection.Identifier?.Authority, query) ||
+               Contains(projection.Identifier?.Code, query) ||
+               Contains(projection.AreaOfUseName, query) ||
+               Contains(projection.AreaOfUseScope, query) ||
+               Contains(projection.BaseGeographicCrsName, query) ||
+               Contains(projection.DatumName, query) ||
+               (projection.Aliases?.Any(alias => Contains(alias, query)) ?? false) ||
+               Contains(GetAuthorityCode(projection), query);
+    }
+
+    private static bool Contains(string? source, string query) =>
+        !string.IsNullOrWhiteSpace(source) && source.Contains(query, StringComparison.OrdinalIgnoreCase);
+
+    private static string GetCartographicProjectionDisplayName(ProjectionDefinitionSummary? projection)
+    {
+        if (projection == null)
+        {
+            return string.Empty;
+        }
+
+        string authorityCode = GetAuthorityCode(projection);
+        return string.IsNullOrEmpty(authorityCode) ? projection.Name : $"{projection.Name} ({authorityCode})";
+    }
+
+    private static string GetAuthorityCode(ProjectionDefinitionSummary projection)
+    {
+        string? authority = projection.Identifier?.Authority;
+        string? code = projection.Identifier?.Code;
+        return string.IsNullOrWhiteSpace(authority) || string.IsNullOrWhiteSpace(code)
+            ? string.Empty
+            : $"{authority}:{code}";
     }
 
     private async Task Save()
