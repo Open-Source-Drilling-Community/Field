@@ -196,7 +196,11 @@ https://dev.digiwells.no/Field/api/swagger (development server)
 
 https://app.digiwells.no/Field/api/swagger (production server)
 
-The microservice and webapp are deployed as Docker containers using Kubernetes and Helm. More info at:
+The microservice and webapp are deployed as Docker containers using Kubernetes and Helm. The deployment identities are `osdcdrillingfieldservice` and `osdcdrillingfieldwebappclient`; their Kubernetes service names are `osdcfieldservice` and `osdcfieldwebappclient`.
+
+For the one-time rename procedure, including preservation of the existing `field-claim` database volume, see [deployment/identity-cutover.md](deployment/identity-cutover.md).
+
+More info at:
 
 https://github.com/NORCE-DrillingAndWells/DrillingAndWells/wiki
 

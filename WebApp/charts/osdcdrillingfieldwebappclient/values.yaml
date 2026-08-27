@@ -1,15 +1,15 @@
-# Default values for norcedrillingfieldservice.
+# Default values for osdcdrillingfieldwebappclient.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 replicaCount: 1
 image:
-  repository: digiwells/norcedrillingfieldservice
+  repository: docker.io/digiwells/osdcdrillingfieldwebappclient
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "stable"
 imagePullSecrets: []
-nameOverride: "norcedrillingfieldservice"
-fullnameOverride: "norcedrillingfieldservice"
+nameOverride: "osdcdrillingfieldwebappclient"
+fullnameOverride: "osdcfieldwebappclient"
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -32,31 +32,30 @@ service:
   type: ClusterIP
   port: 80
   annotations:
-    description: "A microservice for handling field"
+    description: "A webapp client for handling field"
 ingress:
   enabled: true
   className: public
   annotations:
-    # nginx-ingress: Enable regex path matching for case-insensitive routing
-    # This allows /SurveyInstrument/api to match the same route as /surveyinstrument/api
+    # Enable regex path matching for case-insensitive Field routes.
     nginx.ingress.kubernetes.io/use-regex: "true"
   hosts:
     - host: localhost
       paths:
-        # Regex pattern matches /surveyinstrument/api or /SurveyInstrument/api, etc.
-        - path: /(?i)field/api
+        # Matches /field/webapp, /Field/webapp, and other casing variants.
+        - path: /(?i)field/webapp
           pathType: ImplementationSpecific
     - host: dev.digiwells.no
       paths:
-        - path: /(?i)field/api
+        - path: /(?i)field/webapp
           pathType: ImplementationSpecific
     - host: app.digiwells.no
       paths:
-        - path: /(?i)field/api
+        - path: /(?i)field/webapp
           pathType: ImplementationSpecific
     - host: awe.web.intra.norceresearch.no
       paths:
-        - path: /(?i)field/api
+        - path: /(?i)field/webapp
           pathType: ImplementationSpecific
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -80,6 +79,3 @@ tolerations: []
 affinity: {}
 probes:
   enabled: false
-# Reviewed legacy CartographicProjection UUID to EarthCartographicProjection
-# projection-definition UUID mappings. Leave empty when no migration is needed.
-projectionDefinitionIdMappings: {}

@@ -104,13 +104,17 @@ dotnet run --project Service
 Docker example:
 
 ```bash
-docker build -t field-service -f Service/Dockerfile .
+docker build -t digiwells/osdcdrillingfieldservice:stable -f Service/Dockerfile .
 docker run --rm -p 5002:5002 \
   -e ASPNETCORE_URLS="http://+:5002" \
   -e EarthCartographicProjectionHostURL="https://dev.digiwells.no/" \
   -e EarthGeodesyHostURL="https://dev.digiwells.no/" \
-  -v field-home:/home field-service
+  -v field-home:/home digiwells/osdcdrillingfieldservice:stable
 ```
+
+The Helm chart is `Service/charts/osdcdrillingfieldservice`; its Kubernetes
+Service name is `osdcfieldservice`. Existing clusters must adopt the preserved
+`field-claim` PVC as described in `deployment/identity-cutover.md`.
 
 ## Contract generation
 

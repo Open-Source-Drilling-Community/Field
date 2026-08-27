@@ -113,7 +113,7 @@ Internal structure:
 Build:
 
 ```bash
-docker build -t field-webapp ./WebApp
+docker build -t digiwells/osdcdrillingfieldwebappclient:stable -f WebApp/Dockerfile .
 ```
 
 Run:
@@ -128,8 +128,11 @@ docker run --rm -p 5011:5011 -p 5012:5012 \
   -e GeodeticDatumHostURL="https://dev.your-host/" \
   -e VerticalDatumHostURL="https://app.digiwells.no/" \
   -e UnitConversionHostURL="https://dev.your-host/" \
-  field-webapp
+  digiwells/osdcdrillingfieldwebappclient:stable
 ```
+
+The Helm chart is `WebApp/charts/osdcdrillingfieldwebappclient`; its Kubernetes
+Service name is `osdcfieldwebappclient`.
 
 Then open `https://localhost:5011/Field/webapp/Field`.
 

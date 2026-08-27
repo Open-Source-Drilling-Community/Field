@@ -1,16 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "norcedrillingfieldservice.fullname" . }}
+  name: {{ include "osdcdrillingfieldservice.fullname" . }}
   labels:
-    {{- include "norcedrillingfieldservice.labels" . | nindent 4 }}
+    {{- include "osdcdrillingfieldservice.labels" . | nindent 4 }}
 spec:
+  strategy:
+    type: {{ .Values.strategy.type }}
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "norcedrillingfieldservice.selectorLabels" . | nindent 6 }}
+      {{- include "osdcdrillingfieldservice.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,13 +20,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "norcedrillingfieldservice.selectorLabels" . | nindent 8 }}
+        {{- include "osdcdrillingfieldservice.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "norcedrillingfieldservice.serviceAccountName" . }}
+      serviceAccountName: {{ include "osdcdrillingfieldservice.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -63,12 +65,16 @@ spec:
           {{- end }}
       volumes:
       - name: fielddb
+        {{- if .Values.persistence.enabled }}
         persistentVolumeClaim:
-          claimName: field-claim
+          claimName: {{ .Values.persistence.existingClaim | default .Values.persistence.claimName }}
+        {{- else }}
+        emptyDir: {}
+        {{- end }}
       {{- if .Values.projectionDefinitionIdMappings }}
       - name: projection-mappings
         configMap:
-          name: {{ include "norcedrillingfieldservice.fullname" . }}-projection-mappings
+          name: {{ include "osdcdrillingfieldservice.fullname" . }}-projection-mappings
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
