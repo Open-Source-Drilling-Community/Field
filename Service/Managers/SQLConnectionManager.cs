@@ -97,7 +97,7 @@ namespace NORCE.Drilling.Field.Service.Managers
             }
             else
             {
-                _logger.LogInformation("SqliteConnectionManager created");
+                throw new InvalidOperationException("Unable to initialize the Field database storage directory.");
             }
         }
 

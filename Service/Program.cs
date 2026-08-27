@@ -74,6 +74,13 @@ builder.Services.AddFieldRestMcpTools();
 
 var app = builder.Build();
 
+// Resolve the database manager before the web host starts accepting requests.
+// Its constructor validates the database and applies the projection-reference
+// migration, so a missing reviewed mapping must fail pod startup rather than
+// remaining hidden until the first API or web-app request.
+_ = app.Services.GetRequiredService<SqlConnectionManager>();
+app.Logger.LogInformation("Field database initialization and migrations completed.");
+
 var basePath = "/field/api";
 app.UsePathBase(basePath);
 
