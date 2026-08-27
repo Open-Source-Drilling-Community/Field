@@ -182,15 +182,31 @@ namespace NORCE.Drilling.Field.Service.Managers
                     }
                 }
 
+                int schemaVersion;
+                using (SqliteCommand version = connection.CreateCommand())
+                {
+                    version.CommandText = "PRAGMA user_version";
+                    schemaVersion = Convert.ToInt32(version.ExecuteScalar());
+                }
+                if (schemaVersion > CURRENT_SCHEMA_VERSION)
+                {
+                    throw new InvalidOperationException(
+                        $"Field database schema version {schemaVersion} is newer than the supported version {CURRENT_SCHEMA_VERSION}.");
+                }
+
+                // Legacy JSON inspection is deliberately version-gated. Once a database has
+                // reached v2, startup validates its table structure but does not repeatedly scan
+                // every persisted Field or require the one-time migration mapping configuration.
+                bool requiresSchemaMigration = schemaVersion < CURRENT_SCHEMA_VERSION;
                 bool hasObsoleteCalculationTable = tableNameList.Contains("FieldCartographicConversionSetTable", StringComparer.Ordinal);
-                FieldProjectionMigrationPlan projectionPlan = tableNameList.Contains("FieldTable", StringComparer.Ordinal)
+                FieldProjectionMigrationPlan projectionPlan = requiresSchemaMigration && tableNameList.Contains("FieldTable", StringComparer.Ordinal)
                     ? FieldProjectionReferenceMigrator.Plan(connection, _projectionMappings)
                     : new FieldProjectionMigrationPlan([]);
 
                 // Back up the complete SQLite database before the first persisted migration.
                 // The backup remains alongside Field.db and is independent of the logical
                 // off-machine JSON backup made before deployment.
-                if (hasObsoleteCalculationTable || projectionPlan.HasChanges)
+                if (requiresSchemaMigration && (hasObsoleteCalculationTable || projectionPlan.HasChanges))
                 {
                     BackupBeforeMigration(connection);
                     using SqliteTransaction transaction = connection.BeginTransaction();
@@ -209,6 +225,7 @@ namespace NORCE.Drilling.Field.Service.Managers
                         version.CommandText = $"PRAGMA user_version = {CURRENT_SCHEMA_VERSION}";
                         version.ExecuteNonQuery();
                         transaction.Commit();
+                        schemaVersion = CURRENT_SCHEMA_VERSION;
                         tableNameList.Remove("FieldCartographicConversionSetTable");
                         _logger.LogInformation("Migrated Field database to schema version {Version}; {FieldCount} field projection references changed and obsolete calculation cases removed={RemovedCases}", CURRENT_SCHEMA_VERSION, projectionPlan.Changes.Count, hasObsoleteCalculationTable);
                     }
@@ -244,9 +261,13 @@ namespace NORCE.Drilling.Field.Service.Managers
                     throw new InvalidOperationException(
                         $"Unexpected Field database structure. No data was changed. Unexpected=[{string.Join(',', unexpected)}], missing=[{string.Join(',', missing)}], malformed=[{string.Join(',', malformed)}].");
                 }
-                using SqliteCommand schemaVersion = connection.CreateCommand();
-                schemaVersion.CommandText = $"PRAGMA user_version = {CURRENT_SCHEMA_VERSION}";
-                schemaVersion.ExecuteNonQuery();
+                if (schemaVersion < CURRENT_SCHEMA_VERSION)
+                {
+                    using SqliteCommand updateVersion = connection.CreateCommand();
+                    updateVersion.CommandText = $"PRAGMA user_version = {CURRENT_SCHEMA_VERSION}";
+                    updateVersion.ExecuteNonQuery();
+                    _logger.LogInformation("Advanced Field database schema metadata to version {Version}", CURRENT_SCHEMA_VERSION);
+                }
             }
             else
             {

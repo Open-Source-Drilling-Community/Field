@@ -23,3 +23,29 @@ be inferred were explicitly assigned by Eric Cayeux on 2026-08-27: app field
 `ayombero` uses WGS 84 / UTM zone 18N (EPSG:32618), and AWE field `The field`
 uses ED50 / UTM zone 31N (EPSG:23031). Both authoritative definitions were
 verified live before the assignments were recorded in `assessment.json`.
+
+## Deployment completion and retention
+
+The migration was completed and verified on all three deployments on
+2026-08-27. Post-migration API checks found 7 fields on dev, 2 on AWE, and 135
+on app, with respectively 1, 2, and 131 non-null `ProjectionDefinitionID`
+values and no legacy `CartographicProjectionID` properties.
+
+An independent post-v2 logical snapshot was stored at
+`C:\OSDC\FieldMigrationBackups\post-v2\20260827T130709Z`. Every HeavyData
+record count matches its ID-list count. SHA-256 checksums are:
+
+| Deployment | File | SHA-256 |
+|---|---|---|
+| app | `field-ids.json` | `CF74B85EE30D15D516BB936A57FDE1943B111555FAB656FEBDB2C2BB25D58FE7` |
+| app | `fields-heavy.json` | `2EA0BC0B3320C719CB9D01503899A6AF2000505B4F32DCA1B42C5DEA229AD0EC` |
+| AWE | `field-ids.json` | `E58FD345F5AE36A32F9DD86F281995D0F19A84F33D551030C65E59B8202D9BBA` |
+| AWE | `fields-heavy.json` | `7F11563B3F5AD4905D4DBAE0B9812C52D2CF04552D57D31A2258D14F2F511128` |
+| dev | `field-ids.json` | `0E468FDC497F367C83E49345F873449ACDDFDB9E9CE4975A0E75256005276D6A` |
+| dev | `fields-heavy.json` | `E3F74CA27B423A95B242D807649FC6FC1BAB74944CEBFEF74C7CF8309361F9C0` |
+
+Keep the migrator, its tests, and these reviewed mapping files through at least
+one release cycle so that a pre-v2 database backup can still be restored. A v2
+database skips legacy Field scanning and does not require mappings at startup;
+normal table-structure validation still runs. Remove the recovery path only in
+a later release that explicitly drops support for pre-v2 databases.
