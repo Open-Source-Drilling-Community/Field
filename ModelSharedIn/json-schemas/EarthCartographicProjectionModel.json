@@ -1,0 +1,1889 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "OSDC Earth Cartographic Projection API",
+    "description": "Immutable EPSG and custom projected-CRS definitions with stateless, atomic SI forward and inverse projection.",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "/EarthCartographicProjection/api"
+    }
+  ],
+  "paths": {
+    "/EarthCartographicProjection": {
+      "get": {
+        "tags": [
+          "EarthCartographicProjection"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.EarthCartographicProjectionServiceInfo"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.EarthCartographicProjectionServiceInfo"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.EarthCartographicProjectionServiceInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/EarthCartographicProjection/Forward": {
+      "post": {
+        "tags": [
+          "EarthCartographicProjection"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ForwardProjectionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ForwardProjectionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ForwardProjectionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ForwardProjectionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ForwardProjectionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ForwardProjectionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/EarthCartographicProjection/Inverse": {
+      "post": {
+        "tags": [
+          "EarthCartographicProjection"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.InverseProjectionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.InverseProjectionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.InverseProjectionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.InverseProjectionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.InverseProjectionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.InverseProjectionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/EarthCartographicProjectionUsageStatistics": {
+      "get": {
+        "tags": [
+          "EarthCartographicProjectionUsageStatistics"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.UsageStatisticsEarthCartographicProjection"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.UsageStatisticsEarthCartographicProjection"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.UsageStatisticsEarthCartographicProjection"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ProjectionDefinition/Summaries": {
+      "get": {
+        "tags": [
+          "ProjectionDefinition"
+        ],
+        "parameters": [
+          {
+            "name": "includeDeprecated",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinitionSummary"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinitionSummary"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinitionSummary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ProjectionDefinition/Search": {
+      "post": {
+        "tags": [
+          "ProjectionDefinition"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinitionSearchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinitionSearchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinitionSearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchResult_OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchResult_OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchResult_OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ProjectionDefinition/{id}": {
+      "get": {
+        "tags": [
+          "ProjectionDefinition"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ProjectionDefinition"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.UpdateProjectionDefinitionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.UpdateProjectionDefinitionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.UpdateProjectionDefinitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ProjectionDefinition"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/ProjectionDefinition": {
+      "post": {
+        "tags": [
+          "ProjectionDefinition"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CreateProjectionDefinitionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CreateProjectionDefinitionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CreateProjectionDefinitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ProjectionMethod/Search": {
+      "post": {
+        "tags": [
+          "ProjectionMethod"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchResult_OSDC.Drilling.EarthCartographicProjection.Model.ProjectionMethod"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchResult_OSDC.Drilling.EarthCartographicProjection.Model.ProjectionMethod"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchResult_OSDC.Drilling.EarthCartographicProjection.Model.ProjectionMethod"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ProjectionMethod/{id}": {
+      "get": {
+        "tags": [
+          "ProjectionMethod"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionMethod"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionMethod"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionMethod"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OSDC.Drilling.EarthCartographicProjection.Model.ApplicabilityPolicy": {
+        "enum": [
+          "RequireApplicable",
+          "AllowUnknown"
+        ],
+        "type": "string"
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.AreaOfUse": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "scope": {
+            "type": "string",
+            "nullable": true
+          },
+          "bounds": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.GeographicBoundingBox"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier": {
+        "required": [
+          "authority",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "authority": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "uri": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.AxisDirection": {
+        "enum": [
+          "East",
+          "West",
+          "North",
+          "South",
+          "Other"
+        ],
+        "type": "string"
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.CatalogEntryStatus": {
+        "enum": [
+          "Authoritative",
+          "Custom",
+          "Deprecated"
+        ],
+        "type": "string"
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.CatalogMatchStatus": {
+        "enum": [
+          "VerifiedExact",
+          "VerifiedAlias",
+          "ProbableMatch",
+          "Conflict"
+        ],
+        "type": "string"
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.CatalogProvenance": {
+        "required": [
+          "source"
+        ],
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "nullable": true
+          },
+          "matchStatus": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogMatchStatus"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "sourceCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "legacyId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "legacySource": {
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchItem_OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition": {
+        "required": [
+          "matchReason",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition"
+          },
+          "matchScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "matchReason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchItem_OSDC.Drilling.EarthCartographicProjection.Model.ProjectionMethod": {
+        "required": [
+          "matchReason",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionMethod"
+          },
+          "matchScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "matchReason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchRequest": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "nullable": true
+          },
+          "authority": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "catalogStatus": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogStatusFilter"
+          },
+          "includeDeprecated": {
+            "type": "boolean"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchResult_OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition": {
+        "type": "object",
+        "properties": {
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "returnedCount": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchItem_OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchResult_OSDC.Drilling.EarthCartographicProjection.Model.ProjectionMethod": {
+        "type": "object",
+        "properties": {
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "returnedCount": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogSearchItem_OSDC.Drilling.EarthCartographicProjection.Model.ProjectionMethod"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.CatalogStatusFilter": {
+        "enum": [
+          "Any",
+          "Authoritative",
+          "Custom",
+          "Deprecated"
+        ],
+        "type": "string"
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.CoordinateSystemAxis": {
+        "required": [
+          "abbreviation",
+          "name",
+          "unit"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "abbreviation": {
+            "type": "string",
+            "nullable": true
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "direction": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AxisDirection"
+          },
+          "unit": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+          },
+          "unitName": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitToMetre": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.CoordinateSystemAxisInput": {
+        "required": [
+          "abbreviation",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "abbreviation": {
+            "type": "string",
+            "nullable": true
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "direction": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AxisDirection"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.CreateProjectionDefinitionRequest": {
+        "required": [
+          "areaOfUse",
+          "baseGeographicCrs",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "identifier": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+          },
+          "baseGeographicCrs": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.GeographicCrsInput"
+          },
+          "methodId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "conversionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionParameterInput"
+            },
+            "nullable": true
+          },
+          "coordinateSystem": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectedCoordinateSystemInput"
+          },
+          "areaOfUse": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AreaOfUse"
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "legacyId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "legacySource": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.CrsReference": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "identifier": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.EarthCartographicProjectionServiceInfo": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "epsgDatasetVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "coordinateConvention": {
+            "type": "string",
+            "nullable": true
+          },
+          "calculationBehavior": {
+            "type": "string",
+            "nullable": true
+          },
+          "catalogBehavior": {
+            "type": "string",
+            "nullable": true
+          },
+          "externalResourceBehavior": {
+            "type": "string",
+            "nullable": true
+          },
+          "mcpErrorBehavior": {
+            "type": "string",
+            "nullable": true
+          },
+          "maximumPositionsPerRequest": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mcpMaximumPositionsPerRequest": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mcpBatchLimitBehavior": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectionMethodCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "projectionDefinitionCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ForwardProjectionPosition": {
+        "required": [
+          "geographicCoordinate",
+          "projectedCoordinate"
+        ],
+        "type": "object",
+        "properties": {
+          "positionIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "geographicCoordinate": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.GeographicCoordinate"
+          },
+          "projectedCoordinate": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectedCoordinate"
+          },
+          "gridConvergence": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ForwardProjectionRequest": {
+        "type": "object",
+        "properties": {
+          "projectionDefinitionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "applicabilityPolicy": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ApplicabilityPolicy"
+          },
+          "positions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.GeographicCoordinate"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ForwardProjectionResponse": {
+        "required": [
+          "geographicCoordinateReferenceSystem",
+          "projectedCoordinateReferenceSystem",
+          "projectionDefinition"
+        ],
+        "type": "object",
+        "properties": {
+          "projectionDefinition": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinitionReference"
+          },
+          "geographicCoordinateReferenceSystem": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CrsReference"
+          },
+          "projectedCoordinateReferenceSystem": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CrsReference"
+          },
+          "apiAxisConvention": {
+            "type": "string",
+            "nullable": true
+          },
+          "gridConvergenceConvention": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicability": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionApplicability"
+          },
+          "positions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ForwardProjectionPosition"
+            },
+            "nullable": true
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ServiceWarning"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.GeodeticDatumReference": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "earthGeodesyDatumId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "identifier": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "expectedModifiedUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.GeographicBoundingBox": {
+        "type": "object",
+        "properties": {
+          "southLatitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "northLatitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "westLongitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "eastLongitude": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.GeographicCoordinate": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.GeographicCrsInput": {
+        "required": [
+          "datum",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "datum": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDatumInput"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.GeographicCrsReference": {
+        "required": [
+          "datum",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "identifier": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+          },
+          "datum": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.GeodeticDatumReference"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.InverseProjectionPosition": {
+        "required": [
+          "geographicCoordinate",
+          "projectedCoordinate"
+        ],
+        "type": "object",
+        "properties": {
+          "positionIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "projectedCoordinate": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectedCoordinate"
+          },
+          "geographicCoordinate": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.GeographicCoordinate"
+          },
+          "gridConvergence": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.InverseProjectionRequest": {
+        "type": "object",
+        "properties": {
+          "projectionDefinitionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "applicabilityPolicy": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ApplicabilityPolicy"
+          },
+          "positions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectedCoordinate"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.InverseProjectionResponse": {
+        "required": [
+          "geographicCoordinateReferenceSystem",
+          "projectedCoordinateReferenceSystem",
+          "projectionDefinition"
+        ],
+        "type": "object",
+        "properties": {
+          "projectionDefinition": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinitionReference"
+          },
+          "geographicCoordinateReferenceSystem": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CrsReference"
+          },
+          "projectedCoordinateReferenceSystem": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CrsReference"
+          },
+          "apiAxisConvention": {
+            "type": "string",
+            "nullable": true
+          },
+          "gridConvergenceConvention": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicability": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionApplicability"
+          },
+          "positions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.InverseProjectionPosition"
+            },
+            "nullable": true
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ServiceWarning"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectedCoordinate": {
+        "type": "object",
+        "properties": {
+          "easting": {
+            "type": "number",
+            "format": "double"
+          },
+          "northing": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectedCoordinateSystem": {
+        "type": "object",
+        "properties": {
+          "axes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CoordinateSystemAxis"
+            },
+            "nullable": true
+          },
+          "apiConvention": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectedCoordinateSystemInput": {
+        "type": "object",
+        "properties": {
+          "axes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CoordinateSystemAxisInput"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectionApplicability": {
+        "enum": [
+          "Applicable",
+          "Unknown"
+        ],
+        "type": "string"
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDatumInput": {
+        "type": "object",
+        "properties": {
+          "earthGeodesyDatumId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedModifiedUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinition": {
+        "required": [
+          "areaOfUse",
+          "baseGeographicCrs",
+          "coordinateSystem",
+          "name",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "identifier": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+          },
+          "baseGeographicCrs": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.GeographicCrsReference"
+          },
+          "methodId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "conversionIdentifier": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+          },
+          "conversionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionParameterValue"
+            },
+            "nullable": true
+          },
+          "coordinateSystem": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectedCoordinateSystem"
+          },
+          "areaOfUse": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AreaOfUse"
+          },
+          "isBuiltIn": {
+            "type": "boolean"
+          },
+          "isDeprecated": {
+            "type": "boolean"
+          },
+          "isSuperseded": {
+            "type": "boolean"
+          },
+          "supersededByIdentifiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+            },
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "informationSource": {
+            "type": "string",
+            "nullable": true
+          },
+          "revisionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogProvenance"
+          },
+          "createdUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modifiedUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "runtimeStatus": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionRuntimeStatus"
+          },
+          "runtimeMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "catalogStatus": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogEntryStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinitionReference": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "identifier": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+          },
+          "catalogStatus": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogEntryStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinitionSearchRequest": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "nullable": true
+          },
+          "authority": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "catalogStatus": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogStatusFilter"
+          },
+          "includeDeprecated": {
+            "type": "boolean"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "methodId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "earthGeodesyDatumId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "areaQuery": {
+            "type": "string",
+            "nullable": true
+          },
+          "containsPosition": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.GeographicCoordinate"
+          },
+          "containsBounds": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.GeographicBoundingBox"
+          },
+          "runtimeStatus": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionRuntimeStatus"
+          },
+          "isSuperseded": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectionDefinitionSummary": {
+        "required": [
+          "areaOfUseName",
+          "baseGeographicCrsName",
+          "datumName",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "identifier": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+          },
+          "areaOfUseName": {
+            "type": "string",
+            "nullable": true
+          },
+          "areaOfUseScope": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseGeographicCrsName": {
+            "type": "string",
+            "nullable": true
+          },
+          "datumName": {
+            "type": "string",
+            "nullable": true
+          },
+          "isBuiltIn": {
+            "type": "boolean"
+          },
+          "catalogStatus": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogEntryStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectionMethod": {
+        "required": [
+          "name",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "identifier": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+          },
+          "projName": {
+            "type": "string",
+            "nullable": true
+          },
+          "isBuiltIn": {
+            "type": "boolean"
+          },
+          "isDeprecated": {
+            "type": "boolean"
+          },
+          "isCustomDefinitionAllowed": {
+            "type": "boolean"
+          },
+          "customDefinitionRestrictionCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "customDefinitionRestrictionMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionParameterDefinition"
+            },
+            "nullable": true
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogProvenance"
+          },
+          "catalogStatus": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.CatalogEntryStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectionParameterDefinition": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "identifier": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+          },
+          "quantity": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionParameterQuantity"
+          },
+          "isRequired": {
+            "type": "boolean"
+          },
+          "minimumValue": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "maximumValue": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectionParameterInput": {
+        "type": "object",
+        "properties": {
+          "parameterId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectionParameterQuantity": {
+        "enum": [
+          "Angle",
+          "Length",
+          "Scale",
+          "Integer",
+          "Boolean"
+        ],
+        "type": "string"
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectionParameterValue": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "parameterId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "identifier": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+          },
+          "quantity": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionParameterQuantity"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "originalValue": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "originalUnit": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+          },
+          "originalUnitName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ProjectionRuntimeStatus": {
+        "enum": [
+          "NotEvaluated",
+          "Available",
+          "UnsupportedByRuntime",
+          "DatumUnavailable",
+          "InvalidDefinition"
+        ],
+        "type": "string"
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.ServiceWarning": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.UpdateProjectionDefinitionRequest": {
+        "required": [
+          "areaOfUse",
+          "baseGeographicCrs",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "identifier": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AuthorityIdentifier"
+          },
+          "baseGeographicCrs": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.GeographicCrsInput"
+          },
+          "methodId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "conversionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectionParameterInput"
+            },
+            "nullable": true
+          },
+          "coordinateSystem": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.ProjectedCoordinateSystemInput"
+          },
+          "areaOfUse": {
+            "$ref": "#/components/schemas/OSDC.Drilling.EarthCartographicProjection.Model.AreaOfUse"
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "legacyId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "legacySource": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.EarthCartographicProjection.Model.UsageStatisticsEarthCartographicProjection": {
+        "type": "object",
+        "properties": {
+          "restForward": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "restInverse": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "mcpForward": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "mcpInverse": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "positionsProjected": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "failures": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "catalogReads": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "catalogWrites": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

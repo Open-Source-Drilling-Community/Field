@@ -17,12 +17,12 @@ public static class FieldReferenceDatumUtils
             .Where(cluster =>
                 cluster is not null &&
                 cluster.FieldID == fieldId &&
-                cluster.ReferenceLatitude?.GaussianValue?.Mean != null &&
-                cluster.ReferenceLongitude?.GaussianValue?.Mean != null)
+                cluster.ReferencePoint?.Latitude != null &&
+                cluster.ReferencePoint?.Longitude != null)
             .ToList() ?? [];
 
-        double? averageLatitude = Average(fieldClusters.Select(cluster => cluster.ReferenceLatitude?.GaussianValue?.Mean));
-        double? averageLongitude = Average(fieldClusters.Select(cluster => cluster.ReferenceLongitude?.GaussianValue?.Mean));
+        double? averageLatitude = Average(fieldClusters.Select(cluster => cluster.ReferencePoint?.Latitude));
+        double? averageLongitude = Average(fieldClusters.Select(cluster => cluster.ReferencePoint?.Longitude));
         double? averageTopWaterDepth = Average(clusters?
             .Where(cluster => cluster is not null && cluster.FieldID == fieldId)
             .Select(cluster => cluster.TopWaterDepth?.GaussianValue?.Mean));

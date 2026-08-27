@@ -45,10 +45,10 @@
                 @if (CartographicProjections != null && CartographicProjections.Count > 0)
                 {
                     <MudItem xs="12" md="3">
-                        <MudSelect T="CartographicProjectionLight" Value="@_cartographicProjection" ValueChanged="@SetCartographicProjection" Label="Cartographic projection" ShrinkLabel ToStringFunc="@(s => s?.Name)">
+                        <MudSelect T="ProjectionDefinitionSummary" Value="@_cartographicProjection" ValueChanged="@SetCartographicProjection" Label="Cartographic projection" ShrinkLabel ToStringFunc="@(s => s?.Name)">
                             @foreach (var sph in CartographicProjections)
                             {
-                                <MudSelectItem T="CartographicProjectionLight" Value="@sph">@sph.Name</MudSelectItem>
+                                <MudSelectItem T="ProjectionDefinitionSummary" Value="@sph">@sph.Name</MudSelectItem>
                             }
                         </MudSelect>
                     </MudItem>
@@ -224,7 +224,7 @@
     public NORCE.Drilling.Field.ModelShared.Field? CurrentField { get; set; }
 
     [Parameter]
-    public List<CartographicProjectionLight>? CartographicProjections { get; set; }
+    public List<ProjectionDefinitionSummary>? CartographicProjections { get; set; }
 
     [Parameter]
     public List<FieldType>? FieldTypes { get; set; }
@@ -233,7 +233,7 @@
     public Action? OnUpdate { get; set; }
 
     // Local variables used to retrieve user-defined parameters
-    private CartographicProjectionLight? _cartographicProjection;
+    private ProjectionDefinitionSummary? _cartographicProjection;
     private string? _name;
     private string? _descr;
     private MathPoint3DGlobalCoordinates _referencePoint = new();
@@ -268,12 +268,12 @@
             if (CurrentField != null && CurrentField.MetaInfo != null)
             {
                 _cartographicProjection = null;
-                if (CurrentField.CartographicProjectionID != null && CurrentField.CartographicProjectionID != Guid.Empty && CartographicProjections != null)
+                if (CurrentField.ProjectionDefinitionID != null && CurrentField.ProjectionDefinitionID != Guid.Empty && CartographicProjections != null)
                 {
-                    CartographicProjectionLight? cartographicProjection = null;
+                    ProjectionDefinitionSummary? cartographicProjection = null;
                     foreach (var projection in CartographicProjections)
                     {
-                        if (projection.MetaInfo != null && projection.MetaInfo.ID == CurrentField.CartographicProjectionID)
+                        if (projection.Id == CurrentField.ProjectionDefinitionID)
                         {
                             cartographicProjection = projection;
                             break;
@@ -326,7 +326,7 @@
         }
     }
 
-    private Task SetCartographicProjection(CartographicProjectionLight? cartographicProjection)
+    private Task SetCartographicProjection(ProjectionDefinitionSummary? cartographicProjection)
     {
         _cartographicProjection = cartographicProjection;
         _ = RefreshCartographicGridPositionReferenceAsync();
@@ -444,7 +444,7 @@
             FieldId = CurrentField?.MetaInfo?.ID,
             Name = _name,
             Description = _descr,
-            CartographicProjectionId = _cartographicProjection?.MetaInfo?.ID ?? Guid.Empty,
+            ProjectionDefinitionId = _cartographicProjection?.Id ?? Guid.Empty,
             ReferencePoint = BuildReferencePointDirtySnapshot(_referencePoint),
             FieldFeatureAssignments = BuildFeatureAssignmentDirtySnapshot(_fieldFeatureAssignments),
             FieldIdentityAssignments = BuildIdentityAssignmentDirtySnapshot(_fieldIdentityAssignments),
@@ -528,9 +528,9 @@
     private NORCE.Drilling.Field.ModelShared.Field BuildEditedField(DateTimeOffset? lastModificationDate)
     {
         Guid cartographicProjectionID = Guid.Empty;
-        if (_cartographicProjection != null && _cartographicProjection.MetaInfo != null && _cartographicProjection.MetaInfo.ID != Guid.Empty)
+        if (_cartographicProjection != null && _cartographicProjection.Id != Guid.Empty)
         {
-            cartographicProjectionID = _cartographicProjection.MetaInfo.ID;
+            cartographicProjectionID = _cartographicProjection.Id;
         }
 
         return new NORCE.Drilling.Field.ModelShared.Field
@@ -540,7 +540,7 @@
             Description = _descr,
             CreationDate = CurrentField?.CreationDate,
             LastModificationDate = lastModificationDate,
-            CartographicProjectionID = cartographicProjectionID,
+            ProjectionDefinitionID = cartographicProjectionID,
             ReferencePoint = CloneReferencePointForStorage(_referencePoint),
             FieldFeatureAssignments = CloneFeatureAssignments(_fieldFeatureAssignments),
             FieldIdentityAssignments = CloneIdentityAssignments(_fieldIdentityAssignments),
@@ -553,7 +553,7 @@
     {
         _name = imported.Name;
         _descr = imported.Description;
-        _cartographicProjection = FindCartographicProjection(imported.CartographicProjectionID);
+        _cartographicProjection = FindCartographicProjection(imported.ProjectionDefinitionID);
         _referencePoint = CloneReferencePointForEditor(imported.ReferencePoint);
         UpdateFieldPositionReferenceSource();
         _fieldFeatureAssignments = CloneFeatureAssignments(imported.FieldFeatureAssignments);
@@ -697,25 +697,21 @@
 
             await RefreshMeanSeaLevelDepthReferenceAsync(sample.Value);
 
-            CartographicCoordinate? cartographicCoordinate = await ConvertReferenceSampleToCartographicAsync(fieldId, sample.Value);
-            if (cartographicCoordinate?.Northing == null || cartographicCoordinate.Easting == null)
+            FieldCoordinateConversionPositionResult? converted = await ConvertReferenceSampleToCartographicAsync(fieldId, sample.Value);
+            if (converted == null)
             {
                 ClearCartographicReferences();
                 return;
             }
 
             DataUtils.CartographicGridPositionReferenceSource.CartographicGridNorthPositionReference =
-                cartographicCoordinate.Northing.Value - sample.Value.RiemannianNorth;
+                converted.ProjectedCoordinate.Northing - sample.Value.RiemannianNorth;
             DataUtils.CartographicGridPositionReferenceSource.CartographicGridEastPositionReference =
-                cartographicCoordinate.Easting.Value - sample.Value.RiemannianEast;
+                converted.ProjectedCoordinate.Easting - sample.Value.RiemannianEast;
             DataUtils.CartographicProjectionDatumGeodeticReferenceSource.CartographicProjectionDatumLatitudeReference =
-                cartographicCoordinate.GeodeticCoordinate?.LatitudeDatum == null
-                    ? null
-                    : cartographicCoordinate.GeodeticCoordinate.LatitudeDatum.Value - sample.Value.Latitude;
+                converted.ProjectionDatumGeographicCoordinate.Latitude - sample.Value.Latitude;
             DataUtils.CartographicProjectionDatumGeodeticReferenceSource.CartographicProjectionDatumLongitudeReference =
-                cartographicCoordinate.GeodeticCoordinate?.LongitudeDatum == null
-                    ? null
-                    : cartographicCoordinate.GeodeticCoordinate.LongitudeDatum.Value - sample.Value.Longitude;
+                converted.ProjectionDatumGeographicCoordinate.Longitude - sample.Value.Longitude;
         }
         catch (Exception ex)
         {
@@ -827,8 +823,8 @@
         ReferencePositionSample? referenceSample = TryBuildReferenceSample(
             null,
             null,
-            cluster.ReferenceLatitude?.GaussianValue?.Mean,
-            cluster.ReferenceLongitude?.GaussianValue?.Mean);
+            cluster.ReferencePoint?.Latitude,
+            cluster.ReferencePoint?.Longitude);
         if (referenceSample != null)
         {
             return referenceSample;
@@ -914,10 +910,10 @@
             point.Longitude.Value);
     }
 
-    private async Task<CartographicCoordinate?> ConvertReferenceSampleToCartographicAsync(Guid fieldId, ReferencePositionSample sample)
+    private async Task<FieldCoordinateConversionPositionResult?> ConvertReferenceSampleToCartographicAsync(Guid fieldId, ReferencePositionSample sample)
     {
-        Guid? persistedProjectionId = CurrentField?.CartographicProjectionID;
-        Guid? selectedProjectionId = _cartographicProjection?.MetaInfo?.ID;
+        Guid? persistedProjectionId = CurrentField?.ProjectionDefinitionID;
+        Guid? selectedProjectionId = _cartographicProjection?.Id;
         if (persistedProjectionId == null || persistedProjectionId == Guid.Empty)
         {
             logger.LogDebug("Skipping cartographic reference update because the field has no saved cartographic projection");
@@ -930,52 +926,23 @@
             return null;
         }
 
-        Guid conversionId = Guid.NewGuid();
-        DateTimeOffset now = DateTimeOffset.UtcNow;
-        FieldCartographicConversionSet conversionSet = new()
+        FieldForwardConversionRequest request = new()
         {
-            MetaInfo = new MetaInfo
-            {
-                ID = conversionId,
-                HttpHostName = Api.HostNameField,
-                HttpHostBasePath = Api.HostBasePathField,
-                HttpEndPoint = "FieldCartographicConversionSet/"
-            },
-            Name = DataUtils.DEFAULT_NAME_CartographicConversionSet,
-            Description = "Temporary conversion for cartographic position reference.",
-            CreationDate = now,
-            LastModificationDate = now,
             FieldID = fieldId,
-            CartographicCoordinateList =
+            SourceGeographicReference = FieldGeographicReference.Wgs84,
+            ProjectionApplicabilityPolicy = FieldApplicabilityPolicy.AllowUnknown,
+            Positions =
             [
-                new CartographicCoordinate
+                new FieldForwardConversionPosition
                 {
-                    GeodeticCoordinate = new GeodeticCoordinate
-                    {
-                        LatitudeWGS84 = sample.Latitude,
-                        LongitudeWGS84 = sample.Longitude,
-                        VerticalDepthWGS84 = 0
-                    }
+                    Latitude = sample.Latitude,
+                    Longitude = sample.Longitude,
+                    VerticalDepth = 0
                 }
             ]
         };
-
-        try
-        {
-            await Api.ClientField.PostFieldCartographicConversionSetAsync(conversionSet);
-            FieldCartographicConversionSet calculated = await Api.ClientField.GetFieldCartographicConversionSetByIdAsync(conversionId);
-            return calculated.CartographicCoordinateList?.FirstOrDefault();
-        }
-        finally
-        {
-            try
-            {
-                await Api.ClientField.DeleteFieldCartographicConversionSetByIdAsync(conversionId);
-            }
-            catch
-            {
-            }
-        }
+        FieldCoordinateConversionResponse response = await Api.ClientField.ForwardFieldCoordinatesAsync(request);
+        return response.Positions?.FirstOrDefault();
     }
 
     private static void ClearCartographicReferences()
@@ -1636,14 +1603,14 @@
         return firstStart <= secondEnd && secondStart <= firstEnd;
     }
 
-    private CartographicProjectionLight? FindCartographicProjection(Guid? cartographicProjectionID)
+    private ProjectionDefinitionSummary? FindCartographicProjection(Guid? cartographicProjectionID)
     {
         if (cartographicProjectionID == null || cartographicProjectionID == Guid.Empty || CartographicProjections == null)
         {
             return null;
         }
 
-        return CartographicProjections.FirstOrDefault(projection => projection.MetaInfo?.ID == cartographicProjectionID);
+        return CartographicProjections.FirstOrDefault(projection => projection.Id == cartographicProjectionID);
     }
 
     private static void UpdateFieldPositionReferenceName(string value)

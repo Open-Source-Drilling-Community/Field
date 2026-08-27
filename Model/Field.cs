@@ -33,9 +33,9 @@ namespace NORCE.Drilling.Field.Model
         public DateTimeOffset? LastModificationDate { get; set; }
         
         /// <summary>
-        /// a reference to the CartographicProjection
+        /// a reference to an EarthCartographicProjection projection definition
         /// </summary>
-        public Guid? CartographicProjectionID { get; set; }
+        public Guid? ProjectionDefinitionID { get; set; }
 
         /// <summary>
         /// optional reference point for the field in SI and WGS84 references

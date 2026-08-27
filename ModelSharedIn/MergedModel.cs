@@ -75,7 +75,7 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<System.Guid>> GetAllCartographicConversionSetIdAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<EarthCartographicProjectionServiceInfo> EarthCartographicProjectionAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -84,12 +84,12 @@ namespace NORCE.Drilling.Field.ModelShared
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicConversionSet"
-                    urlBuilder_.Append("CartographicConversionSet");
+                    // Operation Path: "EarthCartographicProjection"
+                    urlBuilder_.Append("EarthCartographicProjection");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -116,7 +116,7 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<System.Guid>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<EarthCartographicProjectionServiceInfo>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -146,7 +146,7 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task PostCartographicConversionSetAsync(CartographicConversionSet body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ForwardProjectionResponse> ForwardAsync(ForwardProjectionRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -159,11 +159,12 @@ namespace NORCE.Drilling.Field.ModelShared
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicConversionSet"
-                    urlBuilder_.Append("CartographicConversionSet");
+                    // Operation Path: "EarthCartographicProjection/Forward"
+                    urlBuilder_.Append("EarthCartographicProjection/Forward");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -190,73 +191,7 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MetaInfo>> GetAllCartographicConversionSetMetaInfoAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicConversionSet/MetaInfo"
-                    urlBuilder_.Append("CartographicConversionSet/MetaInfo");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<MetaInfo>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ForwardProjectionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -286,7 +221,305 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CartographicConversionSet> GetCartographicConversionSetByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<InverseProjectionResponse> InverseAsync(InverseProjectionRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "EarthCartographicProjection/Inverse"
+                    urlBuilder_.Append("EarthCartographicProjection/Inverse");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<InverseProjectionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UsageStatisticsEarthCartographicProjection> EarthCartographicProjectionUsageStatisticsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "EarthCartographicProjectionUsageStatistics"
+                    urlBuilder_.Append("EarthCartographicProjectionUsageStatistics");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UsageStatisticsEarthCartographicProjection>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProjectionDefinitionSummary>> SummariesAsync(bool? includeDeprecated = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "ProjectionDefinition/Summaries"
+                    urlBuilder_.Append("ProjectionDefinition/Summaries");
+                    urlBuilder_.Append('?');
+                    if (includeDeprecated != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("includeDeprecated")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(includeDeprecated, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ProjectionDefinitionSummary>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CatalogSearchResult_ProjectionDefinition> SearchAsync(ProjectionDefinitionSearchRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "ProjectionDefinition/Search"
+                    urlBuilder_.Append("ProjectionDefinition/Search");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CatalogSearchResult_ProjectionDefinition>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ProjectionDefinition> ProjectionDefinitionGETAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -298,12 +531,12 @@ namespace NORCE.Drilling.Field.ModelShared
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicConversionSet/{id}"
-                    urlBuilder_.Append("CartographicConversionSet/");
+                    // Operation Path: "ProjectionDefinition/{id}"
+                    urlBuilder_.Append("ProjectionDefinition/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -331,7 +564,7 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<CartographicConversionSet>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProjectionDefinition>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -361,7 +594,7 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task PutCartographicConversionSetByIdAsync(System.Guid id, CartographicConversionSet body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ProjectionDefinition> ProjectionDefinitionPUTAsync(System.Guid id, UpdateProjectionDefinitionRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -377,11 +610,12 @@ namespace NORCE.Drilling.Field.ModelShared
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicConversionSet/{id}"
-                    urlBuilder_.Append("CartographicConversionSet/");
+                    // Operation Path: "ProjectionDefinition/{id}"
+                    urlBuilder_.Append("ProjectionDefinition/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -409,7 +643,12 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<ProjectionDefinition>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -434,7 +673,7 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteCartographicConversionSetByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task ProjectionDefinitionDELETEAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -449,8 +688,8 @@ namespace NORCE.Drilling.Field.ModelShared
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicConversionSet/{id}"
-                    urlBuilder_.Append("CartographicConversionSet/");
+                    // Operation Path: "ProjectionDefinition/{id}"
+                    urlBuilder_.Append("ProjectionDefinition/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -501,222 +740,9 @@ namespace NORCE.Drilling.Field.ModelShared
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
+        /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CartographicConversionSetLight>> GetAllCartographicConversionSetLightAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicConversionSet/LightData"
-                    urlBuilder_.Append("CartographicConversionSet/LightData");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<CartographicConversionSetLight>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CartographicConversionSet>> GetAllCartographicConversionSetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicConversionSet/HeavyData"
-                    urlBuilder_.Append("CartographicConversionSet/HeavyData");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<CartographicConversionSet>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<System.Guid>> GetAllCartographicProjectionIdAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicProjection"
-                    urlBuilder_.Append("CartographicProjection");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<System.Guid>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task PostCartographicProjectionAsync(CartographicProjection body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ProjectionDefinition> ProjectionDefinitionPOSTAsync(CreateProjectionDefinitionRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -729,11 +755,12 @@ namespace NORCE.Drilling.Field.ModelShared
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicProjection"
-                    urlBuilder_.Append("CartographicProjection");
+                    // Operation Path: "ProjectionDefinition"
+                    urlBuilder_.Append("ProjectionDefinition");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -758,75 +785,9 @@ namespace NORCE.Drilling.Field.ModelShared
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
+                        if (status_ == 201)
                         {
-                            return;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MetaInfo>> GetAllCartographicProjectionMetaInfoAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicProjection/MetaInfo"
-                    urlBuilder_.Append("CartographicProjection/MetaInfo");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<MetaInfo>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProjectionDefinition>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -856,725 +817,7 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CartographicProjection> GetCartographicProjectionByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            if (id == null)
-                throw new System.ArgumentNullException("id");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicProjection/{id}"
-                    urlBuilder_.Append("CartographicProjection/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<CartographicProjection>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task PutCartographicProjectionByIdAsync(System.Guid id, CartographicProjection body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            if (id == null)
-                throw new System.ArgumentNullException("id");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
-                    var content_ = new System.Net.Http.ByteArrayContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("PUT");
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicProjection/{id}"
-                    urlBuilder_.Append("CartographicProjection/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            return;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteCartographicProjectionByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            if (id == null)
-                throw new System.ArgumentNullException("id");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicProjection/{id}"
-                    urlBuilder_.Append("CartographicProjection/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            return;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CartographicProjectionLight>> GetAllCartographicProjectionLightAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicProjection/LightData"
-                    urlBuilder_.Append("CartographicProjection/LightData");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<CartographicProjectionLight>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CartographicProjection>> GetAllCartographicProjectionAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicProjection/HeavyData"
-                    urlBuilder_.Append("CartographicProjection/HeavyData");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<CartographicProjection>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<string>> GetAllCartographicProjectionTypeIdAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicProjectionType"
-                    urlBuilder_.Append("CartographicProjectionType");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<string>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CartographicProjectionType> GetCartographicProjectionTypeByIdAsync(string id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            if (id == null)
-                throw new System.ArgumentNullException("id");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicProjectionType/{id}"
-                    urlBuilder_.Append("CartographicProjectionType/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<CartographicProjectionType>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CartographicProjectionType>> GetAllCartographicProjectionTypeAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicProjectionType/HeavyData"
-                    urlBuilder_.Append("CartographicProjectionType/HeavyData");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<CartographicProjectionType>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<UsageStatisticsCartographicProjection> GetCartographicProjectionUsageStatisticsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "CartographicProjectionUsageStatistics"
-                    urlBuilder_.Append("CartographicProjectionUsageStatistics");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<UsageStatisticsCartographicProjection>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<System.Guid>> GetAllGeodeticConversionSetIdAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticConversionSet"
-                    urlBuilder_.Append("GeodeticConversionSet");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<System.Guid>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task PostGeodeticConversionSetAsync(GeodeticConversionSet body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<CatalogSearchResult_ProjectionMethod> Search2Async(CatalogSearchRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1587,11 +830,12 @@ namespace NORCE.Drilling.Field.ModelShared
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticConversionSet"
-                    urlBuilder_.Append("GeodeticConversionSet");
+                    // Operation Path: "ProjectionMethod/Search"
+                    urlBuilder_.Append("ProjectionMethod/Search");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1618,73 +862,7 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MetaInfo>> GetAllGeodeticConversionSetMetaInfoAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticConversionSet/MetaInfo"
-                    urlBuilder_.Append("GeodeticConversionSet/MetaInfo");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<MetaInfo>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<CatalogSearchResult_ProjectionMethod>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1714,7 +892,7 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GeodeticConversionSet> GetGeodeticConversionSetByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ProjectionMethod> ProjectionMethodAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -1726,12 +904,12 @@ namespace NORCE.Drilling.Field.ModelShared
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticConversionSet/{id}"
-                    urlBuilder_.Append("GeodeticConversionSet/");
+                    // Operation Path: "ProjectionMethod/{id}"
+                    urlBuilder_.Append("ProjectionMethod/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -1759,7 +937,7 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<GeodeticConversionSet>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProjectionMethod>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1789,11 +967,79 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task PutGeodeticConversionSetByIdAsync(System.Guid id, GeodeticConversionSet body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<EarthGeodesyServiceInfo> EarthGeodesyAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (id == null)
-                throw new System.ArgumentNullException("id");
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "EarthGeodesy"
+                    urlBuilder_.Append("EarthGeodesy");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<EarthGeodesyServiceInfo>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<TransformCoordinatesResponse> TransformAsync(TransformCoordinatesRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -1804,13 +1050,13 @@ namespace NORCE.Drilling.Field.ModelShared
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticConversionSet/{id}"
-                    urlBuilder_.Append("GeodeticConversionSet/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+                    // Operation Path: "EarthGeodesy/Transform"
+                    urlBuilder_.Append("EarthGeodesy/Transform");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1837,142 +1083,7 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteGeodeticConversionSetByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            if (id == null)
-                throw new System.ArgumentNullException("id");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticConversionSet/{id}"
-                    urlBuilder_.Append("GeodeticConversionSet/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            return;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<GeodeticConversionSetLight>> GetAllGeodeticConversionSetLightAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticConversionSet/LightData"
-                    urlBuilder_.Append("GeodeticConversionSet/LightData");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<GeodeticConversionSetLight>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<TransformCoordinatesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2002,7 +1113,7 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<GeodeticConversionSet>> GetAllGeodeticConversionSetAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ResolveTransformationPathsResponse> TransformationPathsAsync(ResolveTransformationPathsRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2010,13 +1121,17 @@ namespace NORCE.Drilling.Field.ModelShared
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticConversionSet/HeavyData"
-                    urlBuilder_.Append("GeodeticConversionSet/HeavyData");
+                    // Operation Path: "EarthGeodesy/TransformationPaths"
+                    urlBuilder_.Append("EarthGeodesy/TransformationPaths");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2043,7 +1158,7 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<GeodeticConversionSet>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ResolveTransformationPathsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2073,7 +1188,7 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<System.Guid>> GetAllGeodeticDatumIdAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<EarthGeodesyServiceInfo> ModelInfoAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2082,7 +1197,323 @@ namespace NORCE.Drilling.Field.ModelShared
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "EarthGeodesy/ModelInfo"
+                    urlBuilder_.Append("EarthGeodesy/ModelInfo");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<EarthGeodesyServiceInfo>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DatumTransformationConnection>> TransformationConnectionsAsync(double? latitude = null, double? longitude = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "EarthGeodesy/TransformationConnections"
+                    urlBuilder_.Append("EarthGeodesy/TransformationConnections");
+                    urlBuilder_.Append('?');
+                    if (latitude != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("latitude")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(latitude, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (longitude != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("longitude")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(longitude, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<DatumTransformationConnection>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UsageStatisticsEarthGeodesy> EarthGeodesyUsageStatisticsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "EarthGeodesyUsageStatistics"
+                    urlBuilder_.Append("EarthGeodesyUsageStatistics");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UsageStatisticsEarthGeodesy>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<GeodeticDatum>> GeodeticDatumAllAsync(string name = null, string authority = null, string code = null, bool? builtIn = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "GeodeticDatum"
+                    urlBuilder_.Append("GeodeticDatum");
+                    urlBuilder_.Append('?');
+                    if (name != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("name")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (authority != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("authority")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(authority, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (code != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("code")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(code, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (builtIn != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("builtIn")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(builtIn, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<GeodeticDatum>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<GeodeticDatum> GeodeticDatumPOSTAsync(CreateGeodeticDatumRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
@@ -2114,7 +1545,7 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<System.Guid>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GeodeticDatum>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2144,7 +1575,7 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task PostGeodeticDatumAsync(GeodeticDatum body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<CatalogSearchResult_GeodeticDatumSummary> Search3Async(CatalogSearchRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2157,11 +1588,12 @@ namespace NORCE.Drilling.Field.ModelShared
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticDatum"
-                    urlBuilder_.Append("GeodeticDatum");
+                    // Operation Path: "GeodeticDatum/Search"
+                    urlBuilder_.Append("GeodeticDatum/Search");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2188,73 +1620,7 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MetaInfo>> GetAllGeodeticDatumMetaInfoAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticDatum/MetaInfo"
-                    urlBuilder_.Append("GeodeticDatum/MetaInfo");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<MetaInfo>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<CatalogSearchResult_GeodeticDatumSummary>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2284,7 +1650,7 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GeodeticDatum> GetGeodeticDatumByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<GeodeticDatum> GeodeticDatumGETAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -2296,7 +1662,7 @@ namespace NORCE.Drilling.Field.ModelShared
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
@@ -2359,7 +1725,7 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task PutGeodeticDatumByIdAsync(System.Guid id, GeodeticDatum body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<GeodeticDatum> GeodeticDatumPUTAsync(System.Guid id, UpdateGeodeticDatumRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -2375,6 +1741,7 @@ namespace NORCE.Drilling.Field.ModelShared
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
@@ -2407,7 +1774,12 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<GeodeticDatum>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -2430,9 +1802,9 @@ namespace NORCE.Drilling.Field.ModelShared
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
+        /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteGeodeticDatumByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task GeodeticDatumDELETEAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -2474,11 +1846,31 @@ namespace NORCE.Drilling.Field.ModelShared
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
+                        if (status_ == 204)
                         {
                             return;
                         }
                         else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
@@ -2501,7 +1893,7 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<GeodeticDatumLight>> GetAllGeodeticDatumLightAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<GeodeticTransformation>> GeodeticTransformationAllAsync(string name = null, string authority = null, string code = null, bool? builtIn = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2510,12 +1902,30 @@ namespace NORCE.Drilling.Field.ModelShared
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticDatum/LightData"
-                    urlBuilder_.Append("GeodeticDatum/LightData");
+                    // Operation Path: "GeodeticTransformation"
+                    urlBuilder_.Append("GeodeticTransformation");
+                    urlBuilder_.Append('?');
+                    if (name != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("name")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (authority != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("authority")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(authority, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (code != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("code")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(code, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (builtIn != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("builtIn")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(builtIn, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2542,7 +1952,7 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<GeodeticDatumLight>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<GeodeticTransformation>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2572,220 +1982,7 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<GeodeticDatum>> GetAllGeodeticDatumAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticDatum/HeavyData"
-                    urlBuilder_.Append("GeodeticDatum/HeavyData");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<GeodeticDatum>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<UsageStatisticsGeodeticDatum> GetGeodeticDatumUsageStatisticsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticDatumUsageStatistics"
-                    urlBuilder_.Append("GeodeticDatumUsageStatistics");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<UsageStatisticsGeodeticDatum>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<System.Guid>> GetAllSpheroidIdAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "Spheroid"
-                    urlBuilder_.Append("Spheroid");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<System.Guid>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task PostSpheroidAsync(Spheroid body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<GeodeticTransformation> GeodeticTransformationPOSTAsync(CreateGeodeticTransformationRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2798,11 +1995,12 @@ namespace NORCE.Drilling.Field.ModelShared
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "Spheroid"
-                    urlBuilder_.Append("Spheroid");
+                    // Operation Path: "GeodeticTransformation"
+                    urlBuilder_.Append("GeodeticTransformation");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2829,73 +2027,7 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MetaInfo>> GetAllSpheroidMetaInfoAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "Spheroid/MetaInfo"
-                    urlBuilder_.Append("Spheroid/MetaInfo");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<MetaInfo>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GeodeticTransformation>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2925,7 +2057,82 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Spheroid> GetSpheroidByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<CatalogSearchResult_GeodeticTransformationSummary> Search4Async(CatalogSearchRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "GeodeticTransformation/Search"
+                    urlBuilder_.Append("GeodeticTransformation/Search");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CatalogSearchResult_GeodeticTransformationSummary>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<GeodeticTransformation> GeodeticTransformationGETAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -2937,12 +2144,12 @@ namespace NORCE.Drilling.Field.ModelShared
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "Spheroid/{id}"
-                    urlBuilder_.Append("Spheroid/");
+                    // Operation Path: "GeodeticTransformation/{id}"
+                    urlBuilder_.Append("GeodeticTransformation/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -2970,7 +2177,7 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Spheroid>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GeodeticTransformation>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -3000,7 +2207,7 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task PutSpheroidByIdAsync(System.Guid id, Spheroid body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<GeodeticTransformation> GeodeticTransformationPUTAsync(System.Guid id, UpdateGeodeticTransformationRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -3016,11 +2223,12 @@ namespace NORCE.Drilling.Field.ModelShared
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "Spheroid/{id}"
-                    urlBuilder_.Append("Spheroid/");
+                    // Operation Path: "GeodeticTransformation/{id}"
+                    urlBuilder_.Append("GeodeticTransformation/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -3048,7 +2256,12 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<GeodeticTransformation>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -3071,9 +2284,9 @@ namespace NORCE.Drilling.Field.ModelShared
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
+        /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteSpheroidByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task GeodeticTransformationDELETEAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -3088,8 +2301,337 @@ namespace NORCE.Drilling.Field.ModelShared
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "Spheroid/{id}"
-                    urlBuilder_.Append("Spheroid/");
+                    // Operation Path: "GeodeticTransformation/{id}"
+                    urlBuilder_.Append("GeodeticTransformation/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 204)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ReferenceEllipsoid>> ReferenceEllipsoidAllAsync(string name = null, string authority = null, string code = null, bool? builtIn = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "ReferenceEllipsoid"
+                    urlBuilder_.Append("ReferenceEllipsoid");
+                    urlBuilder_.Append('?');
+                    if (name != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("name")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (authority != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("authority")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(authority, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (code != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("code")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(code, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (builtIn != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("builtIn")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(builtIn, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ReferenceEllipsoid>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ReferenceEllipsoid> ReferenceEllipsoidPOSTAsync(CreateReferenceEllipsoidRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "ReferenceEllipsoid"
+                    urlBuilder_.Append("ReferenceEllipsoid");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ReferenceEllipsoid>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CatalogSearchResult_ReferenceEllipsoidSummary> Search5Async(CatalogSearchRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "ReferenceEllipsoid/Search"
+                    urlBuilder_.Append("ReferenceEllipsoid/Search");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CatalogSearchResult_ReferenceEllipsoidSummary>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ReferenceEllipsoid> ReferenceEllipsoidGETAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "ReferenceEllipsoid/{id}"
+                    urlBuilder_.Append("ReferenceEllipsoid/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -3117,7 +2659,12 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<ReferenceEllipsoid>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -3142,21 +2689,29 @@ namespace NORCE.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Spheroid>> GetAllSpheroidAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ReferenceEllipsoid> ReferenceEllipsoidPUTAsync(System.Guid id, UpdateReferenceEllipsoidRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "Spheroid/HeavyData"
-                    urlBuilder_.Append("Spheroid/HeavyData");
+                    // Operation Path: "ReferenceEllipsoid/{id}"
+                    urlBuilder_.Append("ReferenceEllipsoid/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -3183,12 +2738,101 @@ namespace NORCE.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<Spheroid>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ReferenceEllipsoid>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>No Content</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task ReferenceEllipsoidDELETEAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "ReferenceEllipsoid/{id}"
+                    urlBuilder_.Append("ReferenceEllipsoid/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 204)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -3320,179 +2964,29 @@ namespace NORCE.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CountPerDay
+    public enum ApplicabilityPolicy
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Date")]
-        public System.DateTimeOffset Date { get; set; }
+        [System.Runtime.Serialization.EnumMember(Value = @"RequireApplicable")]
+        RequireApplicable = 0,
 
-        [System.Text.Json.Serialization.JsonPropertyName("Count")]
-        public long Count { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
+        [System.Runtime.Serialization.EnumMember(Value = @"AllowUnknown")]
+        AllowUnknown = 1,
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class History
+    public partial class AreaOfUse
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Data")]
-        public System.Collections.Generic.ICollection<CountPerDay> Data { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class UsageStatisticsCartographicProjection
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("LastSaved")]
-        public System.DateTimeOffset LastSaved { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("BackUpInterval")]
-        public string BackUpInterval { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllCartographicProjectionTypeIdPerDay")]
-        public History GetAllCartographicProjectionTypeIdPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetCartographicProjectionTypeByIdPerDay")]
-        public History GetCartographicProjectionTypeByIdPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllCartographicProjectionTypePerDay")]
-        public History GetAllCartographicProjectionTypePerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllCartographicProjectionIdPerDay")]
-        public History GetAllCartographicProjectionIdPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllCartographicProjectionMetaInfoPerDay")]
-        public History GetAllCartographicProjectionMetaInfoPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetCartographicProjectionByIdPerDay")]
-        public History GetCartographicProjectionByIdPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllCartographicProjectionLightPerDay")]
-        public History GetAllCartographicProjectionLightPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllCartographicProjectionPerDay")]
-        public History GetAllCartographicProjectionPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("PostCartographicProjectionPerDay")]
-        public History PostCartographicProjectionPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("PutCartographicProjectionByIdPerDay")]
-        public History PutCartographicProjectionByIdPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("DeleteCartographicProjectionByIdPerDay")]
-        public History DeleteCartographicProjectionByIdPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllCartographicConversionSetIdPerDay")]
-        public History GetAllCartographicConversionSetIdPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllCartographicConversionSetMetaInfoPerDay")]
-        public History GetAllCartographicConversionSetMetaInfoPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetCartographicConversionSetByIdPerDay")]
-        public History GetCartographicConversionSetByIdPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllCartographicConversionSetLightPerDay")]
-        public History GetAllCartographicConversionSetLightPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllCartographicConversionSetPerDay")]
-        public History GetAllCartographicConversionSetPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("PostCartographicConversionSetPerDay")]
-        public History PostCartographicConversionSetPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("PutCartographicConversionSetByIdPerDay")]
-        public History PutCartographicConversionSetByIdPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("DeleteCartographicConversionSetByIdPerDay")]
-        public History DeleteCartographicConversionSetByIdPerDay { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum AreaNormalizationTransformType
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"None")]
-        None = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Linear")]
-        Linear = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Quadratic")]
-        Quadratic = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Tangent")]
-        Tangent = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum AxisType
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"None")]
-        None = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"x")]
-        X = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"y")]
-        Y = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CartographicConversionSet
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("MetaInfo")]
-        public MetaInfo MetaInfo { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("Description")]
-        public string Description { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("scope")]
+        public string Scope { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("CreationDate")]
-        public System.DateTimeOffset? CreationDate { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("LastModificationDate")]
-        public System.DateTimeOffset? LastModificationDate { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("CartographicProjectionID")]
-        public System.Guid? CartographicProjectionID { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("CartographicCoordinateList")]
-        public System.Collections.Generic.ICollection<CartographicCoordinate> CartographicCoordinateList { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("bounds")]
+        public GeographicBoundingBox Bounds { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -3506,59 +3000,326 @@ namespace NORCE.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CartographicConversionSetLight
+    public partial class AuthorityIdentifier
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("MetaInfo")]
-        public MetaInfo MetaInfo { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("Authority")]
+        public string Authority { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        [System.Text.Json.Serialization.JsonPropertyName("Code")]
+        public string Code { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Version")]
+        public string Version { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Uri")]
+        public string Uri { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum AxisDirection
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"East")]
+        East = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"West")]
+        West = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"North")]
+        North = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"South")]
+        South = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Other")]
+        Other = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum CatalogEntryStatus
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Authoritative")]
+        Authoritative = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Legacy")]
+        Legacy = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Custom")]
+        Custom = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Deprecated")]
+        Deprecated = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum CatalogMatchStatus
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"VerifiedExact")]
+        VerifiedExact = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"VerifiedAlias")]
+        VerifiedAlias = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LegacyDefinition")]
+        LegacyDefinition = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ProbableMatch")]
+        ProbableMatch = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Conflict")]
+        Conflict = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CatalogProvenance
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Source")]
+        public string Source { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MatchStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogMatchStatus MatchStatus { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SourceVersion")]
+        public string SourceVersion { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SourceCode")]
+        public string SourceCode { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("LegacyId")]
+        public System.Guid? LegacyId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Notes")]
+        public string Notes { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CanonicalId")]
+        public System.Guid? CanonicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsLegacyCombinedDefinition")]
+        public bool IsLegacyCombinedDefinition { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CatalogSearchItem_ProjectionDefinition
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public ProjectionDefinition Value { get; set; } = new ProjectionDefinition();
+
+        [System.Text.Json.Serialization.JsonPropertyName("matchScore")]
+        public double MatchScore { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("matchReason")]
+        public string MatchReason { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CatalogSearchItem_ProjectionMethod
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public ProjectionMethod Value { get; set; } = new ProjectionMethod();
+
+        [System.Text.Json.Serialization.JsonPropertyName("matchScore")]
+        public double MatchScore { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("matchReason")]
+        public string MatchReason { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CatalogSearchRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Query")]
+        public string Query { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Authority")]
+        public string Authority { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Code")]
+        public string Code { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CatalogStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogEntryStatus CatalogStatus { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IncludeLegacy")]
+        public bool IncludeLegacy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IncludeDeprecated")]
+        public bool IncludeDeprecated { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Offset")]
+        public int Offset { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Limit")]
+        public int Limit { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CatalogSearchResult_ProjectionDefinition
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalCount")]
+        public int TotalCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("offset")]
+        public int Offset { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("limit")]
+        public int Limit { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("returnedCount")]
+        public int ReturnedCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<CatalogSearchItem_ProjectionDefinition> Items { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CatalogSearchResult_ProjectionMethod
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalCount")]
+        public int TotalCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("offset")]
+        public int Offset { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("limit")]
+        public int Limit { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("returnedCount")]
+        public int ReturnedCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<CatalogSearchItem_ProjectionMethod> Items { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum CatalogStatusFilter
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Any")]
+        Any = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Authoritative")]
+        Authoritative = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Custom")]
+        Custom = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Deprecated")]
+        Deprecated = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CoordinateSystemAxis
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("Description")]
-        public string Description { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("abbreviation")]
+        public string Abbreviation { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("CreationDate")]
-        public System.DateTimeOffset? CreationDate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("order")]
+        public int Order { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("LastModificationDate")]
-        public System.DateTimeOffset? LastModificationDate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("direction")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public AxisDirection Direction { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("CartographicProjectionName")]
-        public string CartographicProjectionName { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("unit")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public AuthorityIdentifier Unit { get; set; } = new AuthorityIdentifier();
 
-        [System.Text.Json.Serialization.JsonPropertyName("CartographicProjectionDescription")]
-        public string CartographicProjectionDescription { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("unitName")]
+        public string UnitName { get; set; }
 
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CartographicCoordinate
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Northing")]
-        public double? Northing { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Easting")]
-        public double? Easting { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("VerticalDepth")]
-        public double? VerticalDepth { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GeodeticCoordinate")]
-        public GeodeticCoordinate GeodeticCoordinate { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GridConvergenceDatum")]
-        public double? GridConvergenceDatum { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("unitToMetre")]
+        public double UnitToMetre { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -3572,125 +3333,21 @@ namespace NORCE.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CartographicProjection
+    public partial class CoordinateSystemAxisInput
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("MetaInfo")]
-        public MetaInfo MetaInfo { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("Description")]
-        public string Description { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("abbreviation")]
+        public string Abbreviation { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("CreationDate")]
-        public System.DateTimeOffset? CreationDate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("order")]
+        public int Order { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("LastModificationDate")]
-        public System.DateTimeOffset? LastModificationDate { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("ProjectionType")]
+        [System.Text.Json.Serialization.JsonPropertyName("direction")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public ProjectionType ProjectionType { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GeodeticDatumID")]
-        public System.Guid? GeodeticDatumID { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("LatitudeOrigin")]
-        public double? LatitudeOrigin { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Latitude1")]
-        public double? Latitude1 { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Latitude2")]
-        public double? Latitude2 { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("LatitudeTrueScale")]
-        public double? LatitudeTrueScale { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("LongitudeOrigin")]
-        public double? LongitudeOrigin { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Scaling")]
-        public double? Scaling { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("FalseEasting")]
-        public double? FalseEasting { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("FalseNorthing")]
-        public double? FalseNorthing { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Zone")]
-        public int Zone { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsSouth")]
-        public bool IsSouth { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsHyperbolic")]
-        public bool IsHyperbolic { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("ProjectionHeight")]
-        public double? ProjectionHeight { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("HeightViewPoint")]
-        public double? HeightViewPoint { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Sweep")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public AxisType Sweep { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("AzimuthCentralLine")]
-        public double? AzimuthCentralLine { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Weight")]
-        public double? Weight { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Landsat")]
-        public int? Landsat { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Path")]
-        public int? Path { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Alpha")]
-        public double? Alpha { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Gamma")]
-        public double? Gamma { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Longitude1")]
-        public double? Longitude1 { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Longitude2")]
-        public double? Longitude2 { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("LongitudeCentralPoint")]
-        public double? LongitudeCentralPoint { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("NoOffset")]
-        public bool NoOffset { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("NoRotation")]
-        public bool NoRotation { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("AreaNormalizationTransform")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public AreaNormalizationTransformType AreaNormalizationTransform { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("PegLatitude")]
-        public double? PegLatitude { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("PegLongitude")]
-        public double? PegLongitude { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("PegHeading")]
-        public double? PegHeading { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("N")]
-        public double? N { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Q")]
-        public double? Q { get; set; }
+        public AxisDirection Direction { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -3704,26 +3361,49 @@ namespace NORCE.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CartographicProjectionLight
+    public partial class CreateProjectionDefinitionRequest
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("MetaInfo")]
-        public MetaInfo MetaInfo { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("Description")]
+        [System.Text.Json.Serialization.JsonPropertyName("description")]
         public string Description { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("CreationDate")]
-        public System.DateTimeOffset? CreationDate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("aliases")]
+        public System.Collections.Generic.ICollection<string> Aliases { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("LastModificationDate")]
-        public System.DateTimeOffset? LastModificationDate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("IsDefault")]
-        public bool IsDefault { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("baseGeographicCrs")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public GeographicCrsInput BaseGeographicCrs { get; set; } = new GeographicCrsInput();
+
+        [System.Text.Json.Serialization.JsonPropertyName("methodId")]
+        public System.Guid MethodId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("conversionName")]
+        public string ConversionName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("parameters")]
+        public System.Collections.Generic.ICollection<ProjectionParameterInput> Parameters { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("coordinateSystem")]
+        public ProjectedCoordinateSystemInput CoordinateSystem { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("areaOfUse")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public AreaOfUse AreaOfUse { get; set; } = new AreaOfUse();
+
+        [System.Text.Json.Serialization.JsonPropertyName("remarks")]
+        public string Remarks { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("legacyId")]
+        public System.Guid? LegacyId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("legacySource")]
+        public string LegacySource { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -3737,102 +3417,122 @@ namespace NORCE.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CartographicProjectionType
+    public partial class CrsReference
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Projection")]
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class EarthCartographicProjectionServiceInfo
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("service")]
+        public string Service { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("version")]
+        public string Version { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("epsgDatasetVersion")]
+        public string EpsgDatasetVersion { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("coordinateConvention")]
+        public string CoordinateConvention { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("calculationBehavior")]
+        public string CalculationBehavior { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("catalogBehavior")]
+        public string CatalogBehavior { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("externalResourceBehavior")]
+        public string ExternalResourceBehavior { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("mcpErrorBehavior")]
+        public string McpErrorBehavior { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("maximumPositionsPerRequest")]
+        public int MaximumPositionsPerRequest { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("mcpMaximumPositionsPerRequest")]
+        public int McpMaximumPositionsPerRequest { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("mcpBatchLimitBehavior")]
+        public string McpBatchLimitBehavior { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("projectionMethodCount")]
+        public int ProjectionMethodCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("projectionDefinitionCount")]
+        public int ProjectionDefinitionCount { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ForwardProjectionPosition
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("positionIndex")]
+        public int PositionIndex { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("geographicCoordinate")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public GeographicCoordinate GeographicCoordinate { get; set; } = new GeographicCoordinate();
+
+        [System.Text.Json.Serialization.JsonPropertyName("projectedCoordinate")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public ProjectedCoordinate ProjectedCoordinate { get; set; } = new ProjectedCoordinate();
+
+        [System.Text.Json.Serialization.JsonPropertyName("gridConvergence")]
+        public double? GridConvergence { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ForwardProjectionRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("projectionDefinitionId")]
+        public System.Guid ProjectionDefinitionId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("applicabilityPolicy")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public ProjectionType Projection { get; set; }
+        public ApplicabilityPolicy ApplicabilityPolicy { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("UseLatitudeOrigin")]
-        public bool UseLatitudeOrigin { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseLatitude1")]
-        public bool UseLatitude1 { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseLatitude2")]
-        public bool UseLatitude2 { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseLatitudeTrueScale")]
-        public bool UseLatitudeTrueScale { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseLongitudeOrigin")]
-        public bool UseLongitudeOrigin { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseScaling")]
-        public bool UseScaling { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseFalseEastingNorthing")]
-        public bool UseFalseEastingNorthing { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseZone")]
-        public bool UseZone { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseSouth")]
-        public bool UseSouth { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseHyperbolic")]
-        public bool UseHyperbolic { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseProjectionHeight")]
-        public bool UseProjectionHeight { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseHeightViewPoint")]
-        public bool UseHeightViewPoint { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseSweep")]
-        public bool UseSweep { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseAzimuthCentralLine")]
-        public bool UseAzimuthCentralLine { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseWeight")]
-        public bool UseWeight { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseLandsat")]
-        public bool UseLandsat { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UsePath")]
-        public bool UsePath { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseAlpha")]
-        public bool UseAlpha { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseGamma")]
-        public bool UseGamma { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseLongitude1")]
-        public bool UseLongitude1 { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseLongitude2")]
-        public bool UseLongitude2 { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseLongitudeCentralPoint")]
-        public bool UseLongitudeCentralPoint { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseNoOffset")]
-        public bool UseNoOffset { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseNoRotation")]
-        public bool UseNoRotation { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseAreaNormalizationTransform")]
-        public bool UseAreaNormalizationTransform { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UsePegLatitude")]
-        public bool UsePegLatitude { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UsePegLongitude")]
-        public bool UsePegLongitude { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UsePegHeading")]
-        public bool UsePegHeading { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseN")]
-        public bool UseN { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("UseQ")]
-        public bool UseQ { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("positions")]
+        public System.Collections.Generic.ICollection<GeographicCoordinate> Positions { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -3846,176 +3546,348 @@ namespace NORCE.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum ProjectionType
+    public partial class ForwardProjectionResponse
     {
+
+        [System.Text.Json.Serialization.JsonPropertyName("projectionDefinition")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public ProjectionDefinitionReference ProjectionDefinition { get; set; } = new ProjectionDefinitionReference();
+
+        [System.Text.Json.Serialization.JsonPropertyName("geographicCoordinateReferenceSystem")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CrsReference GeographicCoordinateReferenceSystem { get; set; } = new CrsReference();
+
+        [System.Text.Json.Serialization.JsonPropertyName("projectedCoordinateReferenceSystem")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CrsReference ProjectedCoordinateReferenceSystem { get; set; } = new CrsReference();
+
+        [System.Text.Json.Serialization.JsonPropertyName("apiAxisConvention")]
+        public string ApiAxisConvention { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("gridConvergenceConvention")]
+        public string GridConvergenceConvention { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("applicability")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public ProjectionApplicability Applicability { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("positions")]
+        public System.Collections.Generic.ICollection<ForwardProjectionPosition> Positions { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("warnings")]
+        public System.Collections.Generic.ICollection<ServiceWarning> Warnings { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class GeodeticDatumReference
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("earthGeodesyDatumId")]
+        public System.Guid? EarthGeodesyDatumId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("expectedModifiedUtc")]
+        public System.DateTimeOffset? ExpectedModifiedUtc { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class GeographicBoundingBox
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SouthLatitude")]
+        public double SouthLatitude { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("NorthLatitude")]
+        public double NorthLatitude { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("WestLongitude")]
+        public double WestLongitude { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("EastLongitude")]
+        public double EastLongitude { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class GeographicCoordinate
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("latitude")]
+        public double Latitude { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("longitude")]
+        public double Longitude { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class GeographicCrsInput
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("datum")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public ProjectionDatumInput Datum { get; set; } = new ProjectionDatumInput();
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class GeographicCrsReference
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("datum")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public GeodeticDatumReference Datum { get; set; } = new GeodeticDatumReference();
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class InverseProjectionPosition
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("positionIndex")]
+        public int PositionIndex { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("projectedCoordinate")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public ProjectedCoordinate ProjectedCoordinate { get; set; } = new ProjectedCoordinate();
+
+        [System.Text.Json.Serialization.JsonPropertyName("geographicCoordinate")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public GeographicCoordinate GeographicCoordinate { get; set; } = new GeographicCoordinate();
+
+        [System.Text.Json.Serialization.JsonPropertyName("gridConvergence")]
+        public double? GridConvergence { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class InverseProjectionRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("projectionDefinitionId")]
+        public System.Guid ProjectionDefinitionId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("applicabilityPolicy")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public ApplicabilityPolicy ApplicabilityPolicy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("positions")]
+        public System.Collections.Generic.ICollection<ProjectedCoordinate> Positions { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class InverseProjectionResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("projectionDefinition")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public ProjectionDefinitionReference ProjectionDefinition { get; set; } = new ProjectionDefinitionReference();
+
+        [System.Text.Json.Serialization.JsonPropertyName("geographicCoordinateReferenceSystem")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CrsReference GeographicCoordinateReferenceSystem { get; set; } = new CrsReference();
+
+        [System.Text.Json.Serialization.JsonPropertyName("projectedCoordinateReferenceSystem")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CrsReference ProjectedCoordinateReferenceSystem { get; set; } = new CrsReference();
+
+        [System.Text.Json.Serialization.JsonPropertyName("apiAxisConvention")]
+        public string ApiAxisConvention { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("gridConvergenceConvention")]
+        public string GridConvergenceConvention { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("applicability")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public ProjectionApplicability Applicability { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("positions")]
+        public System.Collections.Generic.ICollection<InverseProjectionPosition> Positions { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("warnings")]
+        public System.Collections.Generic.ICollection<ServiceWarning> Warnings { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectedCoordinate
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("easting")]
+        public double Easting { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("northing")]
+        public double Northing { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectedCoordinateSystem
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("axes")]
+        public System.Collections.Generic.ICollection<CoordinateSystemAxis> Axes { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("apiConvention")]
+        public string ApiConvention { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectedCoordinateSystemInput
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("axes")]
+        public System.Collections.Generic.ICollection<CoordinateSystemAxisInput> Axes { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectionApplicability
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Applicable")]
+        Applicable = 0,
 
         [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
-        Unknown = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"UTM")]
-        UTM = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"LambertConformalConic")]
-        LambertConformalConic = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"LambertConformalConicAlternative")]
-        LambertConformalConicAlternative = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"LambertEqualAreaConic")]
-        LambertEqualAreaConic = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"TransverseMercator")]
-        TransverseMercator = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Mercator")]
-        Mercator = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Polyconic")]
-        Polyconic = 7,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ModifiedStereographicAlaska")]
-        ModifiedStereographicAlaska = 8,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"AlbersEqualArea")]
-        AlbersEqualArea = 9,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"AzimuthalEquidistant")]
-        AzimuthalEquidistant = 10,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Aitoff")]
-        Aitoff = 11,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Bonne")]
-        Bonne = 12,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CalCoopOceanFish")]
-        CalCoopOceanFish = 13,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Cassini")]
-        Cassini = 14,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CentralCylinder")]
-        CentralCylinder = 15,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"EqualAreaCylindrical")]
-        EqualAreaCylindrical = 16,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"EquidistantCylindrical")]
-        EquidistantCylindrical = 17,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"EquidistantConic")]
-        EquidistantConic = 18,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"GeostationarySatelliteView")]
-        GeostationarySatelliteView = 19,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"GeneralSinusoidalSeries")]
-        GeneralSinusoidalSeries = 20,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ModifiedStereographic48US")]
-        ModifiedStereographic48US = 21,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ModifiedStereographic50US")]
-        ModifiedStereographic50US = 22,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"InternationalMapWorldPolyconic")]
-        InternationalMapWorldPolyconic = 23,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Laborde")]
-        Laborde = 24,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"LambertAzimuthalEqualArea")]
-        LambertAzimuthalEqualArea = 25,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Lagrange")]
-        Lagrange = 26,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"LeeOblatedStereographic")]
-        LeeOblatedStereographic = 27,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"SpaceObliqueLandsat")]
-        SpaceObliqueLandsat = 28,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"McBrydeThomasFlatPolarSinusoidal")]
-        McBrydeThomasFlatPolarSinusoidal = 29,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"MillerOblatedStereographic")]
-        MillerOblatedStereographic = 30,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"SpaceObliqueMISR")]
-        SpaceObliqueMISR = 31,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NewZealandMapGrid")]
-        NewZealandMapGrid = 32,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ObliqueMercator")]
-        ObliqueMercator = 33,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Orthographic")]
-        Orthographic = 34,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"QuadrilateralizedSphericalCube")]
-        QuadrilateralizedSphericalCube = 35,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"RoussilheStereographic")]
-        RoussilheStereographic = 36,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"S2")]
-        S2 = 37,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"SphericalCrossTrackHeight")]
-        SphericalCrossTrackHeight = 38,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Sinusoidal")]
-        Sinusoidal = 39,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"SwissObliqueMercator")]
-        SwissObliqueMercator = 40,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Stereographic")]
-        Stereographic = 41,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ObliqueStereographicAlternative")]
-        ObliqueStereographicAlternative = 42,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"UniversalPolarStereographic")]
-        UniversalPolarStereographic = 43,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"UrmaevV")]
-        UrmaevV = 44,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"WebMercator")]
-        WebMercator = 45,
+        Unknown = 1,
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class GeodeticCoordinate
+    public partial class ProjectionDatumInput
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("LatitudeWGS84")]
-        public double? LatitudeWGS84 { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("earthGeodesyDatumId")]
+        public System.Guid EarthGeodesyDatumId { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("LongitudeWGS84")]
-        public double? LongitudeWGS84 { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("VerticalDepthWGS84")]
-        public double? VerticalDepthWGS84 { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("LatitudeDatum")]
-        public double? LatitudeDatum { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("LongitudeDatum")]
-        public double? LongitudeDatum { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("VerticalDepthDatum")]
-        public double? VerticalDepthDatum { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("OctreeDepth")]
-        public int OctreeDepth { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("OctreeCode")]
-        public OctreeCodeLong OctreeCode { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("expectedModifiedUtc")]
+        public System.DateTimeOffset? ExpectedModifiedUtc { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -4029,17 +3901,89 @@ namespace NORCE.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class OctreeCodeLong
+    public partial class ProjectionDefinition
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Depth")]
-        public int Depth { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("CodeHigh")]
-        public long CodeHigh { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("CodeLow")]
-        public long CodeLow { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("description")]
+        public string Description { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("aliases")]
+        public System.Collections.Generic.ICollection<string> Aliases { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("baseGeographicCrs")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public GeographicCrsReference BaseGeographicCrs { get; set; } = new GeographicCrsReference();
+
+        [System.Text.Json.Serialization.JsonPropertyName("methodId")]
+        public System.Guid MethodId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("conversionIdentifier")]
+        public AuthorityIdentifier ConversionIdentifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("conversionName")]
+        public string ConversionName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("parameters")]
+        public System.Collections.Generic.ICollection<ProjectionParameterValue> Parameters { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("coordinateSystem")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public ProjectedCoordinateSystem CoordinateSystem { get; set; } = new ProjectedCoordinateSystem();
+
+        [System.Text.Json.Serialization.JsonPropertyName("areaOfUse")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public AreaOfUse AreaOfUse { get; set; } = new AreaOfUse();
+
+        [System.Text.Json.Serialization.JsonPropertyName("isBuiltIn")]
+        public bool IsBuiltIn { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("isDeprecated")]
+        public bool IsDeprecated { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSuperseded")]
+        public bool IsSuperseded { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("supersededByIdentifiers")]
+        public System.Collections.Generic.ICollection<AuthorityIdentifier> SupersededByIdentifiers { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("remarks")]
+        public string Remarks { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("informationSource")]
+        public string InformationSource { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("revisionDate")]
+        public System.DateTimeOffset? RevisionDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("provenance")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CatalogProvenance Provenance { get; set; } = new CatalogProvenance();
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdUtc")]
+        public System.DateTimeOffset CreatedUtc { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("modifiedUtc")]
+        public System.DateTimeOffset ModifiedUtc { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("runtimeStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public ProjectionRuntimeStatus RuntimeStatus { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("runtimeMessage")]
+        public string RuntimeMessage { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("catalogStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogEntryStatus CatalogStatus { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -4053,20 +3997,21 @@ namespace NORCE.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class MetaInfo
+    public partial class ProjectionDefinitionReference
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("ID")]
-        public System.Guid ID { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("HttpHostName")]
-        public string HttpHostName { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("HttpHostBasePath")]
-        public string HttpHostBasePath { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("HttpEndPoint")]
-        public string HttpEndPoint { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("catalogStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogEntryStatus CatalogStatus { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -4080,83 +4025,52 @@ namespace NORCE.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class UsageStatisticsGeodeticDatum
+    public partial class ProjectionDefinitionSearchRequest
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("LastSaved")]
-        public System.DateTimeOffset LastSaved { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("query")]
+        public string Query { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("BackUpInterval")]
-        public string BackUpInterval { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("authority")]
+        public string Authority { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllSpheroidIdPerDay")]
-        public History GetAllSpheroidIdPerDay { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public string Code { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllSpheroidMetaInfoPerDay")]
-        public History GetAllSpheroidMetaInfoPerDay { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("catalogStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogStatusFilter CatalogStatus { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("GetSpheroidByIdPerDay")]
-        public History GetSpheroidByIdPerDay { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("includeDeprecated")]
+        public bool IncludeDeprecated { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllSpheroidPerDay")]
-        public History GetAllSpheroidPerDay { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("offset")]
+        public int Offset { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("PostSpheroidPerDay")]
-        public History PostSpheroidPerDay { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("limit")]
+        public int Limit { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("PutSpheroidByIdPerDay")]
-        public History PutSpheroidByIdPerDay { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("methodId")]
+        public System.Guid? MethodId { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("DeleteSpheroidByIdPerDay")]
-        public History DeleteSpheroidByIdPerDay { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("earthGeodesyDatumId")]
+        public System.Guid? EarthGeodesyDatumId { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllGeodeticDatumIdPerDay")]
-        public History GetAllGeodeticDatumIdPerDay { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("areaQuery")]
+        public string AreaQuery { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllGeodeticDatumMetaInfoPerDay")]
-        public History GetAllGeodeticDatumMetaInfoPerDay { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("containsPosition")]
+        public GeographicCoordinate ContainsPosition { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("GetGeodeticDatumByIdPerDay")]
-        public History GetGeodeticDatumByIdPerDay { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("containsBounds")]
+        public GeographicBoundingBox ContainsBounds { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllGeodeticDatumLightPerDay")]
-        public History GetAllGeodeticDatumLightPerDay { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("runtimeStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public ProjectionRuntimeStatus RuntimeStatus { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllGeodeticDatumPerDay")]
-        public History GetAllGeodeticDatumPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("PostGeodeticDatumPerDay")]
-        public History PostGeodeticDatumPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("PutGeodeticDatumByIdPerDay")]
-        public History PutGeodeticDatumByIdPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("DeleteGeodeticDatumByIdPerDay")]
-        public History DeleteGeodeticDatumByIdPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllGeodeticConversionSetIdPerDay")]
-        public History GetAllGeodeticConversionSetIdPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllGeodeticConversionSetMetaInfoPerDay")]
-        public History GetAllGeodeticConversionSetMetaInfoPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetGeodeticConversionSetByIdPerDay")]
-        public History GetGeodeticConversionSetByIdPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllGeodeticConversionSetLightPerDay")]
-        public History GetAllGeodeticConversionSetLightPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("GetAllGeodeticConversionSetPerDay")]
-        public History GetAllGeodeticConversionSetPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("PostGeodeticConversionSetPerDay")]
-        public History PostGeodeticConversionSetPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("PutGeodeticConversionSetByIdPerDay")]
-        public History PutGeodeticConversionSetByIdPerDay { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("DeleteGeodeticConversionSetByIdPerDay")]
-        public History DeleteGeodeticConversionSetByIdPerDay { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("isSuperseded")]
+        public bool? IsSuperseded { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -4170,11 +4084,672 @@ namespace NORCE.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class GeodeticConversionSet
+    public partial class ProjectionDefinitionSummary
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("MetaInfo")]
-        public MetaInfo MetaInfo { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("description")]
+        public string Description { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("aliases")]
+        public System.Collections.Generic.ICollection<string> Aliases { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("areaOfUseName")]
+        public string AreaOfUseName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("areaOfUseScope")]
+        public string AreaOfUseScope { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("baseGeographicCrsName")]
+        public string BaseGeographicCrsName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("datumName")]
+        public string DatumName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("isBuiltIn")]
+        public bool IsBuiltIn { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("catalogStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogEntryStatus CatalogStatus { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectionMethod
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("description")]
+        public string Description { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("projName")]
+        public string ProjName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("isBuiltIn")]
+        public bool IsBuiltIn { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("isDeprecated")]
+        public bool IsDeprecated { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCustomDefinitionAllowed")]
+        public bool IsCustomDefinitionAllowed { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("customDefinitionRestrictionCode")]
+        public string CustomDefinitionRestrictionCode { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("customDefinitionRestrictionMessage")]
+        public string CustomDefinitionRestrictionMessage { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("aliases")]
+        public System.Collections.Generic.ICollection<string> Aliases { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("parameters")]
+        public System.Collections.Generic.ICollection<ProjectionParameterDefinition> Parameters { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("provenance")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CatalogProvenance Provenance { get; set; } = new CatalogProvenance();
+
+        [System.Text.Json.Serialization.JsonPropertyName("catalogStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogEntryStatus CatalogStatus { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectionParameterDefinition
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("quantity")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public ProjectionParameterQuantity Quantity { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("isRequired")]
+        public bool IsRequired { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("minimumValue")]
+        public double? MinimumValue { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("maximumValue")]
+        public double? MaximumValue { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("description")]
+        public string Description { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectionParameterInput
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("parameterId")]
+        public System.Guid ParameterId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public double Value { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectionParameterQuantity
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Angle")]
+        Angle = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Length")]
+        Length = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Scale")]
+        Scale = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Integer")]
+        Integer = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Boolean")]
+        Boolean = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectionParameterValue
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("parameterId")]
+        public System.Guid ParameterId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("quantity")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public ProjectionParameterQuantity Quantity { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public double Value { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("originalValue")]
+        public double? OriginalValue { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("originalUnit")]
+        public AuthorityIdentifier OriginalUnit { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("originalUnitName")]
+        public string OriginalUnitName { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectionRuntimeStatus
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NotEvaluated")]
+        NotEvaluated = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Available")]
+        Available = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"UnsupportedByRuntime")]
+        UnsupportedByRuntime = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DatumUnavailable")]
+        DatumUnavailable = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"InvalidDefinition")]
+        InvalidDefinition = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ServiceWarning
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Code")]
+        public string Code { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Message")]
+        public string Message { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UpdateProjectionDefinitionRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("description")]
+        public string Description { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("aliases")]
+        public System.Collections.Generic.ICollection<string> Aliases { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("baseGeographicCrs")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public GeographicCrsInput BaseGeographicCrs { get; set; } = new GeographicCrsInput();
+
+        [System.Text.Json.Serialization.JsonPropertyName("methodId")]
+        public System.Guid MethodId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("conversionName")]
+        public string ConversionName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("parameters")]
+        public System.Collections.Generic.ICollection<ProjectionParameterInput> Parameters { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("coordinateSystem")]
+        public ProjectedCoordinateSystemInput CoordinateSystem { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("areaOfUse")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public AreaOfUse AreaOfUse { get; set; } = new AreaOfUse();
+
+        [System.Text.Json.Serialization.JsonPropertyName("remarks")]
+        public string Remarks { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("legacyId")]
+        public System.Guid? LegacyId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("legacySource")]
+        public string LegacySource { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UsageStatisticsEarthCartographicProjection
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("restForward")]
+        public long RestForward { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("restInverse")]
+        public long RestInverse { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("mcpForward")]
+        public long McpForward { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("mcpInverse")]
+        public long McpInverse { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("positionsProjected")]
+        public long PositionsProjected { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("failures")]
+        public long Failures { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("catalogReads")]
+        public long CatalogReads { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("catalogWrites")]
+        public long CatalogWrites { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProblemDetails
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("type")]
+        public string Type { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("title")]
+        public string Title { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        public int? Status { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("detail")]
+        public string Detail { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("instance")]
+        public string Instance { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CatalogReference
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CatalogSearchItem_GeodeticDatumSummary
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Value")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public GeodeticDatumSummary Value { get; set; } = new GeodeticDatumSummary();
+
+        [System.Text.Json.Serialization.JsonPropertyName("MatchScore")]
+        public double MatchScore { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MatchReason")]
+        public string MatchReason { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CatalogSearchItem_GeodeticTransformationSummary
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Value")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public GeodeticTransformationSummary Value { get; set; } = new GeodeticTransformationSummary();
+
+        [System.Text.Json.Serialization.JsonPropertyName("MatchScore")]
+        public double MatchScore { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MatchReason")]
+        public string MatchReason { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CatalogSearchItem_ReferenceEllipsoidSummary
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Value")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public ReferenceEllipsoidSummary Value { get; set; } = new ReferenceEllipsoidSummary();
+
+        [System.Text.Json.Serialization.JsonPropertyName("MatchScore")]
+        public double MatchScore { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MatchReason")]
+        public string MatchReason { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CatalogSearchResult_GeodeticDatumSummary
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("TotalCount")]
+        public int TotalCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Offset")]
+        public int Offset { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Limit")]
+        public int Limit { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ReturnedCount")]
+        public int ReturnedCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Items")]
+        public System.Collections.Generic.ICollection<CatalogSearchItem_GeodeticDatumSummary> Items { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CatalogSearchResult_GeodeticTransformationSummary
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("TotalCount")]
+        public int TotalCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Offset")]
+        public int Offset { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Limit")]
+        public int Limit { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ReturnedCount")]
+        public int ReturnedCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Items")]
+        public System.Collections.Generic.ICollection<CatalogSearchItem_GeodeticTransformationSummary> Items { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CatalogSearchResult_ReferenceEllipsoidSummary
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("TotalCount")]
+        public int TotalCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Offset")]
+        public int Offset { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Limit")]
+        public int Limit { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ReturnedCount")]
+        public int ReturnedCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Items")]
+        public System.Collections.Generic.ICollection<CatalogSearchItem_ReferenceEllipsoidSummary> Items { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum CoordinateOperationDomain
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Geographic2D")]
+        Geographic2D = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Geographic3D")]
+        Geographic3D = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Geocentric3D")]
+        Geocentric3D = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Other")]
+        Other = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CoordinateOperationParameterValue
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public AuthorityIdentifier Identifier { get; set; } = new AuthorityIdentifier();
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Value")]
+        public double? Value { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("FileReference")]
+        public string FileReference { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Unit")]
+        public AuthorityIdentifier Unit { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("UnitName")]
+        public string UnitName { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CoordinateReferenceSystemReference
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public AuthorityIdentifier Identifier { get; set; } = new AuthorityIdentifier();
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Domain")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CoordinateOperationDomain Domain { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CreateGeodeticDatumRequest
+    {
 
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string Name { get; set; }
@@ -4182,20 +4757,60 @@ namespace NORCE.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("CreationDate")]
-        public System.DateTimeOffset? CreationDate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("ReferenceEllipsoidId")]
+        public System.Guid ReferenceEllipsoidId { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("LastModificationDate")]
-        public System.DateTimeOffset? LastModificationDate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("GeodeticDatum")]
-        public GeodeticDatum GeodeticDatum { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("ReferenceObjectType")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public GeodeticReferenceObjectType ReferenceObjectType { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("OctreeBounds")]
-        public Bounds OctreeBounds { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("IsDeprecated")]
+        public bool IsDeprecated { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("GeodeticCoordinates")]
-        public System.Collections.Generic.ICollection<GeodeticCoordinate> GeodeticCoordinates { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianName")]
+        public string PrimeMeridianName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianIdentifier")]
+        public AuthorityIdentifier PrimeMeridianIdentifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianLongitude")]
+        public double PrimeMeridianLongitude { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Origin")]
+        public string Origin { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PublicationDate")]
+        public string PublicationDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RealizationEpoch")]
+        public string RealizationEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("FrameReferenceEpoch")]
+        public double? FrameReferenceEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AnchorEpoch")]
+        public double? AnchorEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ConventionalReferenceSystem")]
+        public string ConventionalReferenceSystem { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RealizationMethod")]
+        public string RealizationMethod { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("EnsembleAccuracy")]
+        public double? EnsembleAccuracy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MemberDatumIds")]
+        public System.Collections.Generic.ICollection<System.Guid> MemberDatumIds { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Usage")]
+        public System.Collections.Generic.ICollection<GeodeticUsage> Usage { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Remarks")]
+        public string Remarks { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -4209,11 +4824,8 @@ namespace NORCE.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class GeodeticConversionSetLight
+    public partial class CreateGeodeticTransformationRequest
     {
-
-        [System.Text.Json.Serialization.JsonPropertyName("MetaInfo")]
-        public MetaInfo MetaInfo { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string Name { get; set; }
@@ -4221,17 +4833,263 @@ namespace NORCE.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("CreationDate")]
-        public System.DateTimeOffset? CreationDate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("SourceDatumId")]
+        public System.Guid SourceDatumId { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("LastModificationDate")]
-        public System.DateTimeOffset? LastModificationDate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("TargetDatumId")]
+        public System.Guid TargetDatumId { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("GeodeticDatumName")]
-        public string GeodeticDatumName { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("Method")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public GeodeticTransformationMethod Method { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("GeodeticDatumDescription")]
-        public string GeodeticDatumDescription { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("TranslationX")]
+        public double TranslationX { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TranslationY")]
+        public double TranslationY { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TranslationZ")]
+        public double TranslationZ { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RotationX")]
+        public double RotationX { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RotationY")]
+        public double RotationY { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RotationZ")]
+        public double RotationZ { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ScaleDifference")]
+        public double ScaleDifference { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Accuracy")]
+        public double? Accuracy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AreaOfUse")]
+        public string AreaOfUse { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AreaOfUseBounds")]
+        public GeographicBoundingBox AreaOfUseBounds { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CreateReferenceEllipsoidRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Description")]
+        public string Description { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SemiMajorAxis")]
+        public double SemiMajorAxis { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("InverseFlattening")]
+        public double InverseFlattening { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DatumReference
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ReferenceEllipsoid")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public EllipsoidReference ReferenceEllipsoid { get; set; } = new EllipsoidReference();
+
+        [System.Text.Json.Serialization.JsonPropertyName("CatalogStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogEntryStatus CatalogStatus { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DatumTransformationConnection
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("TransformationId")]
+        public System.Guid TransformationId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TransformationName")]
+        public string TransformationName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SourceDatumId")]
+        public System.Guid SourceDatumId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TargetDatumId")]
+        public System.Guid TargetDatumId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsReversible")]
+        public bool IsReversible { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CanExecuteForward")]
+        public bool? CanExecuteForward { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CanExecuteReverse")]
+        public bool? CanExecuteReverse { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AreaOfUse")]
+        public string AreaOfUse { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AreaOfUseBounds")]
+        public GeographicBoundingBox AreaOfUseBounds { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum DepthTransformationPolicy
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unspecified")]
+        Unspecified = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PreservePhysicalPoint")]
+        PreservePhysicalPoint = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"AllowUntransformedDepthFor2D")]
+        AllowUntransformedDepthFor2D = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class EarthGeodesyServiceInfo
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Service")]
+        public string Service { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Version")]
+        public string Version { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("EpsgDatasetVersion")]
+        public string EpsgDatasetVersion { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CoordinateConvention")]
+        public string CoordinateConvention { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CalculationBehavior")]
+        public string CalculationBehavior { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("InitializationBehavior")]
+        public string InitializationBehavior { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PerformanceGuidance")]
+        public string PerformanceGuidance { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ExternalResourceBehavior")]
+        public string ExternalResourceBehavior { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("McpErrorBehavior")]
+        public string McpErrorBehavior { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CatalogBehavior")]
+        public string CatalogBehavior { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MaximumPositionsPerRequest")]
+        public int MaximumPositionsPerRequest { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("McpMaximumPositionsPerRequest")]
+        public int McpMaximumPositionsPerRequest { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MaximumTransformationPathLength")]
+        public int MaximumTransformationPathLength { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ReferenceEllipsoidCount")]
+        public int ReferenceEllipsoidCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("GeodeticDatumCount")]
+        public int GeodeticDatumCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TransformationCount")]
+        public int TransformationCount { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class EllipsoidReference
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SemiMajorAxis")]
+        public double SemiMajorAxis { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("InverseFlattening")]
+        public double InverseFlattening { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -4248,8 +5106,8 @@ namespace NORCE.Drilling.Field.ModelShared
     public partial class GeodeticDatum
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("MetaInfo")]
-        public MetaInfo MetaInfo { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public System.Guid Id { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string Name { get; set; }
@@ -4257,38 +5115,351 @@ namespace NORCE.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("CreationDate")]
-        public System.DateTimeOffset? CreationDate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("ReferenceEllipsoidId")]
+        public System.Guid ReferenceEllipsoidId { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("LastModificationDate")]
-        public System.DateTimeOffset? LastModificationDate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsBuiltIn")]
+        public bool IsBuiltIn { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("IsDefault")]
         public bool IsDefault { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("Spheroid")]
-        public Spheroid Spheroid { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("Provenance")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CatalogProvenance Provenance { get; set; } = new CatalogProvenance();
 
-        [System.Text.Json.Serialization.JsonPropertyName("DeltaX")]
-        public ScalarDrillingProperty DeltaX { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("CreatedUtc")]
+        public System.DateTimeOffset CreatedUtc { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("DeltaY")]
-        public ScalarDrillingProperty DeltaY { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("ModifiedUtc")]
+        public System.DateTimeOffset ModifiedUtc { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("DeltaZ")]
-        public ScalarDrillingProperty DeltaZ { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("Aliases")]
+        public System.Collections.Generic.ICollection<string> Aliases { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ReferenceObjectType")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public GeodeticReferenceObjectType ReferenceObjectType { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsDeprecated")]
+        public bool IsDeprecated { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsSuperseded")]
+        public bool IsSuperseded { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianName")]
+        public string PrimeMeridianName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianIdentifier")]
+        public AuthorityIdentifier PrimeMeridianIdentifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianLongitude")]
+        public double PrimeMeridianLongitude { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Origin")]
+        public string Origin { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PublicationDate")]
+        public string PublicationDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RealizationEpoch")]
+        public string RealizationEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("FrameReferenceEpoch")]
+        public double? FrameReferenceEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AnchorEpoch")]
+        public double? AnchorEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ConventionalReferenceSystem")]
+        public string ConventionalReferenceSystem { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RealizationMethod")]
+        public string RealizationMethod { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("EnsembleAccuracy")]
+        public double? EnsembleAccuracy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MemberDatumIds")]
+        public System.Collections.Generic.ICollection<System.Guid> MemberDatumIds { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Usage")]
+        public System.Collections.Generic.ICollection<GeodeticUsage> Usage { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Remarks")]
+        public string Remarks { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("InformationSource")]
+        public string InformationSource { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RevisionDate")]
+        public System.DateTimeOffset? RevisionDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CatalogStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogEntryStatus CatalogStatus { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class GeodeticDatumSummary
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Description")]
+        public string Description { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ReferenceEllipsoid")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public EllipsoidReference ReferenceEllipsoid { get; set; } = new EllipsoidReference();
+
+        [System.Text.Json.Serialization.JsonPropertyName("CatalogStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogEntryStatus CatalogStatus { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsDefault")]
+        public bool IsDefault { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ReferenceObjectType")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public GeodeticReferenceObjectType ReferenceObjectType { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsDeprecated")]
+        public bool IsDeprecated { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsSuperseded")]
+        public bool IsSuperseded { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianName")]
+        public string PrimeMeridianName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianIdentifier")]
+        public AuthorityIdentifier PrimeMeridianIdentifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianLongitude")]
+        public double PrimeMeridianLongitude { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Origin")]
+        public string Origin { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PublicationDate")]
+        public string PublicationDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RealizationEpoch")]
+        public string RealizationEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("FrameReferenceEpoch")]
+        public double? FrameReferenceEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AnchorEpoch")]
+        public double? AnchorEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ConventionalReferenceSystem")]
+        public string ConventionalReferenceSystem { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RealizationMethod")]
+        public string RealizationMethod { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("EnsembleAccuracy")]
+        public double? EnsembleAccuracy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MemberDatumIds")]
+        public System.Collections.Generic.ICollection<System.Guid> MemberDatumIds { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Usage")]
+        public System.Collections.Generic.ICollection<GeodeticUsage> Usage { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Remarks")]
+        public string Remarks { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("InformationSource")]
+        public string InformationSource { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RevisionDate")]
+        public System.DateTimeOffset? RevisionDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Provenance")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CatalogProvenance Provenance { get; set; } = new CatalogProvenance();
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class GeodeticPosition
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Latitude")]
+        public double Latitude { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Longitude")]
+        public double Longitude { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Depth")]
+        public double Depth { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CoordinateEpochUtc")]
+        public System.DateTimeOffset? CoordinateEpochUtc { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum GeodeticReferenceObjectType
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"StaticReferenceFrame")]
+        StaticReferenceFrame = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DynamicReferenceFrame")]
+        DynamicReferenceFrame = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DatumEnsemble")]
+        DatumEnsemble = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class GeodeticTransformation
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Description")]
+        public string Description { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SourceDatumId")]
+        public System.Guid SourceDatumId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TargetDatumId")]
+        public System.Guid TargetDatumId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Method")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public GeodeticTransformationMethod Method { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MethodName")]
+        public string MethodName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MethodIdentifier")]
+        public AuthorityIdentifier MethodIdentifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SourceCrs")]
+        public CoordinateReferenceSystemReference SourceCrs { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TargetCrs")]
+        public CoordinateReferenceSystemReference TargetCrs { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsReversible")]
+        public bool IsReversible { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ComponentOperationIdentifiers")]
+        public System.Collections.Generic.ICollection<AuthorityIdentifier> ComponentOperationIdentifiers { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Parameters")]
+        public System.Collections.Generic.ICollection<CoordinateOperationParameterValue> Parameters { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RequiresExternalResource")]
+        public bool RequiresExternalResource { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RequiresCoordinateEpoch")]
+        public bool RequiresCoordinateEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TranslationX")]
+        public double TranslationX { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TranslationY")]
+        public double TranslationY { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TranslationZ")]
+        public double TranslationZ { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("RotationX")]
-        public ScalarDrillingProperty RotationX { get; set; }
+        public double RotationX { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("RotationY")]
-        public ScalarDrillingProperty RotationY { get; set; }
+        public double RotationY { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("RotationZ")]
-        public ScalarDrillingProperty RotationZ { get; set; }
+        public double RotationZ { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("ScaleFactor")]
-        public ScalarDrillingProperty ScaleFactor { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("ScaleDifference")]
+        public double ScaleDifference { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Accuracy")]
+        public double? Accuracy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AreaOfUse")]
+        public string AreaOfUse { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AreaOfUseBounds")]
+        public GeographicBoundingBox AreaOfUseBounds { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsBuiltIn")]
+        public bool IsBuiltIn { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsDeprecated")]
+        public bool IsDeprecated { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsSuperseded")]
+        public bool IsSuperseded { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Provenance")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CatalogProvenance Provenance { get; set; } = new CatalogProvenance();
+
+        [System.Text.Json.Serialization.JsonPropertyName("CreatedUtc")]
+        public System.DateTimeOffset CreatedUtc { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ModifiedUtc")]
+        public System.DateTimeOffset ModifiedUtc { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CatalogStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogEntryStatus CatalogStatus { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -4302,11 +5473,26 @@ namespace NORCE.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class GeodeticDatumLight
+    public enum GeodeticTransformationMethod
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("MetaInfo")]
-        public MetaInfo MetaInfo { get; set; }
+        [System.Runtime.Serialization.EnumMember(Value = @"GeocentricTranslations")]
+        GeocentricTranslations = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PositionVectorSevenParameter")]
+        PositionVectorSevenParameter = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"AuthoritativeEpsgOperation")]
+        AuthoritativeEpsgOperation = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class GeodeticTransformationSummary
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public System.Guid Id { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string Name { get; set; }
@@ -4314,14 +5500,88 @@ namespace NORCE.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("CreationDate")]
-        public System.DateTimeOffset? CreationDate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("LastModificationDate")]
-        public System.DateTimeOffset? LastModificationDate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("SourceDatum")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CatalogReference SourceDatum { get; set; } = new CatalogReference();
 
-        [System.Text.Json.Serialization.JsonPropertyName("IsDefault")]
-        public bool IsDefault { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("TargetDatum")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CatalogReference TargetDatum { get; set; } = new CatalogReference();
+
+        [System.Text.Json.Serialization.JsonPropertyName("Method")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public GeodeticTransformationMethod Method { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MethodName")]
+        public string MethodName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MethodIdentifier")]
+        public AuthorityIdentifier MethodIdentifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SourceCrs")]
+        public CoordinateReferenceSystemReference SourceCrs { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TargetCrs")]
+        public CoordinateReferenceSystemReference TargetCrs { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsReversible")]
+        public bool IsReversible { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ComponentOperationIdentifiers")]
+        public System.Collections.Generic.ICollection<AuthorityIdentifier> ComponentOperationIdentifiers { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Parameters")]
+        public System.Collections.Generic.ICollection<CoordinateOperationParameterValue> Parameters { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RequiresExternalResource")]
+        public bool RequiresExternalResource { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RequiresCoordinateEpoch")]
+        public bool RequiresCoordinateEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TranslationX")]
+        public double TranslationX { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TranslationY")]
+        public double TranslationY { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TranslationZ")]
+        public double TranslationZ { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RotationX")]
+        public double RotationX { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RotationY")]
+        public double RotationY { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RotationZ")]
+        public double RotationZ { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ScaleDifference")]
+        public double ScaleDifference { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Accuracy")]
+        public double? Accuracy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AccuracyMeaning")]
+        public string AccuracyMeaning { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AreaOfUse")]
+        public string AreaOfUse { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AreaOfUseBounds")]
+        public GeographicBoundingBox AreaOfUseBounds { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CatalogStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogEntryStatus CatalogStatus { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Provenance")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CatalogProvenance Provenance { get; set; } = new CatalogProvenance();
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -4335,11 +5595,32 @@ namespace NORCE.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Spheroid
+    public partial class GeodeticUsage
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("MetaInfo")]
-        public MetaInfo MetaInfo { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("Scope")]
+        public string Scope { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Extent")]
+        public string Extent { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ReferenceEllipsoid
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public System.Guid Id { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string Name { get; set; }
@@ -4347,146 +5628,58 @@ namespace NORCE.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("CreationDate")]
-        public System.DateTimeOffset? CreationDate { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("LastModificationDate")]
-        public System.DateTimeOffset? LastModificationDate { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsDefault")]
-        public bool IsDefault { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("SemiMajorAxis")]
-        public ScalarDrillingProperty SemiMajorAxis { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsSemiMajorAxisSet")]
-        public bool IsSemiMajorAxisSet { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("SemiMinorAxis")]
-        public ScalarDrillingProperty SemiMinorAxis { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsSemiMinorAxisSet")]
-        public bool IsSemiMinorAxisSet { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Eccentricity")]
-        public ScalarDrillingProperty Eccentricity { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsEccentricitySet")]
-        public bool IsEccentricitySet { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("SquaredEccentricity")]
-        public ScalarDrillingProperty SquaredEccentricity { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsSquaredEccentricitySet")]
-        public bool IsSquaredEccentricitySet { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Flattening")]
-        public ScalarDrillingProperty Flattening { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsFlatteningSet")]
-        public bool IsFlatteningSet { get; set; }
+        public double SemiMajorAxis { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("InverseFlattening")]
-        public ScalarDrillingProperty InverseFlattening { get; set; }
+        public double InverseFlattening { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("IsInverseFlatteningSet")]
-        public bool IsInverseFlatteningSet { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("IsBuiltIn")]
+        public bool IsBuiltIn { get; set; }
 
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+        [System.Text.Json.Serialization.JsonPropertyName("IsDefault")]
+        public bool IsDefault { get; set; }
 
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
+        [System.Text.Json.Serialization.JsonPropertyName("Provenance")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CatalogProvenance Provenance { get; set; } = new CatalogProvenance();
 
-    }
+        [System.Text.Json.Serialization.JsonPropertyName("CreatedUtc")]
+        public System.DateTimeOffset CreatedUtc { get; set; }
 
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ScalarDrillingProperty
-    {
+        [System.Text.Json.Serialization.JsonPropertyName("ModifiedUtc")]
+        public System.DateTimeOffset ModifiedUtc { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("DiracDistributionValue")]
-        public DiracDistribution DiracDistributionValue { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("Aliases")]
+        public System.Collections.Generic.ICollection<string> Aliases { get; set; }
 
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+        [System.Text.Json.Serialization.JsonPropertyName("IsDeprecated")]
+        public bool IsDeprecated { get; set; }
 
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
+        [System.Text.Json.Serialization.JsonPropertyName("IsSuperseded")]
+        public bool IsSuperseded { get; set; }
 
-    }
+        [System.Text.Json.Serialization.JsonPropertyName("Remarks")]
+        public string Remarks { get; set; }
 
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Point3D
-    {
+        [System.Text.Json.Serialization.JsonPropertyName("InformationSource")]
+        public string InformationSource { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("X")]
-        public double? X { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("RevisionDate")]
+        public System.DateTimeOffset? RevisionDate { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("Y")]
-        public double? Y { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("SourceUnit")]
+        public AuthorityIdentifier SourceUnit { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("Z")]
-        public double? Z { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("CatalogStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogEntryStatus CatalogStatus { get; set; }
 
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Bounds
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("MinX")]
-        public double? MinX { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("MaxX")]
-        public double? MaxX { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("MinY")]
-        public double? MinY { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("MaxY")]
-        public double? MaxY { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("MinZ")]
-        public double? MinZ { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("MaxZ")]
-        public double? MaxZ { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("MiddleX")]
-        public double? MiddleX { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("MiddleY")]
-        public double? MiddleY { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("MiddleZ")]
-        public double? MiddleZ { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("IntervalX")]
-        public double? IntervalX { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("IntervalY")]
-        public double? IntervalY { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("IntervalZ")]
-        public double? IntervalZ { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("Center")]
-        public Point3D Center { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("SemiMinorAxis")]
+        public double SemiMinorAxis { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -4500,17 +5693,557 @@ namespace NORCE.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DiracDistribution
+    public partial class ReferenceEllipsoidSummary
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("MinValue")]
-        public double MinValue { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public System.Guid Id { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("MaxValue")]
-        public double MaxValue { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string Name { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("Value")]
-        public double? Value { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("Description")]
+        public string Description { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SemiMajorAxis")]
+        public double SemiMajorAxis { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("InverseFlattening")]
+        public double InverseFlattening { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SemiMinorAxis")]
+        public double SemiMinorAxis { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SourceUnit")]
+        public AuthorityIdentifier SourceUnit { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CatalogStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogEntryStatus CatalogStatus { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsDefault")]
+        public bool IsDefault { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsDeprecated")]
+        public bool IsDeprecated { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsSuperseded")]
+        public bool IsSuperseded { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Remarks")]
+        public string Remarks { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("InformationSource")]
+        public string InformationSource { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RevisionDate")]
+        public System.DateTimeOffset? RevisionDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Provenance")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CatalogProvenance Provenance { get; set; } = new CatalogProvenance();
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ResolveTransformationPathsRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SourceDatumId")]
+        public System.Guid SourceDatumId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TargetDatumId")]
+        public System.Guid TargetDatumId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Positions")]
+        public System.Collections.Generic.ICollection<GeodeticPosition> Positions { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MaximumCandidates")]
+        public int MaximumCandidates { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ResolveTransformationPathsResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SourceDatum")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public DatumReference SourceDatum { get; set; } = new DatumReference();
+
+        [System.Text.Json.Serialization.JsonPropertyName("TargetDatum")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public DatumReference TargetDatum { get; set; } = new DatumReference();
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsAmbiguous")]
+        public bool IsAmbiguous { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SelectionGuidance")]
+        public string SelectionGuidance { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Candidates")]
+        public System.Collections.Generic.ICollection<TransformationPathCandidate> Candidates { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class TransformCoordinatesRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SourceDatumId")]
+        public System.Guid SourceDatumId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TargetDatumId")]
+        public System.Guid TargetDatumId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Positions")]
+        public System.Collections.Generic.ICollection<GeodeticPosition> Positions { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SelectionPolicy")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public TransformationSelectionPolicy SelectionPolicy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TransformationPathIds")]
+        public System.Collections.Generic.ICollection<System.Guid> TransformationPathIds { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SelectionToken")]
+        public string SelectionToken { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ApplicabilityPolicy")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public ApplicabilityPolicy ApplicabilityPolicy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("DepthPolicy")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public DepthTransformationPolicy DepthPolicy { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class TransformCoordinatesResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SourceDatum")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CatalogReference SourceDatum { get; set; } = new CatalogReference();
+
+        [System.Text.Json.Serialization.JsonPropertyName("TargetDatum")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CatalogReference TargetDatum { get; set; } = new CatalogReference();
+
+        [System.Text.Json.Serialization.JsonPropertyName("TransformationPath")]
+        public System.Collections.Generic.ICollection<TransformationReference> TransformationPath { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Positions")]
+        public System.Collections.Generic.ICollection<GeodeticPosition> Positions { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Applicability")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public TransformationApplicability Applicability { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("DepthReferenceChanged")]
+        public bool DepthReferenceChanged { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("DepthChanges")]
+        public System.Collections.Generic.ICollection<double> DepthChanges { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MaximumAbsoluteDepthChange")]
+        public double MaximumAbsoluteDepthChange { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Warnings")]
+        public System.Collections.Generic.ICollection<ServiceWarning> Warnings { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum TransformationApplicability
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NotEvaluated")]
+        NotEvaluated = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Applicable")]
+        Applicable = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OutsideAreaOfUse")]
+        OutsideAreaOfUse = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
+        Unknown = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class TransformationPathCandidate
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Rank")]
+        public int Rank { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsRecommended")]
+        public bool IsRecommended { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RecommendationReason")]
+        public string RecommendationReason { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Applicability")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public TransformationApplicability Applicability { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ApplicabilityMessage")]
+        public string ApplicabilityMessage { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsExecutable")]
+        public bool IsExecutable { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ExecutionIssues")]
+        public System.Collections.Generic.ICollection<ServiceWarning> ExecutionIssues { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SelectionToken")]
+        public string SelectionToken { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CombinedAccuracy")]
+        public double? CombinedAccuracy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AccuracyMeaning")]
+        public string AccuracyMeaning { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Operations")]
+        public System.Collections.Generic.ICollection<TransformationReference> Operations { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class TransformationReference
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Method")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public GeodeticTransformationMethod Method { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MethodName")]
+        public string MethodName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MethodIdentifier")]
+        public AuthorityIdentifier MethodIdentifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SourceCrs")]
+        public CoordinateReferenceSystemReference SourceCrs { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TargetCrs")]
+        public CoordinateReferenceSystemReference TargetCrs { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ComponentOperationIdentifiers")]
+        public System.Collections.Generic.ICollection<AuthorityIdentifier> ComponentOperationIdentifiers { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RequiresExternalResource")]
+        public bool RequiresExternalResource { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RequiresCoordinateEpoch")]
+        public bool RequiresCoordinateEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Accuracy")]
+        public double? Accuracy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AccuracyMeaning")]
+        public string AccuracyMeaning { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AreaOfUse")]
+        public string AreaOfUse { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AreaOfUseBounds")]
+        public GeographicBoundingBox AreaOfUseBounds { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AppliedInReverse")]
+        public bool AppliedInReverse { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CatalogStatus")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public CatalogEntryStatus CatalogStatus { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum TransformationSelectionPolicy
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RequireUnambiguous")]
+        RequireUnambiguous = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FirstAvailable")]
+        FirstAvailable = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ExplicitPath")]
+        ExplicitPath = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UpdateGeodeticDatumRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Description")]
+        public string Description { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ReferenceEllipsoidId")]
+        public System.Guid ReferenceEllipsoidId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ReferenceObjectType")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public GeodeticReferenceObjectType ReferenceObjectType { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("IsDeprecated")]
+        public bool IsDeprecated { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianName")]
+        public string PrimeMeridianName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianIdentifier")]
+        public AuthorityIdentifier PrimeMeridianIdentifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianLongitude")]
+        public double PrimeMeridianLongitude { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Origin")]
+        public string Origin { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PublicationDate")]
+        public string PublicationDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RealizationEpoch")]
+        public string RealizationEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("FrameReferenceEpoch")]
+        public double? FrameReferenceEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AnchorEpoch")]
+        public double? AnchorEpoch { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ConventionalReferenceSystem")]
+        public string ConventionalReferenceSystem { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RealizationMethod")]
+        public string RealizationMethod { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("EnsembleAccuracy")]
+        public double? EnsembleAccuracy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MemberDatumIds")]
+        public System.Collections.Generic.ICollection<System.Guid> MemberDatumIds { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Usage")]
+        public System.Collections.Generic.ICollection<GeodeticUsage> Usage { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Remarks")]
+        public string Remarks { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UpdateGeodeticTransformationRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Description")]
+        public string Description { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SourceDatumId")]
+        public System.Guid SourceDatumId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TargetDatumId")]
+        public System.Guid TargetDatumId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Method")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public GeodeticTransformationMethod Method { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TranslationX")]
+        public double TranslationX { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TranslationY")]
+        public double TranslationY { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("TranslationZ")]
+        public double TranslationZ { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RotationX")]
+        public double RotationX { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RotationY")]
+        public double RotationY { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("RotationZ")]
+        public double RotationZ { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ScaleDifference")]
+        public double ScaleDifference { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Accuracy")]
+        public double? Accuracy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AreaOfUse")]
+        public string AreaOfUse { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("AreaOfUseBounds")]
+        public GeographicBoundingBox AreaOfUseBounds { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UpdateReferenceEllipsoidRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Description")]
+        public string Description { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
+        public AuthorityIdentifier Identifier { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("SemiMajorAxis")]
+        public double SemiMajorAxis { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("InverseFlattening")]
+        public double InverseFlattening { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UsageStatisticsEarthGeodesy
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("RestTransforms")]
+        public long RestTransforms { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("MCPTransforms")]
+        public long MCPTransforms { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("FailedRequests")]
+        public long FailedRequests { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("PositionsTransformed")]
+        public long PositionsTransformed { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CatalogReads")]
+        public long CatalogReads { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("CatalogWrites")]
+        public long CatalogWrites { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 

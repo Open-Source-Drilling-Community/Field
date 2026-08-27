@@ -29,7 +29,7 @@ namespace NORCE.Drilling.Field.Service.Managers
             _instance ??= new FieldManager(logger, connectionManager);
             return _instance;
         }
-        internal static FieldManager Instance { get { return _instance; } }
+        internal static FieldManager Instance { get { return _instance!; } }
 
         public int Count
         {

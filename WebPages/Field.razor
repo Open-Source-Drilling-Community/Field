@@ -50,7 +50,7 @@ else
 @code {
     private List<NORCE.Drilling.Field.ModelShared.Field> fieldList = new();
     private List<NORCE.Drilling.Field.ModelShared.Field> selectedFieldList = new();
-    private List<CartographicProjectionLight> cartographicProjectionList = new();
+    private List<ProjectionDefinitionSummary> cartographicProjectionList = new();
     private List<FieldType> fieldTypeList = new();
     private NORCE.Drilling.Field.ModelShared.Field? currentField;
     // UI related variables
@@ -77,7 +77,7 @@ else
             // Starting all loading tasks asynchronously
             logger.LogInformation("Trying to load list of Fields from client: " + Api.HostNameField);
             var fieldTask = Api.ClientField.GetAllFieldAsync();
-            var cartographicProjectionTask = Api.ClientCartographicProjection.GetAllCartographicProjectionLightAsync();
+            var cartographicProjectionTask = Api.ClientEarthCartographicProjection.SummariesAsync(false);
 
             List<Task> loadingTaskList = new List<Task> { fieldTask, cartographicProjectionTask };
 
@@ -109,7 +109,7 @@ else
                 {
                     try
                     {
-                        List<CartographicProjectionLight>? cartographicProjections = (List<CartographicProjectionLight>)await cartographicProjectionTask; // awaiting the finished task allows to retrieve its result and throw exception if needed
+                        List<ProjectionDefinitionSummary>? cartographicProjections = (List<ProjectionDefinitionSummary>)await cartographicProjectionTask; // awaiting the finished task allows to retrieve its result and throw exception if needed
                         if (cartographicProjections != null)
                         {
                             cartographicProjectionList = cartographicProjections;

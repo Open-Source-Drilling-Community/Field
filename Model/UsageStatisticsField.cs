@@ -74,16 +74,6 @@ namespace NORCE.Drilling.Field.Model
         public History PutFieldByIdPerDay { get; set; } = new History();
         public History DeleteFieldByIdPerDay { get; set; } = new History();
 
-        public History GetAllFieldCartographicConversionSetIdPerDay { get; set; } = new History();
-        public History GetAllFieldCartographicConversionSetMetaInfoPerDay { get; set; } = new History();
-        public History GetFieldCartographicConversionSetByIdPerDay { get; set; } = new History();
-        public History GetAllFieldCartographicConversionSetByFieldIdPerDay { get; set; } = new History();
-        public History GetAllFieldCartographicConversionSetLightPerDay { get; set; } = new History();
-        public History GetAllFieldCartographicConversionSetPerDay { get; set; } = new History();
-        public History PostFieldCartographicConversionSetPerDay { get; set; } = new History();
-        public History PutFieldCartographicConversionSetByIdPerDay { get; set; } = new History();
-        public History DeleteFieldCartographicConversionSetByIdPerDay { get; set; } = new History();
-
         public History GetAllFieldDelineationLineTypeIdPerDay { get; set; } = new History();
         public History GetAllFieldDelineationLineTypeMetaInfoPerDay { get; set; } = new History();
         public History GetFieldDelineationLineTypeByIdPerDay { get; set; } = new History();
@@ -145,7 +135,7 @@ namespace NORCE.Drilling.Field.Model
                                 }
                             }
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
 
                         }
@@ -256,115 +246,6 @@ namespace NORCE.Drilling.Field.Model
                 ManageBackup();
             }
         }
-        public void IncrementGetAllFieldCartographicConversionSetIdPerDay()
-        {
-            lock (lock_)
-            {
-                if (GetAllFieldCartographicConversionSetIdPerDay == null)
-                {
-                    GetAllFieldCartographicConversionSetIdPerDay = new History();
-                }
-                GetAllFieldCartographicConversionSetIdPerDay.Increment();
-                ManageBackup();
-            }
-        }
-        public void IncrementGetAllFieldCartographicConversionSetMetaInfoPerDay()
-        {
-            lock (lock_)
-            {
-                if (GetAllFieldCartographicConversionSetMetaInfoPerDay == null)
-                {
-                    GetAllFieldCartographicConversionSetMetaInfoPerDay = new History();
-                }
-                GetAllFieldCartographicConversionSetMetaInfoPerDay.Increment();
-                ManageBackup();
-            }
-        }
-        public void IncrementGetFieldCartographicConversionSetByFieldIdPerDay()
-        {
-            lock (lock_)
-            {
-                if (GetAllFieldCartographicConversionSetByFieldIdPerDay == null)
-                {
-                    GetAllFieldCartographicConversionSetByFieldIdPerDay = new History();
-                }
-                GetAllFieldCartographicConversionSetByFieldIdPerDay.Increment();
-                ManageBackup();
-            }
-        }
-        public void IncrementGetFieldCartographicConversionSetByIdPerDay()
-        {
-            lock (lock_)
-            {
-                if (GetFieldCartographicConversionSetByIdPerDay == null)
-                {
-                    GetFieldCartographicConversionSetByIdPerDay = new History();
-                }
-                GetFieldCartographicConversionSetByIdPerDay.Increment();
-                ManageBackup();
-            }
-        }
-        public void IncrementGetAllFieldCartographicConversionSetLightPerDay()
-        {
-            lock (lock_)
-            {
-                if (GetAllFieldCartographicConversionSetLightPerDay == null)
-                {
-                    GetAllFieldCartographicConversionSetLightPerDay = new History();
-                }
-                GetAllFieldCartographicConversionSetLightPerDay.Increment();
-                ManageBackup();
-            }
-        }
-        public void IncrementGetAllFieldCartographicConversionSetPerDay()
-        {
-            lock (lock_)
-            {
-                if (GetAllFieldCartographicConversionSetPerDay == null)
-                {
-                    GetAllFieldCartographicConversionSetPerDay = new History();
-                }
-                GetAllFieldCartographicConversionSetPerDay.Increment();
-                ManageBackup();
-            }
-        }
-        public void IncrementPostFieldCartographicConversionSetPerDay()
-        {
-            lock (lock_)
-            {
-                if (PostFieldCartographicConversionSetPerDay == null)
-                {
-                    PostFieldCartographicConversionSetPerDay = new History();
-                }
-                PostFieldCartographicConversionSetPerDay.Increment();
-                ManageBackup();
-            }
-        }
-        public void IncrementPutFieldCartographicConversionSetByIdPerDay()
-        {
-            lock (lock_)
-            {
-                if (PutFieldCartographicConversionSetByIdPerDay == null)
-                {
-                    PutFieldCartographicConversionSetByIdPerDay = new History();
-                }
-                PutFieldCartographicConversionSetByIdPerDay.Increment();
-                ManageBackup();
-            }
-        }
-        public void IncrementDeleteFieldCartographicConversionSetByIdPerDay()
-        {
-            lock (lock_)
-            {
-                if (DeleteFieldCartographicConversionSetByIdPerDay == null)
-                {
-                    DeleteFieldCartographicConversionSetByIdPerDay = new History();
-                }
-                DeleteFieldCartographicConversionSetByIdPerDay.Increment();
-                ManageBackup();
-            }
-        }
-
         public void IncrementGetAllFieldDelineationLineTypeIdPerDay() => IncrementHistory(() => GetAllFieldDelineationLineTypeIdPerDay, value => GetAllFieldDelineationLineTypeIdPerDay = value);
         public void IncrementGetAllFieldDelineationLineTypeMetaInfoPerDay() => IncrementHistory(() => GetAllFieldDelineationLineTypeMetaInfoPerDay, value => GetAllFieldDelineationLineTypeMetaInfoPerDay = value);
         public void IncrementGetFieldDelineationLineTypeByIdPerDay() => IncrementHistory(() => GetFieldDelineationLineTypeByIdPerDay, value => GetFieldDelineationLineTypeByIdPerDay = value);

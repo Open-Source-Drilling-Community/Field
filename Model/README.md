@@ -4,20 +4,19 @@ The Model project contains the domain types and supporting utilities for the Fie
 
 ## Purpose
 
-- Provide strongly typed models for the Field microservice (Field, FieldCartographicConversionSet, FieldCartographicConversionSetLight, field features, field memberships, field identities, and delineation lines).
+- Provide strongly typed Field entities, vocabularies, delineation lines, and stateless coordinate-conversion contracts.
 - Centralize lightweight logic and contracts used across Service, WebApp, and tests.
 - Track per-endpoint usage metrics via UsageStatisticsField, persisted periodically for diagnostics.
 
 ## Key Types
 
-- Field: Represents a field entity with identity (`MetaInfo.ID`), name/description, timestamps, a cartographic projection reference (`CartographicProjectionID`), an optional reference point, feature assignments, identity assignments, membership assignments, and delineation lines.
+- Field: Represents a field entity whose optional `ProjectionDefinitionID` references EarthCartographicProjection.
 - FieldFeatureCategory, FieldFeatureOption, FieldFeatureAssignment: Define user-managed feature categories/options and selected field feature options, with exclusivity and optional validity periods.
 - FieldMembershipCategory, FieldMembershipOption, FieldMembershipAssignment: Define user-managed membership categories/options and selected field membership options, with behavior similar to features.
 - FieldIdentity and FieldIdentityAssignment: Define user-managed symbolic identity names and field-specific identity values such as official names, external database IDs, WITSML UIDs, or report IDs.
 - FieldDelineationLineType, FieldDelineationLine, FieldDelineationBoundaryLine: Define managed delineation line types, input line geometry, optional margin/depth ranges, and calculated boundary lines.
-- FieldCartographicConversionSet: Input/output payload for cartographic ↔ geodetic conversions related to a given Field; includes `FieldID` and a list of `CartographicCoordinate` items (from ModelSharedIn).
-- FieldCartographicConversionSetLight: Lightweight view of conversion set metadata and basic field info.
-- UsageStatisticsField: Aggregates per-day counters for REST endpoints (GET/POST/PUT/DELETE) for both Field and FieldCartographicConversionSet resources, with periodic JSON backup to `../home/history.json`.
+- FieldForwardConversionRequest, FieldInverseConversionRequest and FieldCoordinateConversionResponse are ordered, atomic synchronous contracts that are never persisted.
+- UsageStatisticsField: Aggregates per-day REST counters with periodic JSON backup to `../home/history.json`.
 
 Namespaces: All types live under `NORCE.Drilling.Field.Model`.
 
@@ -49,8 +48,7 @@ Top and bottom depth limits are optional. If both are missing, the delineation a
   - `OSDC.DotnetLibraries.General.Common`
   - `OSDC.DotnetLibraries.General.Statistics`
   - `OSDC.DotnetLibraries.Drilling.DrillingProperties`
-- Project reference:
-  - `ModelSharedIn` — shared input DTOs (e.g., `CartographicCoordinate`, geodetic types) used by conversion models.
+- Project reference: `ModelSharedIn`, containing pinned EarthCartographicProjection and EarthGeodesy contracts used by the Service.
 
 See `Model/Model.csproj` for exact versions.
 
@@ -90,27 +88,15 @@ await client.PostFieldAsync(field);
 var fetched = await client.GetFieldByIdAsync(fieldId);
 ```
 
-Prepare a FieldCartographicConversionSet payload:
+Perform a synchronous forward conversion:
 
 ```csharp
-var fccs = new FieldCartographicConversionSet
+var result = await client.ForwardFieldCoordinatesAsync(new FieldForwardConversionRequest
 {
-    MetaInfo = new MetaInfo { ID = Guid.NewGuid() },
-    Name = "Conversion Set",
-    Description = "Sample",
     FieldID = fieldId,
-    CartographicCoordinateList = new List<CartographicCoordinate>
-    {
-        new CartographicCoordinate
-        {
-            Northing = 1000,
-            Easting = 2000,
-            VerticalDepth = 50
-        }
-    }
-};
-
-await client.PostFieldCartographicConversionSetAsync(fccs);
+    SourceGeographicReference = FieldGeographicReference.Wgs84,
+    Positions = [new FieldForwardConversionPosition { Latitude = 1.0, Longitude = 0.1, VerticalDepth = 50 }]
+});
 ```
 
 Record a usage event (inside Service):

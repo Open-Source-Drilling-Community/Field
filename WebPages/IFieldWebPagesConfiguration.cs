@@ -6,8 +6,8 @@ public interface IFieldWebPagesConfiguration :
     IFieldHostURL,
     IClusterHostURL,
     ITrajectoryHostURL,
-    ICartographicProjectionHostURL,
     IUnitConversionHostURL
 {
+    string? EarthCartographicProjectionHostURL { get; set; }
     string? VerticalDatumHostURL { get; set; }
 }

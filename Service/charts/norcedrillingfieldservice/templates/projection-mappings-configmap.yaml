@@ -1,0 +1,13 @@
+{{- if .Values.projectionDefinitionIdMappings }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "norcedrillingfieldservice.fullname" . }}-projection-mappings
+  labels:
+    {{- include "norcedrillingfieldservice.labels" . | nindent 4 }}
+data:
+  Field.ProjectionMappings.json: |-
+    {
+      "ProjectionDefinitionIdMappings": {{ .Values.projectionDefinitionIdMappings | toJson }}
+    }
+{{- end }}

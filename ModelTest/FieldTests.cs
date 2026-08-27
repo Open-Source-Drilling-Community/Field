@@ -19,7 +19,7 @@ public class FieldTests
         Assert.That(field.Description, Is.Null);
         Assert.That(field.CreationDate, Is.Null);
         Assert.That(field.LastModificationDate, Is.Null);
-        Assert.That(field.CartographicProjectionID, Is.Null);
+        Assert.That(field.ProjectionDefinitionID, Is.Null);
         Assert.That(field.ReferencePoint, Is.Null);
         Assert.That(field.FieldFeatureAssignments, Is.Null);
         Assert.That(field.DelineationLines, Is.Null);

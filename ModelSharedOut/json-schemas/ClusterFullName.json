@@ -1,0 +1,1574 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Service, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "version": "1.0"
+  },
+  "paths": {
+    "/Cluster": {
+      "get": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "GetAllClusterId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "PostCluster",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Cluster/MetaInfo": {
+      "get": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "GetAllClusterMetaInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Cluster/{id}": {
+      "get": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "GetClusterById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "PutClusterById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "DeleteClusterById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Cluster/HeavyData": {
+      "get": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "GetAllCluster",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Cluster/LightData": {
+      "get": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "GetAllClusterLight",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterLight"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Cluster/ByFieldId": {
+      "get": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "GetAllClusterByFieldId",
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Cluster/ByRigId": {
+      "get": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "GetAllClusterByRigId",
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Cluster/SingleWell": {
+      "get": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "GetAllSingleWellCluster",
+        "parameters": [
+          {
+            "name": "IsSingleWellNullable",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Cluster/FixedPlatform": {
+      "get": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "GetAllFixedPlatformCluster",
+        "parameters": [
+          {
+            "name": "fixedBool",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ClusterFeatureCategory": {
+      "get": {
+        "tags": [
+          "ClusterFeatureCategory"
+        ],
+        "operationId": "GetAllClusterFeatureCategoryId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ClusterFeatureCategory"
+        ],
+        "operationId": "PostClusterFeatureCategory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/ClusterFeatureCategory/MetaInfo": {
+      "get": {
+        "tags": [
+          "ClusterFeatureCategory"
+        ],
+        "operationId": "GetAllClusterFeatureCategoryMetaInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ClusterFeatureCategory/{id}": {
+      "get": {
+        "tags": [
+          "ClusterFeatureCategory"
+        ],
+        "operationId": "GetClusterFeatureCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ClusterFeatureCategory"
+        ],
+        "operationId": "PutClusterFeatureCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ClusterFeatureCategory"
+        ],
+        "operationId": "DeleteClusterFeatureCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/ClusterFeatureCategory/HeavyData": {
+      "get": {
+        "tags": [
+          "ClusterFeatureCategory"
+        ],
+        "operationId": "GetAllClusterFeatureCategory",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ClusterIdentity": {
+      "get": {
+        "tags": [
+          "ClusterIdentity"
+        ],
+        "operationId": "GetAllClusterIdentityId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ClusterIdentity"
+        ],
+        "operationId": "PostClusterIdentity",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/ClusterIdentity/MetaInfo": {
+      "get": {
+        "tags": [
+          "ClusterIdentity"
+        ],
+        "operationId": "GetAllClusterIdentityMetaInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ClusterIdentity/{id}": {
+      "get": {
+        "tags": [
+          "ClusterIdentity"
+        ],
+        "operationId": "GetClusterIdentityById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ClusterIdentity"
+        ],
+        "operationId": "PutClusterIdentityById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ClusterIdentity"
+        ],
+        "operationId": "DeleteClusterIdentityById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/ClusterIdentity/HeavyData": {
+      "get": {
+        "tags": [
+          "ClusterIdentity"
+        ],
+        "operationId": "GetAllClusterIdentity",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ClusterUsageStatistics": {
+      "get": {
+        "tags": [
+          "ClusterUsageStatistics"
+        ],
+        "operationId": "GetClusterUsageStatistics",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.UsageStatisticsCluster"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/SlotFeatureCategory": {
+      "get": {
+        "tags": [
+          "SlotFeatureCategory"
+        ],
+        "operationId": "GetAllSlotFeatureCategoryId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SlotFeatureCategory"
+        ],
+        "operationId": "PostSlotFeatureCategory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/SlotFeatureCategory/MetaInfo": {
+      "get": {
+        "tags": [
+          "SlotFeatureCategory"
+        ],
+        "operationId": "GetAllSlotFeatureCategoryMetaInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/SlotFeatureCategory/{id}": {
+      "get": {
+        "tags": [
+          "SlotFeatureCategory"
+        ],
+        "operationId": "GetSlotFeatureCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "SlotFeatureCategory"
+        ],
+        "operationId": "PutSlotFeatureCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "SlotFeatureCategory"
+        ],
+        "operationId": "DeleteSlotFeatureCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/SlotFeatureCategory/HeavyData": {
+      "get": {
+        "tags": [
+          "SlotFeatureCategory"
+        ],
+        "operationId": "GetAllSlotFeatureCategory",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "NORCE.Drilling.Cluster.Model.Cluster": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "FieldID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "IsSingleWell": {
+            "type": "boolean"
+          },
+          "RigID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "IsFixedPlatform": {
+            "type": "boolean"
+          },
+          "ClusterIdentityAssignments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentityAssignment"
+            },
+            "nullable": true
+          },
+          "ClusterFeatureAssignments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureAssignment"
+            },
+            "nullable": true
+          },
+          "ReferencePoint": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.Math.Point3DGlobalCoordinates"
+          },
+          "GroundMudLineDepth": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
+          },
+          "TopWaterDepth": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
+          },
+          "Slots": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Slot"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Cluster.Model.ClusterFeatureAssignment": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "FeatureCategoryID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "FeatureOptionID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "FromDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ToDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Cluster.Model.ClusterFeatureCategory": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsExclusive": {
+            "type": "boolean"
+          },
+          "HasValidityPeriod": {
+            "type": "boolean"
+          },
+          "Options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureOption"
+            },
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Cluster.Model.ClusterFeatureOption": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Cluster.Model.ClusterIdentity": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Cluster.Model.ClusterIdentityAssignment": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "IdentityID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "Value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Cluster.Model.ClusterLight": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "FieldID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "IsSingleWell": {
+            "type": "boolean"
+          },
+          "RigID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "IsFixedPlatform": {
+            "type": "boolean"
+          },
+          "ReferencePoint": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.Math.Point3DGlobalCoordinates"
+          },
+          "GroundMudLineDepth": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
+          },
+          "TopWaterDepth": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Cluster.Model.CountPerDay": {
+        "type": "object",
+        "properties": {
+          "Date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Count": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Cluster.Model.History": {
+        "type": "object",
+        "properties": {
+          "Data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.CountPerDay"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Cluster.Model.Slot": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Latitude": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
+          },
+          "Longitude": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
+          },
+          "SlotFeatureAssignments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureAssignment"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Cluster.Model.SlotFeatureAssignment": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "FeatureCategoryID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "FeatureOptionID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "FromDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ToDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Cluster.Model.SlotFeatureCategory": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsExclusive": {
+            "type": "boolean"
+          },
+          "HasValidityPeriod": {
+            "type": "boolean"
+          },
+          "Options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureOption"
+            },
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Cluster.Model.SlotFeatureOption": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Cluster.Model.UsageStatisticsCluster": {
+        "type": "object",
+        "properties": {
+          "LastSaved": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "BackUpInterval": {
+            "type": "string",
+            "format": "date-span"
+          },
+          "GetAllClusterIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterMetaInfoPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetClusterByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterLightPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterByFieldIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterByRigIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllSingleWellClusterPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllFixedPlatformClusterPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "PostClusterPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "PutClusterByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "DeleteClusterByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterIdentityIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterIdentityMetaInfoPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetClusterIdentityByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterIdentityPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "PostClusterIdentityPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "PutClusterIdentityByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "DeleteClusterIdentityByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterFeatureCategoryIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterFeatureCategoryMetaInfoPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetClusterFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterFeatureCategoryPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "PostClusterFeatureCategoryPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "PutClusterFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "DeleteClusterFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllSlotFeatureCategoryIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllSlotFeatureCategoryMetaInfoPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetSlotFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetAllSlotFeatureCategoryPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "PostSlotFeatureCategoryPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "PutSlotFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "DeleteSlotFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          },
+          "GetClusterUsageStatisticsPerDay": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty": {
+        "type": "object",
+        "properties": {
+          "GaussianValue": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.Statistics.GaussianDistribution"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.DotnetLibraries.General.DataManagement.MetaInfo": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "HttpHostName": {
+            "type": "string",
+            "nullable": true
+          },
+          "HttpHostBasePath": {
+            "type": "string",
+            "nullable": true
+          },
+          "HttpEndPoint": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.DotnetLibraries.General.Math.Point3DGlobalCoordinates": {
+        "type": "object",
+        "properties": {
+          "X": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Y": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Z": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "RiemannianNorth": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "RiemannianEast": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TVD": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.DotnetLibraries.General.Statistics.GaussianDistribution": {
+        "type": "object",
+        "properties": {
+          "MinValue": {
+            "type": "number",
+            "format": "double"
+          },
+          "MaxValue": {
+            "type": "number",
+            "format": "double"
+          },
+          "Mean": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "StandardDeviation": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

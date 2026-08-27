@@ -19,10 +19,10 @@ public interface IFieldAPIUtils
     HttpClient HttpClientTrajectory { get; }
     FieldModelShared.Client ClientTrajectory { get; }
 
-    string HostNameCartographicProjection { get; }
-    string HostBasePathCartographicProjection { get; }
-    HttpClient HttpClientCartographicProjection { get; }
-    FieldModelShared.Client ClientCartographicProjection { get; }
+    string HostNameEarthCartographicProjection { get; }
+    string HostBasePathEarthCartographicProjection { get; }
+    HttpClient HttpClientEarthCartographicProjection { get; }
+    FieldModelShared.Client ClientEarthCartographicProjection { get; }
 
     string HostNameUnitConversion { get; }
     string HostBasePathUnitConversion { get; }

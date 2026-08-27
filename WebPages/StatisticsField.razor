@@ -110,10 +110,6 @@ else
 
     private static string GuessArea(string endpoint)
     {
-        if (endpoint.Contains("Cartographic Conversion Set", StringComparison.OrdinalIgnoreCase))
-        {
-            return "Cartographic conversion sets";
-        }
         if (endpoint.Contains("Delineation Line Type", StringComparison.OrdinalIgnoreCase))
         {
             return "Delineation line types";

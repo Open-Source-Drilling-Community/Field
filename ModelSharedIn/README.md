@@ -48,14 +48,8 @@ Using the generated DTOs in code:
 ```csharp
 using NORCE.Drilling.Field.ModelShared;
 
-var coord = new CartographicCoordinate
-{
-    Northing = 1000,
-    Easting = 2000,
-    VerticalDepth = 50
-};
-
-var meta = new MetaInfo { ID = Guid.NewGuid() };
+var projectionRequest = new ForwardProjectionRequest();
+var datumRequest = new TransformCoordinatesRequest();
 ```
 
 Using the generated client against a base URL:
@@ -80,7 +74,7 @@ NuGet packages (see `ModelSharedIn.csproj`):
 
 ## Integration in the Solution
 
-- Model: References these generated DTOs (e.g., `CartographicCoordinate`, `GeodeticCoordinate`, `MetaInfo`, `Point3DGlobalCoordinates`) in domain types like `Field`, `FieldDelineationLine`, and `FieldCartographicConversionSet`.
+- Service: Uses the pinned EarthCartographicProjection and EarthGeodesy clients and DTOs to orchestrate field-level conversion.
 - Service and WebApp: Use types under `NORCE.Drilling.Field.ModelShared` to communicate and to construct payloads consistent with the OpenAPI contracts.
 - ServiceTest: Uses the NSwag `Client` and DTOs from the same namespace to perform end-to-end API tests.
 

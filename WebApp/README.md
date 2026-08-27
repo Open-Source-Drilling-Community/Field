@@ -9,7 +9,7 @@ The WebApp is a Blazor Server front end for the Field microservice. It hosts the
 - Display trajectories and survey runs for a selected field, including delineation line overlays.
 - Configure field-level depth and position references for plotting.
 - Provide calculators for cartographic conversions and single vertical datum conversion.
-- Reuse contextual data pages from the CartographicProjection, GeodeticDatum, and VerticalDatum web page packages.
+- Link to the standalone EarthCartographicProjection web app and reuse the remaining contextual page packages.
 
 ## Installation
 
@@ -22,8 +22,8 @@ Configuration keys:
 - `FieldHostURL`: base URL of the Field service.
 - `ClusterHostURL`: base URL of the Cluster service.
 - `TrajectoryHostURL`: base URL of the Trajectory service.
-- `CartographicProjectionHostURL`: base URL of the CartographicProjection service.
-- `GeodeticDatumHostURL`: base URL of the GeodeticDatum service.
+- `EarthCartographicProjectionHostURL`: base URL of EarthCartographicProjection.
+- `GeodeticDatumHostURL`: base URL of the GeodeticDatum service used by its hosted pages.
 - `VerticalDatumHostURL`: base URL of the VerticalDatum service.
 - `UnitConversionHostURL`: base URL of the UnitConversion service.
 
@@ -35,7 +35,7 @@ Example `WebApp/appsettings.Development.json`:
   "FieldHostURL": "https://dev.digiwells.no/",
   "ClusterHostURL": "https://dev.digiwells.no/",
   "TrajectoryHostURL": "https://dev.digiwells.no/",
-  "CartographicProjectionHostURL": "https://dev.digiwells.no/",
+  "EarthCartographicProjectionHostURL": "https://dev.digiwells.no/",
   "GeodeticDatumHostURL": "https://dev.digiwells.no/",
   "VerticalDatumHostURL": "https://app.digiwells.no/",
   "UnitConversionHostURL": "https://dev.digiwells.no/"
@@ -74,7 +74,7 @@ Survey Display:
 
 Contextual Data:
 
-- `Cartographic Projections` (`/Field/webapp/CartographicProjection`)
+- `Projection definitions` links to `/EarthCartographicProjection/webapp/ProjectionDefinition`.
 - `Geodetic Datum` (`/Field/webapp/GeodeticDatum`)
 - `Spheroid` (`/Field/webapp/Spheroid`)
 
@@ -94,7 +94,6 @@ Runtime and packages:
 - ASP.NET Core Blazor Server, .NET 8
 - MudBlazor
 - `NORCE.Drilling.Field.WebPages`
-- `NORCE.Drilling.CartographicProjection.WebPages`
 - `NORCE.Drilling.GeodeticDatum.WebPages`
 - `NORCE.Drilling.VerticalDatum.WebPage`
 - `OSDC.DotnetLibraries.General.DataManagement`
@@ -123,7 +122,7 @@ docker run --rm -p 5011:5011 -p 5012:5012 \
   -e FieldHostURL="https://host.docker.internal:5001/" \
   -e ClusterHostURL="https://dev.your-host/" \
   -e TrajectoryHostURL="https://dev.your-host/" \
-  -e CartographicProjectionHostURL="https://dev.your-host/" \
+  -e EarthCartographicProjectionHostURL="https://dev.your-host/" \
   -e GeodeticDatumHostURL="https://dev.your-host/" \
   -e VerticalDatumHostURL="https://app.digiwells.no/" \
   -e UnitConversionHostURL="https://dev.your-host/" \

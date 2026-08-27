@@ -32,24 +32,25 @@ internal sealed class LegacyMcpServerToolAdapter : McpServerTool
 
         _protocolTool = new Tool
         {
-            Name = NormalizeToolName(tool.Name),
-            Description = tool.Description
+            Name = tool.Name,
+            Title = tool.Behavior.Title,
+            Description = tool.Description,
+            InputSchema = JsonSerializer.SerializeToElement(tool.InputSchema, SerializerOptions),
+            OutputSchema = JsonSerializer.SerializeToElement(tool.OutputSchema, SerializerOptions),
+            Annotations = new()
+            {
+                Title = tool.Behavior.Title,
+                ReadOnlyHint = tool.Behavior.ReadOnlyHint,
+                DestructiveHint = tool.Behavior.DestructiveHint,
+                IdempotentHint = tool.Behavior.IdempotentHint,
+                OpenWorldHint = tool.Behavior.OpenWorldHint
+            }
         };
-
-        if (tool.InputSchema is JsonNode schemaNode)
-        {
-            _protocolTool.InputSchema = JsonSerializer.SerializeToElement(schemaNode, SerializerOptions);
-        }
     }
 
     public override Tool ProtocolTool => _protocolTool;
 
     public override IReadOnlyList<object> Metadata => _metadata;
-
-    private static string NormalizeToolName(string name)
-    {
-        return name.Replace('.', '_').Replace('/', '_');
-    }
 
     public override async ValueTask<CallToolResult> InvokeAsync(
         RequestContext<CallToolRequestParams> request,
@@ -62,10 +63,13 @@ internal sealed class LegacyMcpServerToolAdapter : McpServerTool
         try
         {
             var result = await _tool.InvokeAsync(arguments, cancellationToken).ConfigureAwait(false);
-
+            if (TryGetFailure(result, out JsonNode failure))
+                return Error(failure);
+            string? fallback = result?.ToJsonString(SerializerOptions);
             return new CallToolResult
             {
-                StructuredContent = result
+                StructuredContent = result?.DeepClone(),
+                Content = fallback is null ? [] : [new TextContentBlock { Text = fallback }]
             };
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -76,17 +80,12 @@ internal sealed class LegacyMcpServerToolAdapter : McpServerTool
         {
             _logger.LogError(ex, "MCP tool {ToolName} failed while handling request.", _tool.Name);
 
-            return new CallToolResult
+            return Error(new JsonObject
             {
-                IsError = true,
-                Content =
-                {
-                    new TextContentBlock
-                    {
-                        Text = $"Tool '{_tool.Name}' failed: {ex.Message}"
-                    }
-                }
-            };
+                ["error"] = "internal_error",
+                ["message"] = "An unexpected server error occurred while executing the tool.",
+                ["errors"] = new JsonArray()
+            });
         }
     }
 
@@ -114,4 +113,25 @@ internal sealed class LegacyMcpServerToolAdapter : McpServerTool
 
         return result;
     }
+
+    private static bool TryGetFailure(JsonNode? result, out JsonNode failure)
+    {
+        failure = null!;
+        if (result is not JsonObject response || response["status"]?.GetValue<int>() is not int status || status < 400)
+            return false;
+        if (response["data"] is JsonNode payload)
+        {
+            failure = payload.DeepClone();
+            return true;
+        }
+        string message = response["error"]?.GetValue<string>() ?? "The tool request failed.";
+        failure = new JsonObject { ["error"] = "validation_failed", ["message"] = message, ["errors"] = new JsonArray() };
+        return true;
+    }
+
+    private static CallToolResult Error(JsonNode problem) => new()
+    {
+        IsError = true,
+        Content = { new TextContentBlock { Text = problem.ToJsonString(SerializerOptions) } }
+    };
 }

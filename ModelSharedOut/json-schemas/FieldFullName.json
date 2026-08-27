@@ -222,76 +222,78 @@
         }
       }
     },
-    "/FieldCartographicConversionSet": {
-      "get": {
-        "tags": [
-          "FieldCartographicConversionSet"
-        ],
-        "operationId": "GetAllFieldCartographicConversionSetId",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
+    "/FieldCoordinateConversion/Forward": {
       "post": {
         "tags": [
-          "FieldCartographicConversionSet"
+          "FieldCoordinateConversion"
         ],
-        "operationId": "PostFieldCartographicConversionSet",
+        "operationId": "ForwardFieldCoordinates",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCartographicConversionSet"
+                "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldForwardConversionRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCartographicConversionSet"
+                "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldForwardConversionRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCartographicConversionSet"
+                "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldForwardConversionRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/FieldCartographicConversionSet/MetaInfo": {
-      "get": {
-        "tags": [
-          "FieldCartographicConversionSet"
-        ],
-        "operationId": "GetAllFieldCartographicConversionSetMetaInfo",
-        "responses": {
-          "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NORCE.Drilling.Field.ModelShared.MetaInfo"
-                  }
+                  "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCoordinateConversionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldConversionErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldConversionErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldConversionErrorEnvelope"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldConversionErrorEnvelope"
                 }
               }
             }
@@ -299,169 +301,78 @@
         }
       }
     },
-    "/FieldCartographicConversionSet/{id}": {
-      "get": {
+    "/FieldCoordinateConversion/Inverse": {
+      "post": {
         "tags": [
-          "FieldCartographicConversionSet"
+          "FieldCoordinateConversion"
         ],
-        "operationId": "GetFieldCartographicConversionSetById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCartographicConversionSet"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "FieldCartographicConversionSet"
-        ],
-        "operationId": "PutFieldCartographicConversionSetById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
+        "operationId": "InverseFieldCoordinates",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCartographicConversionSet"
+                "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldInverseConversionRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCartographicConversionSet"
+                "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldInverseConversionRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCartographicConversionSet"
+                "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldInverseConversionRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "FieldCartographicConversionSet"
-        ],
-        "operationId": "DeleteFieldCartographicConversionSetById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/FieldCartographicConversionSet/FieldID": {
-      "get": {
-        "tags": [
-          "FieldCartographicConversionSet"
-        ],
-        "operationId": "GetAllFieldCartographicConversionSetByFieldId",
-        "parameters": [
-          {
-            "name": "fieldId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCartographicConversionSet"
+                  "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCoordinateConversionResponse"
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/FieldCartographicConversionSet/LightData": {
-      "get": {
-        "tags": [
-          "FieldCartographicConversionSet"
-        ],
-        "operationId": "GetAllFieldCartographicConversionSetLight",
-        "responses": {
-          "200": {
-            "description": "OK",
+          },
+          "400": {
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCartographicConversionSetLight"
-                  }
+                  "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldConversionErrorEnvelope"
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/FieldCartographicConversionSet/HeavyData": {
-      "get": {
-        "tags": [
-          "FieldCartographicConversionSet"
-        ],
-        "operationId": "GetAllFieldCartographicConversionSet",
-        "responses": {
-          "200": {
-            "description": "OK",
+          },
+          "404": {
+            "description": "Not Found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCartographicConversionSet"
-                  }
+                  "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldConversionErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldConversionErrorEnvelope"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldConversionErrorEnvelope"
                 }
               }
             }
@@ -1306,7 +1217,7 @@
             "format": "date-time",
             "nullable": true
           },
-          "CartographicProjectionID": {
+          "ProjectionDefinitionID": {
             "type": "string",
             "format": "uuid",
             "nullable": true
@@ -1345,88 +1256,186 @@
         },
         "additionalProperties": false
       },
-      "NORCE.Drilling.Field.Model.FieldCartographicConversionSet": {
+      "NORCE.Drilling.Field.Model.FieldApplicabilityPolicy": {
+        "enum": [
+          "RequireApplicable",
+          "AllowUnknown"
+        ],
+        "type": "string"
+      },
+      "NORCE.Drilling.Field.Model.FieldCatalogReference": {
         "type": "object",
         "properties": {
-          "MetaInfo": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          "ID": {
+            "type": "string",
+            "format": "uuid"
           },
           "Name": {
             "type": "string",
             "nullable": true
           },
-          "Description": {
+          "Authority": {
             "type": "string",
             "nullable": true
           },
-          "CreationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "LastModificationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "FieldID": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "FieldName": {
+          "Code": {
             "type": "string",
             "nullable": true
-          },
-          "FieldDescription": {
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Field.Model.FieldConversionErrorEnvelope": {
+        "required": [
+          "Error",
+          "Message"
+        ],
+        "type": "object",
+        "properties": {
+          "Error": {
             "type": "string",
             "nullable": true
           },
-          "CartographicCoordinateList": {
+          "Message": {
+            "type": "string",
+            "nullable": true
+          },
+          "Errors": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/NORCE.Drilling.Field.ModelShared.CartographicCoordinate"
+              "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldConversionValidationError"
             },
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "NORCE.Drilling.Field.Model.FieldCartographicConversionSetLight": {
+      "NORCE.Drilling.Field.Model.FieldConversionValidationError": {
+        "required": [
+          "Code",
+          "Message",
+          "Property"
+        ],
         "type": "object",
         "properties": {
-          "MetaInfo": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          "PositionIndex": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           },
-          "Name": {
+          "Property": {
             "type": "string",
             "nullable": true
           },
-          "Description": {
+          "Code": {
             "type": "string",
             "nullable": true
           },
-          "CreationDate": {
+          "Message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Field.Model.FieldConversionWarning": {
+        "required": [
+          "Code",
+          "Message"
+        ],
+        "type": "object",
+        "properties": {
+          "Code": {
+            "type": "string",
+            "nullable": true
+          },
+          "Message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Field.Model.FieldCoordinateConversionPositionResult": {
+        "required": [
+          "ProjectedCoordinate",
+          "ProjectionDatumGeographicCoordinate"
+        ],
+        "type": "object",
+        "properties": {
+          "PositionIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ProjectionDatumGeographicCoordinate": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldGeographicCoordinate"
+          },
+          "Wgs84GeographicCoordinate": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldGeographicCoordinate"
+          },
+          "ProjectedCoordinate": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldProjectedCoordinate"
+          },
+          "ProjectionDatumVerticalDepth": {
+            "type": "number",
+            "format": "double"
+          },
+          "Wgs84VerticalDepth": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "CoordinateEpochUtc": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "LastModificationDate": {
-            "type": "string",
-            "format": "date-time",
+          "GridConvergence": {
+            "type": "number",
+            "format": "double",
             "nullable": true
-          },
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Field.Model.FieldCoordinateConversionResponse": {
+        "required": [
+          "ApiAxisConvention",
+          "ProjectionDatum",
+          "ProjectionDefinition",
+          "Wgs84Datum"
+        ],
+        "type": "object",
+        "properties": {
           "FieldID": {
             "type": "string",
-            "format": "uuid",
-            "nullable": true
+            "format": "uuid"
           },
-          "FieldName": {
+          "ProjectionDefinition": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCatalogReference"
+          },
+          "ProjectionDatum": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCatalogReference"
+          },
+          "Wgs84Datum": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCatalogReference"
+          },
+          "ApiAxisConvention": {
             "type": "string",
             "nullable": true
           },
-          "FieldDescription": {
-            "type": "string",
+          "Positions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldCoordinateConversionPositionResult"
+            },
+            "nullable": true
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldConversionWarning"
+            },
             "nullable": true
           }
         },
@@ -1534,6 +1543,13 @@
         },
         "additionalProperties": false
       },
+      "NORCE.Drilling.Field.Model.FieldDepthTransformationPolicy": {
+        "enum": [
+          "PreservePhysicalPoint",
+          "AllowUntransformedDepthFor2D"
+        ],
+        "type": "string"
+      },
       "NORCE.Drilling.Field.Model.FieldFeatureAssignment": {
         "type": "object",
         "properties": {
@@ -1614,6 +1630,79 @@
         },
         "additionalProperties": false
       },
+      "NORCE.Drilling.Field.Model.FieldForwardConversionPosition": {
+        "type": "object",
+        "properties": {
+          "Latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "VerticalDepth": {
+            "type": "number",
+            "format": "double"
+          },
+          "CoordinateEpochUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Field.Model.FieldForwardConversionRequest": {
+        "required": [
+          "Positions"
+        ],
+        "type": "object",
+        "properties": {
+          "FieldID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "SourceGeographicReference": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldGeographicReference"
+          },
+          "ProjectionApplicabilityPolicy": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldApplicabilityPolicy"
+          },
+          "Transformation": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldTransformationOptions"
+          },
+          "Positions": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldForwardConversionPosition"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Field.Model.FieldGeographicCoordinate": {
+        "type": "object",
+        "properties": {
+          "Latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "Longitude": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Field.Model.FieldGeographicReference": {
+        "enum": [
+          "ProjectionDatum",
+          "Wgs84"
+        ],
+        "type": "string"
+      },
       "NORCE.Drilling.Field.Model.FieldIdentity": {
         "type": "object",
         "properties": {
@@ -1652,6 +1741,55 @@
           "Value": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Field.Model.FieldInverseConversionPosition": {
+        "type": "object",
+        "properties": {
+          "Easting": {
+            "type": "number",
+            "format": "double"
+          },
+          "Northing": {
+            "type": "number",
+            "format": "double"
+          },
+          "VerticalDepth": {
+            "type": "number",
+            "format": "double"
+          },
+          "CoordinateEpochUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Field.Model.FieldInverseConversionRequest": {
+        "required": [
+          "Positions"
+        ],
+        "type": "object",
+        "properties": {
+          "FieldID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ProjectionApplicabilityPolicy": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldApplicabilityPolicy"
+          },
+          "Transformation": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldTransformationOptions"
+          },
+          "Positions": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldInverseConversionPosition"
+            }
           }
         },
         "additionalProperties": false
@@ -1763,6 +1901,55 @@
         },
         "additionalProperties": false
       },
+      "NORCE.Drilling.Field.Model.FieldProjectedCoordinate": {
+        "type": "object",
+        "properties": {
+          "Easting": {
+            "type": "number",
+            "format": "double"
+          },
+          "Northing": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Field.Model.FieldTransformationOptions": {
+        "type": "object",
+        "properties": {
+          "SelectionPolicy": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldTransformationSelectionPolicy"
+          },
+          "TransformationPathIDs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
+          "SelectionToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "ApplicabilityPolicy": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldApplicabilityPolicy"
+          },
+          "DepthPolicy": {
+            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.FieldDepthTransformationPolicy"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NORCE.Drilling.Field.Model.FieldTransformationSelectionPolicy": {
+        "enum": [
+          "RequireUnambiguous",
+          "FirstAvailable",
+          "ExplicitPath"
+        ],
+        "type": "string"
+      },
       "NORCE.Drilling.Field.Model.History": {
         "type": "object",
         "properties": {
@@ -1809,33 +1996,6 @@
             "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
           },
           "DeleteFieldByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
-          },
-          "GetAllFieldCartographicConversionSetIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
-          },
-          "GetAllFieldCartographicConversionSetMetaInfoPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
-          },
-          "GetFieldCartographicConversionSetByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
-          },
-          "GetAllFieldCartographicConversionSetByFieldIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
-          },
-          "GetAllFieldCartographicConversionSetLightPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
-          },
-          "GetAllFieldCartographicConversionSetPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
-          },
-          "PostFieldCartographicConversionSetPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
-          },
-          "PutFieldCartographicConversionSetByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
-          },
-          "DeleteFieldCartographicConversionSetByIdPerDay": {
             "$ref": "#/components/schemas/NORCE.Drilling.Field.Model.History"
           },
           "GetAllFieldDelineationLineTypeIdPerDay": {
@@ -1927,118 +2087,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "NORCE.Drilling.Field.ModelShared.CartographicCoordinate": {
-        "type": "object",
-        "properties": {
-          "Northing": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "Easting": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "VerticalDepth": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "GeodeticCoordinate": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Field.ModelShared.GeodeticCoordinate"
-          },
-          "GridConvergenceDatum": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          }
-        },
-        "additionalProperties": { }
-      },
-      "NORCE.Drilling.Field.ModelShared.GeodeticCoordinate": {
-        "type": "object",
-        "properties": {
-          "LatitudeWGS84": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "LongitudeWGS84": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "VerticalDepthWGS84": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "LatitudeDatum": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "LongitudeDatum": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "VerticalDepthDatum": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "OctreeDepth": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "OctreeCode": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Field.ModelShared.OctreeCodeLong"
-          }
-        },
-        "additionalProperties": { }
-      },
-      "NORCE.Drilling.Field.ModelShared.MetaInfo": {
-        "type": "object",
-        "properties": {
-          "ID": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "HttpHostName": {
-            "type": "string",
-            "nullable": true
-          },
-          "HttpHostBasePath": {
-            "type": "string",
-            "nullable": true
-          },
-          "HttpEndPoint": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": { }
-      },
-      "NORCE.Drilling.Field.ModelShared.OctreeCodeLong": {
-        "type": "object",
-        "properties": {
-          "Depth": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "CodeHigh": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "CodeLow": {
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        "additionalProperties": { }
       },
       "OSDC.DotnetLibraries.General.DataManagement.MetaInfo": {
         "type": "object",

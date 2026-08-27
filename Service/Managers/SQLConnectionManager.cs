@@ -30,9 +30,11 @@ namespace NORCE.Drilling.Field.Service.Managers
     {
         private readonly ILogger<SqlConnectionManager> _logger;
         private readonly string _connectionString;
+        private readonly IReadOnlyDictionary<Guid, Guid> _projectionMappings;
         public static readonly string HOME_DIRECTORY = ".." + Path.DirectorySeparatorChar + "home" + Path.DirectorySeparatorChar;
         public static readonly string DATABASE_FILENAME = "Field.db";
         public static readonly string DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+        public const int CURRENT_SCHEMA_VERSION = 2;
 
         // dictionary describing tables format
         private readonly static Dictionary<string, string[]> _tableStructureDict = new Dictionary<string, string[]>()
@@ -41,18 +43,6 @@ namespace NORCE.Drilling.Field.Service.Managers
                     "ID text primary key",
                     "MetaInfo text",
                     "Field text" }
-                },
-                { "FieldCartographicConversionSetTable", new string[] {
-                    "ID text primary key",
-                    "MetaInfo text",
-                    "Name text",
-                    "Description text",
-                    "CreationDate text",
-                    "LastModificationDate text",
-                    "FieldID text",
-                    "FieldName text",
-                    "FieldDescription text",
-                    "FieldCartographicConversionSet text" }
                 },
                 { "FieldDelineationLineTypeTable", new string[] {
                     "ID text primary key",
@@ -92,10 +82,14 @@ namespace NORCE.Drilling.Field.Service.Managers
                 }
             };
 
-        public SqlConnectionManager(string connectionString, ILogger<SqlConnectionManager> logger)
+        public SqlConnectionManager(
+            string connectionString,
+            ILogger<SqlConnectionManager> logger,
+            IReadOnlyDictionary<Guid, Guid>? projectionMappings = null)
         {
             _connectionString = connectionString;
             _logger = logger;
+            _projectionMappings = projectionMappings ?? new Dictionary<Guid, Guid>();
             _logger.LogInformation("SqliteConnectionManager created");
             if (Initialize())
             {
@@ -166,16 +160,14 @@ namespace NORCE.Drilling.Field.Service.Managers
         }
 
         /// <summary>
-        /// This function parses the existing database and check that its structure matches the expected one.
-        /// If not, the existing database is backed-up and the actual database is recreated from scratch
+        /// Applies explicit non-destructive schema migrations and verifies the resulting structure.
+        /// Unexpected structures fail startup; they are never repaired by dropping user tables.
         /// </summary>
         private void ManageDataBase()
         {
             var connection = GetConnection();
             if (connection != null)
             {
-                bool parseOk = true;
-                bool createDb = false;
                 List<string> tableNameList = new();
                 string query = "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%';";
 
@@ -190,91 +182,89 @@ namespace NORCE.Drilling.Field.Service.Managers
                     }
                 }
 
-                if (tableNameList.Count != _tableStructureDict.Count) // unexpected number of tables
-                {
-                    parseOk = false;
-                }
-                else
-                {
-                    foreach (var tableStruct in _tableStructureDict)
-                    {
-                        bool tmpSuccess = false;
-                        foreach (string tableName in tableNameList)
-                        {
-                            if (tableName == tableStruct.Key) // unexpected table names
-                            {
-                                tmpSuccess = true;
-                                break;
-                            }
-                        }
-                        if (!tmpSuccess ||
-                            !CheckDatabaseStructure(tableStruct)) // badly formatted table
-                        {
-                            parseOk = false;
-                            break;
-                        }
-                    }
-                }
-                if (!parseOk)
-                {
-                    createDb = true;
-                    if (tableNameList.Count > 0)
-                    {
-                        _logger.LogWarning("Unexpected structure of the existing database. A timestamped backup copy will be generated");
-                        // backup existing database
-                        string backupFileName = HOME_DIRECTORY + Path.DirectorySeparatorChar + DATABASE_FILENAME;
-                        string timeStamp = DateTime.UtcNow.ToString(DATE_TIME_FORMAT);
-                        backupFileName = backupFileName.Insert(backupFileName.Length - 3, "-" + timeStamp);
-                        try
-                        {
-                            File.Copy(HOME_DIRECTORY + Path.DirectorySeparatorChar + DATABASE_FILENAME, backupFileName);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "Problem while generating a timestamped backup copy of the existing database");
-                        }
-                        // drop existing tables
-                        _logger.LogWarning("Dropping tables from existing database");
-                        foreach (string tableName in tableNameList)
-                        {
-                            if (!DropTable(tableName))
-                            {
-                                createDb = false;
-                                _logger.LogError("Impossible to drop {tableName}. Database may be corrupted, consider deleting it", tableName);
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (createDb)
-                {
-                    _logger.LogInformation("Creating database tables");
-                    bool success = true;
-                    foreach (var tableStruct in _tableStructureDict)
-                    {
-                        string tableName = tableStruct.Key;
-                        if (CreateTable(tableStruct))
-                        {
-                            if (!IndexTable(tableName))
-                                success = false;
-                        }
-                        else
-                        {
-                            success = false;
-                        }
-                        if (!success)
-                        {
-                            if (!DropTable(tableName))
-                                _logger.LogError("Impossible to drop {key}. Database may be corrupted, consider deleting it", tableName);
-                        }
+                bool hasObsoleteCalculationTable = tableNameList.Contains("FieldCartographicConversionSetTable", StringComparer.Ordinal);
+                FieldProjectionMigrationPlan projectionPlan = tableNameList.Contains("FieldTable", StringComparer.Ordinal)
+                    ? FieldProjectionReferenceMigrator.Plan(connection, _projectionMappings)
+                    : new FieldProjectionMigrationPlan([]);
 
+                // Back up the complete SQLite database before the first persisted migration.
+                // The backup remains alongside Field.db and is independent of the logical
+                // off-machine JSON backup made before deployment.
+                if (hasObsoleteCalculationTable || projectionPlan.HasChanges)
+                {
+                    BackupBeforeMigration(connection);
+                    using SqliteTransaction transaction = connection.BeginTransaction();
+                    try
+                    {
+                        FieldProjectionReferenceMigrator.Apply(connection, transaction, projectionPlan);
+                        if (hasObsoleteCalculationTable)
+                        {
+                            using SqliteCommand drop = connection.CreateCommand();
+                            drop.Transaction = transaction;
+                            drop.CommandText = "DROP TABLE FieldCartographicConversionSetTable";
+                            drop.ExecuteNonQuery();
+                        }
+                        using SqliteCommand version = connection.CreateCommand();
+                        version.Transaction = transaction;
+                        version.CommandText = $"PRAGMA user_version = {CURRENT_SCHEMA_VERSION}";
+                        version.ExecuteNonQuery();
+                        transaction.Commit();
+                        tableNameList.Remove("FieldCartographicConversionSetTable");
+                        _logger.LogInformation("Migrated Field database to schema version {Version}; {FieldCount} field projection references changed and obsolete calculation cases removed={RemovedCases}", CURRENT_SCHEMA_VERSION, projectionPlan.Changes.Count, hasObsoleteCalculationTable);
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
                     }
                 }
+
+                if (tableNameList.Count == 0)
+                {
+                    _logger.LogInformation("Creating Field database schema version {Version}", CURRENT_SCHEMA_VERSION);
+                    foreach (var tableStruct in _tableStructureDict)
+                    {
+                        if (!CreateTable(tableStruct) || !IndexTable(tableStruct.Key))
+                            throw new InvalidOperationException($"Unable to create required Field database table '{tableStruct.Key}'.");
+                    }
+                    using SqliteCommand version = connection.CreateCommand();
+                    version.CommandText = $"PRAGMA user_version = {CURRENT_SCHEMA_VERSION}";
+                    version.ExecuteNonQuery();
+                    return;
+                }
+
+                List<string> unexpected = tableNameList.Except(_tableStructureDict.Keys, StringComparer.Ordinal).ToList();
+                List<string> missing = _tableStructureDict.Keys.Except(tableNameList, StringComparer.Ordinal).ToList();
+                List<string> malformed = _tableStructureDict
+                    .Where(table => tableNameList.Contains(table.Key, StringComparer.Ordinal) && !CheckDatabaseStructure(table))
+                    .Select(table => table.Key)
+                    .ToList();
+                if (unexpected.Count > 0 || missing.Count > 0 || malformed.Count > 0)
+                {
+                    throw new InvalidOperationException(
+                        $"Unexpected Field database structure. No data was changed. Unexpected=[{string.Join(',', unexpected)}], missing=[{string.Join(',', missing)}], malformed=[{string.Join(',', malformed)}].");
+                }
+                using SqliteCommand schemaVersion = connection.CreateCommand();
+                schemaVersion.CommandText = $"PRAGMA user_version = {CURRENT_SCHEMA_VERSION}";
+                schemaVersion.ExecuteNonQuery();
             }
             else
             {
                 _logger.LogError("Problem opening a new connection while managing database");
             }
+        }
+
+        private void BackupBeforeMigration(SqliteConnection source)
+        {
+            var builder = new SqliteConnectionStringBuilder(_connectionString);
+            string sourcePath = Path.GetFullPath(builder.DataSource);
+            string directory = Path.GetDirectoryName(sourcePath)
+                ?? throw new InvalidOperationException("The Field database path has no parent directory.");
+            string backupPath = Path.Combine(directory, $"Field.pre-v{CURRENT_SCHEMA_VERSION}.{DateTime.UtcNow:yyyyMMddTHHmmssfffZ}.db");
+            using var destination = new SqliteConnection($"Data Source={backupPath}");
+            destination.Open();
+            source.BackupDatabase(destination);
+            _logger.LogWarning("Created pre-migration Field database backup at {BackupPath}", backupPath);
         }
 
         /// <summary>

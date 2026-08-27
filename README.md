@@ -4,7 +4,7 @@ The Field solution provides a microservice (REST API), reusable Razor pages, and
 
 ## Purpose
 
-- Expose a REST API to create, read, update, and delete Field data, managed field feature categories, field memberships, field identities, delineation line types, and cartographic conversion sets associated with a Field.
+- Expose CRUD APIs for Field data and managed vocabularies, plus synchronous stateless field coordinate conversion.
 - Expose an MCP endpoint mirroring the REST API for agent/tool integrations, with optional MCP hub registration from the shared `home/` volume.
 - Provide a web UI to browse and edit fields, manage field vocabularies, maintain delineation lines, display field-level trajectories and survey runs, and run cartographic and vertical datum conversions.
 - Share OpenAPI-generated clients/DTOs to keep contracts consistent across Service, WebApp, and tests.
@@ -29,9 +29,9 @@ Steps (dev):
   - Base path: `https://localhost:5011/Field/webapp` and `http://localhost:5012/Field/webapp`
 
 Configuration:
-- Service reads `CartographicProjectionHostURL` (see `Service/appsettings.*.json`).
+- Service reads `EarthCartographicProjectionHostURL` and `EarthGeodesyHostURL` (see `Service/appsettings.*.json`).
 - Service can read optional external configuration from `home/Field.Service.json`, or from the path specified by `FIELD_EXTERNAL_CONFIG`.
-- WebApp reads `FieldHostURL`, `ClusterHostURL`, `TrajectoryHostURL`, `CartographicProjectionHostURL`, `GeodeticDatumHostURL`, `VerticalDatumHostURL`, and `UnitConversionHostURL` (see `WebApp/appsettings.*.json`).
+- WebApp reads `FieldHostURL`, `ClusterHostURL`, `TrajectoryHostURL`, `EarthCartographicProjectionHostURL`, `GeodeticDatumHostURL`, `VerticalDatumHostURL`, and `UnitConversionHostURL`.
 
 Code generation:
 - When model or controller contracts change, regenerate DTOs in this order:
@@ -68,8 +68,8 @@ WebApp (UI):
 MCP server:
 - Streamable HTTP: `/Field/api/mcp`
 - WebSocket: `/Field/api/mcp/ws`
-- Tool groups mirror the REST API: `field.*`, `field_cartographic_conversion_set.*`, `field_feature_category.*`, `field_membership_category.*`, `field_identity.*`, `field_delineation_line_type.*`, and `field_usage_statistics.get`.
-- Optional MCP hub registration is configured with `McpHub` in `Field.Service.json`; MCP URLs are derived from `McpHub:PublicBaseUrl`.
+- Conversion tools are `field_forward_convert_coordinates` and `field_inverse_convert_coordinates`; requests and results are never persisted.
+- Optional MCP hub registration is configured with `McpHub` in `Field_Service_json`; MCP URLs are derived from `McpHub:PublicBaseUrl`.
 
 # Solution architecture
 
@@ -83,7 +83,7 @@ The solution is composed of:
   - *dependencies* = BaseModels
 - **Service**
   - defines the proper microservice API
-  - exposes CRUD controllers for fields, cartographic conversion sets, field feature categories, field membership categories, field identities, and delineation line types
+  - exposes CRUD controllers for Field-owned data and synchronous forward/inverse field coordinate conversion
   - exposes MCP tools for the same endpoint surface and can publish its MCP endpoint to an MCP hub
   - computes delineation boundary lines during Field create/update
   - *dependencies* = Model

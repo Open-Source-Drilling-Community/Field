@@ -1,0 +1,63 @@
+{
+  "generatedUtc": "2026-08-27T00:00:00Z",
+  "sourceBackup": "C:\\OSDC\\Backups\\Field\\20260827T074126Z",
+  "remoteMutationPerformed": false,
+  "verification": {
+    "checkedLiveOn": [
+      "dev.digiwells.no",
+      "app.digiwells.no",
+      "awe.web.intra.norceresearch.no"
+    ],
+    "epsgDatasetVersion": "13.101",
+    "verifiedMappings": [
+      {
+        "legacyId": "acf0f15f-8ed0-4030-ad9c-3e4e8d7cd29b",
+        "newId": "30000000-0000-4000-8000-000000023031",
+        "authority": "EPSG",
+        "code": "23031",
+        "name": "ED50 / UTM zone 31N",
+        "earthGeodesyDatumId": "00000000-0000-4000-8000-000000006230"
+      },
+      {
+        "legacyId": "90a59cb6-ea19-4eef-8aca-69af37c1acee",
+        "newId": "30000000-0000-4000-8000-000000023032",
+        "authority": "EPSG",
+        "code": "23032",
+        "name": "ED50 / UTM zone 32N",
+        "earthGeodesyDatumId": "00000000-0000-4000-8000-000000006230"
+      },
+      {
+        "legacyId": "1dc6d203-a644-4a21-8270-a6a6dcfdf067",
+        "newId": "30000000-0000-4000-8000-000000023034",
+        "authority": "EPSG",
+        "code": "23034",
+        "name": "ED50 / UTM zone 34N",
+        "earthGeodesyDatumId": "00000000-0000-4000-8000-000000006230"
+      },
+      {
+        "legacyId": "dd8424d9-3de8-4047-bd9e-bbbaf1972071",
+        "newId": "30000000-0000-4000-8000-000000032618",
+        "authority": "EPSG",
+        "code": "32618",
+        "name": "WGS 84 / UTM zone 18N",
+        "earthGeodesyDatumId": "00000000-0000-4000-8000-000000006326",
+        "decision": "Assigned by Eric Cayeux on 2026-08-27 for app field aa163bb4-4a52-4382-be09-1b54327e464e (ayombero)."
+      },
+      {
+        "legacyId": "5f2d9883-af55-4fed-871a-8b57d79933d0",
+        "newId": "30000000-0000-4000-8000-000000023031",
+        "authority": "EPSG",
+        "code": "23031",
+        "name": "ED50 / UTM zone 31N",
+        "earthGeodesyDatumId": "00000000-0000-4000-8000-000000006230",
+        "decision": "Assigned by Eric Cayeux on 2026-08-27 for AWE field 087a2779-2692-4ebb-80c6-5b190c8e440c (The field)."
+      }
+    ]
+  },
+  "environmentSummary": [
+    { "environment": "dev.digiwells.no", "fieldCount": 7, "mappedReferences": 1, "unassignedReferences": 6, "unresolvedReferences": 0 },
+    { "environment": "app.digiwells.no", "fieldCount": 135, "mappedReferences": 131, "unassignedReferences": 4, "unresolvedReferences": 0 },
+    { "environment": "awe.web.intra.norceresearch.no", "fieldCount": 2, "mappedReferences": 2, "unassignedReferences": 0, "unresolvedReferences": 0 }
+  ],
+  "unresolved": []
+}

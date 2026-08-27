@@ -3,11 +3,14 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 443
 ENV FIELD_EXTERNAL_CONFIG=/home/Field.Service.json
+ENV FIELD_PROJECTION_MAPPINGS_CONFIG=/home/Field.ProjectionMappings.json
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 WORKDIR /src
 COPY ["Service/Service.csproj", "Service/"]
+COPY ["Model/Model.csproj", "Model/"]
+COPY ["ModelSharedIn/ModelSharedIn.csproj", "ModelSharedIn/"]
 RUN dotnet restore "Service/Service.csproj"
 
 COPY . .

@@ -60,7 +60,7 @@ var ids = await client.GetAllFieldIdAsync();
 var field = await client.GetFieldByIdAsync(fieldId);
 ```
 
-The generated DTOs include types like `Field`, `MetaInfo`, `FieldCartographicConversionSet`, `FieldFeatureCategory`, `FieldMembershipCategory`, `FieldIdentity`, `FieldDelineationLineType`, and the associated Field assignment/delineation DTOs, aligned with the Service controllers.
+The generated DTOs include `Field`, synchronous forward/inverse conversion contracts, managed Field vocabularies, assignments, and delineation DTOs aligned with the Service controllers.
 
 ## Dependencies
 

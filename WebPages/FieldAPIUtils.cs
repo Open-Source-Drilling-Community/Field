@@ -19,9 +19,9 @@ public class FieldAPIUtils : APIUtils, IFieldAPIUtils
         HttpClientTrajectory = SetHttpClient(HostNameTrajectory, HostBasePathTrajectory);
         ClientTrajectory = new FieldModelShared.Client(HttpClientTrajectory.BaseAddress!.ToString(), HttpClientTrajectory);
 
-        HostNameCartographicProjection = Require(configuration.CartographicProjectionHostURL, nameof(configuration.CartographicProjectionHostURL));
-        HttpClientCartographicProjection = SetHttpClient(HostNameCartographicProjection, HostBasePathCartographicProjection);
-        ClientCartographicProjection = new FieldModelShared.Client(HttpClientCartographicProjection.BaseAddress!.ToString(), HttpClientCartographicProjection);
+        HostNameEarthCartographicProjection = Require(configuration.EarthCartographicProjectionHostURL, nameof(configuration.EarthCartographicProjectionHostURL));
+        HttpClientEarthCartographicProjection = SetHttpClient(HostNameEarthCartographicProjection, HostBasePathEarthCartographicProjection);
+        ClientEarthCartographicProjection = new FieldModelShared.Client(HttpClientEarthCartographicProjection.BaseAddress!.ToString(), HttpClientEarthCartographicProjection);
 
         HostNameUnitConversion = Require(configuration.UnitConversionHostURL, nameof(configuration.UnitConversionHostURL));
 
@@ -55,10 +55,10 @@ public class FieldAPIUtils : APIUtils, IFieldAPIUtils
     public HttpClient HttpClientTrajectory { get; }
     public FieldModelShared.Client ClientTrajectory { get; }
 
-    public string HostNameCartographicProjection { get; }
-    public string HostBasePathCartographicProjection { get; } = "CartographicProjection/api/";
-    public HttpClient HttpClientCartographicProjection { get; }
-    public FieldModelShared.Client ClientCartographicProjection { get; }
+    public string HostNameEarthCartographicProjection { get; }
+    public string HostBasePathEarthCartographicProjection { get; } = "EarthCartographicProjection/api/";
+    public HttpClient HttpClientEarthCartographicProjection { get; }
+    public FieldModelShared.Client ClientEarthCartographicProjection { get; }
 
     public string HostNameUnitConversion { get; }
     public string HostBasePathUnitConversion { get; } = "UnitConversion/api/";

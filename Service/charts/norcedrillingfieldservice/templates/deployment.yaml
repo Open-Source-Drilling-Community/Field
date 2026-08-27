@@ -52,10 +52,24 @@ spec:
           volumeMounts:
           - mountPath: /home/
             name: fielddb
+          {{- if .Values.projectionDefinitionIdMappings }}
+          - mountPath: /config/Field.ProjectionMappings.json
+            name: projection-mappings
+            subPath: Field.ProjectionMappings.json
+            readOnly: true
+          env:
+          - name: FIELD_PROJECTION_MAPPINGS_CONFIG
+            value: /config/Field.ProjectionMappings.json
+          {{- end }}
       volumes:
       - name: fielddb
         persistentVolumeClaim:
           claimName: field-claim
+      {{- if .Values.projectionDefinitionIdMappings }}
+      - name: projection-mappings
+        configMap:
+          name: {{ include "norcedrillingfieldservice.fullname" . }}-projection-mappings
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

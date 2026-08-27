@@ -165,7 +165,7 @@ class Program
                             var updater = new OpenApiSchemaReferenceUpdater();
                             updater.MergeSchemasAndUpdateRefs(document, doc, key =>
                             {
-                                return key.Split(".").Last();
+                                return ShortTypeName(key);
                             });
                         }
 
@@ -259,9 +259,17 @@ class Program
     {
         public string Generate(JsonSchema schema, string? typeNameHint, IEnumerable<string> reservedTypeNames)
         {
-            // strip namespaces & nested-class '+' to leave only the short name
-            return typeNameHint?.Split('.', '+').Last() ?? "Anonymous";
+            return typeNameHint == null ? "Anonymous" : ShortTypeName(typeNameHint.Replace('+', '_'));
         }
+    }
+
+    private static string ShortTypeName(string qualifiedName)
+    {
+        // Generic OpenAPI schema names contain more than one namespace-qualified
+        // component, for example CatalogSearchResult_OSDC....ProjectionDefinition.
+        // Strip each component independently so the wrapper is not collapsed into
+        // (and confused with) its item type.
+        return string.Join("_", qualifiedName.Split('_').Select(component => component.Split('.').Last()));
     }
 
     static void PrettyPrint(string header, string message, string exception = "")

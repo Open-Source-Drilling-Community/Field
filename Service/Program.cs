@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +11,6 @@ using NORCE.Drilling.Field.Service;
 using NORCE.Drilling.Field.Service.Managers;
 using NORCE.Drilling.Field.Service.Mcp;
 using NORCE.Drilling.Field.Service.Mcp.Tools;
-using System;
 using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,11 +19,16 @@ string externalConfigPath = builder.Configuration["FIELD_EXTERNAL_CONFIG"]
     ?? Path.Combine(SqlConnectionManager.HOME_DIRECTORY, "Field.Service.json");
 builder.Configuration.AddJsonFile(externalConfigPath, optional: true, reloadOnChange: true);
 
+string projectionMappingsConfigPath = builder.Configuration["FIELD_PROJECTION_MAPPINGS_CONFIG"]
+    ?? Path.Combine(SqlConnectionManager.HOME_DIRECTORY, "Field.ProjectionMappings.json");
+builder.Configuration.AddJsonFile(projectionMappingsConfigPath, optional: true, reloadOnChange: false);
+
 // registering the manager of SQLite connections through dependency injection
 builder.Services.AddSingleton(sp =>
     new SqlConnectionManager(
         $"Data Source={SqlConnectionManager.HOME_DIRECTORY}{SqlConnectionManager.DATABASE_FILENAME}",
-        sp.GetRequiredService<ILogger<SqlConnectionManager>>()));
+        sp.GetRequiredService<ILogger<SqlConnectionManager>>(),
+        ParseProjectionMappings(sp.GetRequiredService<IConfiguration>())));
 
 
 // serialization settings (using System.Json)
@@ -41,6 +47,9 @@ builder.Services.AddSwaggerGen(config =>
 builder.Services.Configure<McpHubOptions>(builder.Configuration.GetSection(McpHubOptions.SectionName));
 builder.Services.AddHttpClient(nameof(McpHubRegistrationService));
 builder.Services.AddHostedService<McpHubRegistrationService>();
+builder.Services.AddHttpClient<IEarthCartographicProjectionClient, EarthCartographicProjectionClient>();
+builder.Services.AddHttpClient<IEarthGeodesyClient, EarthGeodesyClient>();
+builder.Services.AddScoped<FieldCoordinateConversionService>();
 
 // MCP server registrations
 var serverVersion = typeof(SqlConnectionManager).Assembly.GetName().Version?.ToString() ?? "1.0.0";
@@ -66,8 +75,6 @@ builder.Services.AddFieldRestMcpTools();
 var app = builder.Build();
 
 var basePath = "/field/api";
-var scheme = "http";
-
 app.UsePathBase(basePath);
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -91,9 +98,6 @@ app.Use(async (context, next) =>
 
     await next();
 });
-
-if (!String.IsNullOrEmpty(builder.Configuration["CartographicProjectionHostURL"]))
-    Configuration.CartographicProjectionHostURL = builder.Configuration["CartographicProjectionHostURL"];
 
 if (builder.Environment.IsDevelopment())
 {
@@ -134,3 +138,16 @@ app.MapControllers();
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+static IReadOnlyDictionary<Guid, Guid> ParseProjectionMappings(IConfiguration configuration)
+{
+    Dictionary<Guid, Guid> result = [];
+    foreach (IConfigurationSection entry in configuration.GetSection("ProjectionDefinitionIdMappings").GetChildren())
+    {
+        if (!Guid.TryParse(entry.Key, out Guid legacyId) || legacyId == Guid.Empty ||
+            !Guid.TryParse(entry.Value, out Guid replacementId) || replacementId == Guid.Empty)
+            throw new InvalidOperationException($"ProjectionDefinitionIdMappings entry '{entry.Key}' must map one non-empty UUID to another.");
+        result.Add(legacyId, replacementId);
+    }
+    return result;
+}
