@@ -35,12 +35,17 @@
                         <MudText Typo="Typo.body2">All wellbore trajectories for the selected field, shown in 3D and as a horizontal projection.</MudText>
                     </MudItem>
                     <MudItem xs="12" sm="8" md="4">
-                        <MudSelect Label="Field" T="Guid?" Value="@selectedFieldId" ValueChanged="OnFieldChanged" ShrinkLabel Clearable="true">
-                            @foreach (FieldModelShared.Field field in AvailableFields)
-                            {
-                                <MudSelectItem T="Guid?" Value="@((Guid?)field.MetaInfo.ID)">@field.Name</MudSelectItem>
-                            }
-                        </MudSelect>
+                        <MudAutocomplete Label="Field"
+                                         T="Guid?"
+                                         Value="@selectedFieldId"
+                                         ValueChanged="OnFieldChanged"
+                                         SearchFunc="SearchFieldsAsync"
+                                         ToStringFunc="GetFieldName"
+                                         Clearable="true"
+                                         ResetValueOnEmptyText="true"
+                                         CoerceText="false"
+                                         MinCharacters="0"
+                                         ShrinkLabel />
                     </MudItem>
                     <MudItem xs="12" sm="4" md="2">
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="ReloadSelectedFieldAsync" Disabled="@(selectedFieldId == null)">Reload</MudButton>
@@ -166,7 +171,10 @@
                                          YAxisUsesPositionReference="true"
                                          XAxisPositionDirection="@PositionDirectionType.East"
                                          YAxisPositionDirection="@PositionDirectionType.North"
-                                         ShowLegends="@PlotHorizontalShowLegends" />
+                                         ShowLegends="@PlotHorizontalShowLegends"
+                                         LegendLinkedTraceIds="@PlotHorizontalLegendLinkedTraceIds"
+                                         LegendControlsLinkedTraces="@PlotHorizontalLegendControlsLinkedTraces"
+                                         LegendTraceKinds="@PlotHorizontalLegendTraceKinds" />
                         </MudPaper>
                     </MudItem>
                 </MudGrid>
@@ -303,6 +311,9 @@
     private List<string> PlotHorizontalColors => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.Color).ToList();
     private List<bool> PlotHorizontalShowLegends => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.ShowLegend).ToList();
     private List<string> PlotHorizontalLineDashes => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.LineDash).ToList();
+    private List<string?> PlotHorizontalLegendLinkedTraceIds => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.TrajectoryId?.ToString("D")).ToList();
+    private List<bool> PlotHorizontalLegendControlsLinkedTraces => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.ShowLegend && trace.TrajectoryId != null && trace.LegendTraceKind != PlotTraceKindOther).ToList();
+    private List<string> PlotHorizontalLegendTraceKinds => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.LegendTraceKind).ToList();
     private List<List<object>> PlotHorizontalNorthValuesList => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.NorthValues).ToList();
     private List<List<object>> PlotHorizontalEastValuesList => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.EastValues).ToList();
     private string SelectedTrajectoryText => string.Join(" -> ", selectedTrajectoryIds.Select(id => FindTrajectoryName(id)));
@@ -363,6 +374,34 @@
             .Where(field => field?.MetaInfo != null)
             .OrderBy(field => field.Name)
             .ToList() ?? [];
+
+    private Task<IEnumerable<Guid?>> SearchFieldsAsync(string? value, CancellationToken cancellationToken)
+    {
+        IEnumerable<FieldModelShared.Field> fields = AvailableFields;
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            fields = fields.Where(field =>
+                GetFieldDisplayName(field).StartsWith(value, StringComparison.OrdinalIgnoreCase) ||
+                field.MetaInfo.ID.ToString("D").Contains(value, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return Task.FromResult(fields.Select(field => (Guid?)field.MetaInfo.ID));
+    }
+
+    private string GetFieldName(Guid? fieldId)
+    {
+        if (fieldId is not Guid id)
+        {
+            return string.Empty;
+        }
+
+        return fieldList?
+            .FirstOrDefault(field => field?.MetaInfo?.ID == id)
+            ?.Name ?? id.ToString("D");
+    }
+
+    private static string GetFieldDisplayName(FieldModelShared.Field field) =>
+        string.IsNullOrWhiteSpace(field.Name) ? field.MetaInfo.ID.ToString("D") : field.Name;
 
     private async Task OnFieldChanged(Guid? fieldId)
     {
