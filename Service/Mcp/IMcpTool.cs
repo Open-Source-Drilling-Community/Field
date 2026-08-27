@@ -2,7 +2,7 @@ using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NORCE.Drilling.Field.Service.Mcp;
+namespace OSDC.Drilling.Field.Service.Mcp;
 
 public interface IMcpTool
 {

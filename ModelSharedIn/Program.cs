@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 using Microsoft.OpenApi;
 using NJsonSchema;
@@ -41,7 +41,7 @@ class Program
     private static readonly string CSHARP_MODEL = "MergedModel.cs";
 
     // ### BEGIN CODE SPECIFIC TO ModelSharedIn 3/3 ###
-    private static readonly string NAMESPACE = "NORCE.Drilling.Field.ModelShared"; // should be the same as for ModelSharedIn to avoid type name collision
+    private static readonly string NAMESPACE = "OSDC.Drilling.Field.ModelShared"; // should be the same as for ModelSharedIn to avoid type name collision
     private static readonly string SHARED_FOLDER = "ModelSharedIn";
     // ### END CODE SPECIFIC TO ModelSharedIn 3/3 ###
 

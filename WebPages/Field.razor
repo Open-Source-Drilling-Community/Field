@@ -11,7 +11,7 @@
 else
 {
     <div hidden="@isHiddenMainPanel">
-        <MudDataGrid T="NORCE.Drilling.Field.ModelShared.Field" @key="_gridKey"
+        <MudDataGrid T="OSDC.Drilling.Field.ModelShared.Field" @key="_gridKey"
                      MultiSelection="true" Items="@fieldList" SelectedItemsChanged="@SelectedItemsChanged"
                      EditMode="DataGridEditMode.Form"
                      Hover="true"  RowClick="@RowClicked"
@@ -27,7 +27,7 @@ else
                               AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
             </ToolBarContent>
             <Columns>
-                <SelectColumn T="NORCE.Drilling.Field.ModelShared.Field" />
+                <SelectColumn T="OSDC.Drilling.Field.ModelShared.Field" />
                 <PropertyColumn Property="x => x.Name" Title="@DataUtils.FieldNameLabel" CellStyle="width: 30%;" Sortable="true" Editable="false" />
                 <PropertyColumn Property="x => x.Description" Title="@DataUtils.FieldDescrLabel" CellStyle="width: 60%;" Sortable="true" Editable="false" />
                 <TemplateColumn CellClass="d-flex justify-end">
@@ -37,7 +37,7 @@ else
                 </TemplateColumn>
             </Columns>
             <PagerContent>
-                <MudDataGridPager T="NORCE.Drilling.Field.ModelShared.Field" />
+                <MudDataGridPager T="OSDC.Drilling.Field.ModelShared.Field" />
             </PagerContent>
         </MudDataGrid>
     </div>
@@ -48,11 +48,11 @@ else
 }
 
 @code {
-    private List<NORCE.Drilling.Field.ModelShared.Field> fieldList = new();
-    private List<NORCE.Drilling.Field.ModelShared.Field> selectedFieldList = new();
+    private List<OSDC.Drilling.Field.ModelShared.Field> fieldList = new();
+    private List<OSDC.Drilling.Field.ModelShared.Field> selectedFieldList = new();
     private List<ProjectionDefinitionSummary> cartographicProjectionList = new();
     private List<FieldType> fieldTypeList = new();
-    private NORCE.Drilling.Field.ModelShared.Field? currentField;
+    private OSDC.Drilling.Field.ModelShared.Field? currentField;
     // UI related variables
     public bool isHiddenMainPanel;
     public bool isHiddenEditPanel;
@@ -72,7 +72,7 @@ else
             isHiddenMainPanel = false;
             isHiddenEditPanel = true;
             currentField = null;
-            selectedFieldList = new List<NORCE.Drilling.Field.ModelShared.Field>();
+            selectedFieldList = new List<OSDC.Drilling.Field.ModelShared.Field>();
 
             // Starting all loading tasks asynchronously
             logger.LogInformation("Trying to load list of Fields from client: " + Api.HostNameField);
@@ -89,7 +89,7 @@ else
                 {
                     try
                     {
-                        fieldList = (List<NORCE.Drilling.Field.ModelShared.Field>)await fieldTask; // awaiting the finished task allows to retrieve its result and throw exception if needed
+                        fieldList = (List<OSDC.Drilling.Field.ModelShared.Field>)await fieldTask; // awaiting the finished task allows to retrieve its result and throw exception if needed
                         if (fieldList != null)
                         {
                             fieldList.Sort((t1, t2) => t1.Name.CompareTo(t2.Name));
@@ -142,7 +142,7 @@ else
         {
             MetaInfo metaInfo = new() { ID = Guid.NewGuid(), HttpHostName = Api.HostNameField, HttpHostBasePath = Api.HostBasePathField, HttpEndPoint = "Field/" };
             DateTimeOffset creationDate = DateTimeOffset.UtcNow;
-            NORCE.Drilling.Field.ModelShared.Field currentField = new()
+            OSDC.Drilling.Field.ModelShared.Field currentField = new()
             {
                 MetaInfo = metaInfo,
                 Name = DataUtils.DEFAULT_NAME_Field,
@@ -161,7 +161,7 @@ else
             {
                 logger.LogInformation("Field posted successfully");
                 Snackbar.Add("Field posted successfully", Severity.Success);
-                await RowClicked(new DataGridRowClickEventArgs<NORCE.Drilling.Field.ModelShared.Field>(new MouseEventArgs(), addedField, -1));
+                await RowClicked(new DataGridRowClickEventArgs<OSDC.Drilling.Field.ModelShared.Field>(new MouseEventArgs(), addedField, -1));
             }
             else
             {
@@ -177,7 +177,7 @@ else
         }
     }
 
-    private async Task RowClicked(DataGridRowClickEventArgs<NORCE.Drilling.Field.ModelShared.Field> args)
+    private async Task RowClicked(DataGridRowClickEventArgs<OSDC.Drilling.Field.ModelShared.Field> args)
     {
         await EditField(args.Item.MetaInfo.ID);
     }
@@ -206,7 +206,7 @@ else
         }
     }
 
-    private async Task DeleteField(NORCE.Drilling.Field.ModelShared.Field field)
+    private async Task DeleteField(OSDC.Drilling.Field.ModelShared.Field field)
     {
         if (field?.MetaInfo?.ID is not Guid id || id == Guid.Empty)
         {
@@ -252,7 +252,7 @@ else
 
             if (confirmed)
             {
-                foreach (NORCE.Drilling.Field.ModelShared.Field field in toDelete)
+                foreach (OSDC.Drilling.Field.ModelShared.Field field in toDelete)
                 {
                     await Api.ClientField.DeleteFieldByIdAsync(field.MetaInfo.ID);
                 }
@@ -282,7 +282,7 @@ else
         return result != null && !result.Canceled;
     }
 
-    private static string GetFieldDisplayName(NORCE.Drilling.Field.ModelShared.Field field)
+    private static string GetFieldDisplayName(OSDC.Drilling.Field.ModelShared.Field field)
     {
         if (!string.IsNullOrWhiteSpace(field?.Name))
         {
@@ -295,7 +295,7 @@ else
     }
 
     //Quick filter - filter gobally across multiple columns with the same input
-    private Func<NORCE.Drilling.Field.ModelShared.Field, bool>
+    private Func<OSDC.Drilling.Field.ModelShared.Field, bool>
     _fieldFilter => x =>
     {
         if (string.IsNullOrWhiteSpace(_searchString))
@@ -322,7 +322,7 @@ else
         //Activating Commit event capture with parameter CommittedItemChanges = "@CommittedItemChanges" in MudDataGrid; arguments are specified in OnClick="@context.Actions.CommittedEditingItem(...)"
     }
 
-    void SelectedItemsChanged(HashSet<NORCE.Drilling.Field.ModelShared.Field>
+    void SelectedItemsChanged(HashSet<OSDC.Drilling.Field.ModelShared.Field>
         items)
     {
         selectedFieldList = items.ToList();

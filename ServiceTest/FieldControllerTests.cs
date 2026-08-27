@@ -1,7 +1,8 @@
 using System.Net.Http.Headers;
-using NORCE.Drilling.Field.ModelShared;
+using OSDC.Drilling.Field.ModelShared;
+using FieldModel = OSDC.Drilling.Field.ModelShared.Field;
 
-namespace ServiceTest
+namespace OSDC.Drilling.Field.ServiceTest
 {
     public class FieldControllerTests
     {
@@ -32,7 +33,7 @@ namespace ServiceTest
             Guid fieldId = Guid.NewGuid();
             DateTimeOffset now = DateTimeOffset.UtcNow;
 
-            var field = new Field
+            var field = new FieldModel
             {
                 MetaInfo = new MetaInfo { ID = fieldId },
                 Name = "Test Field",
@@ -71,7 +72,7 @@ namespace ServiceTest
             {
                 // Delete and verify 404
                 await api.DeleteFieldByIdAsync(fieldId);
-                Field? shouldBeNull = null;
+                FieldModel? shouldBeNull = null;
                 try
                 {
                     shouldBeNull = await api.GetFieldByIdAsync(fieldId);
@@ -87,7 +88,7 @@ namespace ServiceTest
         [Test]
         public async Task Field_POST_EmptyId_Returns_BadRequest()
         {
-            var invalid = new Field
+            var invalid = new FieldModel
             {
                 MetaInfo = new MetaInfo { ID = Guid.Empty },
                 Name = "Invalid Field",
@@ -110,7 +111,7 @@ namespace ServiceTest
         public async Task Field_POST_Duplicate_Returns_Conflict()
         {
             var id = Guid.NewGuid();
-            var field = new Field
+            var field = new FieldModel
             {
                 MetaInfo = new MetaInfo { ID = id },
                 Name = "Duplicate Field",

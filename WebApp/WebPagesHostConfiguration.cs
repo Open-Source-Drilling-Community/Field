@@ -1,7 +1,7 @@
-using NORCE.Drilling.Field.WebPages;
+using OSDC.Drilling.Field.WebPages;
 using OSDC.DotnetLibraries.Drilling.WebAppUtils;
 
-namespace NORCE.Drilling.Field.WebApp;
+namespace OSDC.Drilling.Field.WebApp;
 
 public class WebPagesHostConfiguration :
     IFieldWebPagesConfiguration,

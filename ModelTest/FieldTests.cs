@@ -1,11 +1,11 @@
 using System;
 using System.Text.Json;
 using NUnit.Framework;
-using NORCE.Drilling.Field.Model;
+using OSDC.Drilling.Field.Model;
 using OSDC.DotnetLibraries.General.Common;
 using OSDC.DotnetLibraries.General.Math;
 
-namespace NORCE.Drilling.Field.ModelTest;
+namespace OSDC.Drilling.Field.ModelTest;
 
 public class FieldTests
 {

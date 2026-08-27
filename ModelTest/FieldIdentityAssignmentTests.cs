@@ -1,9 +1,9 @@
 using System;
 using System.Text.Json;
 using NUnit.Framework;
-using NORCE.Drilling.Field.Model;
+using OSDC.Drilling.Field.Model;
 
-namespace NORCE.Drilling.Field.ModelTest;
+namespace OSDC.Drilling.Field.ModelTest;
 
 public class FieldIdentityAssignmentTests
 {

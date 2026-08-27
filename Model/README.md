@@ -18,7 +18,7 @@ The Model project contains the domain types and supporting utilities for the Fie
 - FieldForwardConversionRequest, FieldInverseConversionRequest and FieldCoordinateConversionResponse are ordered, atomic synchronous contracts that are never persisted.
 - UsageStatisticsField: Aggregates per-day REST counters with periodic JSON backup to `../home/history.json`.
 
-Namespaces: All types live under `NORCE.Drilling.Field.Model`.
+Namespaces: All types live under `OSDC.Drilling.Field.Model`.
 
 ## Delineation Line Margins
 
@@ -67,7 +67,7 @@ See `Model/Model.csproj` for exact versions.
 Create and POST a Field through the Service API (shape of the payload comes from this project):
 
 ```csharp
-using NORCE.Drilling.Field.ModelShared; // NSwag client/DTOs
+using OSDC.Drilling.Field.ModelShared; // NSwag client/DTOs
 
 var baseUrl = "https://localhost:5001/Field/api/";
 var http = new HttpClient(new HttpClientHandler { ServerCertificateCustomValidationCallback = (_,_,_,_) => true })

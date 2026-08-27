@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.Data.Sqlite;
 
-namespace NORCE.Drilling.Field.Service.Managers;
+namespace OSDC.Drilling.Field.Service.Managers;
 
 public sealed record FieldProjectionMigrationChange(
     Guid FieldID,

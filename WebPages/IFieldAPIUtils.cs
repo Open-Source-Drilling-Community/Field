@@ -1,6 +1,6 @@
-using FieldModelShared = NORCE.Drilling.Field.ModelShared;
+using FieldModelShared = OSDC.Drilling.Field.ModelShared;
 
-namespace NORCE.Drilling.Field.WebPages;
+namespace OSDC.Drilling.Field.WebPages;
 
 public interface IFieldAPIUtils
 {

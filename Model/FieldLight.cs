@@ -1,7 +1,7 @@
 using OSDC.DotnetLibraries.General.DataManagement;
 using System;
 
-namespace NORCE.Drilling.Field.Model
+namespace OSDC.Drilling.Field.Model
 {
     /// <summary>
     /// Light weight version of a Field.

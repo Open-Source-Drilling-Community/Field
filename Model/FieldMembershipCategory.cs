@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NORCE.Drilling.Field.Model
+namespace OSDC.Drilling.Field.Model
 {
     public class FieldMembershipCategory : IMembershipCategory
     {

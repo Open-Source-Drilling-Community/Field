@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
-namespace NORCE.Drilling.Field.Model
+namespace OSDC.Drilling.Field.Model
 {
     public struct CountPerDay
     {

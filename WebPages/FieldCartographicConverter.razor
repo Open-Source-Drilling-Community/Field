@@ -64,9 +64,9 @@
 </MudUnitAndReferenceChoiceTag>
 
 @code {
-    private List<NORCE.Drilling.Field.ModelShared.Field>? _fields;
-    private NORCE.Drilling.Field.ModelShared.Field? _forwardField;
-    private NORCE.Drilling.Field.ModelShared.Field? _inverseField;
+    private List<OSDC.Drilling.Field.ModelShared.Field>? _fields;
+    private OSDC.Drilling.Field.ModelShared.Field? _forwardField;
+    private OSDC.Drilling.Field.ModelShared.Field? _inverseField;
     private FieldGeographicReference _forwardReference = FieldGeographicReference.ProjectionDatum;
     private double? _forwardLatitude, _forwardLongitude, _forwardDepth;
     private double? _inverseEasting, _inverseNorthing, _inverseDepth;
@@ -157,9 +157,9 @@
         finally { _busy = false; }
     }
 
-    private RenderFragment FieldSelector(bool forward) => @<MudSelect T="NORCE.Drilling.Field.ModelShared.Field" Label="Field and projection"
-        Value="@(forward ? _forwardField : _inverseField)" ValueChanged="@((NORCE.Drilling.Field.ModelShared.Field value) => { if (forward) _forwardField = value; else _inverseField = value; })" ToStringFunc="@(value => value?.Name)">
-        @foreach (var item in _fields ?? []) { <MudSelectItem T="NORCE.Drilling.Field.ModelShared.Field" Value="@item">@item.Name</MudSelectItem> }
+    private RenderFragment FieldSelector(bool forward) => @<MudSelect T="OSDC.Drilling.Field.ModelShared.Field" Label="Field and projection"
+        Value="@(forward ? _forwardField : _inverseField)" ValueChanged="@((OSDC.Drilling.Field.ModelShared.Field value) => { if (forward) _forwardField = value; else _inverseField = value; })" ToStringFunc="@(value => value?.Name)">
+        @foreach (var item in _fields ?? []) { <MudSelectItem T="OSDC.Drilling.Field.ModelShared.Field" Value="@item">@item.Name</MudSelectItem> }
     </MudSelect>;
 
     private RenderFragment GeographicOutput(string title, FieldGeographicCoordinate? coordinate, double? depth) => @<div class="mt-4">

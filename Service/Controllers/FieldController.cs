@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OSDC.DotnetLibraries.General.DataManagement;
-using NORCE.Drilling.Field.Service.Managers;
-using NORCE.Drilling.Field.Model;
+using OSDC.Drilling.Field.Service.Managers;
+using OSDC.Drilling.Field.Model;
 
-namespace NORCE.Drilling.Field.Service.Controllers
+namespace OSDC.Drilling.Field.Service.Controllers
 {
     [Produces("application/json")]
     [Route("[controller]")]

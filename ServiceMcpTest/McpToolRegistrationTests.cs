@@ -1,10 +1,10 @@
 using System.Text.Json.Nodes;
 using Microsoft.Extensions.DependencyInjection;
-using NORCE.Drilling.Field.Service.Mcp;
-using NORCE.Drilling.Field.Service.Mcp.Tools;
+using OSDC.Drilling.Field.Service.Mcp;
+using OSDC.Drilling.Field.Service.Mcp.Tools;
 using NUnit.Framework;
 
-namespace NORCE.Drilling.Field.ServiceMcpTest;
+namespace OSDC.Drilling.Field.ServiceMcpTest;
 
 [TestFixture]
 public sealed class McpToolRegistrationTests

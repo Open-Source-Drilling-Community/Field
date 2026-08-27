@@ -93,7 +93,7 @@ Runtime and packages:
 
 - ASP.NET Core Blazor Server, .NET 8
 - MudBlazor
-- `NORCE.Drilling.Field.WebPages`
+- `OSDC.Drilling.Field.WebPages`
 - `NORCE.Drilling.GeodeticDatum.WebPages`
 - `NORCE.Drilling.VerticalDatum.WebPage`
 - `OSDC.DotnetLibraries.General.DataManagement`

@@ -6,7 +6,7 @@ ModelSharedIn manages the shared input data model that the Field solution depend
 
 - Collect and version the OpenAPI schemas of dependent microservices (as JSON files in `json-schemas/`).
 - Merge those schemas into a single OpenAPI document (`MergedModel.json`).
-- Generate a strongly-typed C# client and DTOs (`MergedModel.cs`) under the namespace `NORCE.Drilling.Field.ModelShared` for consumption by other projects.
+- Generate a strongly-typed C# client and DTOs (`MergedModel.cs`) under the namespace `OSDC.Drilling.Field.ModelShared` for consumption by other projects.
 
 This implements a “distributed shared model” pattern: each microservice owns the subset of external types it needs, generated directly from the source OpenAPI specs.
 
@@ -15,7 +15,7 @@ This implements a “distributed shared model” pattern: each microservice owns
 - The console program (`Program.cs`) scans `json-schemas/*.json` for dependency schemas, merges paths and schemas, normalizes schema names (short type names), and writes:
   - `MergedModel.json`: merged OpenAPI (for inspection/verification)
   - `MergedModel.cs`: NSwag-generated C# client and DTOs
-- The generated types live in `NORCE.Drilling.Field.ModelShared`, aligning with consumers like `Service`, `WebApp`, and `ServiceTest`.
+- The generated types live in `OSDC.Drilling.Field.ModelShared`, aligning with consumers like `Service`, `WebApp`, and `ServiceTest`.
 
 ## Installation and Generation
 
@@ -46,7 +46,7 @@ Outputs:
 
 Using the generated DTOs in code:
 ```csharp
-using NORCE.Drilling.Field.ModelShared;
+using OSDC.Drilling.Field.ModelShared;
 
 var projectionRequest = new ForwardProjectionRequest();
 var datumRequest = new TransformCoordinatesRequest();
@@ -54,7 +54,7 @@ var datumRequest = new TransformCoordinatesRequest();
 
 Using the generated client against a base URL:
 ```csharp
-using NORCE.Drilling.Field.ModelShared;
+using OSDC.Drilling.Field.ModelShared;
 
 var baseUrl = "https://localhost:5001/Field/api/";
 using var http = new HttpClient(new HttpClientHandler { ServerCertificateCustomValidationCallback = (_,_,_,_) => true })
@@ -75,7 +75,7 @@ NuGet packages (see `ModelSharedIn.csproj`):
 ## Integration in the Solution
 
 - Service: Uses the pinned EarthCartographicProjection and EarthGeodesy clients and DTOs to orchestrate field-level conversion.
-- Service and WebApp: Use types under `NORCE.Drilling.Field.ModelShared` to communicate and to construct payloads consistent with the OpenAPI contracts.
+- Service and WebApp: Use types under `OSDC.Drilling.Field.ModelShared` to communicate and to construct payloads consistent with the OpenAPI contracts.
 - ServiceTest: Uses the NSwag `Client` and DTOs from the same namespace to perform end-to-end API tests.
 
 ## Tips

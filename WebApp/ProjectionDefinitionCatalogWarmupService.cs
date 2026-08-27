@@ -1,7 +1,7 @@
-using NORCE.Drilling.Field.WebPages;
-using FieldModelShared = NORCE.Drilling.Field.ModelShared;
+using OSDC.Drilling.Field.WebPages;
+using FieldModelShared = OSDC.Drilling.Field.ModelShared;
 
-namespace NORCE.Drilling.Field.WebApp;
+namespace OSDC.Drilling.Field.WebApp;
 
 /// <summary>
 /// Warms the shared projection-summary cache without delaying WebApp readiness.

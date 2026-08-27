@@ -3,7 +3,7 @@ using OSDC.DotnetLibraries.General.Math;
 using System;
 using System.Collections.Generic;
 
-namespace NORCE.Drilling.Field.Model
+namespace OSDC.Drilling.Field.Model
 {
     public class Field
     {

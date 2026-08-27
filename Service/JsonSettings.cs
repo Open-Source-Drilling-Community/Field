@@ -1,9 +1,9 @@
-﻿using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace NORCE.Drilling.Field.Service
+namespace OSDC.Drilling.Field.Service
 {
     public static class JsonSettings
     {

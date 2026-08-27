@@ -5,7 +5,7 @@
 @inject IJSRuntime JSRuntime
 @using System.Net.Http.Json
 @using MathPoint3DGlobalCoordinates = OSDC.DotnetLibraries.General.Math.Point3DGlobalCoordinates
-@using DtoPoint3DGlobalCoordinates = NORCE.Drilling.Field.ModelShared.Point3DGlobalCoordinates
+@using DtoPoint3DGlobalCoordinates = OSDC.Drilling.Field.ModelShared.Point3DGlobalCoordinates
 
 <MudUnitAndReferenceChoiceTag HttpHost="@Api.HostNameUnitConversion"
                               HttpBasePath="@Api.HostBasePathUnitConversion"
@@ -239,7 +239,7 @@
 </MudUnitAndReferenceChoiceTag>
 @code {
     [Parameter]
-    public NORCE.Drilling.Field.ModelShared.Field? CurrentField { get; set; }
+    public OSDC.Drilling.Field.ModelShared.Field? CurrentField { get; set; }
 
     [Parameter]
     public List<ProjectionDefinitionSummary>? CartographicProjections { get; set; }
@@ -412,7 +412,7 @@
                     return;
                 }
 
-                NORCE.Drilling.Field.ModelShared.Field field = BuildEditedField(DateTimeOffset.UtcNow);
+                OSDC.Drilling.Field.ModelShared.Field field = BuildEditedField(DateTimeOffset.UtcNow);
                 await Api.ClientField.PutFieldByIdAsync(CurrentField.MetaInfo.ID, field);
                 CurrentField = await Api.ClientField.GetFieldByIdAsync(CurrentField.MetaInfo.ID);
                 _fieldFeatureAssignments = CloneFeatureAssignments(CurrentField.FieldFeatureAssignments);
@@ -449,7 +449,7 @@
             return;
         }
 
-        NORCE.Drilling.Field.ModelShared.Field field = BuildEditedField(CurrentField.LastModificationDate);
+        OSDC.Drilling.Field.ModelShared.Field field = BuildEditedField(CurrentField.LastModificationDate);
         await DownloadJsonAsync(field, SanitizeFileName($"{_name ?? "field"}.json"));
         Snackbar.Add("Exported field", Severity.Success);
     }
@@ -465,7 +465,7 @@
         try
         {
             using System.IO.Stream stream = args.File.OpenReadStream(128 * 1024 * 1024);
-            NORCE.Drilling.Field.ModelShared.Field? imported = await System.Text.Json.JsonSerializer.DeserializeAsync<NORCE.Drilling.Field.ModelShared.Field>(
+            OSDC.Drilling.Field.ModelShared.Field? imported = await System.Text.Json.JsonSerializer.DeserializeAsync<OSDC.Drilling.Field.ModelShared.Field>(
                 stream,
                 new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             if (imported == null)
@@ -593,7 +593,7 @@
         }
     }
 
-    private NORCE.Drilling.Field.ModelShared.Field BuildEditedField(DateTimeOffset? lastModificationDate)
+    private OSDC.Drilling.Field.ModelShared.Field BuildEditedField(DateTimeOffset? lastModificationDate)
     {
         Guid cartographicProjectionID = Guid.Empty;
         if (_cartographicProjection != null && _cartographicProjection.Id != Guid.Empty)
@@ -601,7 +601,7 @@
             cartographicProjectionID = _cartographicProjection.Id;
         }
 
-        return new NORCE.Drilling.Field.ModelShared.Field
+        return new OSDC.Drilling.Field.ModelShared.Field
         {
             MetaInfo = CurrentField?.MetaInfo,
             Name = _name,
@@ -617,7 +617,7 @@
         };
     }
 
-    private void ApplyImportedField(NORCE.Drilling.Field.ModelShared.Field imported)
+    private void ApplyImportedField(OSDC.Drilling.Field.ModelShared.Field imported)
     {
         _name = imported.Name;
         _descr = imported.Description;

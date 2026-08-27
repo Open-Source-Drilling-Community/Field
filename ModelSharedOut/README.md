@@ -5,7 +5,7 @@ ModelSharedOut generates and maintains the OpenAPI client + DTOs for the Field m
 ## Purpose
 
 - Merge OpenAPI schemas from this solution into a single document (`FieldMergedModel.json`).
-- Generate a strongly-typed C# client and DTOs (`FieldMergedModel.cs`) in namespace `NORCE.Drilling.Field.ModelShared` for consumers like WebApp and ServiceTest.
+- Generate a strongly-typed C# client and DTOs (`FieldMergedModel.cs`) in namespace `OSDC.Drilling.Field.ModelShared` for consumers like WebApp and ServiceTest.
 - Copy the merged OpenAPI document into the Service so it can be served by Swagger UI.
 
 ## How It Works
@@ -14,7 +14,7 @@ ModelSharedOut generates and maintains the OpenAPI client + DTOs for the Field m
 - `Program.cs`:
   - Reads the JSON inputs, merges Paths and Schemas, normalizes schema names to short names.
   - Writes the merged OpenAPI to `Service/wwwroot/json-schema/FieldMergedModel.json`.
-  - Uses NSwag to generate `ModelSharedOut/FieldMergedModel.cs` client + DTOs in `NORCE.Drilling.Field.ModelShared`.
+  - Uses NSwag to generate `ModelSharedOut/FieldMergedModel.cs` client + DTOs in `OSDC.Drilling.Field.ModelShared`.
 
 ## Generate Client and OpenAPI
 
@@ -44,7 +44,7 @@ dotnet run --project ModelSharedOut
 
 Create the NSwag client and call the Service:
 ```csharp
-using NORCE.Drilling.Field.ModelShared;
+using OSDC.Drilling.Field.ModelShared;
 
 var baseUrl = "https://localhost:5001/Field/api/";
 var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = (_,_,_,_) => true };

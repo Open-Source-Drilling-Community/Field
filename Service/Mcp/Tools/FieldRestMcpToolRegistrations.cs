@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NORCE.Drilling.Field.Service.Controllers;
-using NORCE.Drilling.Field.Service.Managers;
-using FieldModel = NORCE.Drilling.Field.Model.Field;
-using FieldForwardConversionRequestModel = NORCE.Drilling.Field.Model.FieldForwardConversionRequest;
-using FieldInverseConversionRequestModel = NORCE.Drilling.Field.Model.FieldInverseConversionRequest;
-using FieldDelineationLineTypeModel = NORCE.Drilling.Field.Model.FieldDelineationLineType;
-using FieldFeatureCategoryModel = NORCE.Drilling.Field.Model.FieldFeatureCategory;
-using FieldIdentityModel = NORCE.Drilling.Field.Model.FieldIdentity;
-using FieldMembershipCategoryModel = NORCE.Drilling.Field.Model.FieldMembershipCategory;
+using OSDC.Drilling.Field.Service.Controllers;
+using OSDC.Drilling.Field.Service.Managers;
+using FieldModel = OSDC.Drilling.Field.Model.Field;
+using FieldForwardConversionRequestModel = OSDC.Drilling.Field.Model.FieldForwardConversionRequest;
+using FieldInverseConversionRequestModel = OSDC.Drilling.Field.Model.FieldInverseConversionRequest;
+using FieldDelineationLineTypeModel = OSDC.Drilling.Field.Model.FieldDelineationLineType;
+using FieldFeatureCategoryModel = OSDC.Drilling.Field.Model.FieldFeatureCategory;
+using FieldIdentityModel = OSDC.Drilling.Field.Model.FieldIdentity;
+using FieldMembershipCategoryModel = OSDC.Drilling.Field.Model.FieldMembershipCategory;
 
-namespace NORCE.Drilling.Field.Service.Mcp.Tools;
+namespace OSDC.Drilling.Field.Service.Mcp.Tools;
 
 public static class FieldRestMcpToolRegistrations
 {
@@ -257,7 +257,7 @@ public static class FieldRestMcpToolRegistrations
     private static async Task<JsonNode?> InvokeForwardConversion(IServiceProvider serviceProvider, JsonObject? arguments, CancellationToken cancellationToken)
     {
         if (!TryDeserializeDirect(arguments, out FieldForwardConversionRequestModel? request, out JsonNode? error)) return error;
-        ActionResult<NORCE.Drilling.Field.Model.FieldCoordinateConversionResponse> result =
+        ActionResult<OSDC.Drilling.Field.Model.FieldCoordinateConversionResponse> result =
             await FieldCoordinateConversionController(serviceProvider).Forward(request!, cancellationToken).ConfigureAwait(false);
         return McpActionResultConverter.FromActionResult(result);
     }
@@ -265,7 +265,7 @@ public static class FieldRestMcpToolRegistrations
     private static async Task<JsonNode?> InvokeInverseConversion(IServiceProvider serviceProvider, JsonObject? arguments, CancellationToken cancellationToken)
     {
         if (!TryDeserializeDirect(arguments, out FieldInverseConversionRequestModel? request, out JsonNode? error)) return error;
-        ActionResult<NORCE.Drilling.Field.Model.FieldCoordinateConversionResponse> result =
+        ActionResult<OSDC.Drilling.Field.Model.FieldCoordinateConversionResponse> result =
             await FieldCoordinateConversionController(serviceProvider).Inverse(request!, cancellationToken).ConfigureAwait(false);
         return McpActionResultConverter.FromActionResult(result);
     }

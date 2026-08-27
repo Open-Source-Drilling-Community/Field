@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace ServiceTest
+namespace OSDC.Drilling.Field.ServiceTest
 {
     public class FieldDelineationCalculatorTests
     {
@@ -11,10 +11,10 @@ namespace ServiceTest
             Assembly modelAssembly = Assembly.LoadFrom(GetServiceAssemblyPath("Model.dll"));
             Assembly mathAssembly = Assembly.LoadFrom(GetServiceAssemblyPath("OSDC.DotnetLibraries.General.Math.dll"));
 
-            Type fieldType = RequireType(modelAssembly, "NORCE.Drilling.Field.Model.Field");
-            Type lineType = RequireType(modelAssembly, "NORCE.Drilling.Field.Model.FieldDelineationLine");
+            Type fieldType = RequireType(modelAssembly, "OSDC.Drilling.Field.Model.Field");
+            Type lineType = RequireType(modelAssembly, "OSDC.Drilling.Field.Model.FieldDelineationLine");
             Type pointType = RequireType(mathAssembly, "OSDC.DotnetLibraries.General.Math.Point3DGlobalCoordinates");
-            Type boundaryType = RequireType(modelAssembly, "NORCE.Drilling.Field.Model.FieldDelineationBoundaryLine");
+            Type boundaryType = RequireType(modelAssembly, "OSDC.Drilling.Field.Model.FieldDelineationBoundaryLine");
 
             object field = Activator.CreateInstance(fieldType)!;
             object line = Activator.CreateInstance(lineType)!;
@@ -30,7 +30,7 @@ namespace ServiceTest
             ]));
             Set(field, "DelineationLines", CreateList(lineType, [line]));
 
-            Type calculator = RequireType(serviceAssembly, "NORCE.Drilling.Field.Service.Managers.FieldDelineationCalculator");
+            Type calculator = RequireType(serviceAssembly, "OSDC.Drilling.Field.Service.Managers.FieldDelineationCalculator");
             MethodInfo calculate = calculator.GetMethod("Calculate", BindingFlags.Static | BindingFlags.Public)
                 ?? throw new InvalidOperationException("Calculate method not found.");
 
@@ -300,8 +300,8 @@ namespace ServiceTest
 
         private static object CreateFieldWithLine(Assembly modelAssembly, Assembly mathAssembly, double margin, IEnumerable<(double North, double East)> coordinates)
         {
-            Type fieldType = RequireType(modelAssembly, "NORCE.Drilling.Field.Model.Field");
-            Type lineType = RequireType(modelAssembly, "NORCE.Drilling.Field.Model.FieldDelineationLine");
+            Type fieldType = RequireType(modelAssembly, "OSDC.Drilling.Field.Model.Field");
+            Type lineType = RequireType(modelAssembly, "OSDC.Drilling.Field.Model.FieldDelineationLine");
             Type pointType = RequireType(mathAssembly, "OSDC.DotnetLibraries.General.Math.Point3DGlobalCoordinates");
 
             object field = Activator.CreateInstance(fieldType)!;
@@ -316,7 +316,7 @@ namespace ServiceTest
 
         private static void Calculate(Assembly serviceAssembly, object field)
         {
-            Type calculator = RequireType(serviceAssembly, "NORCE.Drilling.Field.Service.Managers.FieldDelineationCalculator");
+            Type calculator = RequireType(serviceAssembly, "OSDC.Drilling.Field.Service.Managers.FieldDelineationCalculator");
             MethodInfo calculate = calculator.GetMethod("Calculate", BindingFlags.Static | BindingFlags.Public)
                 ?? throw new InvalidOperationException("Calculate method not found.");
 

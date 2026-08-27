@@ -1,7 +1,7 @@
 using System.Text.Json;
-using NORCE.Drilling.Field.ModelShared;
+using OSDC.Drilling.Field.ModelShared;
 
-namespace ServiceTest;
+namespace OSDC.Drilling.Field.ServiceTest;
 
 public class FieldCoordinateConversionContractTests
 {

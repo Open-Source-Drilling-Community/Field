@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 
-namespace NORCE.Drilling.Field.Service.Managers
+namespace OSDC.Drilling.Field.Service.Managers
 {
     public class FieldMembershipCategoryManager
     {

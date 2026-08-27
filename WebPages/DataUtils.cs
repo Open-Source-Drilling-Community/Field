@@ -1,6 +1,6 @@
 using OSDC.UnitConversion.DrillingRazorMudComponents;
 
-namespace NORCE.Drilling.Field.WebPages;
+namespace OSDC.Drilling.Field.WebPages;
 
 public static class DataUtils
 {

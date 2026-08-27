@@ -1,6 +1,6 @@
-# NORCE.Drilling.Field.WebPages
+# OSDC.Drilling.Field.WebPages
 
-`NORCE.Drilling.Field.WebPages` is a Razor class library that packages the Field-specific web pages together with the API, editing, import/export, and plotting utilities they require.
+`OSDC.Drilling.Field.WebPages` is a Razor class library that packages the Field-specific web pages together with the API, editing, import/export, and plotting utilities they require.
 
 ## Contents
 
@@ -68,7 +68,7 @@ Example routing:
 
 ```razor
 <Router AppAssembly="@typeof(App).Assembly"
-        AdditionalAssemblies="new[] { typeof(NORCE.Drilling.Field.WebPages.Field).Assembly }">
+        AdditionalAssemblies="new[] { typeof(OSDC.Drilling.Field.WebPages.Field).Assembly }">
 ```
 
 ## Routes

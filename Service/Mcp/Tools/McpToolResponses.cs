@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace NORCE.Drilling.Field.Service.Mcp.Tools;
+namespace OSDC.Drilling.Field.Service.Mcp.Tools;
 
 internal static class McpToolResponses
 {

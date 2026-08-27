@@ -1,9 +1,9 @@
 using System;
 using System.Text.Json;
-using NORCE.Drilling.Field.Model;
+using OSDC.Drilling.Field.Model;
 using NUnit.Framework;
 
-namespace NORCE.Drilling.Field.ModelTest;
+namespace OSDC.Drilling.Field.ModelTest;
 
 public class FieldCoordinateConversionTests
 {

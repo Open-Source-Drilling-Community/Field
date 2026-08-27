@@ -2,9 +2,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using NORCE.Drilling.Field.Model;
+using OSDC.Drilling.Field.Model;
 
-namespace NORCE.Drilling.Field.Service.Controllers;
+namespace OSDC.Drilling.Field.Service.Controllers;
 
 [Produces("application/json")]
 [Route("FieldCoordinateConversion")]

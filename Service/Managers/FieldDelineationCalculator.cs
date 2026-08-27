@@ -1,11 +1,11 @@
-using NORCE.Drilling.Field.Model;
+using OSDC.Drilling.Field.Model;
 using OSDC.DotnetLibraries.General.Math;
 using Clipper2Lib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NORCE.Drilling.Field.Service.Managers
+namespace OSDC.Drilling.Field.Service.Managers
 {
     internal static class FieldDelineationCalculator
     {

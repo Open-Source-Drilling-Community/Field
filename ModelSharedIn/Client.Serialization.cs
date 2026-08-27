@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace NORCE.Drilling.Field.ModelShared;
+namespace OSDC.Drilling.Field.ModelShared;
 
 public partial class Client
 {

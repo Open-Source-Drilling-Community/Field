@@ -1,12 +1,12 @@
 using System.Reflection;
 
-namespace NORCE.Drilling.Field.WebApp;
+namespace OSDC.Drilling.Field.WebApp;
 
 public static class ExternalRazorAssemblies
 {
     public static IReadOnlyList<Assembly> All { get; } =
     [
-        typeof(NORCE.Drilling.Field.WebPages.Field).Assembly,
+        typeof(OSDC.Drilling.Field.WebPages.Field).Assembly,
         typeof(NORCE.Drilling.GeodeticDatum.WebPages.GeodeticDatumMain).Assembly,
         typeof(NORCE.Drilling.VerticalDatum.WebPage.VerticalDatumConversionMain).Assembly,
     ];

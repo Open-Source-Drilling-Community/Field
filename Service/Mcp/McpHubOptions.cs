@@ -1,4 +1,4 @@
-namespace NORCE.Drilling.Field.Service.Mcp;
+namespace OSDC.Drilling.Field.Service.Mcp;
 
 public sealed class McpHubOptions
 {

@@ -3,9 +3,9 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using NORCE.Drilling.Field.ModelShared;
+using OSDC.Drilling.Field.ModelShared;
 
-namespace NORCE.Drilling.Field.Service;
+namespace OSDC.Drilling.Field.Service;
 
 public interface IEarthCartographicProjectionClient
 {

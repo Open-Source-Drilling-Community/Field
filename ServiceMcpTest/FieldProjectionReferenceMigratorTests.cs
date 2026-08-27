@@ -1,8 +1,8 @@
 using Microsoft.Data.Sqlite;
-using NORCE.Drilling.Field.Service.Managers;
+using OSDC.Drilling.Field.Service.Managers;
 using NUnit.Framework;
 
-namespace NORCE.Drilling.Field.ServiceMcpTest;
+namespace OSDC.Drilling.Field.ServiceMcpTest;
 
 [TestFixture]
 public sealed class FieldProjectionReferenceMigratorTests

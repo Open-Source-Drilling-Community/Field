@@ -5,11 +5,11 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using NORCE.Drilling.Field.Model;
-using NORCE.Drilling.Field.ModelShared;
-using NORCE.Drilling.Field.Service.Managers;
+using OSDC.Drilling.Field.Model;
+using OSDC.Drilling.Field.ModelShared;
+using OSDC.Drilling.Field.Service.Managers;
 
-namespace NORCE.Drilling.Field.Service;
+namespace OSDC.Drilling.Field.Service;
 
 public sealed class FieldConversionException(
     int statusCode,

@@ -1,7 +1,7 @@
 using System;
 using OSDC.DotnetLibraries.General.DataManagement;
 
-namespace NORCE.Drilling.Field.Model
+namespace OSDC.Drilling.Field.Model
 {
     public class FieldFeatureAssignment : IFeatureAssignment
     {

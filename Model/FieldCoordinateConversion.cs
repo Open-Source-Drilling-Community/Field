@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace NORCE.Drilling.Field.Model;
+namespace OSDC.Drilling.Field.Model;
 
 public enum FieldGeographicReference
 {
