@@ -6,6 +6,7 @@
 
 - `Field`
 - `FieldEdit`
+- `FieldBackupRestore`: versioned multi-field JSON backup and transactional restore UI
 - `FieldFeatures`
 - `FieldMemberships`
 - `FieldIdentities`
@@ -74,6 +75,7 @@ Example routing:
 ## Routes
 
 - `/Field`
+- `/FieldBackupRestore`
 - `/FieldFeatures`
 - `/FieldMemberships`
 - `/FieldIdentities`

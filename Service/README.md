@@ -44,6 +44,14 @@ provided ingress).
 
 - `Field`: Field CRUD. A Field optionally carries `ProjectionDefinitionID`,
   which identifies an EarthCartographicProjection definition.
+- `Field/BatchExport`: creates a read-only, versioned JSON backup document for
+  every field or an explicitly ordered UUID selection. Selected exports are
+  atomic: an invalid, duplicate, or missing UUID returns a stable error envelope
+  and no partial document. `All` exports are ordered by UUID.
+- `Field/BatchRestore`: validates and restores a version-1 batch-export
+  document in one SQLite transaction. `FailIfExists` rejects the complete batch
+  on any existing field UUID; `ReplaceExisting` atomically inserts new fields
+  and replaces existing fields. No partial restore is committed.
 - `FieldCoordinateConversion/Forward`: converts an ordered geographic batch
   in the projection datum or WGS 84 to canonical easting/northing.
 - `FieldCoordinateConversion/Inverse`: converts canonical easting/northing to

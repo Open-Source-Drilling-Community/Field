@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using OSDC.DotnetLibraries.General.DataManagement;
 using Microsoft.Data.Sqlite;
 using System.Text.Json;
+using OSDC.Drilling.Field.Model;
 
 namespace OSDC.Drilling.Field.Service.Managers
 {
@@ -277,6 +278,84 @@ namespace OSDC.Drilling.Field.Service.Managers
                 _logger.LogWarning("Impossible to access the SQLite database");
             }
             return null;
+        }
+
+        /// <summary>
+        /// Reads all complete fields for a logical backup and verifies that every
+        /// serialized field UUID matches its database row UUID. One SELECT statement
+        /// supplies the complete export snapshot.
+        /// </summary>
+        public List<Model.Field?>? GetAllFieldForExport()
+        {
+            List<Model.Field?> fields = [];
+            var connection = _connectionManager.GetConnection();
+            if (connection == null)
+            {
+                _logger.LogWarning("Impossible to access the SQLite database");
+                return null;
+            }
+
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT ID, Field FROM FieldTable ORDER BY ID";
+            try
+            {
+                using var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    if (reader.IsDBNull(0) || reader.IsDBNull(1))
+                    {
+                        _logger.LogError("A FieldTable row contains a null ID or Field document and cannot be exported");
+                        return null;
+                    }
+
+                    Guid rowId = reader.GetGuid(0);
+                    Model.Field? field = JsonSerializer.Deserialize<Model.Field>(reader.GetString(1), JsonSettings.Options);
+                    if (field?.MetaInfo?.ID != rowId)
+                    {
+                        _logger.LogError("FieldTable row {FieldId} does not match the UUID embedded in its Field document", rowId);
+                        return null;
+                    }
+                    fields.Add(field);
+                }
+                _logger.LogInformation("Returning a verified snapshot of all Field records for batch export");
+                return fields;
+            }
+            catch (Exception ex) when (ex is SqliteException or JsonException)
+            {
+                _logger.LogError(ex, "Impossible to read a verified Field snapshot for batch export");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Validates and restores all fields in the supplied backup document in one transaction.
+        /// </summary>
+        public FieldBatchRestoreOutcome RestoreBatch(FieldBatchRestoreRequest? request)
+        {
+            try
+            {
+                using SqliteConnection? connection = _connectionManager.GetConnection();
+                if (connection == null)
+                {
+                    _logger.LogWarning("Impossible to access the SQLite database for batch restore");
+                    return FieldBatchRestorer.StorageFailure("The field database is unavailable.");
+                }
+
+                FieldBatchRestoreOutcome outcome = FieldBatchRestorer.Restore(connection, request, DateTimeOffset.UtcNow);
+                if (outcome.IsSuccess)
+                {
+                    _logger.LogInformation(
+                        "Atomically restored {CreatedCount} new and {ReplacedCount} existing Field records",
+                        outcome.Response!.CreatedCount,
+                        outcome.Response.ReplacedCount);
+                }
+                return outcome;
+            }
+            catch (SqliteException ex)
+            {
+                _logger.LogError(ex, "Impossible to open the Field database for batch restore");
+                return FieldBatchRestorer.StorageFailure("The field database is unavailable.");
+            }
         }
 
         /// <summary>

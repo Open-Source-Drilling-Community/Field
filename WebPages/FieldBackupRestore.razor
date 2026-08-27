@@ -1,0 +1,501 @@
+@page "/FieldBackupRestore"
+@implements IAsyncDisposable
+@inject ILogger<FieldBackupRestore> logger
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject IFieldAPIUtils Api
+@inject IJSRuntime JSRuntime
+
+<MudText Typo="Typo.h4" Class="mt-4 mb-4">Field backup and restore</MudText>
+@if (_busy)
+{
+    <MudProgressLinear Indeterminate="true" Class="mb-3" />
+}
+
+<MudExpansionPanels MultiExpansion="true">
+    <MudExpansionPanel Text="Backup fields" Expanded="true">
+        <MudText Typo="Typo.body2" Class="mb-3">
+            Export all fields or an ordered selection to one versioned JSON backup file.
+            Projection and catalog definitions remain external UUID references.
+        </MudText>
+
+        @if (_fields == null)
+        {
+            <MudProgressLinear Indeterminate="true" />
+        }
+        else
+        {
+            <MudDataGrid T="FieldLight" @key="_fieldGridKey"
+                         Items="@_fields"
+                         MultiSelection="true"
+                         SelectedItems="@_selectedFields"
+                         SelectedItemsChanged="SelectedFieldsChanged"
+                         QuickFilter="@FieldFilter"
+                         Hover="true"
+                         SortMode="SortMode.Multiple"
+                         Filterable="false"
+                         ReadOnly="true"
+                         Elevation="0">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Available fields</MudText>
+                    <MudSpacer />
+                    <MudTextField @bind-Value="_fieldSearch"
+                                  Placeholder="Search"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Search"
+                                  Immediate="true"
+                                  Class="mt-0" />
+                </ToolBarContent>
+                <Columns>
+                    <SelectColumn T="FieldLight" />
+                    <PropertyColumn Property="field => field.Name" Title="Name" Sortable="true" />
+                    <PropertyColumn Property="field => field.Description" Title="Description" Sortable="true" />
+                    <TemplateColumn Title="UUID" Sortable="false">
+                        <CellTemplate>@(context.Item.MetaInfo?.ID.ToString() ?? "—")</CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="FieldLight" />
+                </PagerContent>
+            </MudDataGrid>
+
+            <MudContainer Class="d-flex flex-row align-center pa-0 mt-4">
+                <MudButton Class="me-2"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Download"
+                           Disabled="@(_busy || _fields.Count == 0)"
+                           OnClick="ExportAllAsync">
+                    Backup all (@_fields.Count)
+                </MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Download"
+                           Disabled="@(_busy || _selectedFields.Count == 0)"
+                           OnClick="ExportSelectedAsync">
+                    Backup selected (@_selectedFields.Count)
+                </MudButton>
+            </MudContainer>
+            @if (_backupErrors.Count != 0)
+            {
+                <MudAlert Severity="Severity.Error" Dense="true" Class="mt-3">
+                    @foreach (string error in _backupErrors)
+                    {
+                        <MudText Typo="Typo.body2">• @error</MudText>
+                    }
+                </MudAlert>
+            }
+        }
+    </MudExpansionPanel>
+
+    <MudExpansionPanel Text="Restore fields">
+        <MudAlert Severity="Severity.Info" Dense="true" Class="mb-3">
+            Choose a JSON file produced by the batch backup operation. The server validates
+            the complete document before changing the database, and commits all fields together.
+        </MudAlert>
+
+        <label class="mud-button-root mud-button mud-button-filled mud-button-filled-primary mud-button-filled-size-medium">
+            Choose backup file
+            <InputFile OnChange="LoadRestoreFileAsync" accept=".json,application/json" style="display:none" />
+        </label>
+        @if (!string.IsNullOrWhiteSpace(_restoreFileName))
+        {
+            <MudText Typo="Typo.body2" Class="mt-2">Selected file: @_restoreFileName</MudText>
+        }
+
+        @if (_restoreDocument != null)
+        {
+            <MudGrid Class="mt-3">
+                <MudItem xs="12" md="4">
+                    <MudText Typo="Typo.subtitle2">Format</MudText>
+                    <MudText Typo="Typo.body2">@_restoreDocument.FormatIdentifier</MudText>
+                </MudItem>
+                <MudItem xs="12" md="2">
+                    <MudText Typo="Typo.subtitle2">Schema version</MudText>
+                    <MudText Typo="Typo.body2">@_restoreDocument.SchemaVersion</MudText>
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <MudText Typo="Typo.subtitle2">Exported at UTC</MudText>
+                    <MudText Typo="Typo.body2">@_restoreDocument.ExportedAtUtc.ToString("u")</MudText>
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <MudText Typo="Typo.subtitle2">Fields</MudText>
+                    <MudText Typo="Typo.body2">@(_restoreDocument.Fields?.Count ?? 0)</MudText>
+                </MudItem>
+            </MudGrid>
+
+            @if (_restoreValidationErrors.Count != 0)
+            {
+                <MudAlert Severity="Severity.Error" Dense="true" Class="mt-3">
+                    <MudText Typo="Typo.subtitle2">This file cannot be restored:</MudText>
+                    @foreach (string error in _restoreValidationErrors)
+                    {
+                        <MudText Typo="Typo.body2">• @error</MudText>
+                    }
+                </MudAlert>
+            }
+            else
+            {
+                <MudDataGrid T="OSDC.Drilling.Field.ModelShared.Field"
+                             Items="@_restoreDocument.Fields"
+                             QuickFilter="@RestoreFieldFilter"
+                             Hover="true"
+                             SortMode="SortMode.Multiple"
+                             Filterable="false"
+                             ReadOnly="true"
+                             Elevation="0"
+                             Class="mt-3">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">Backup contents</MudText>
+                        <MudSpacer />
+                        <MudTextField @bind-Value="_restoreSearch"
+                                      Placeholder="Search"
+                                      Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.Search"
+                                      Immediate="true"
+                                      Class="mt-0" />
+                    </ToolBarContent>
+                    <Columns>
+                        <PropertyColumn Property="field => field.Name" Title="Name" Sortable="true" />
+                        <PropertyColumn Property="field => field.Description" Title="Description" Sortable="true" />
+                        <TemplateColumn Title="UUID">
+                            <CellTemplate>@(context.Item.MetaInfo?.ID.ToString() ?? "—")</CellTemplate>
+                        </TemplateColumn>
+                    </Columns>
+                    <PagerContent>
+                        <MudDataGridPager T="OSDC.Drilling.Field.ModelShared.Field" />
+                    </PagerContent>
+                </MudDataGrid>
+
+                <MudText Typo="Typo.subtitle2" Class="mt-4 mb-1">If a field UUID already exists</MudText>
+                <MudRadioGroup T="FieldBatchRestoreConflictPolicy" Value="_restorePolicy" ValueChanged="RestorePolicyChanged">
+                    <MudRadio T="FieldBatchRestoreConflictPolicy"
+                              Value="FieldBatchRestoreConflictPolicy.FailIfExists"
+                              Color="Color.Primary">
+                        Stop without changing any field
+                    </MudRadio>
+                    <MudRadio T="FieldBatchRestoreConflictPolicy"
+                              Value="FieldBatchRestoreConflictPolicy.ReplaceExisting"
+                              Color="Color.Error">
+                        Replace existing fields
+                    </MudRadio>
+                </MudRadioGroup>
+
+                @if (_restorePolicy == FieldBatchRestoreConflictPolicy.ReplaceExisting)
+                {
+                    <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-2">
+                        Existing fields with matching UUIDs will be replaced by the records in this backup.
+                    </MudAlert>
+                }
+
+                <MudButton Variant="Variant.Filled"
+                           Color="@(_restorePolicy == FieldBatchRestoreConflictPolicy.ReplaceExisting ? Color.Error : Color.Primary)"
+                           StartIcon="@Icons.Material.Filled.Restore"
+                           Disabled="@(_busy || !CanRestore)"
+                           OnClick="RestoreAsync"
+                           Class="mt-3">
+                    Restore @(_restoreDocument.Fields?.Count ?? 0) field(s)
+                </MudButton>
+            }
+        }
+
+        @if (_serverErrors.Count != 0)
+        {
+            <MudAlert Severity="Severity.Error" Dense="true" Class="mt-3">
+                @foreach (string error in _serverErrors)
+                {
+                    <MudText Typo="Typo.body2">• @error</MudText>
+                }
+            </MudAlert>
+        }
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@code {
+    private const long MaximumBackupFileBytes = 256L * 1024L * 1024L;
+    private const string ExpectedFormatIdentifier = "OSDC.Drilling.Field.BatchExport";
+    private const int ExpectedSchemaVersion = 1;
+
+    private List<FieldLight>? _fields;
+    private HashSet<FieldLight> _selectedFields = [];
+    private string? _fieldSearch;
+    private int _fieldGridKey;
+    private bool _busy;
+    private readonly List<string> _backupErrors = [];
+
+    private string? _restoreFileName;
+    private FieldBatchExportDocument? _restoreDocument;
+    private FieldBatchRestoreConflictPolicy _restorePolicy = FieldBatchRestoreConflictPolicy.FailIfExists;
+    private readonly List<string> _restoreValidationErrors = [];
+    private readonly List<string> _serverErrors = [];
+    private string? _restoreSearch;
+    private IJSObjectReference? _downloadModule;
+
+    private bool CanRestore => _restoreDocument?.Fields is { Count: > 0 } && _restoreValidationErrors.Count == 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFieldsAsync();
+    }
+
+    private async Task LoadFieldsAsync()
+    {
+        try
+        {
+            _fields = ((await Api.ClientField.GetAllFieldLightAsync()) ?? [])
+                .Where(field => field?.MetaInfo?.ID is Guid id && id != Guid.Empty)
+                .OrderBy(field => field.Name, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+            _selectedFields = [];
+            _fieldGridKey++;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unable to load fields for backup");
+            _fields = [];
+            Snackbar.Add("Unable to load fields for backup.", Severity.Error);
+        }
+    }
+
+    private void SelectedFieldsChanged(HashSet<FieldLight> fields)
+    {
+        _selectedFields = fields;
+    }
+
+    private Task ExportAllAsync() => ExportAsync(FieldBatchExportScope.All, null);
+
+    private Task ExportSelectedAsync()
+    {
+        List<Guid> ids = _selectedFields
+            .Where(field => field.MetaInfo?.ID is Guid id && id != Guid.Empty)
+            .OrderBy(field => field.Name, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(field => field.MetaInfo!.ID)
+            .Select(field => field.MetaInfo!.ID)
+            .ToList();
+        return ExportAsync(FieldBatchExportScope.Selected, ids);
+    }
+
+    private async Task ExportAsync(FieldBatchExportScope scope, List<Guid>? fieldIds)
+    {
+        try
+        {
+            _busy = true;
+            _backupErrors.Clear();
+            FieldBatchExportDocument document = await Api.ClientField.BatchExportFieldsAsync(new FieldBatchExportRequest
+            {
+                Scope = scope,
+                FieldIDs = fieldIds
+            });
+            string json = System.Text.Json.JsonSerializer.Serialize(document, CreateJsonOptions(writeIndented: true));
+            string fileName = $"field-backup-{DateTime.UtcNow:yyyyMMddTHHmmssZ}.json";
+            _downloadModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>(
+                "import",
+                "./_content/OSDC.Drilling.Field.WebPages/fieldBatchBackup.js?v=20260827");
+            await _downloadModule.InvokeVoidAsync("downloadJson", fileName, json);
+            Snackbar.Add($"Backed up {document.Fields?.Count ?? 0} field(s).", Severity.Success);
+        }
+        catch (ApiException<FieldBatchErrorEnvelope> ex)
+        {
+            logger.LogError(ex, "Field batch backup was rejected: {Error}", ex.Result?.Error);
+            ShowApiErrors(ex.Result, "Field backup was rejected.", _backupErrors);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unable to back up fields");
+            _backupErrors.Clear();
+            _backupErrors.Add("Unable to back up fields.");
+            Snackbar.Add("Unable to back up fields.", Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task LoadRestoreFileAsync(InputFileChangeEventArgs args)
+    {
+        _restoreDocument = null;
+        _restoreValidationErrors.Clear();
+        _serverErrors.Clear();
+        _restoreSearch = null;
+        _restoreFileName = args.File.Name;
+
+        try
+        {
+            await using System.IO.Stream stream = args.File.OpenReadStream(MaximumBackupFileBytes);
+            _restoreDocument = await System.Text.Json.JsonSerializer.DeserializeAsync<FieldBatchExportDocument>(
+                stream,
+                CreateJsonOptions(writeIndented: false));
+            ValidateRestoreDocument();
+            if (_restoreValidationErrors.Count == 0)
+            {
+                Snackbar.Add($"Loaded backup containing {_restoreDocument!.Fields.Count} field(s).", Severity.Success);
+            }
+        }
+        catch (Exception ex) when (ex is System.Text.Json.JsonException or IOException or InvalidOperationException)
+        {
+            logger.LogWarning(ex, "Unable to read field backup file {FileName}", args.File.Name);
+            _restoreDocument = null;
+            _restoreValidationErrors.Add("The selected file is not a readable Field batch-backup JSON document.");
+            Snackbar.Add("Unable to read the selected backup file.", Severity.Error);
+        }
+    }
+
+    private void ValidateRestoreDocument()
+    {
+        _restoreValidationErrors.Clear();
+        if (_restoreDocument == null)
+        {
+            _restoreValidationErrors.Add("The document is empty.");
+            return;
+        }
+        if (!string.Equals(_restoreDocument.FormatIdentifier, ExpectedFormatIdentifier, StringComparison.Ordinal))
+        {
+            _restoreValidationErrors.Add($"FormatIdentifier must be '{ExpectedFormatIdentifier}'.");
+        }
+        if (_restoreDocument.SchemaVersion != ExpectedSchemaVersion)
+        {
+            _restoreValidationErrors.Add($"SchemaVersion must be {ExpectedSchemaVersion}.");
+        }
+        if (_restoreDocument.ExportedAtUtc == default || _restoreDocument.ExportedAtUtc.Offset != TimeSpan.Zero)
+        {
+            _restoreValidationErrors.Add("ExportedAtUtc must be a valid UTC timestamp.");
+        }
+        if (_restoreDocument.Fields == null || _restoreDocument.Fields.Count == 0)
+        {
+            _restoreValidationErrors.Add("The backup must contain at least one field.");
+            return;
+        }
+
+        var positionsById = new Dictionary<Guid, int>();
+        int index = 0;
+        foreach (OSDC.Drilling.Field.ModelShared.Field? field in _restoreDocument.Fields)
+        {
+            Guid? id = field?.MetaInfo?.ID;
+            if (id == null || id == Guid.Empty)
+            {
+                _restoreValidationErrors.Add($"Field at position {index} has no non-empty UUID.");
+            }
+            else if (positionsById.TryGetValue(id.Value, out int firstIndex))
+            {
+                _restoreValidationErrors.Add($"Field at position {index} duplicates UUID {id} from position {firstIndex}.");
+            }
+            else
+            {
+                positionsById.Add(id.Value, index);
+            }
+            if (field?.ProjectionDefinitionID == Guid.Empty)
+            {
+                _restoreValidationErrors.Add($"Field at position {index} has an empty projection UUID.");
+            }
+            index++;
+        }
+    }
+
+    private void RestorePolicyChanged(FieldBatchRestoreConflictPolicy policy)
+    {
+        _restorePolicy = policy;
+        _serverErrors.Clear();
+    }
+
+    private async Task RestoreAsync()
+    {
+        if (!CanRestore || _restoreDocument == null)
+        {
+            return;
+        }
+
+        string confirmation = _restorePolicy == FieldBatchRestoreConflictPolicy.ReplaceExisting
+            ? $"Restore {_restoreDocument.Fields.Count} field(s)? Existing fields with matching UUIDs will be replaced."
+            : $"Restore {_restoreDocument.Fields.Count} field(s)? The operation will stop without changes if any UUID already exists.";
+        bool? confirmed = await DialogService.ShowMessageBox(
+            "Restore fields",
+            confirmation,
+            yesText: _restorePolicy == FieldBatchRestoreConflictPolicy.ReplaceExisting ? "Restore and replace" : "Restore",
+            cancelText: "Cancel",
+            options: new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true });
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        try
+        {
+            _busy = true;
+            _serverErrors.Clear();
+            FieldBatchRestoreResponse response = await Api.ClientField.BatchRestoreFieldsAsync(new FieldBatchRestoreRequest
+            {
+                ConflictPolicy = _restorePolicy,
+                Document = _restoreDocument
+            });
+            Snackbar.Add($"Restore completed: {response.CreatedCount} created, {response.ReplacedCount} replaced.", Severity.Success);
+            await LoadFieldsAsync();
+        }
+        catch (ApiException<FieldBatchErrorEnvelope> ex)
+        {
+            logger.LogError(ex, "Field batch restore was rejected: {Error}", ex.Result?.Error);
+            ShowApiErrors(ex.Result, "Field restore was rejected.", _serverErrors);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unable to restore fields");
+            _serverErrors.Add("Unable to restore fields.");
+            Snackbar.Add("Unable to restore fields.", Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private void ShowApiErrors(FieldBatchErrorEnvelope? envelope, string fallback, List<string> target)
+    {
+        target.Clear();
+        if (envelope?.Errors != null)
+        {
+            target.AddRange(envelope.Errors.Select(error =>
+                error.PositionIndex == null
+                    ? $"{error.Property}: {error.Message}"
+                    : $"Position {error.PositionIndex}: {error.Property}: {error.Message}"));
+        }
+        if (target.Count == 0)
+        {
+            target.Add(envelope?.Message ?? fallback);
+        }
+        Snackbar.Add(envelope?.Message ?? fallback, Severity.Error);
+    }
+
+    private static System.Text.Json.JsonSerializerOptions CreateJsonOptions(bool writeIndented)
+    {
+        var options = new System.Text.Json.JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            WriteIndented = writeIndented,
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
+        options.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+        return options;
+    }
+
+    private Func<FieldLight, bool> FieldFilter => field =>
+        string.IsNullOrWhiteSpace(_fieldSearch) ||
+        $"{field.Name} {field.Description} {field.MetaInfo?.ID}".Contains(_fieldSearch, StringComparison.OrdinalIgnoreCase);
+
+    private Func<OSDC.Drilling.Field.ModelShared.Field, bool> RestoreFieldFilter => field =>
+        string.IsNullOrWhiteSpace(_restoreSearch) ||
+        $"{field.Name} {field.Description} {field.MetaInfo?.ID}".Contains(_restoreSearch, StringComparison.OrdinalIgnoreCase);
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_downloadModule != null)
+        {
+            try
+            {
+                await _downloadModule.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+            }
+        }
+    }
+}

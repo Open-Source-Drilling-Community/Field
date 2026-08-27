@@ -70,6 +70,8 @@ namespace OSDC.Drilling.Field.Model
         public History GetFieldByIdPerDay { get; set; } = new History();
         public History GetAllFieldLightPerDay { get; set; } = new History();
         public History GetAllFieldPerDay { get; set; } = new History();
+        public History BatchExportFieldsPerDay { get; set; } = new History();
+        public History BatchRestoreFieldsPerDay { get; set; } = new History();
         public History PostFieldPerDay { get; set; } = new History();
         public History PutFieldByIdPerDay { get; set; } = new History();
         public History DeleteFieldByIdPerDay { get; set; } = new History();
@@ -222,6 +224,8 @@ namespace OSDC.Drilling.Field.Model
                 ManageBackup();
             }
         }
+        public void IncrementBatchExportFieldsPerDay() => IncrementHistory(() => BatchExportFieldsPerDay, value => BatchExportFieldsPerDay = value);
+        public void IncrementBatchRestoreFieldsPerDay() => IncrementHistory(() => BatchRestoreFieldsPerDay, value => BatchRestoreFieldsPerDay = value);
         public void IncrementPutFieldByIdPerDay()
         {
             lock (lock_)

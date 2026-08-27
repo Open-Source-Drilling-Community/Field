@@ -11,14 +11,14 @@
     <Title>OSDC.Drilling.Field.WebPages</Title>
     <Authors>Eric Cayeux</Authors>
     <Company>NORCE</Company>
-    <Description>Reusable Razor class library containing the Field, CartographicConverter, and statistics web pages. See the package README for setup, dependencies, and usage.</Description>
+    <Description>Reusable Razor class library containing Field management, batch backup and restore, conversion, display, and statistics pages. See the package README for setup, dependencies, and usage.</Description>
     <PackageTags>field;drilling;blazor;razor;mudblazor</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Open-Source-Drilling-Community/Field</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/Open-Source-Drilling-Community/Field</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>2.0.0</Version>
   </PropertyGroup>
 

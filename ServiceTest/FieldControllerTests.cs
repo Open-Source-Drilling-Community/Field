@@ -61,6 +61,49 @@ namespace OSDC.Drilling.Field.ServiceTest
                 Assert.That(heavies, Is.Not.Null);
                 Assert.That(heavies.Any(f => f?.MetaInfo?.ID == fieldId), Is.True);
 
+                var batchExport = await api.BatchExportFieldsAsync(new FieldBatchExportRequest
+                {
+                    Scope = FieldBatchExportScope.Selected,
+                    FieldIDs = new[] { fieldId }
+                });
+                Assert.Multiple(() =>
+                {
+                    Assert.That(batchExport.FormatIdentifier, Is.EqualTo("OSDC.Drilling.Field.BatchExport"));
+                    Assert.That(batchExport.SchemaVersion, Is.EqualTo(1));
+                    Assert.That(batchExport.Fields.Select(exported => exported.MetaInfo.ID), Is.EqualTo(new[] { fieldId }));
+                });
+
+                try
+                {
+                    await api.BatchRestoreFieldsAsync(new FieldBatchRestoreRequest
+                    {
+                        ConflictPolicy = FieldBatchRestoreConflictPolicy.FailIfExists,
+                        Document = batchExport
+                    });
+                    Assert.Fail("FailIfExists should reject an existing field UUID.");
+                }
+                catch (ApiException<FieldBatchErrorEnvelope> ex)
+                {
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(ex.StatusCode, Is.EqualTo(409));
+                        Assert.That(ex.Result.Error, Is.EqualTo("field_restore_conflict"));
+                        Assert.That(ex.Result.Errors.Single().PositionIndex, Is.Zero);
+                    });
+                }
+
+                var restore = await api.BatchRestoreFieldsAsync(new FieldBatchRestoreRequest
+                {
+                    ConflictPolicy = FieldBatchRestoreConflictPolicy.ReplaceExisting,
+                    Document = batchExport
+                });
+                Assert.Multiple(() =>
+                {
+                    Assert.That(restore.CreatedCount, Is.Zero);
+                    Assert.That(restore.ReplacedCount, Is.EqualTo(1));
+                    Assert.That(restore.FieldIDs, Is.EqualTo(new[] { fieldId }));
+                });
+
                 // Update
                 fetched.Name = "Test Field Updated";
                 await api.PutFieldByIdAsync(fieldId, fetched);

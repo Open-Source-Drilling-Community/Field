@@ -109,6 +109,79 @@ namespace OSDC.Drilling.Field.Service.Controllers
         }
 
         /// <summary>
+        /// Exports every stored field or an explicitly ordered selection as one
+        /// versioned JSON backup document. The operation is read-only and never
+        /// returns a partial selected batch.
+        /// </summary>
+        [HttpPost("BatchExport", Name = "BatchExportFields")]
+        [ProducesResponseType<FieldBatchExportDocument>(StatusCodes.Status200OK)]
+        [ProducesResponseType<FieldBatchErrorEnvelope>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<FieldBatchErrorEnvelope>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<FieldBatchErrorEnvelope>(StatusCodes.Status500InternalServerError)]
+        public ActionResult<FieldBatchExportDocument> BatchExportFields([FromBody] FieldBatchExportRequest? request)
+        {
+            UsageStatisticsField.Instance.IncrementBatchExportFieldsPerDay();
+            List<Model.Field?>? snapshot = _fieldManager.GetAllFieldForExport();
+            if (snapshot == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new FieldBatchErrorEnvelope
+                {
+                    Error = "field_export_failed",
+                    Message = "The stored fields could not be read for export.",
+                    Errors =
+                    [
+                        new FieldBatchError
+                        {
+                            Property = "Fields",
+                            Code = "storage_unavailable",
+                            Message = "The field database is unavailable or could not be read."
+                        }
+                    ]
+                });
+            }
+
+            FieldBatchExportOutcome outcome = FieldBatchExporter.Create(request, snapshot, DateTimeOffset.UtcNow);
+            if (outcome.IsSuccess)
+            {
+                return Ok(outcome.Document);
+            }
+
+            return outcome.FailureKind switch
+            {
+                FieldBatchExportFailureKind.InvalidRequest => BadRequest(outcome.Error),
+                FieldBatchExportFailureKind.FieldNotFound => NotFound(outcome.Error),
+                _ => StatusCode(StatusCodes.Status500InternalServerError, outcome.Error)
+            };
+        }
+
+        /// <summary>
+        /// Validates and atomically restores every field in a versioned batch-export
+        /// document. FailIfExists rejects the complete batch on any UUID conflict;
+        /// ReplaceExisting inserts new fields and replaces existing fields together.
+        /// </summary>
+        [HttpPost("BatchRestore", Name = "BatchRestoreFields")]
+        [ProducesResponseType<FieldBatchRestoreResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<FieldBatchErrorEnvelope>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<FieldBatchErrorEnvelope>(StatusCodes.Status409Conflict)]
+        [ProducesResponseType<FieldBatchErrorEnvelope>(StatusCodes.Status500InternalServerError)]
+        public ActionResult<FieldBatchRestoreResponse> BatchRestoreFields([FromBody] FieldBatchRestoreRequest? request)
+        {
+            UsageStatisticsField.Instance.IncrementBatchRestoreFieldsPerDay();
+            FieldBatchRestoreOutcome outcome = _fieldManager.RestoreBatch(request);
+            if (outcome.IsSuccess)
+            {
+                return Ok(outcome.Response);
+            }
+
+            return outcome.FailureKind switch
+            {
+                FieldBatchRestoreFailureKind.InvalidRequest => BadRequest(outcome.Error),
+                FieldBatchRestoreFailureKind.Conflict => Conflict(outcome.Error),
+                _ => StatusCode(StatusCodes.Status500InternalServerError, outcome.Error)
+            };
+        }
+
+        /// <summary>
         /// Returns the list of all FieldLight present in the microservice database, at endpoint Field/api/Field/LightData
         /// </summary>
         /// <returns>the list of all FieldLight present in the microservice database, at endpoint Field/api/Field/LightData</returns>

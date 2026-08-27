@@ -5,6 +5,7 @@ The WebApp is a Blazor Server front end for the Field microservice. It hosts the
 ## Purpose
 
 - Manage Field records through the Field REST API.
+- Back up all or selected fields and atomically restore versioned JSON backups.
 - Manage field features, field memberships, field identities, and delineation line types.
 - Display trajectories and survey runs for a selected field, including delineation line overlays.
 - Configure field-level depth and position references for plotting.
@@ -62,6 +63,7 @@ The app sets `UsePathBase("/Field/webapp")`, so all pages are rooted under that 
 Field Management:
 
 - `Field` (`/Field/webapp/Field`): create, edit, delete, and search Field records.
+- `Backup and Restore` (`/Field/webapp/FieldBackupRestore`): export all or selected fields to one versioned JSON file, preview an uploaded backup, and restore it atomically with explicit conflict handling.
 - `Field Features` (`/Field/webapp/FieldFeatures`): manage field feature categories, options, exclusivity, and validity behavior.
 - `Field Memberships` (`/Field/webapp/FieldMemberships`): manage membership categories and options such as basin, play, license, operator, or pipeline network.
 - `Field Identities` (`/Field/webapp/FieldIdentities`): manage symbolic identity definitions such as Official name, WITSML UID, or External database ID.
@@ -104,7 +106,7 @@ Internal structure:
 - `ExternalRazorAssemblies.cs`: exposes Field and external web page assemblies to the Blazor router.
 - `ExternalWebPagesServiceCollectionExtensions.cs`: registers API utilities for external web page packages.
 - `WebPagesHostConfiguration.cs`: shares host URL configuration across Field and imported web pages.
-- `Shared/NavMenu.razor`: defines the grouped side menu.
+- `Shared/NavMenu.razor`: defines the grouped side menu, including Field batch backup and restore.
 
 ## Docker
 

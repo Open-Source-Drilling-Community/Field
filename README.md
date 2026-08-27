@@ -4,7 +4,7 @@ The Field solution provides a microservice (REST API), reusable Razor pages, and
 
 ## Purpose
 
-- Expose CRUD APIs for Field data and managed vocabularies, plus synchronous stateless field coordinate conversion.
+- Expose CRUD APIs for Field data and managed vocabularies, versioned batch export, plus synchronous stateless field coordinate conversion.
 - Expose an MCP endpoint mirroring the REST API for agent/tool integrations, with optional MCP hub registration from the shared `home/` volume.
 - Provide a web UI to browse and edit fields, manage field vocabularies, maintain delineation lines, display field-level trajectories and survey runs, and run cartographic and vertical datum conversions.
 - Share OpenAPI-generated clients/DTOs to keep contracts consistent across Service, WebApp, and tests.
@@ -56,6 +56,50 @@ curl -k -X POST "https://localhost:5001/Field/api/Field" \
   }'
 ```
 
+Batch export every field into a versioned JSON document:
+```
+curl -k -X POST "https://localhost:5001/Field/api/Field/BatchExport" \
+  -H "Content-Type: application/json" \
+  -d '{ "Scope": "All" }' \
+  --output fields.json
+```
+
+Use `Scope: "Selected"` with a non-empty, unique `FieldIDs` array to export
+specific fields in the requested order. The complete request fails if any UUID
+is empty, duplicated, or absent. An `All` export is ordered by UUID for stable
+output. The version-1 document identifies itself as
+`OSDC.Drilling.Field.BatchExport` and contains complete Field records; referenced
+projection definitions and Field-owned catalog definitions remain external
+resources identified by UUID.
+
+Atomically restore that document without overwriting existing fields:
+```
+curl -k -X POST "https://localhost:5001/Field/api/Field/BatchRestore" \
+  -H "Content-Type: application/json" \
+  --data-binary @- <<'JSON'
+{
+  "ConflictPolicy": "FailIfExists",
+  "Document": {
+    "FormatIdentifier": "OSDC.Drilling.Field.BatchExport",
+    "SchemaVersion": 1,
+    "ExportedAtUtc": "2026-08-27T12:00:00Z",
+    "Fields": [
+      {
+        "MetaInfo": { "ID": "11111111-1111-1111-1111-111111111111" },
+        "Name": "My Field"
+      }
+    ]
+  }
+}
+JSON
+```
+
+`FailIfExists` rejects the whole batch if any UUID is already stored.
+`ReplaceExisting` inserts missing fields and replaces existing fields in the
+same transaction. Format, version, UTC timestamp, field identities, duplicate
+UUIDs, and projection UUIDs are validated before writing. A storage failure at
+any position rolls back every earlier write.
+
 WebApp (UI):
 - Local Field page: `https://localhost:5011/Field/webapp/Field`
 - Dev example: `https://dev.digiwells.no/Field/webapp/Field`
@@ -64,6 +108,7 @@ WebApp (UI):
   - `/Field/webapp/FieldMemberships`
   - `/Field/webapp/FieldIdentities`
   - `/Field/webapp/FieldDelineationLineTypes`
+- Batch backup and restore: `/Field/webapp/FieldBackupRestore`
 
 MCP server:
 - Streamable HTTP: `/Field/api/mcp`
