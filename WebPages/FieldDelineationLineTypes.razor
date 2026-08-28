@@ -103,7 +103,7 @@ else
                 EnsureMetaInfo(lineType);
                 if (existingIds.Contains(lineType.MetaInfo!.ID))
                 {
-                    await Api.ClientField.PutFieldDelineationLineTypeByIdAsync(lineType.MetaInfo.ID, lineType);
+                    await Api.ClientField.PutFieldDelineationLineTypeByIdAsync(lineType.MetaInfo.ID, lineType.LastModificationDate ?? throw new InvalidOperationException("The stored line type has no concurrency timestamp."), lineType);
                 }
                 else
                 {

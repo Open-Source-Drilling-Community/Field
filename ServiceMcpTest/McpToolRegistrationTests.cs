@@ -143,6 +143,42 @@ public sealed class McpToolRegistrationTests
         Assert.That(schema["additionalProperties"]?.GetValue<bool>(), Is.False);
     }
 
+    [Test]
+    public void Update_tools_require_optimistic_concurrency_token()
+    {
+        foreach (IMcpTool tool in _tools.Values.Where(tool => tool.Name.EndsWith("_update_by_id", StringComparison.Ordinal)))
+        {
+            Assert.That(RequiredNames(RequireObject(tool.InputSchema)), Does.Contain("expectedModifiedUtc"), tool.Name);
+            Assert.That(Property(RequireObject(tool.InputSchema), "expectedModifiedUtc")["format"]?.GetValue<string>(), Is.EqualTo("date-time"), tool.Name);
+        }
+    }
+
+    [Test]
+    public void Crud_and_conversion_tools_publish_domain_specific_output_data()
+    {
+        foreach (IMcpTool tool in _tools.Values.Where(tool => tool.Name != "ping" && !tool.Name.EndsWith("_delete_by_id", StringComparison.Ordinal)))
+        {
+            JsonObject output = RequireObject(tool.OutputSchema);
+            JsonObject data = Property(output, "data");
+            bool constrained = data.ContainsKey("properties") || data.ContainsKey("items") || data.ContainsKey("const") || data.ContainsKey("$ref");
+            Assert.That(constrained, Is.True, $"{tool.Name} has an unconstrained success data schema");
+        }
+    }
+
+    [Test]
+    public void Field_write_schema_excludes_derived_and_removed_properties()
+    {
+        JsonObject field = Property(RequireObject(_tools["field_create"].InputSchema), "field");
+        JsonObject lines = Property(field, "DelineationLines");
+        JsonObject line = RequireObject(lines["items"]);
+        JsonObject properties = RequireObject(line["properties"]);
+        Assert.Multiple(() =>
+        {
+            Assert.That(properties.ContainsKey("CalculatedBoundaryLines"), Is.False);
+            Assert.That(properties.ContainsKey("LineType"), Is.False);
+        });
+    }
+
     private static JsonObject RequireObject(JsonNode? node)
     {
         Assert.That(node, Is.TypeOf<JsonObject>());

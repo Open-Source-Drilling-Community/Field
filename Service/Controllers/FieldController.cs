@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using OSDC.DotnetLibraries.General.DataManagement;
 using OSDC.Drilling.Field.Service.Managers;
@@ -187,37 +188,14 @@ namespace OSDC.Drilling.Field.Service.Controllers
         /// <param name="field"></param>
         /// <returns>true if the given Field has been added successfully to the microservice database, at the endpoint Field/api/Field</returns>
         [HttpPost(Name = "PostField")]
+        [ProducesResponseType<Model.Field>(StatusCodes.Status200OK)]
+        [ProducesResponseType<FieldMutationErrorEnvelope>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<FieldMutationErrorEnvelope>(StatusCodes.Status409Conflict)]
+        [ProducesResponseType<FieldMutationErrorEnvelope>(StatusCodes.Status500InternalServerError)]
         public ActionResult PostField([FromBody] Model.Field? data)
         {
             UsageStatisticsField.Instance.IncrementPostFieldPerDay();
-            // Check if field exists in the database through ID
-            if (data != null && data.MetaInfo != null && data.MetaInfo.ID != Guid.Empty)
-            {
-                var existingData = _fieldManager.GetFieldById(data.MetaInfo.ID);
-                if (existingData == null)
-                {   
-                    //  If field was not found, call AddField, where the field.Calculate()
-                    // method is called. 
-                    if (_fieldManager.AddField(data))
-                    {
-                        return Ok(); // status=OK is used rather than status=Created because NSwag auto-generated controllers use 200 (OK) rather than 201 (Created) as return codes
-                    }
-                    else
-                    {
-                        return StatusCode(StatusCodes.Status500InternalServerError);
-                    }
-                }
-                else
-                {
-                    _logger.LogWarning("The given Field already exists and will not be added");
-                    return StatusCode(StatusCodes.Status409Conflict);
-                }
-            }
-            else
-            {
-                _logger.LogWarning("The given Field is null, badly formed, or its ID is empty");
-                return BadRequest();
-            }
+            return this.ToActionResult(_fieldManager.AddField(data), data);
         }
 
         /// <summary>
@@ -226,35 +204,23 @@ namespace OSDC.Drilling.Field.Service.Controllers
         /// <param name="field"></param>
         /// <returns>true if the given Field has been updated successfully to the microservice database, at the endpoint Field/api/Field/id</returns>
         [HttpPut("{id}", Name = "PutFieldById")]
-        public ActionResult PutFieldById(Guid id, [FromBody] Model.Field? data)
+        [ProducesResponseType<Model.Field>(StatusCodes.Status200OK)]
+        [ProducesResponseType<FieldMutationErrorEnvelope>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<FieldMutationErrorEnvelope>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<FieldMutationErrorEnvelope>(StatusCodes.Status409Conflict)]
+        [ProducesResponseType<FieldMutationErrorEnvelope>(StatusCodes.Status500InternalServerError)]
+        public ActionResult PutFieldById(Guid id, [FromQuery, BindRequired] DateTimeOffset expectedModifiedUtc, [FromBody] Model.Field? data)
         {
             UsageStatisticsField.Instance.IncrementPutFieldByIdPerDay();
-            // Check if Field is in the data base
-            if (data != null && data.MetaInfo != null && data.MetaInfo.ID.Equals(id))
+            if (expectedModifiedUtc == default)
             {
-                var existingData = _fieldManager.GetFieldById(id);
-                if (existingData != null)
+                return BadRequest(new FieldMutationErrorEnvelope
                 {
-                    if (_fieldManager.UpdateFieldById(id, data))
-                    {
-                        return Ok();
-                    }
-                    else
-                    {
-                        return StatusCode(StatusCodes.Status500InternalServerError);
-                    }
-                }
-                else
-                {
-                    _logger.LogWarning("The given Field has not been found in the database");
-                    return NotFound();
-                }
+                    Error = "invalid_request",
+                    Message = "expectedModifiedUtc is required."
+                });
             }
-            else
-            {
-                _logger.LogWarning("The given Field is null, badly formed, or its does not match the ID to update");
-                return BadRequest();
-            }
+            return this.ToActionResult(_fieldManager.UpdateFieldById(id, expectedModifiedUtc, data), data);
         }
 
         /// <summary>

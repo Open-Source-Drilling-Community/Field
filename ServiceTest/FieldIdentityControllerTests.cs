@@ -22,7 +22,7 @@ namespace OSDC.Drilling.Field.ServiceTest
             Assert.That(fetched.Name, Is.EqualTo(identity.Name));
 
             fetched.Name = "updated field identity";
-            await api.PutFieldIdentityByIdAsync(fetched.MetaInfo.ID, fetched);
+            await api.PutFieldIdentityByIdAsync(fetched.MetaInfo.ID, fetched.LastModificationDate!.Value, fetched);
             FieldIdentity updated = await api.GetFieldIdentityByIdAsync(fetched.MetaInfo.ID);
             Assert.That(updated.Name, Is.EqualTo("updated field identity"));
 

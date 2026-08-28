@@ -19,7 +19,8 @@ stored.
 The service uses path base `/Field/api`.
 
 - `Field`: Field CRUD. A Field optionally carries `ProjectionDefinitionID`,
-  which identifies an EarthCartographicProjection definition.
+  which identifies an EarthCartographicProjection definition. Create and update
+  validate all Field-owned catalog references in the same transaction.
 - `Field/BatchExport`: creates a read-only, versioned JSON backup document for
   every field or an explicitly ordered UUID selection. Selected exports are
   atomic: an invalid, duplicate, or missing UUID returns a stable error envelope
@@ -31,15 +32,17 @@ The service uses path base `/Field/api`.
   records by compatible UUID or unique normalized name, while
   `MapOrCreateMissing` may create missing local records with server-generated
   UUIDs. Catalog mapping, reference rewriting, optional catalog creation, and
-  every field write are atomic. Version-1 documents are accepted for same-server
-  recovery only when all referenced catalog UUIDs already exist locally.
+  every field write are atomic.
 - `FieldCoordinateConversion/Forward`: converts an ordered geographic batch
   in the projection datum or WGS 84 to canonical easting/northing.
 - `FieldCoordinateConversion/Inverse`: converts canonical easting/northing to
   projection-datum coordinates and, when a usable EarthGeodesy path exists,
   WGS 84 coordinates.
 - `FieldFeatureCategory`, `FieldMembershipCategory`, `FieldIdentity`, and
-  `FieldDelineationLineType`: Field-owned catalog CRUD.
+  `FieldDelineationLineType`: Field-owned catalog CRUD. Deletion is rejected
+  while a Field references a definition. Category updates are rejected if they
+  remove an option still referenced by a Field. Conflict errors include the
+  affected Field UUIDs.
 - `FieldUsageStatistics`: REST usage counters.
 
 Angles are SI radians, distances are SI metres, easting precedes northing, and
@@ -49,6 +52,11 @@ WGS-84-to-projection-datum path failure rejects the batch.
 
 Swagger is available at `/Field/api/swagger` and the merged contract at
 `/Field/api/swagger/merged/swagger.json`.
+
+All PUT endpoints are complete replacements and require the query parameter
+`expectedModifiedUtc`, copied from the latest returned `LastModificationDate`.
+The server preserves `CreationDate`, assigns a new `LastModificationDate`, and
+returns HTTP 409 `concurrency_conflict` if another writer has changed the record.
 
 ## MCP
 
@@ -62,8 +70,8 @@ Swagger is available at `/Field/api/swagger` and the merged contract at
   `field_membership_category_...`, `field_identity_...`, and
   `field_delineation_line_type_...`
 
-Tool names use underscores only. Tools publish explicit JSON input/output
-schemas and MCP annotations. Successes contain schema-conforming structured
+Tool names use underscores only. Tools publish resource-specific JSON input and
+output schemas and MCP annotations. Successes contain schema-conforming structured
 content plus a JSON text fallback; failures set `isError=true`, return the
 stable `{error,message,errors}` JSON envelope, and omit success-shaped
 structured content. Usage statistics remain available through REST and are
@@ -71,10 +79,10 @@ intentionally not exposed through MCP.
 
 ## Persistence compatibility
 
-The current database schema version is 2. New databases are created at this
-version and existing version-2 databases are validated at startup. Pre-v2
-databases are rejected without modification; restore and migrate such a backup
-with a pre-cleanup service release before using this version.
+The current database schema version is 3. New databases are created at this
+version. Existing schema-version-2 databases are upgraded transactionally by
+initializing missing creation/modification timestamps; the database structure
+is then validated before the service becomes available.
 
 ## Build and run
 

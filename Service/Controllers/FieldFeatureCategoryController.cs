@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using OSDC.Drilling.Field.Model;
 using OSDC.Drilling.Field.Service.Managers;
@@ -16,10 +17,12 @@ namespace OSDC.Drilling.Field.Service.Controllers
     {
         private readonly ILogger<FieldFeatureCategoryManager> _logger;
         private readonly FieldFeatureCategoryManager _manager;
+        private readonly SqlConnectionManager _connectionManager;
 
         public FieldFeatureCategoryController(ILogger<FieldFeatureCategoryManager> logger, SqlConnectionManager connectionManager)
         {
             _logger = logger;
+            _connectionManager = connectionManager;
             _manager = FieldFeatureCategoryManager.GetInstance(_logger, connectionManager);
         }
 
@@ -61,6 +64,7 @@ namespace OSDC.Drilling.Field.Service.Controllers
         }
 
         [HttpPost(Name = "PostFieldFeatureCategory")]
+        [ProducesResponseType<Model.FieldFeatureCategory>(StatusCodes.Status200OK)]
         public ActionResult PostFieldFeatureCategory([FromBody] Model.FieldFeatureCategory? data)
         {
             UsageStatisticsField.Instance.IncrementPostFieldFeatureCategoryPerDay();
@@ -75,41 +79,28 @@ namespace OSDC.Drilling.Field.Service.Controllers
             }
 
             return _manager.AddFieldFeatureCategory(data)
-                ? Ok()
+                ? Ok(data)
                 : StatusCode(StatusCodes.Status500InternalServerError);
         }
 
         [HttpPut("{id}", Name = "PutFieldFeatureCategoryById")]
-        public ActionResult PutFieldFeatureCategoryById(Guid id, [FromBody] Model.FieldFeatureCategory? data)
+        [ProducesResponseType<Model.FieldFeatureCategory>(StatusCodes.Status200OK)]
+        [ProducesResponseType<FieldMutationErrorEnvelope>(StatusCodes.Status409Conflict)]
+        public ActionResult PutFieldFeatureCategoryById(Guid id, [FromQuery, BindRequired] DateTimeOffset expectedModifiedUtc, [FromBody] Model.FieldFeatureCategory? data)
         {
             UsageStatisticsField.Instance.IncrementPutFieldFeatureCategoryByIdPerDay();
-            if (data?.MetaInfo == null || data.MetaInfo.ID != id)
+            if (expectedModifiedUtc == default)
             {
-                return BadRequest();
+                return BadRequest(new FieldMutationErrorEnvelope { Error = "invalid_request", Message = "expectedModifiedUtc is required." });
             }
-
-            if (_manager.GetFieldFeatureCategoryById(id) == null)
-            {
-                return NotFound();
-            }
-
-            return _manager.UpdateFieldFeatureCategoryById(id, data)
-                ? Ok()
-                : StatusCode(StatusCodes.Status500InternalServerError);
+            return this.ToActionResult(FieldCatalogMutationManager.UpdateFeatureCategory(_connectionManager, _logger, id, expectedModifiedUtc, data), data);
         }
 
         [HttpDelete("{id}", Name = "DeleteFieldFeatureCategoryById")]
         public ActionResult DeleteFieldFeatureCategoryById(Guid id)
         {
             UsageStatisticsField.Instance.IncrementDeleteFieldFeatureCategoryByIdPerDay();
-            if (_manager.GetFieldFeatureCategoryById(id) == null)
-            {
-                return NotFound();
-            }
-
-            return _manager.DeleteFieldFeatureCategoryById(id)
-                ? Ok()
-                : StatusCode(StatusCodes.Status500InternalServerError);
+            return this.ToActionResult(FieldCatalogMutationManager.DeleteFeatureCategory(_connectionManager, _logger, id));
         }
     }
 }

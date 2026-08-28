@@ -79,13 +79,17 @@ var field = new Field
 {
     MetaInfo = new MetaInfo { ID = fieldId },
     Name = "My Field",
-    Description = "Sample",
-    CreationDate = DateTimeOffset.UtcNow,
-    LastModificationDate = DateTimeOffset.UtcNow
+    Description = "Sample"
 };
 
-await client.PostFieldAsync(field);
+field = await client.PostFieldAsync(field);
 var fetched = await client.GetFieldByIdAsync(fieldId);
+
+fetched.Description = "Updated sample";
+fetched = await client.PutFieldByIdAsync(
+    fieldId,
+    fetched.LastModificationDate!.Value,
+    fetched);
 ```
 
 Perform a synchronous forward conversion:

@@ -182,7 +182,7 @@ namespace OSDC.Drilling.Field.Service.Managers
             try
             {
                 DateTimeOffset now = DateTimeOffset.UtcNow;
-                data.CreationDate ??= now;
+                data.CreationDate = now;
                 data.LastModificationDate = now;
                 string metaInfo = JsonSerializer.Serialize(data.MetaInfo, JsonSettings.Options);
                 string serialized = JsonSerializer.Serialize(data, JsonSettings.Options);

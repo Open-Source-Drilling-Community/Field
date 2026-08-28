@@ -105,7 +105,7 @@ else
                 EnsureMetaInfo(identity);
                 if (existingIds.Contains(identity.MetaInfo!.ID))
                 {
-                    await Api.ClientField.PutFieldIdentityByIdAsync(identity.MetaInfo.ID, identity);
+                    await Api.ClientField.PutFieldIdentityByIdAsync(identity.MetaInfo.ID, identity.LastModificationDate ?? throw new InvalidOperationException("The stored identity has no concurrency timestamp."), identity);
                 }
                 else
                 {

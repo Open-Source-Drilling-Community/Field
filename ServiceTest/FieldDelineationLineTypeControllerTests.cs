@@ -22,7 +22,7 @@ namespace OSDC.Drilling.Field.ServiceTest
             Assert.That(fetched.Name, Is.EqualTo(lineType.Name));
 
             fetched.Name = "updated delineation line type";
-            await api.PutFieldDelineationLineTypeByIdAsync(fetched.MetaInfo.ID, fetched);
+            await api.PutFieldDelineationLineTypeByIdAsync(fetched.MetaInfo.ID, fetched.LastModificationDate!.Value, fetched);
             FieldDelineationLineType updated = await api.GetFieldDelineationLineTypeByIdAsync(fetched.MetaInfo.ID);
             Assert.That(updated.Name, Is.EqualTo("updated delineation line type"));
 

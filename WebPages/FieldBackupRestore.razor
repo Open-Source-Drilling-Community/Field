@@ -236,7 +236,6 @@
     private const long MaximumBackupFileBytes = 256L * 1024L * 1024L;
     private const string ExpectedFormatIdentifier = "OSDC.Drilling.Field.BatchExport";
     private const int CurrentSchemaVersion = 2;
-    private const int LegacySchemaVersion = 1;
 
     private List<FieldLight>? _fields;
     private HashSet<FieldLight> _selectedFields = [];
@@ -376,9 +375,9 @@
         {
             _restoreValidationErrors.Add($"FormatIdentifier must be '{ExpectedFormatIdentifier}'.");
         }
-        if (_restoreDocument.SchemaVersion is not LegacySchemaVersion and not CurrentSchemaVersion)
+        if (_restoreDocument.SchemaVersion != CurrentSchemaVersion)
         {
-            _restoreValidationErrors.Add($"SchemaVersion must be {LegacySchemaVersion} or {CurrentSchemaVersion}.");
+            _restoreValidationErrors.Add($"SchemaVersion must be {CurrentSchemaVersion}.");
         }
         if (_restoreDocument.SchemaVersion == CurrentSchemaVersion && _restoreDocument.CatalogDependencies == null)
         {
@@ -453,9 +452,7 @@
             FieldBatchRestoreResponse response = await Api.ClientField.BatchRestoreFieldsAsync(new FieldBatchRestoreRequest
             {
                 ConflictPolicy = _restorePolicy,
-                CatalogPolicy = _restoreDocument.SchemaVersion >= 2
-                    ? _catalogRestorePolicy
-                    : FieldBatchCatalogRestorePolicy.Unspecified,
+                CatalogPolicy = _catalogRestorePolicy,
                 Document = _restoreDocument
             });
             Snackbar.Add($"Restore completed: {response.CreatedCount} field(s) created, {response.ReplacedCount} replaced; " +

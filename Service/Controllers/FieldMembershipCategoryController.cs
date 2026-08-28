@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using OSDC.Drilling.Field.Model;
 using OSDC.Drilling.Field.Service.Managers;
@@ -16,10 +17,12 @@ namespace OSDC.Drilling.Field.Service.Controllers
     {
         private readonly ILogger<FieldMembershipCategoryManager> _logger;
         private readonly FieldMembershipCategoryManager _manager;
+        private readonly SqlConnectionManager _connectionManager;
 
         public FieldMembershipCategoryController(ILogger<FieldMembershipCategoryManager> logger, SqlConnectionManager connectionManager)
         {
             _logger = logger;
+            _connectionManager = connectionManager;
             _manager = FieldMembershipCategoryManager.GetInstance(_logger, connectionManager);
         }
 
@@ -61,6 +64,7 @@ namespace OSDC.Drilling.Field.Service.Controllers
         }
 
         [HttpPost(Name = "PostFieldMembershipCategory")]
+        [ProducesResponseType<Model.FieldMembershipCategory>(StatusCodes.Status200OK)]
         public ActionResult PostFieldMembershipCategory([FromBody] Model.FieldMembershipCategory? data)
         {
             UsageStatisticsField.Instance.IncrementPostFieldMembershipCategoryPerDay();
@@ -75,41 +79,28 @@ namespace OSDC.Drilling.Field.Service.Controllers
             }
 
             return _manager.AddFieldMembershipCategory(data)
-                ? Ok()
+                ? Ok(data)
                 : StatusCode(StatusCodes.Status500InternalServerError);
         }
 
         [HttpPut("{id}", Name = "PutFieldMembershipCategoryById")]
-        public ActionResult PutFieldMembershipCategoryById(Guid id, [FromBody] Model.FieldMembershipCategory? data)
+        [ProducesResponseType<Model.FieldMembershipCategory>(StatusCodes.Status200OK)]
+        [ProducesResponseType<FieldMutationErrorEnvelope>(StatusCodes.Status409Conflict)]
+        public ActionResult PutFieldMembershipCategoryById(Guid id, [FromQuery, BindRequired] DateTimeOffset expectedModifiedUtc, [FromBody] Model.FieldMembershipCategory? data)
         {
             UsageStatisticsField.Instance.IncrementPutFieldMembershipCategoryByIdPerDay();
-            if (data?.MetaInfo == null || data.MetaInfo.ID != id)
+            if (expectedModifiedUtc == default)
             {
-                return BadRequest();
+                return BadRequest(new FieldMutationErrorEnvelope { Error = "invalid_request", Message = "expectedModifiedUtc is required." });
             }
-
-            if (_manager.GetFieldMembershipCategoryById(id) == null)
-            {
-                return NotFound();
-            }
-
-            return _manager.UpdateFieldMembershipCategoryById(id, data)
-                ? Ok()
-                : StatusCode(StatusCodes.Status500InternalServerError);
+            return this.ToActionResult(FieldCatalogMutationManager.UpdateMembershipCategory(_connectionManager, _logger, id, expectedModifiedUtc, data), data);
         }
 
         [HttpDelete("{id}", Name = "DeleteFieldMembershipCategoryById")]
         public ActionResult DeleteFieldMembershipCategoryById(Guid id)
         {
             UsageStatisticsField.Instance.IncrementDeleteFieldMembershipCategoryByIdPerDay();
-            if (_manager.GetFieldMembershipCategoryById(id) == null)
-            {
-                return NotFound();
-            }
-
-            return _manager.DeleteFieldMembershipCategoryById(id)
-                ? Ok()
-                : StatusCode(StatusCodes.Status500InternalServerError);
+            return this.ToActionResult(FieldCatalogMutationManager.DeleteMembershipCategory(_connectionManager, _logger, id));
         }
     }
 }

@@ -312,7 +312,6 @@
         {
             ID = Guid.NewGuid(),
             DelineationLineTypeID = GetDefaultLineTypeId(),
-            LineType = GetDefaultLineTypeName(),
             Name = "New delineation line",
             Points = [],
             CalculatedBoundaryLines = []
@@ -351,7 +350,6 @@
         }
 
         SelectedLine.DelineationLineTypeID = value;
-        SelectedLine.LineType = value == null ? null : LineTypes.FirstOrDefault(lineType => lineType.MetaInfo?.ID == value)?.Name;
         SelectedLine.CalculatedBoundaryLines = [];
     }
 
@@ -512,11 +510,6 @@
             .ToList();
     }
 
-    private string? GetDefaultLineTypeName()
-    {
-        return GetSelectableLineTypes().FirstOrDefault()?.Name ?? "lease line";
-    }
-
     private Guid? GetDefaultLineTypeId()
     {
         return GetSelectableLineTypes().FirstOrDefault()?.MetaInfo?.ID;
@@ -535,7 +528,6 @@
         {
             ID = line.ID == Guid.Empty ? Guid.NewGuid() : line.ID,
             DelineationLineTypeID = line.DelineationLineTypeID,
-            LineType = line.LineType,
             Name = line.Name,
             Description = line.Description,
             Margin = line.Margin,
@@ -1077,11 +1069,7 @@
 
     private static string GetLineDisplayName(FieldDelineationLine line)
     {
-        return !string.IsNullOrWhiteSpace(line.Name)
-            ? line.Name
-            : !string.IsNullOrWhiteSpace(line.LineType)
-                ? line.LineType
-            : "Unnamed line";
+        return !string.IsNullOrWhiteSpace(line.Name) ? line.Name : "Unnamed line";
     }
 
     private string GetLineTypeDisplayName(FieldDelineationLine line)
@@ -1095,7 +1083,7 @@
             }
         }
 
-        return line.LineType ?? string.Empty;
+        return string.Empty;
     }
 
     private static double MeridianDistance(double latitude)

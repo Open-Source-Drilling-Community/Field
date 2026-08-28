@@ -17,11 +17,6 @@ namespace OSDC.Drilling.Field.Model
         public Guid? DelineationLineTypeID { get; set; }
 
         /// <summary>
-        /// legacy user-defined line type name kept for backward-compatible JSON imports
-        /// </summary>
-        public string? LineType { get; set; }
-
-        /// <summary>
         /// user-defined name of the delineation line
         /// </summary>
         public string? Name { get; set; }

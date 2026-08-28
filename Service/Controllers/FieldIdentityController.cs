@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using OSDC.Drilling.Field.Model;
 using OSDC.Drilling.Field.Service.Managers;
@@ -16,10 +17,12 @@ namespace OSDC.Drilling.Field.Service.Controllers
     {
         private readonly ILogger<FieldIdentityManager> _logger;
         private readonly FieldIdentityManager _manager;
+        private readonly SqlConnectionManager _connectionManager;
 
         public FieldIdentityController(ILogger<FieldIdentityManager> logger, SqlConnectionManager connectionManager)
         {
             _logger = logger;
+            _connectionManager = connectionManager;
             _manager = FieldIdentityManager.GetInstance(_logger, connectionManager);
         }
 
@@ -61,6 +64,7 @@ namespace OSDC.Drilling.Field.Service.Controllers
         }
 
         [HttpPost(Name = "PostFieldIdentity")]
+        [ProducesResponseType<Model.FieldIdentity>(StatusCodes.Status200OK)]
         public ActionResult PostFieldIdentity([FromBody] Model.FieldIdentity? data)
         {
             UsageStatisticsField.Instance.IncrementPostFieldIdentityPerDay();
@@ -75,41 +79,28 @@ namespace OSDC.Drilling.Field.Service.Controllers
             }
 
             return _manager.AddFieldIdentity(data)
-                ? Ok()
+                ? Ok(data)
                 : StatusCode(StatusCodes.Status500InternalServerError);
         }
 
         [HttpPut("{id}", Name = "PutFieldIdentityById")]
-        public ActionResult PutFieldIdentityById(Guid id, [FromBody] Model.FieldIdentity? data)
+        [ProducesResponseType<Model.FieldIdentity>(StatusCodes.Status200OK)]
+        [ProducesResponseType<FieldMutationErrorEnvelope>(StatusCodes.Status409Conflict)]
+        public ActionResult PutFieldIdentityById(Guid id, [FromQuery, BindRequired] DateTimeOffset expectedModifiedUtc, [FromBody] Model.FieldIdentity? data)
         {
             UsageStatisticsField.Instance.IncrementPutFieldIdentityByIdPerDay();
-            if (data?.MetaInfo == null || data.MetaInfo.ID != id)
+            if (expectedModifiedUtc == default)
             {
-                return BadRequest();
+                return BadRequest(new FieldMutationErrorEnvelope { Error = "invalid_request", Message = "expectedModifiedUtc is required." });
             }
-
-            if (_manager.GetFieldIdentityById(id) == null)
-            {
-                return NotFound();
-            }
-
-            return _manager.UpdateFieldIdentityById(id, data)
-                ? Ok()
-                : StatusCode(StatusCodes.Status500InternalServerError);
+            return this.ToActionResult(FieldCatalogMutationManager.UpdateIdentity(_connectionManager, _logger, id, expectedModifiedUtc, data), data);
         }
 
         [HttpDelete("{id}", Name = "DeleteFieldIdentityById")]
         public ActionResult DeleteFieldIdentityById(Guid id)
         {
             UsageStatisticsField.Instance.IncrementDeleteFieldIdentityByIdPerDay();
-            if (_manager.GetFieldIdentityById(id) == null)
-            {
-                return NotFound();
-            }
-
-            return _manager.DeleteFieldIdentityById(id)
-                ? Ok()
-                : StatusCode(StatusCodes.Status500InternalServerError);
+            return this.ToActionResult(FieldCatalogMutationManager.DeleteIdentity(_connectionManager, _logger, id));
         }
     }
 }

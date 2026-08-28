@@ -9,6 +9,13 @@ The Field solution provides a microservice (REST API), reusable Razor pages, and
 - Provide a web UI to browse and edit fields, manage field vocabularies, maintain delineation lines, display field-level trajectories and survey runs, and run cartographic, vertical datum, Earth gravity, and Earth magnetic-field calculations.
 - Share OpenAPI-generated clients/DTOs to keep contracts consistent across Service, WebApp, and tests.
 
+Field writes validate every reference to the locally owned feature, membership,
+identity, and delineation-line-type catalogs. A referenced catalog definition or
+option cannot be deleted, and a category update cannot remove an option still in
+use. Conflicts identify the affected Field UUIDs. PUT operations are full
+replacements and require `expectedModifiedUtc` from the latest representation;
+stale updates return HTTP 409 without changing stored data.
+
 ## Installation
 
 Prerequisites:
@@ -109,8 +116,6 @@ UUIDs by compatible local UUID or a unique normalized-name match and rejects
 missing definitions. `MapOrCreateMissing` additionally creates missing local
 definitions and options with server-generated UUIDs. Catalog matching,
 reference rewriting, catalog creation and field restoration are atomic.
-Schema-version 1 documents remain accepted for same-server recovery only when
-every referenced catalog UUID already exists locally.
 
 WebApp (UI):
 - Local Field page: `https://localhost:5011/Field/webapp/Field`

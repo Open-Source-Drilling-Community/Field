@@ -6,6 +6,8 @@ using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Data.Sqlite;
+using System.Text.Json;
+using OSDC.Drilling.Field.Model;
 
 namespace OSDC.Drilling.Field.Service.Managers
 {
@@ -33,7 +35,7 @@ namespace OSDC.Drilling.Field.Service.Managers
         public static readonly string HOME_DIRECTORY = ".." + Path.DirectorySeparatorChar + "home" + Path.DirectorySeparatorChar;
         public static readonly string DATABASE_FILENAME = "Field.db";
         public static readonly string DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-        public const int CURRENT_SCHEMA_VERSION = 2;
+        public const int CURRENT_SCHEMA_VERSION = 3;
 
         // dictionary describing tables format
         private readonly static Dictionary<string, string[]> _tableStructureDict = new Dictionary<string, string[]>()
@@ -162,7 +164,7 @@ namespace OSDC.Drilling.Field.Service.Managers
         /// </summary>
         private void ManageDataBase()
         {
-            var connection = GetConnection();
+            using var connection = GetConnection();
             if (connection != null)
             {
                 List<string> tableNameList = new();
@@ -205,12 +207,17 @@ namespace OSDC.Drilling.Field.Service.Managers
                     return;
                 }
 
+                if (schemaVersion == 2)
+                {
+                    MigrateVersion2ToVersion3(connection);
+                    schemaVersion = CURRENT_SCHEMA_VERSION;
+                }
+
                 if (schemaVersion < CURRENT_SCHEMA_VERSION)
                 {
                     throw new InvalidOperationException(
                         $"Field database schema version {schemaVersion} is no longer supported. " +
-                        $"Migrate it to version {CURRENT_SCHEMA_VERSION} with a pre-cleanup Field service release, " +
-                        "then start this version again.");
+                        $"Restore it through the schema-version-2 batch API before starting this service.");
                 }
 
                 List<string> unexpected = tableNameList.Except(_tableStructureDict.Keys, StringComparer.Ordinal).ToList();
@@ -231,6 +238,101 @@ namespace OSDC.Drilling.Field.Service.Managers
             }
         }
 
+        private void MigrateVersion2ToVersion3(SqliteConnection connection)
+        {
+            _logger.LogInformation("Migrating Field database schema from version 2 to version 3 by assigning server-owned timestamps where absent");
+            using SqliteTransaction transaction = connection.BeginTransaction();
+            try
+            {
+                DateTimeOffset now = DateTimeOffset.UtcNow;
+                NormalizeFieldTimestamps(connection, transaction, now);
+                NormalizeCatalogTimestamps<FieldFeatureCategory>(connection, transaction, now, "FieldFeatureCategoryTable", "FieldFeatureCategory",
+                    value => value.CreationDate, (value, timestamp) => value.CreationDate = timestamp,
+                    value => value.LastModificationDate, (value, timestamp) => value.LastModificationDate = timestamp);
+                NormalizeCatalogTimestamps<FieldMembershipCategory>(connection, transaction, now, "FieldMembershipCategoryTable", "FieldMembershipCategory",
+                    value => value.CreationDate, (value, timestamp) => value.CreationDate = timestamp,
+                    value => value.LastModificationDate, (value, timestamp) => value.LastModificationDate = timestamp);
+                NormalizeCatalogTimestamps<FieldIdentity>(connection, transaction, now, "FieldIdentityTable", "FieldIdentity",
+                    value => value.CreationDate, (value, timestamp) => value.CreationDate = timestamp,
+                    value => value.LastModificationDate, (value, timestamp) => value.LastModificationDate = timestamp);
+                NormalizeCatalogTimestamps<FieldDelineationLineType>(connection, transaction, now, "FieldDelineationLineTypeTable", "FieldDelineationLineType",
+                    value => value.CreationDate, (value, timestamp) => value.CreationDate = timestamp,
+                    value => value.LastModificationDate, (value, timestamp) => value.LastModificationDate = timestamp);
+
+                using SqliteCommand version = connection.CreateCommand();
+                version.Transaction = transaction;
+                version.CommandText = $"PRAGMA user_version = {CURRENT_SCHEMA_VERSION}";
+                version.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+
+        private static void NormalizeFieldTimestamps(SqliteConnection connection, SqliteTransaction transaction, DateTimeOffset now)
+        {
+            List<(Guid ID, Model.Field Value)> values = [];
+            using (SqliteCommand read = connection.CreateCommand())
+            {
+                read.Transaction = transaction;
+                read.CommandText = "SELECT ID, Field FROM FieldTable";
+                using SqliteDataReader reader = read.ExecuteReader();
+                while (reader.Read())
+                {
+                    Model.Field? value = JsonSerializer.Deserialize<Model.Field>(reader.GetString(1), JsonSettings.Options);
+                    if (value != null) values.Add((reader.GetGuid(0), value));
+                }
+            }
+            foreach ((Guid id, Model.Field value) in values)
+            {
+                if (value.CreationDate != null && value.LastModificationDate != null) continue;
+                value.CreationDate ??= now;
+                value.LastModificationDate ??= value.CreationDate;
+                using SqliteCommand update = connection.CreateCommand();
+                update.Transaction = transaction;
+                update.CommandText = "UPDATE FieldTable SET Field=$document WHERE ID=$id";
+                update.Parameters.AddWithValue("$document", JsonSerializer.Serialize(value, JsonSettings.Options));
+                update.Parameters.AddWithValue("$id", id.ToString());
+                update.ExecuteNonQuery();
+            }
+        }
+
+        private static void NormalizeCatalogTimestamps<T>(SqliteConnection connection, SqliteTransaction transaction, DateTimeOffset now,
+            string table, string documentColumn, Func<T, DateTimeOffset?> getCreated, Action<T, DateTimeOffset?> setCreated,
+            Func<T, DateTimeOffset?> getModified, Action<T, DateTimeOffset?> setModified)
+            where T : class
+        {
+            List<(Guid ID, T Value)> values = [];
+            using (SqliteCommand read = connection.CreateCommand())
+            {
+                read.Transaction = transaction;
+                read.CommandText = $"SELECT ID, {documentColumn} FROM {table}";
+                using SqliteDataReader reader = read.ExecuteReader();
+                while (reader.Read())
+                {
+                    T? value = JsonSerializer.Deserialize<T>(reader.GetString(1), JsonSettings.Options);
+                    if (value != null) values.Add((reader.GetGuid(0), value));
+                }
+            }
+            foreach ((Guid id, T value) in values)
+            {
+                if (getCreated(value) != null && getModified(value) != null) continue;
+                setCreated(value, getCreated(value) ?? now);
+                setModified(value, getModified(value) ?? getCreated(value));
+                using SqliteCommand update = connection.CreateCommand();
+                update.Transaction = transaction;
+                update.CommandText = $"UPDATE {table} SET CreationDate=$created, LastModificationDate=$modified, {documentColumn}=$document WHERE ID=$id";
+                update.Parameters.AddWithValue("$created", getCreated(value)?.ToString(DATE_TIME_FORMAT) ?? (object)DBNull.Value);
+                update.Parameters.AddWithValue("$modified", getModified(value)?.ToString(DATE_TIME_FORMAT) ?? (object)DBNull.Value);
+                update.Parameters.AddWithValue("$document", JsonSerializer.Serialize(value, JsonSettings.Options));
+                update.Parameters.AddWithValue("$id", id.ToString());
+                update.ExecuteNonQuery();
+            }
+        }
+
         /// <summary>
         /// Check that expected fields (in tableStructure.Value) exactly match those of the stored database
         /// </summary>
@@ -238,7 +340,7 @@ namespace OSDC.Drilling.Field.Service.Managers
         /// <returns>true if the expected fields exactly match fields of the stored database</returns>
         private bool CheckDatabaseStructure(KeyValuePair<string, string[]> tableStructure)
         {
-            var connection = GetConnection();
+            using var connection = GetConnection();
             if (connection != null)
             {
                 var command = connection.CreateCommand();
@@ -285,7 +387,7 @@ namespace OSDC.Drilling.Field.Service.Managers
 
         private bool CreateTable(KeyValuePair<string, string[]> tabStruct)
         {
-            var connection = GetConnection();
+            using var connection = GetConnection();
             if (connection != null)
             {
                 var command = connection.CreateCommand();
@@ -320,7 +422,7 @@ namespace OSDC.Drilling.Field.Service.Managers
 
         private bool IndexTable(string dbName)
         {
-            var connection = GetConnection();
+            using var connection = GetConnection();
             if (connection != null)
             {
                 var command = connection.CreateCommand();
@@ -346,7 +448,7 @@ namespace OSDC.Drilling.Field.Service.Managers
 
         private bool DropTable(string dbName)
         {
-            var connection = GetConnection();
+            using var connection = GetConnection();
             if (connection != null)
             {
                 var command = connection.CreateCommand();

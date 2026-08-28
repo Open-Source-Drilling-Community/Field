@@ -150,10 +150,12 @@ public sealed class FieldBatchRestorerTests
         return new FieldBatchRestoreRequest
         {
             ConflictPolicy = policy,
+            CatalogPolicy = FieldBatchCatalogRestorePolicy.MapExisting,
             Document = new FieldBatchExportDocument
             {
-                SchemaVersion = FieldBatchExportDocument.LegacySchemaVersion,
+                SchemaVersion = FieldBatchExportDocument.CurrentSchemaVersion,
                 ExportedAtUtc = DateTimeOffset.UtcNow,
+                CatalogDependencies = new FieldBatchCatalogDependencies(),
                 Fields = fields.ToList()
             }
         };

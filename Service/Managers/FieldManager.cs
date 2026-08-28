@@ -252,7 +252,7 @@ namespace OSDC.Drilling.Field.Service.Managers
         public List<Model.Field?>? GetAllField()
         {
             List<Model.Field?> vals = [];
-            var connection = _connectionManager.GetConnection();
+            using var connection = _connectionManager.GetConnection();
             if (connection != null)
             {
                 var command = connection.CreateCommand();
@@ -334,7 +334,7 @@ namespace OSDC.Drilling.Field.Service.Managers
         /// </summary>
         public FieldBatchExportOutcome ExportBatch(FieldBatchExportRequest? request)
         {
-            SqliteConnection? connection = _connectionManager.GetConnection();
+            using SqliteConnection? connection = _connectionManager.GetConnection();
             if (connection == null)
             {
                 return FieldBatchExporter.StorageFailure("The field database is unavailable.");
@@ -422,7 +422,7 @@ namespace OSDC.Drilling.Field.Service.Managers
         public List<Model.FieldLight>? GetAllFieldLight()
         {
             List<Model.FieldLight> vals = [];
-            var connection = _connectionManager.GetConnection();
+            using var connection = _connectionManager.GetConnection();
             if (connection != null)
             {
                 var command = connection.CreateCommand();
@@ -465,77 +465,72 @@ namespace OSDC.Drilling.Field.Service.Managers
         /// </summary>
         /// <param name="field"></param>
         /// <returns>true if the given Field has been added successfully to the microservice database</returns>
-        public bool AddField(Model.Field? field)
+        internal FieldMutationResult AddField(Model.Field? field)
         {
-            if (field != null && field.MetaInfo != null && field.MetaInfo.ID != Guid.Empty)
+            if (field?.MetaInfo == null || field.MetaInfo.ID == Guid.Empty)
             {
-                FieldDelineationCalculator.Calculate(field);
-                //if successful, check if another parent data with the same ID was calculated/added during the calculation time
-                Model.Field? newField = GetFieldById(field.MetaInfo.ID);
-                if (newField == null)
+                return FieldMutationResult.Invalid("Field.MetaInfo.ID", "invalid_id", "A non-empty Field UUID is required.");
+            }
+
+            using var connection = _connectionManager.GetConnection();
+            if (connection == null)
+            {
+                return FieldMutationResult.StorageFailure();
+            }
+
+            using SqliteTransaction transaction = connection.BeginTransaction();
+            try
+            {
+                using (SqliteCommand exists = connection.CreateCommand())
                 {
-                    //update FieldTable
-                    var connection = _connectionManager.GetConnection();
-                    if (connection != null)
+                    exists.Transaction = transaction;
+                    exists.CommandText = "SELECT COUNT(*) FROM FieldTable WHERE ID = $id";
+                    exists.Parameters.AddWithValue("$id", field.MetaInfo.ID.ToString());
+                    if (Convert.ToInt64(exists.ExecuteScalar()) != 0)
                     {
-                        using SqliteTransaction transaction = connection.BeginTransaction();
-                        bool success = true;
-                        try
+                        transaction.Rollback();
+                        return new FieldMutationResult(FieldMutationFailureKind.Conflict, new FieldMutationErrorEnvelope
                         {
-                            //add the Field to the FieldTable
-                            string metaInfo = JsonSerializer.Serialize(field.MetaInfo, JsonSettings.Options);
-                            string data = JsonSerializer.Serialize(field, JsonSettings.Options);
-                            var command = connection.CreateCommand();
-                            command.CommandText = "INSERT INTO FieldTable (" +
-                                "ID, " +
-                                "MetaInfo, " +
-                                "Field" +
-                                ") VALUES (" +
-                                $"'{field.MetaInfo.ID}', " +
-                                $"'{metaInfo}', " +
-                                $"'{data}'" +
-                                ")";
-                            int count = command.ExecuteNonQuery();
-                            if (count != 1)
-                            {
-                                _logger.LogWarning("Impossible to insert the given Field into the FieldTable");
-                                success = false;
-                            }
-                        }
-                        catch (SqliteException ex)
-                        {
-                            _logger.LogError(ex, "Impossible to add the given Field into FieldTable");
-                            success = false;
-                        }
-                        //finalizing SQL transaction
-                        if (success)
-                        {
-                            transaction.Commit();
-                            _logger.LogInformation("Added the given Field of given ID into the FieldTable successfully");
-                        }
-                        else
-                        {
-                            transaction.Rollback();
-                        }
-                        return success;
+                            Error = "already_exists",
+                            Message = "A Field with the supplied UUID already exists."
+                        });
                     }
-                    else
-                    {
-                        _logger.LogWarning("Impossible to access the SQLite database");
-                    }
-                }
-                else
-                {
-                    _logger.LogWarning("Impossible to post Field. ID already found in database.");
-                    return false;
                 }
 
+                List<FieldMutationError> referenceErrors = FieldReferenceIntegrityValidator.ValidateField(connection, transaction, field);
+                if (referenceErrors.Count != 0)
+                {
+                    transaction.Rollback();
+                    return FieldMutationResult.InvalidReferences(referenceErrors);
+                }
+
+                DateTimeOffset now = DateTimeOffset.UtcNow;
+                field.CreationDate = now;
+                field.LastModificationDate = now;
+                FieldDelineationCalculator.Calculate(field);
+
+                using SqliteCommand command = connection.CreateCommand();
+                command.Transaction = transaction;
+                command.CommandText = "INSERT INTO FieldTable (ID, MetaInfo, Field) VALUES ($id, $meta, $field)";
+                command.Parameters.AddWithValue("$id", field.MetaInfo.ID.ToString());
+                command.Parameters.AddWithValue("$meta", JsonSerializer.Serialize(field.MetaInfo, JsonSettings.Options));
+                command.Parameters.AddWithValue("$field", JsonSerializer.Serialize(field, JsonSettings.Options));
+                if (command.ExecuteNonQuery() != 1)
+                {
+                    transaction.Rollback();
+                    return FieldMutationResult.StorageFailure();
+                }
+
+                transaction.Commit();
+                _logger.LogInformation("Added Field {FieldId} successfully", field.MetaInfo.ID);
+                return FieldMutationResult.Success();
             }
-            else
+            catch (Exception ex) when (ex is SqliteException or JsonException)
             {
-                _logger.LogWarning("The Field ID or the ID of its input are null or empty");
+                transaction.Rollback();
+                _logger.LogError(ex, "Impossible to add Field {FieldId}", field.MetaInfo.ID);
+                return FieldMutationResult.StorageFailure();
             }
-            return false;
         }
 
         /// <summary>
@@ -543,63 +538,78 @@ namespace OSDC.Drilling.Field.Service.Managers
         /// </summary>
         /// <param name="field"></param>
         /// <returns>true if the given Field has been updated successfully</returns>
-        public bool UpdateFieldById(Guid guid, Model.Field? field)
+        internal FieldMutationResult UpdateFieldById(Guid guid, DateTimeOffset expectedModifiedUtc, Model.Field? field)
         {
-            bool success = true;
-            if (guid != Guid.Empty && field != null && field.MetaInfo != null && field.MetaInfo.ID == guid)
+            if (guid == Guid.Empty || field?.MetaInfo == null || field.MetaInfo.ID != guid)
             {
-                FieldDelineationCalculator.Calculate(field);
-                //update FieldTable
-                var connection = _connectionManager.GetConnection();
-                if (connection != null)
-                {
-                    using SqliteTransaction transaction = connection.BeginTransaction();
-                    //update fields in FieldTable
-                    try
-                    {
-                        string metaInfo = JsonSerializer.Serialize(field.MetaInfo, JsonSettings.Options);
-                        string data = JsonSerializer.Serialize(field, JsonSettings.Options);
-                        var command = connection.CreateCommand();
-                        command.CommandText = $"UPDATE FieldTable SET " +
-                            $"MetaInfo = '{metaInfo}', " +
-                            $"Field = '{data}' " +
-                            $"WHERE ID = '{guid}'";
-                        int count = command.ExecuteNonQuery();
-                        if (count != 1)
-                        {
-                            _logger.LogWarning("Impossible to update the Field");
-                            success = false;
-                        }
-                    }
-                    catch (SqliteException ex)
-                    {
-                        _logger.LogError(ex, "Impossible to update the Field");
-                        success = false;
-                    }
+                return FieldMutationResult.Invalid("Field.MetaInfo.ID", "id_mismatch", "The route UUID must match Field.MetaInfo.ID.");
+            }
 
-                    // Finalizing
-                    if (success)
-                    {
-                        transaction.Commit();
-                        _logger.LogInformation("Updated the given Field successfully");
-                        return true;
-                    }
-                    else
-                    {
-                        transaction.Rollback();
-                    }
-                }
-                else
-                {
-                    _logger.LogWarning("Impossible to access the SQLite database");
-                }
-            }
-            else
+            using var connection = _connectionManager.GetConnection();
+            if (connection == null)
             {
-                _logger.LogWarning("The Field ID or the ID of some of its attributes are null or empty");
+                return FieldMutationResult.StorageFailure();
             }
-            return false;
+
+            using SqliteTransaction transaction = connection.BeginTransaction();
+            try
+            {
+                Model.Field? stored;
+                using (SqliteCommand read = connection.CreateCommand())
+                {
+                    read.Transaction = transaction;
+                    read.CommandText = "SELECT Field FROM FieldTable WHERE ID = $id";
+                    read.Parameters.AddWithValue("$id", guid.ToString());
+                    object? serialized = read.ExecuteScalar();
+                    stored = serialized is string json ? JsonSerializer.Deserialize<Model.Field>(json, JsonSettings.Options) : null;
+                }
+                if (stored == null)
+                {
+                    transaction.Rollback();
+                    return FieldMutationResult.NotFound("The Field does not exist.");
+                }
+                if (stored.LastModificationDate == null || !SameInstant(stored.LastModificationDate.Value, expectedModifiedUtc))
+                {
+                    transaction.Rollback();
+                    return FieldMutationResult.ConcurrencyConflict("expectedModifiedUtc",
+                        $"Expected {expectedModifiedUtc:O}, but the stored Field was modified at {stored.LastModificationDate:O}.");
+                }
+
+                List<FieldMutationError> referenceErrors = FieldReferenceIntegrityValidator.ValidateField(connection, transaction, field);
+                if (referenceErrors.Count != 0)
+                {
+                    transaction.Rollback();
+                    return FieldMutationResult.InvalidReferences(referenceErrors);
+                }
+
+                field.CreationDate = stored.CreationDate;
+                field.LastModificationDate = DateTimeOffset.UtcNow;
+                FieldDelineationCalculator.Calculate(field);
+                using SqliteCommand command = connection.CreateCommand();
+                command.Transaction = transaction;
+                command.CommandText = "UPDATE FieldTable SET MetaInfo = $meta, Field = $field WHERE ID = $id";
+                command.Parameters.AddWithValue("$id", guid.ToString());
+                command.Parameters.AddWithValue("$meta", JsonSerializer.Serialize(field.MetaInfo, JsonSettings.Options));
+                command.Parameters.AddWithValue("$field", JsonSerializer.Serialize(field, JsonSettings.Options));
+                if (command.ExecuteNonQuery() != 1)
+                {
+                    transaction.Rollback();
+                    return FieldMutationResult.StorageFailure();
+                }
+
+                transaction.Commit();
+                _logger.LogInformation("Updated Field {FieldId} successfully", guid);
+                return FieldMutationResult.Success();
+            }
+            catch (Exception ex) when (ex is SqliteException or JsonException)
+            {
+                transaction.Rollback();
+                _logger.LogError(ex, "Impossible to update Field {FieldId}", guid);
+                return FieldMutationResult.StorageFailure();
+            }
         }
+
+        private static bool SameInstant(DateTimeOffset left, DateTimeOffset right) => left.UtcTicks == right.UtcTicks;
 
         /// <summary>
         /// Deletes the Field of given ID from the microservice database

@@ -26,7 +26,7 @@ namespace OSDC.Drilling.Field.ServiceTest
             Assert.That(fetched.Options, Has.Count.EqualTo(1));
 
             fetched.Name = "updated membership category";
-            await api.PutFieldMembershipCategoryByIdAsync(fetched.MetaInfo.ID, fetched);
+            await api.PutFieldMembershipCategoryByIdAsync(fetched.MetaInfo.ID, fetched.LastModificationDate!.Value, fetched);
             FieldMembershipCategory updated = await api.GetFieldMembershipCategoryByIdAsync(fetched.MetaInfo.ID);
             Assert.That(updated.Name, Is.EqualTo("updated membership category"));
 

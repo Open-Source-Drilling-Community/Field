@@ -38,15 +38,10 @@ public static class FieldBatchRestorer
             List<FieldBatchError> mappingErrors = [];
             int createdDefinitions = 0, createdOptions = 0;
 
-            if (request.Document.SchemaVersion == FieldBatchExportDocument.LegacySchemaVersion)
-                ValidateLegacyReferences(fields, catalogs, mappingErrors);
-            else
-            {
-                ResolveDependencies(request.Document.CatalogDependencies!, catalogs,
-                    request.CatalogPolicy == FieldBatchCatalogRestorePolicy.MapOrCreateMissing,
-                    mappings, mappingErrors, restoredAtUtc, ref createdDefinitions, ref createdOptions);
-                if (mappingErrors.Count == 0) RewriteReferences(fields, mappings);
-            }
+            ResolveDependencies(request.Document.CatalogDependencies!, catalogs,
+                request.CatalogPolicy == FieldBatchCatalogRestorePolicy.MapOrCreateMissing,
+                mappings, mappingErrors, restoredAtUtc, ref createdDefinitions, ref createdOptions);
+            if (mappingErrors.Count == 0) RewriteReferences(fields, mappings);
 
             if (mappingErrors.Count != 0)
             {
@@ -276,33 +271,6 @@ public static class FieldBatchRestorer
         }
     }
 
-    private static void ValidateLegacyReferences(List<FieldModel> fields, CatalogState catalogs, List<FieldBatchError> errors)
-    {
-        HashSet<Guid> featureCategories = catalogs.Features.Select(value => value.MetaInfo!.ID).ToHashSet();
-        HashSet<Guid> featureOptions = catalogs.Features.SelectMany(value => value.Options ?? []).Select(value => value.ID).ToHashSet();
-        HashSet<Guid> membershipCategories = catalogs.Memberships.Select(value => value.MetaInfo!.ID).ToHashSet();
-        HashSet<Guid> membershipOptions = catalogs.Memberships.SelectMany(value => value.Options ?? []).Select(value => value.ID).ToHashSet();
-        HashSet<Guid> identities = catalogs.Identities.Select(value => value.MetaInfo!.ID).ToHashSet();
-        HashSet<Guid> lineTypes = catalogs.LineTypes.Select(value => value.MetaInfo!.ID).ToHashSet();
-        for (int index = 0; index < fields.Count; index++)
-        {
-            foreach (FieldFeatureAssignment value in fields[index].FieldFeatureAssignments ?? [])
-            { RequireLocal(value.FeatureCategoryID, featureCategories, index, "FieldFeatureAssignments.FeatureCategoryID", errors); RequireLocal(value.FeatureOptionID, featureOptions, index, "FieldFeatureAssignments.FeatureOptionID", errors); }
-            foreach (FieldMembershipAssignment value in fields[index].FieldMembershipAssignments ?? [])
-            { RequireLocal(value.MembershipCategoryID, membershipCategories, index, "FieldMembershipAssignments.MembershipCategoryID", errors); RequireLocal(value.MembershipOptionID, membershipOptions, index, "FieldMembershipAssignments.MembershipOptionID", errors); }
-            foreach (FieldIdentityAssignment value in fields[index].FieldIdentityAssignments ?? []) RequireLocal(value.IdentityID, identities, index, "FieldIdentityAssignments.IdentityID", errors);
-            foreach (FieldDelineationLine value in fields[index].DelineationLines ?? []) RequireLocal(value.DelineationLineTypeID, lineTypes, index, "DelineationLines.DelineationLineTypeID", errors);
-        }
-    }
-
-    private static void RequireLocal(Guid? id, HashSet<Guid> available, int index, string property, List<FieldBatchError> errors)
-    {
-        if (id is not Guid value || value == Guid.Empty)
-            errors.Add(Error(index, $"Document.Fields.{property}", "invalid_catalog_reference", "Catalog references must be non-empty UUIDs."));
-        else if (!available.Contains(value))
-            errors.Add(Error(index, $"Document.Fields.{property}", "legacy_catalog_reference_missing", $"Schema version 1 does not describe referenced UUID '{value}', and it does not exist locally."));
-    }
-
     private static List<FieldModel> CloneFields(List<FieldModel> fields) => JsonSerializer.Deserialize<List<FieldModel>>(
         JsonSerializer.Serialize(fields, JsonSettings.Options), JsonSettings.Options) ?? throw new JsonException("Fields could not be cloned.");
     private static List<PreparedField> PrepareFields(List<FieldModel> fields) => fields.Select(field => new PreparedField(
@@ -330,7 +298,7 @@ public static class FieldBatchRestorer
         FieldBatchExportDocument? document = request.Document;
         if (document == null) { errors.Add(Error(null, "Document", "required", "A batch-export document is required.")); return errors; }
         if (document.FormatIdentifier != FieldBatchExportDocument.CurrentFormatIdentifier) errors.Add(Error(null, "Document.FormatIdentifier", "unsupported_format", $"FormatIdentifier must be '{FieldBatchExportDocument.CurrentFormatIdentifier}'."));
-        if (document.SchemaVersion is not FieldBatchExportDocument.LegacySchemaVersion and not FieldBatchExportDocument.CurrentSchemaVersion) errors.Add(Error(null, "Document.SchemaVersion", "unsupported_schema_version", "SchemaVersion must be 1 or 2."));
+        if (document.SchemaVersion != FieldBatchExportDocument.CurrentSchemaVersion) errors.Add(Error(null, "Document.SchemaVersion", "unsupported_schema_version", $"SchemaVersion must be {FieldBatchExportDocument.CurrentSchemaVersion}."));
         if (document.SchemaVersion == FieldBatchExportDocument.CurrentSchemaVersion)
         {
             if (document.CatalogDependencies == null) errors.Add(Error(null, "Document.CatalogDependencies", "required", "Schema version 2 requires catalog dependencies."));

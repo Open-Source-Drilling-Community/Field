@@ -29,7 +29,7 @@ namespace OSDC.Drilling.Field.ServiceTest
             Assert.That(fetched.Options, Has.Count.EqualTo(1));
 
             fetched.Name = "updated field feature category";
-            await api.PutFieldFeatureCategoryByIdAsync(fetched.MetaInfo.ID, fetched);
+            await api.PutFieldFeatureCategoryByIdAsync(fetched.MetaInfo.ID, fetched.LastModificationDate!.Value, fetched);
             FieldFeatureCategory updated = await api.GetFieldFeatureCategoryByIdAsync(fetched.MetaInfo.ID);
             Assert.That(updated.Name, Is.EqualTo("updated field feature category"));
 

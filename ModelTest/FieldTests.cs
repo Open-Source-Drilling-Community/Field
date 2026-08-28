@@ -64,7 +64,6 @@ public class FieldTests
                 {
                     ID = Guid.NewGuid(),
                     DelineationLineTypeID = lineTypeId,
-                    LineType = "lease line",
                     Name = "North lease line",
                     Margin = 100,
                     TopDepth = 1000,
@@ -132,7 +131,6 @@ public class FieldTests
                 {
                     ID = Guid.Parse("44444444-4444-4444-4444-444444444444"),
                     DelineationLineTypeID = Guid.Parse("66666666-6666-6666-6666-666666666666"),
-                    LineType = "border line",
                     Name = "Border",
                     Description = "A border line",
                     Margin = 50,

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using OSDC.Drilling.Field.Model;
 using OSDC.Drilling.Field.Service.Managers;
@@ -16,10 +17,12 @@ namespace OSDC.Drilling.Field.Service.Controllers
     {
         private readonly ILogger<FieldDelineationLineTypeManager> _logger;
         private readonly FieldDelineationLineTypeManager _manager;
+        private readonly SqlConnectionManager _connectionManager;
 
         public FieldDelineationLineTypeController(ILogger<FieldDelineationLineTypeManager> logger, SqlConnectionManager connectionManager)
         {
             _logger = logger;
+            _connectionManager = connectionManager;
             _manager = FieldDelineationLineTypeManager.GetInstance(_logger, connectionManager);
         }
 
@@ -61,6 +64,7 @@ namespace OSDC.Drilling.Field.Service.Controllers
         }
 
         [HttpPost(Name = "PostFieldDelineationLineType")]
+        [ProducesResponseType<Model.FieldDelineationLineType>(StatusCodes.Status200OK)]
         public ActionResult PostFieldDelineationLineType([FromBody] Model.FieldDelineationLineType? data)
         {
             UsageStatisticsField.Instance.IncrementPostFieldDelineationLineTypePerDay();
@@ -75,41 +79,28 @@ namespace OSDC.Drilling.Field.Service.Controllers
             }
 
             return _manager.AddFieldDelineationLineType(data)
-                ? Ok()
+                ? Ok(data)
                 : StatusCode(StatusCodes.Status500InternalServerError);
         }
 
         [HttpPut("{id}", Name = "PutFieldDelineationLineTypeById")]
-        public ActionResult PutFieldDelineationLineTypeById(Guid id, [FromBody] Model.FieldDelineationLineType? data)
+        [ProducesResponseType<Model.FieldDelineationLineType>(StatusCodes.Status200OK)]
+        [ProducesResponseType<FieldMutationErrorEnvelope>(StatusCodes.Status409Conflict)]
+        public ActionResult PutFieldDelineationLineTypeById(Guid id, [FromQuery, BindRequired] DateTimeOffset expectedModifiedUtc, [FromBody] Model.FieldDelineationLineType? data)
         {
             UsageStatisticsField.Instance.IncrementPutFieldDelineationLineTypeByIdPerDay();
-            if (data?.MetaInfo == null || data.MetaInfo.ID != id)
+            if (expectedModifiedUtc == default)
             {
-                return BadRequest();
+                return BadRequest(new FieldMutationErrorEnvelope { Error = "invalid_request", Message = "expectedModifiedUtc is required." });
             }
-
-            if (_manager.GetFieldDelineationLineTypeById(id) == null)
-            {
-                return NotFound();
-            }
-
-            return _manager.UpdateFieldDelineationLineTypeById(id, data)
-                ? Ok()
-                : StatusCode(StatusCodes.Status500InternalServerError);
+            return this.ToActionResult(FieldCatalogMutationManager.UpdateDelineationLineType(_connectionManager, _logger, id, expectedModifiedUtc, data), data);
         }
 
         [HttpDelete("{id}", Name = "DeleteFieldDelineationLineTypeById")]
         public ActionResult DeleteFieldDelineationLineTypeById(Guid id)
         {
             UsageStatisticsField.Instance.IncrementDeleteFieldDelineationLineTypeByIdPerDay();
-            if (_manager.GetFieldDelineationLineTypeById(id) == null)
-            {
-                return NotFound();
-            }
-
-            return _manager.DeleteFieldDelineationLineTypeById(id)
-                ? Ok()
-                : StatusCode(StatusCodes.Status500InternalServerError);
+            return this.ToActionResult(FieldCatalogMutationManager.DeleteDelineationLineType(_connectionManager, _logger, id));
         }
     }
 }

@@ -413,7 +413,7 @@
                 }
 
                 OSDC.Drilling.Field.ModelShared.Field field = BuildEditedField(DateTimeOffset.UtcNow);
-                await Api.ClientField.PutFieldByIdAsync(CurrentField.MetaInfo.ID, field);
+                await Api.ClientField.PutFieldByIdAsync(CurrentField.MetaInfo.ID, CurrentField.LastModificationDate ?? throw new InvalidOperationException("The stored Field has no concurrency timestamp."), field);
                 CurrentField = await Api.ClientField.GetFieldByIdAsync(CurrentField.MetaInfo.ID);
                 _fieldFeatureAssignments = CloneFeatureAssignments(CurrentField.FieldFeatureAssignments);
                 _fieldFeatureCategories = await LoadFieldFeatureCategoriesAsync();
@@ -1752,7 +1752,6 @@
             {
                 ID = line.ID == Guid.Empty ? Guid.NewGuid() : line.ID,
                 DelineationLineTypeID = line.DelineationLineTypeID,
-                LineType = line.LineType,
                 Name = line.Name,
                 Description = line.Description,
                 Margin = line.Margin,
@@ -1901,7 +1900,6 @@
         {
             line.ID,
             line.DelineationLineTypeID,
-            line.LineType,
             line.Name,
             line.Description,
             line.Margin,

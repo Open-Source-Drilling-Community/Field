@@ -158,7 +158,7 @@ else
                 EnsureCategory(category);
                 if (existingIds.Contains(category.MetaInfo!.ID))
                 {
-                    await Api.ClientField.PutFieldMembershipCategoryByIdAsync(category.MetaInfo.ID, category);
+                    await Api.ClientField.PutFieldMembershipCategoryByIdAsync(category.MetaInfo.ID, category.LastModificationDate ?? throw new InvalidOperationException("The stored category has no concurrency timestamp."), category);
                 }
                 else
                 {

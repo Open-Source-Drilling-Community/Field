@@ -39,7 +39,6 @@ namespace OSDC.Drilling.Field.Model
     {
         public const string CurrentFormatIdentifier = "OSDC.Drilling.Field.BatchExport";
         public const int CurrentSchemaVersion = 2;
-        public const int LegacySchemaVersion = 1;
 
         /// <summary>
         /// Stable discriminator used to reject unrelated JSON documents during import.
@@ -139,8 +138,7 @@ namespace OSDC.Drilling.Field.Model
         public FieldBatchRestoreConflictPolicy ConflictPolicy { get; set; }
 
         /// <summary>
-        /// Required for schema version 2. Schema version 1 always requires every
-        /// referenced UUID to exist locally because it contains no dependency metadata.
+        /// Controls whether missing catalog definitions are rejected or created locally.
         /// </summary>
         public FieldBatchCatalogRestorePolicy CatalogPolicy { get; set; }
 

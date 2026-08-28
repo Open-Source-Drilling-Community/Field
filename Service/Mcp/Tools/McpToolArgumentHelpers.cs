@@ -34,7 +34,33 @@ internal static class McpToolArgumentHelpers
     }
 
     public static JsonObject CreateFieldSchema(bool includeId = false) =>
-        WrapBody("field", CreateFieldObjectSchema(), includeId, "field.MetaInfo.ID");
+        WrapBody("field", CreateFieldObjectSchema(includeCalculatedBoundaryLines: false), includeId, "field.MetaInfo.ID");
+
+    public static JsonObject CreateFieldResourceSchema() => CreateFieldObjectSchema();
+    public static JsonObject CreateFieldLightResourceSchema() => CreateFieldLightSchema();
+    public static JsonObject CreateFieldDelineationLineTypeResourceSchema() => CreateNamedDefinitionSchema("field delineation line type");
+    public static JsonObject CreateFieldFeatureCategoryResourceSchema() => CreateCategorySchema("feature");
+    public static JsonObject CreateFieldIdentityResourceSchema() => CreateNamedDefinitionSchema("field identity");
+    public static JsonObject CreateFieldMembershipCategoryResourceSchema() => CreateCategorySchema("membership");
+
+    public static JsonObject CreateStatusOnlyOutputSchema() => new()
+    {
+        ["type"] = "object",
+        ["properties"] = new JsonObject { ["status"] = SuccessStatus() },
+        ["required"] = new JsonArray("status"),
+        ["additionalProperties"] = false
+    };
+
+    public static JsonObject CreateIdsOutputSchema() => SuccessEnvelope(
+        ArraySchema("Stored resource UUIDs.", Uuid("Stored resource UUID.")));
+
+    public static JsonObject CreateMetaInfoListOutputSchema() => SuccessEnvelope(
+        ArraySchema("Stored resource metadata.", CreateMetaInfoSchema("stored resource")));
+
+    public static JsonObject CreateResourceOutputSchema(JsonObject resourceSchema) => SuccessEnvelope(resourceSchema);
+
+    public static JsonObject CreateResourceListOutputSchema(JsonObject resourceSchema) => SuccessEnvelope(
+        ArraySchema("Stored resources.", resourceSchema));
 
     public static JsonObject CreateFieldForwardConversionSchema() => JsonNode.Parse("""
     {
@@ -66,6 +92,33 @@ internal static class McpToolArgumentHelpers
       "$defs":{"transformation":{"type":"object","properties":{"SelectionPolicy":{"type":"string","enum":["RequireUnambiguous","FirstAvailable","ExplicitPath"],"default":"RequireUnambiguous"},"TransformationPathIDs":{"type":"array","items":{"type":"string","format":"uuid"}},"SelectionToken":{"type":"string"},"ApplicabilityPolicy":{"type":"string","enum":["RequireApplicable","AllowUnknown"],"default":"RequireApplicable"},"DepthPolicy":{"type":"string","enum":["PreservePhysicalPoint","AllowUntransformedDepthFor2D"],"default":"AllowUntransformedDepthFor2D"}},"additionalProperties":false}}
     }
     """)!.AsObject();
+
+    public static JsonObject CreateFieldCoordinateConversionOutputSchema() => SuccessEnvelope(new JsonObject
+    {
+        ["type"] = "object",
+        ["properties"] = new JsonObject
+        {
+            ["FieldID"] = Uuid("Field UUID used for the conversion."),
+            ["ProjectionDefinition"] = CreateCatalogReferenceSchema(),
+            ["ProjectionDatum"] = CreateCatalogReferenceSchema(),
+            ["Wgs84Datum"] = CreateCatalogReferenceSchema(),
+            ["ApiAxisConvention"] = new JsonObject { ["type"] = "string" },
+            ["Positions"] = ArraySchema("Results in request order.", CreateConversionPositionResultSchema()),
+            ["Warnings"] = ArraySchema("Non-fatal conversion warnings.", new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["Code"] = new JsonObject { ["type"] = "string" },
+                    ["Message"] = new JsonObject { ["type"] = "string" }
+                },
+                ["required"] = new JsonArray("Code", "Message"),
+                ["additionalProperties"] = false
+            })
+        },
+        ["required"] = new JsonArray("FieldID", "ProjectionDefinition", "ProjectionDatum", "Wgs84Datum", "ApiAxisConvention", "Positions", "Warnings"),
+        ["additionalProperties"] = false
+    });
 
     public static JsonObject CreateFieldDelineationLineTypeSchema(bool includeId = false) =>
         WrapBody("fieldDelineationLineType", CreateNamedDefinitionSchema("field delineation line type"), includeId, "fieldDelineationLineType.MetaInfo.ID");
@@ -108,14 +161,14 @@ internal static class McpToolArgumentHelpers
                 ["type"] = "string", ["enum"] = new JsonArray("MapExisting", "MapOrCreateMissing"),
                 ["description"] = "MapExisting rejects missing definitions. MapOrCreateMissing creates missing definitions/options with local server-generated UUIDs."
             },
-            ["Document"] = CreateBatchDocumentSchema(nullableDependencies: true, minimumFields: 1, currentVersionOnly: false)
+            ["Document"] = CreateBatchDocumentSchema(minimumFields: 1)
         },
         ["required"] = new JsonArray("ConflictPolicy", "CatalogPolicy", "Document"),
         ["additionalProperties"] = false
     }, false, "request");
 
     public static JsonObject CreateFieldBatchExportOutputSchema() => SuccessEnvelope(
-        CreateBatchDocumentSchema(nullableDependencies: false, minimumFields: 0, currentVersionOnly: true));
+        CreateBatchDocumentSchema(minimumFields: 0));
 
     public static JsonObject CreateFieldBatchRestoreOutputSchema() => SuccessEnvelope(new JsonObject
     {
@@ -146,11 +199,11 @@ internal static class McpToolArgumentHelpers
         ["additionalProperties"] = false
     });
 
-    private static JsonObject CreateBatchDocumentSchema(bool nullableDependencies, int minimumFields, bool currentVersionOnly)
+    private static JsonObject CreateBatchDocumentSchema(int minimumFields)
     {
         JsonObject dependencies = new()
         {
-            ["type"] = nullableDependencies ? new JsonArray("object", "null") : JsonValue.Create("object"),
+            ["type"] = "object",
             ["properties"] = new JsonObject
             {
                 ["FeatureCategories"] = ArraySchema("Referenced feature categories and options.", CreateCategorySchema("feature")),
@@ -167,9 +220,7 @@ internal static class McpToolArgumentHelpers
             ["properties"] = new JsonObject
             {
                 ["FormatIdentifier"] = new JsonObject { ["type"] = "string", ["const"] = "OSDC.Drilling.Field.BatchExport" },
-                ["SchemaVersion"] = currentVersionOnly
-                    ? new JsonObject { ["type"] = "integer", ["const"] = 2 }
-                    : new JsonObject { ["type"] = "integer", ["enum"] = new JsonArray(1, 2) },
+                ["SchemaVersion"] = new JsonObject { ["type"] = "integer", ["const"] = 2 },
                 ["ExportedAtUtc"] = new JsonObject { ["type"] = "string", ["format"] = "date-time" },
                 ["CatalogDependencies"] = dependencies,
                 ["Fields"] = ArraySchema("Complete field records in deterministic or selected order.", CreateFieldObjectSchema(), minimumFields)
@@ -184,7 +235,7 @@ internal static class McpToolArgumentHelpers
         ["type"] = "object",
         ["properties"] = new JsonObject
         {
-            ["status"] = new JsonObject { ["type"] = "integer", ["minimum"] = 200, ["maximum"] = 299 },
+            ["status"] = SuccessStatus(),
             ["data"] = dataSchema
         },
         ["required"] = new JsonArray("status", "data"),
@@ -214,6 +265,13 @@ internal static class McpToolArgumentHelpers
                 ["description"] = $"Identifier of the stored record to update. It must equal {bodyIdPath}."
             };
             required.Add("id");
+            properties["expectedModifiedUtc"] = new JsonObject
+            {
+                ["type"] = "string",
+                ["format"] = "date-time",
+                ["description"] = "LastModificationDate returned by the most recent read. The update is rejected if the stored record changed since that read."
+            };
+            required.Add("expectedModifiedUtc");
         }
 
         return new JsonObject
@@ -225,7 +283,7 @@ internal static class McpToolArgumentHelpers
         };
     }
 
-    private static JsonObject CreateFieldObjectSchema() => new()
+    private static JsonObject CreateFieldObjectSchema(bool includeCalculatedBoundaryLines = true) => new()
     {
         ["type"] = "object",
         ["description"] = "Complete Field resource. MetaInfo.ID must be a caller-generated, non-empty UUID; ProjectionDefinitionID selects the EarthCartographicProjection definition used for stateless conversion.",
@@ -241,11 +299,84 @@ internal static class McpToolArgumentHelpers
             ["FieldFeatureAssignments"] = NullableArray("Feature options assigned to this field.", CreateCategoryAssignmentSchema("Feature")),
             ["FieldIdentityAssignments"] = NullableArray("Identity values assigned to this field.", CreateIdentityAssignmentSchema()),
             ["FieldMembershipAssignments"] = NullableArray("Membership options assigned to this field.", CreateCategoryAssignmentSchema("Membership")),
-            ["DelineationLines"] = NullableArray("User-defined field delineation lines and any service-calculated margin boundaries.", CreateDelineationLineSchema())
+            ["DelineationLines"] = NullableArray("User-defined field delineation lines and any service-calculated margin boundaries.", CreateDelineationLineSchema(includeCalculatedBoundaryLines))
         },
         ["required"] = new JsonArray { "MetaInfo" },
         ["additionalProperties"] = false
     };
+
+    private static JsonObject CreateFieldLightSchema() => new()
+    {
+        ["type"] = "object",
+        ["properties"] = new JsonObject
+        {
+            ["MetaInfo"] = CreateMetaInfoSchema("field"),
+            ["Name"] = NullableString("Human-readable field name."),
+            ["Description"] = NullableString("Human-readable field description."),
+            ["CreationDate"] = NullableDateTime("Server-assigned creation timestamp."),
+            ["LastModificationDate"] = NullableDateTime("Server-assigned modification timestamp.")
+        },
+        ["required"] = new JsonArray("MetaInfo"),
+        ["additionalProperties"] = false
+    };
+
+    private static JsonObject CreateCatalogReferenceSchema() => new()
+    {
+        ["type"] = "object",
+        ["properties"] = new JsonObject
+        {
+            ["ID"] = Uuid("Catalog UUID."),
+            ["Name"] = NullableString("Catalog name."),
+            ["Authority"] = NullableString("Authority name."),
+            ["Code"] = NullableString("Authority code.")
+        },
+        ["required"] = new JsonArray("ID"),
+        ["additionalProperties"] = false
+    };
+
+    private static JsonObject CreateConversionPositionResultSchema() => new()
+    {
+        ["type"] = "object",
+        ["properties"] = new JsonObject
+        {
+            ["PositionIndex"] = NonNegativeInteger("Zero-based input position."),
+            ["ProjectionDatumGeographicCoordinate"] = CreateGeographicCoordinateSchema(false),
+            ["Wgs84GeographicCoordinate"] = CreateGeographicCoordinateSchema(true),
+            ["ProjectedCoordinate"] = new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["Easting"] = new JsonObject { ["type"] = "number" },
+                    ["Northing"] = new JsonObject { ["type"] = "number" }
+                },
+                ["required"] = new JsonArray("Easting", "Northing"),
+                ["additionalProperties"] = false
+            },
+            ["ProjectionDatumVerticalDepth"] = new JsonObject { ["type"] = "number" },
+            ["Wgs84VerticalDepth"] = NullableNumber("WGS 84 vertical depth in SI metres."),
+            ["CoordinateEpochUtc"] = NullableDateTime("Coordinate epoch."),
+            ["GridConvergence"] = NullableNumber("Grid convergence in SI radians.")
+        },
+        ["required"] = new JsonArray("PositionIndex", "ProjectionDatumGeographicCoordinate", "ProjectedCoordinate", "ProjectionDatumVerticalDepth"),
+        ["additionalProperties"] = false
+    };
+
+    private static JsonObject CreateGeographicCoordinateSchema(bool nullable)
+    {
+        JsonObject schema = new()
+        {
+            ["type"] = nullable ? new JsonArray("object", "null") : JsonValue.Create("object"),
+            ["properties"] = new JsonObject
+            {
+                ["Latitude"] = new JsonObject { ["type"] = "number" },
+                ["Longitude"] = new JsonObject { ["type"] = "number" }
+            },
+            ["required"] = new JsonArray("Latitude", "Longitude"),
+            ["additionalProperties"] = false
+        };
+        return schema;
+    }
 
     private static JsonObject CreateNamedDefinitionSchema(string entity) => new()
     {
@@ -338,26 +469,32 @@ internal static class McpToolArgumentHelpers
         ["additionalProperties"] = false
     };
 
-    private static JsonObject CreateDelineationLineSchema() => new()
+    private static JsonObject CreateDelineationLineSchema(bool includeCalculatedBoundaryLines = true)
     {
-        ["type"] = "object",
-        ["description"] = "A user-defined field boundary or delineation line. CalculatedBoundaryLines are derived by the service from Points and Margin.",
-        ["properties"] = new JsonObject
+        JsonObject properties = new()
         {
             ["ID"] = Uuid("Stable identifier of the delineation line."),
             ["DelineationLineTypeID"] = NullableUuid("Identifier of the standalone FieldDelineationLineType definition."),
-            ["LineType"] = NullableString("Legacy user-defined line type retained for backward-compatible imports; prefer DelineationLineTypeID."),
             ["Name"] = NullableString("Human-readable delineation line name."),
             ["Description"] = NullableString("Human-readable delineation line description."),
             ["Margin"] = NullableNumber("Margin distance in meters (SI) used to calculate boundary lines."),
             ["TopDepth"] = NullableNumber("Optional top depth in meters (SI), referenced to WGS84."),
             ["BottomDepth"] = NullableNumber("Optional bottom depth in meters (SI), referenced to WGS84."),
-            ["Points"] = NullableArray("Original line points using SI and WGS84 references.", CreatePointSchema("One original delineation point using SI and WGS84 references.")),
-            ["CalculatedBoundaryLines"] = NullableArray("Service-calculated margin boundaries; normally omit these from create input.", CreateBoundaryLineSchema())
-        },
-        ["required"] = new JsonArray { "ID" },
-        ["additionalProperties"] = false
-    };
+            ["Points"] = NullableArray("Original line points using SI and WGS84 references.", CreatePointSchema("One original delineation point using SI and WGS84 references."))
+        };
+        if (includeCalculatedBoundaryLines)
+        {
+            properties["CalculatedBoundaryLines"] = NullableArray("Service-calculated margin boundaries.", CreateBoundaryLineSchema());
+        }
+        return new JsonObject
+        {
+            ["type"] = "object",
+            ["description"] = "A user-defined field boundary or delineation line. CalculatedBoundaryLines are derived by the service from Points and Margin.",
+            ["properties"] = properties,
+            ["required"] = new JsonArray { "ID" },
+            ["additionalProperties"] = false
+        };
+    }
 
     private static JsonObject CreateBoundaryLineSchema() => new()
     {
@@ -414,6 +551,19 @@ internal static class McpToolArgumentHelpers
     private static JsonObject NullableNumber(string description) => new() { ["type"] = new JsonArray { "number", "null" }, ["description"] = description };
     private static JsonObject Integer(string description) => new() { ["type"] = "integer", ["description"] = description };
     private static JsonObject Boolean(string description) => new() { ["type"] = "boolean", ["description"] = description, ["default"] = false };
+    private static JsonObject SuccessStatus() => new() { ["type"] = "integer", ["minimum"] = 200, ["maximum"] = 299 };
+
+    public static bool TryParseDateTimeOffset(JsonObject? arguments, string key, out DateTimeOffset value, out JsonNode? error)
+    {
+        value = default;
+        error = null;
+        if (arguments?[key] is not JsonNode node || !DateTimeOffset.TryParse(node.ToString(), out value) || value == default)
+        {
+            error = McpToolResponses.CreateValidationError($"Argument '{key}' must be a valid non-default timestamp.");
+            return false;
+        }
+        return true;
+    }
 
     public static bool TryParseGuid(JsonObject? arguments, string key, out Guid value, out JsonNode? error)
     {

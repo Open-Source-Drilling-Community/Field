@@ -109,7 +109,7 @@ namespace OSDC.Drilling.Field.ServiceTest
 
                 // Update
                 fetched.Name = "Test Field Updated";
-                await api.PutFieldByIdAsync(fieldId, fetched);
+                await api.PutFieldByIdAsync(fieldId, fetched.LastModificationDate!.Value, fetched);
 
                 var updated = await api.GetFieldByIdAsync(fieldId);
                 Assert.That(updated.Name, Is.EqualTo("Test Field Updated"));
