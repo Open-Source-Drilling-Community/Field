@@ -1,83 +1,77 @@
 # ModelSharedOut Project
 
-ModelSharedOut generates and maintains the OpenAPI client + DTOs for the Field microservice, and publishes a merged OpenAPI document used by the Service Swagger UI. It follows the distributed shared model approach, keeping client contracts versioned alongside the solution.
+ModelSharedOut produces the merged Field OpenAPI document and the generated C#
+client/DTO contract consumed by the WebApp and tests.
 
-## Purpose
+## Inputs and outputs
 
-- Merge OpenAPI schemas from this solution into a single document (`FieldMergedModel.json`).
-- Generate a strongly-typed C# client and DTOs (`FieldMergedModel.cs`) in namespace `OSDC.Drilling.Field.ModelShared` for consumers like WebApp and ServiceTest.
-- Copy the merged OpenAPI document into the Service so it can be served by Swagger UI.
+The generator merges the OpenAPI documents in `json-schemas/`:
 
-## How It Works
+- `FieldFullName.json`
+- `ClusterFullName.json`
+- `TrajectoryFullName.json`
+- `EarthCartographicProjectionModel.json`
+- `EarthGeodesyModel.json`
+- `EarthVerticalDatumMergedModel.json`
 
-- `json-schemas/` contains input OpenAPI docs (e.g., `FieldFullName.json`, `CartographicProjectionMergedModel.json`).
-- `Program.cs`:
-  - Reads the JSON inputs, merges Paths and Schemas, normalizes schema names to short names.
-  - Writes the merged OpenAPI to `Service/wwwroot/json-schema/FieldMergedModel.json`.
-  - Uses NSwag to generate `ModelSharedOut/FieldMergedModel.cs` client + DTOs in `OSDC.Drilling.Field.ModelShared`.
+It writes these version-controlled outputs:
 
-## Generate Client and OpenAPI
+- `Service/wwwroot/json-schema/FieldMergedModel.json`, served at
+  `/Field/api/swagger/merged/swagger.json`
+- `ModelSharedOut/FieldMergedModel.cs`, generated in namespace
+  `OSDC.Drilling.Field.ModelShared`
 
-Prerequisites:
-- .NET SDK 8.0+
+The generated types include Field CRUD, schema-version-2 batch export/restore
+and catalog-mapping contracts, stateless forward/inverse conversion, managed
+Field vocabularies, assignments, delineation data, and the selected dependency
+contracts included in the merge.
 
-From the solution root:
-```bash
-# regenerate merged OpenAPI + client
- dotnet run --project ModelSharedOut
-```
-Outputs:
-- `Service/wwwroot/json-schema/FieldMergedModel.json` (served by Service Swagger middleware)
-- `ModelSharedOut/FieldMergedModel.cs` (referenced by WebApp and ServiceTest)
+## Regeneration
 
-Note: In Debug builds, `Service/Service.csproj` also invokes `dotnet swagger tofile` to emit `ModelSharedOut/json-schemas/FieldFullName.json`, which feeds into the merge.
-
-After changing Model or Service API contracts, use the full generation sequence:
+In Debug builds, `Service/Service.csproj` uses `dotnet swagger tofile` to refresh
+`ModelSharedOut/json-schemas/FieldFullName.json`. After changing Field models or
+controller contracts, run from the solution root:
 
 ```bash
-dotnet run --project ModelSharedIn
-dotnet build Service\Service.csproj
+dotnet build Service/Service.csproj -c Debug
 dotnet run --project ModelSharedOut
 ```
 
-## Usage Examples
+If a dependency contract also changed, run the complete sequence:
 
-Create the NSwag client and call the Service:
+```bash
+dotnet run --project ModelSharedIn
+dotnet build Service/Service.csproj -c Debug
+dotnet run --project ModelSharedOut
+```
+
+Review and commit the input schemas and both generated outputs. Do not edit
+`FieldMergedModel.cs` or `FieldMergedModel.json` manually.
+
+## Usage example
+
 ```csharp
 using OSDC.Drilling.Field.ModelShared;
 
 var baseUrl = "https://localhost:5001/Field/api/";
-var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = (_,_,_,_) => true };
+var handler = new HttpClientHandler
+{
+    ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+};
 using var http = new HttpClient(handler) { BaseAddress = new Uri(baseUrl) };
 var client = new Client(baseUrl, http);
 
-// Create a Field
-var fieldId = Guid.NewGuid();
-await client.PostFieldAsync(new Field { MetaInfo = new MetaInfo { ID = fieldId }, Name = "My Field" });
-
-// Read lists and single item
 var ids = await client.GetAllFieldIdAsync();
-var field = await client.GetFieldByIdAsync(fieldId);
 ```
-
-The generated DTOs include `Field`, synchronous forward/inverse conversion contracts, managed Field vocabularies, assignments, and delineation DTOs aligned with the Service controllers.
 
 ## Dependencies
 
-NuGet packages (see `ModelSharedOut.csproj`):
-- `Microsoft.OpenApi.Readers` — read and parse OpenAPI inputs
-- `NSwag.CodeGeneration.CSharp` — generate C# client and DTOs
+- `Microsoft.OpenApi.Readers`: parses OpenAPI inputs
+- `NSwag.CodeGeneration.CSharp`: generates the C# client and DTOs
 
-## Integration in the Solution
+The generator normalizes schema names to short names and writes OpenAPI 3.0.3.
+Review generation errors and diffs for schema-name collisions.
 
-- Service: Serves `wwwroot/json-schema/FieldMergedModel.json` through Swagger UI (`/Field/api/swagger/merged/swagger.json`).
-- WebApp: References `ModelSharedOut` to call the Service via the generated `Client` and use DTOs.
-- ServiceTest: Uses the same client/DTOs to perform end-to-end API tests.
-- Model: Compatible with the DTO shapes (e.g., `MetaInfo`) used at the boundaries.
+## Contributors
 
-## Tips
-
-- Keep `json-schemas/` up to date (e.g., after changing Service controllers or external dependencies) and rerun the generator.
-- The tool normalizes schema names to avoid verbose type identifiers; avoid name collisions across inputs.
-- The merged OpenAPI is adjusted to OpenAPI 3.0.3 for tooling compatibility.
-
+- Eric Cayeux, NORCE Research

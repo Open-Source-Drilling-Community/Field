@@ -79,6 +79,121 @@ internal static class McpToolArgumentHelpers
     public static JsonObject CreateFieldMembershipCategorySchema(bool includeId = false) =>
         WrapBody("fieldMembershipCategory", CreateCategorySchema("membership"), includeId, "fieldMembershipCategory.MetaInfo.ID");
 
+    public static JsonObject CreateFieldBatchExportSchema() => WrapBody("request", new JsonObject
+    {
+        ["type"] = "object",
+        ["description"] = "Select All fields or an explicitly ordered set. Selected requires a non-empty unique FieldIDs array; All forbids a non-empty FieldIDs array.",
+        ["properties"] = new JsonObject
+        {
+            ["Scope"] = new JsonObject { ["type"] = "string", ["enum"] = new JsonArray("All", "Selected") },
+            ["FieldIDs"] = new JsonObject
+            {
+                ["type"] = new JsonArray("array", "null"), ["uniqueItems"] = true,
+                ["items"] = Uuid("Field UUID to include; selected order is preserved.")
+            }
+        },
+        ["required"] = new JsonArray("Scope"),
+        ["additionalProperties"] = false
+    }, false, "request");
+
+    public static JsonObject CreateFieldBatchRestoreSchema() => WrapBody("request", new JsonObject
+    {
+        ["type"] = "object",
+        ["description"] = "Atomic restore policy and complete versioned backup document.",
+        ["properties"] = new JsonObject
+        {
+            ["ConflictPolicy"] = new JsonObject { ["type"] = "string", ["enum"] = new JsonArray("FailIfExists", "ReplaceExisting") },
+            ["CatalogPolicy"] = new JsonObject
+            {
+                ["type"] = "string", ["enum"] = new JsonArray("MapExisting", "MapOrCreateMissing"),
+                ["description"] = "MapExisting rejects missing definitions. MapOrCreateMissing creates missing definitions/options with local server-generated UUIDs."
+            },
+            ["Document"] = CreateBatchDocumentSchema(nullableDependencies: true, minimumFields: 1, currentVersionOnly: false)
+        },
+        ["required"] = new JsonArray("ConflictPolicy", "CatalogPolicy", "Document"),
+        ["additionalProperties"] = false
+    }, false, "request");
+
+    public static JsonObject CreateFieldBatchExportOutputSchema() => SuccessEnvelope(
+        CreateBatchDocumentSchema(nullableDependencies: false, minimumFields: 0, currentVersionOnly: true));
+
+    public static JsonObject CreateFieldBatchRestoreOutputSchema() => SuccessEnvelope(new JsonObject
+    {
+        ["type"] = "object",
+        ["properties"] = new JsonObject
+        {
+            ["RestoredAtUtc"] = new JsonObject { ["type"] = "string", ["format"] = "date-time" },
+            ["CreatedCount"] = NonNegativeInteger("Number of newly inserted fields."),
+            ["ReplacedCount"] = NonNegativeInteger("Number of replaced fields."),
+            ["CreatedCatalogDefinitionCount"] = NonNegativeInteger("Number of locally created catalog definitions."),
+            ["CreatedCatalogOptionCount"] = NonNegativeInteger("Number of locally created category options."),
+            ["CatalogMappings"] = ArraySchema("Source-to-local UUID translations applied to field references.", new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["Catalog"] = new JsonObject { ["type"] = "string" }, ["Name"] = new JsonObject { ["type"] = "string" },
+                    ["SourceID"] = Uuid("Source-server catalog UUID."), ["LocalID"] = Uuid("Destination-server catalog UUID."),
+                    ["Resolution"] = new JsonObject { ["type"] = "string", ["enum"] = new JsonArray("exact_uuid", "normalized_name", "created") }
+                },
+                ["required"] = new JsonArray("Catalog", "Name", "SourceID", "LocalID", "Resolution"),
+                ["additionalProperties"] = false
+            }),
+            ["FieldIDs"] = ArraySchema("Restored field UUIDs in document order.", Uuid("Restored field UUID."))
+        },
+        ["required"] = new JsonArray("RestoredAtUtc", "CreatedCount", "ReplacedCount", "CreatedCatalogDefinitionCount",
+            "CreatedCatalogOptionCount", "CatalogMappings", "FieldIDs"),
+        ["additionalProperties"] = false
+    });
+
+    private static JsonObject CreateBatchDocumentSchema(bool nullableDependencies, int minimumFields, bool currentVersionOnly)
+    {
+        JsonObject dependencies = new()
+        {
+            ["type"] = nullableDependencies ? new JsonArray("object", "null") : JsonValue.Create("object"),
+            ["properties"] = new JsonObject
+            {
+                ["FeatureCategories"] = ArraySchema("Referenced feature categories and options.", CreateCategorySchema("feature")),
+                ["MembershipCategories"] = ArraySchema("Referenced membership categories and options.", CreateCategorySchema("membership")),
+                ["Identities"] = ArraySchema("Referenced field identity definitions.", CreateNamedDefinitionSchema("field identity")),
+                ["DelineationLineTypes"] = ArraySchema("Referenced delineation line type definitions.", CreateNamedDefinitionSchema("field delineation line type"))
+            },
+            ["required"] = new JsonArray("FeatureCategories", "MembershipCategories", "Identities", "DelineationLineTypes"),
+            ["additionalProperties"] = false
+        };
+        return new JsonObject
+        {
+            ["type"] = "object",
+            ["properties"] = new JsonObject
+            {
+                ["FormatIdentifier"] = new JsonObject { ["type"] = "string", ["const"] = "OSDC.Drilling.Field.BatchExport" },
+                ["SchemaVersion"] = currentVersionOnly
+                    ? new JsonObject { ["type"] = "integer", ["const"] = 2 }
+                    : new JsonObject { ["type"] = "integer", ["enum"] = new JsonArray(1, 2) },
+                ["ExportedAtUtc"] = new JsonObject { ["type"] = "string", ["format"] = "date-time" },
+                ["CatalogDependencies"] = dependencies,
+                ["Fields"] = ArraySchema("Complete field records in deterministic or selected order.", CreateFieldObjectSchema(), minimumFields)
+            },
+            ["required"] = new JsonArray("FormatIdentifier", "SchemaVersion", "ExportedAtUtc", "CatalogDependencies", "Fields"),
+            ["additionalProperties"] = false
+        };
+    }
+
+    private static JsonObject SuccessEnvelope(JsonObject dataSchema) => new()
+    {
+        ["type"] = "object",
+        ["properties"] = new JsonObject
+        {
+            ["status"] = new JsonObject { ["type"] = "integer", ["minimum"] = 200, ["maximum"] = 299 },
+            ["data"] = dataSchema
+        },
+        ["required"] = new JsonArray("status", "data"),
+        ["additionalProperties"] = false
+    };
+
+    private static JsonObject NonNegativeInteger(string description) => new()
+    { ["type"] = "integer", ["minimum"] = 0, ["description"] = description };
+
     private static JsonObject WrapBody(string key, JsonObject bodySchema, bool includeId, string bodyIdPath)
     {
         var properties = new JsonObject

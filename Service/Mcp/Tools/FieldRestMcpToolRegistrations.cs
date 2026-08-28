@@ -15,6 +15,8 @@ using FieldDelineationLineTypeModel = OSDC.Drilling.Field.Model.FieldDelineation
 using FieldFeatureCategoryModel = OSDC.Drilling.Field.Model.FieldFeatureCategory;
 using FieldIdentityModel = OSDC.Drilling.Field.Model.FieldIdentity;
 using FieldMembershipCategoryModel = OSDC.Drilling.Field.Model.FieldMembershipCategory;
+using FieldBatchExportRequestModel = OSDC.Drilling.Field.Model.FieldBatchExportRequest;
+using FieldBatchRestoreRequestModel = OSDC.Drilling.Field.Model.FieldBatchRestoreRequest;
 
 namespace OSDC.Drilling.Field.Service.Mcp.Tools;
 
@@ -23,13 +25,34 @@ public static class FieldRestMcpToolRegistrations
     public static IServiceCollection AddFieldRestMcpTools(this IServiceCollection services)
     {
         AddFieldTools(services);
+        AddFieldBatchTransferTools(services);
         AddFieldCoordinateConversionTools(services);
         AddFieldDelineationLineTypeTools(services);
         AddFieldFeatureCategoryTools(services);
         AddFieldIdentityTools(services);
         AddFieldMembershipCategoryTools(services);
-        AddUsageStatisticsTool(services);
         return services;
+    }
+
+    private static void AddFieldBatchTransferTools(IServiceCollection services)
+    {
+        services.AddLegacyMcpTool(
+            "field_batch_export",
+            "Create a read-only schema-version-2 JSON backup of all stored fields or an explicitly ordered selection. The result includes the complete Field records and only the Field Feature, Field Membership, Field Identity, and Delineation Line Type definitions/options referenced by those fields. Projection definitions remain external UUID references. The selected operation is atomic: any missing or invalid field rejects the complete export.",
+            McpToolArgumentHelpers.CreateFieldBatchExportSchema(),
+            McpToolArgumentHelpers.CreateFieldBatchExportOutputSchema(),
+            new McpToolBehavior("Export Fields with Catalog Dependencies", true, false, true, false),
+            (sp, args, ct) => InvokeWithBodyResult<FieldBatchExportRequestModel, OSDC.Drilling.Field.Model.FieldBatchExportDocument>(args, "request", ct,
+                request => FieldController(sp).BatchExportFields(request)));
+
+        services.AddLegacyMcpTool(
+            "field_batch_restore",
+            "Validate and atomically restore a versioned Field backup document. Schema version 2 maps source catalog UUIDs to compatible local definitions by exact UUID or unique normalized name; MapOrCreateMissing may create missing local definitions/options with server-generated UUIDs. ReplaceExisting may replace fields with matching UUIDs. Catalog mapping, definition creation, reference rewriting, and all field writes share one transaction, so any validation, ambiguity, conflict, or storage failure changes nothing. Schema version 1 is accepted only when every referenced catalog UUID already exists locally.",
+            McpToolArgumentHelpers.CreateFieldBatchRestoreSchema(),
+            McpToolArgumentHelpers.CreateFieldBatchRestoreOutputSchema(),
+            new McpToolBehavior("Restore Fields and Catalog Dependencies", false, true, false, false),
+            (sp, args, ct) => InvokeWithBodyResult<FieldBatchRestoreRequestModel, OSDC.Drilling.Field.Model.FieldBatchRestoreResponse>(args, "request", ct,
+                request => FieldController(sp).BatchRestoreFields(request)));
     }
 
     private static void AddFieldTools(IServiceCollection services)
@@ -132,12 +155,6 @@ public static class FieldRestMcpToolRegistrations
             (sp, id) => FieldMembershipCategoryController(sp).DeleteFieldMembershipCategoryById(id));
     }
 
-    private static void AddUsageStatisticsTool(IServiceCollection services)
-    {
-        services.AddLegacyMcpTool("field_usage_statistics_get", "Retrieve the Field microservice usage counters collected for REST operations. This administrative result reports endpoint activity rather than field domain or coordinate-conversion data and requires no arguments.", McpToolArgumentHelpers.CreateEmptySchema(),
-            (sp, _, ct) => Invoke(ct, () => FieldUsageStatisticsController(sp).GetFieldUsageStatistics()));
-    }
-
     private static void AddCrudTools<TModel>(
         IServiceCollection services,
         string prefix,
@@ -213,6 +230,15 @@ public static class FieldRestMcpToolRegistrations
         {
             return Task.FromResult<JsonNode?>(error);
         }
+        return Task.FromResult<JsonNode?>(McpActionResultConverter.FromActionResult(action(data)));
+    }
+
+    private static Task<JsonNode?> InvokeWithBodyResult<TModel, TResult>(JsonObject? arguments, string bodyName,
+        CancellationToken cancellationToken, Func<TModel?, ActionResult<TResult>> action)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (!TryDeserialize(arguments, bodyName, out TModel? data, out JsonNode? error))
+            return Task.FromResult<JsonNode?>(error);
         return Task.FromResult<JsonNode?>(McpActionResultConverter.FromActionResult(action(data)));
     }
 
@@ -333,6 +359,4 @@ public static class FieldRestMcpToolRegistrations
     private static FieldMembershipCategoryController FieldMembershipCategoryController(IServiceProvider sp) =>
         new(sp.GetRequiredService<ILogger<FieldMembershipCategoryManager>>(), sp.GetRequiredService<SqlConnectionManager>());
 
-    private static FieldUsageStatisticsController FieldUsageStatisticsController(IServiceProvider sp) =>
-        new(sp.GetRequiredService<ILogger<FieldUsageStatisticsController>>());
 }

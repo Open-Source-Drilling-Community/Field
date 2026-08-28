@@ -121,13 +121,64 @@ internal sealed class LegacyMcpServerToolAdapter : McpServerTool
             return false;
         if (response["data"] is JsonNode payload)
         {
-            failure = payload.DeepClone();
+            failure = NormalizeFailure(payload, status);
             return true;
         }
         string message = response["error"]?.GetValue<string>() ?? "The tool request failed.";
         failure = new JsonObject { ["error"] = "validation_failed", ["message"] = message, ["errors"] = new JsonArray() };
         return true;
     }
+
+    private static JsonNode NormalizeFailure(JsonNode payload, int status)
+    {
+        if (payload is not JsonObject source)
+            return new JsonObject
+            {
+                ["error"] = ErrorCodeForStatus(status),
+                ["message"] = payload.ToJsonString(SerializerOptions),
+                ["errors"] = new JsonArray()
+            };
+
+        JsonNode? error = source["error"] ?? source["Error"];
+        JsonNode? message = source["message"] ?? source["Message"];
+        JsonNode? sourceErrors = source["errors"] ?? source["Errors"];
+        var normalizedErrors = new JsonArray();
+        if (sourceErrors is JsonArray errors)
+        {
+            foreach (JsonNode? item in errors)
+            {
+                if (item is JsonObject detail)
+                {
+                    normalizedErrors.Add(new JsonObject
+                    {
+                        ["positionIndex"] = (detail["positionIndex"] ?? detail["PositionIndex"])?.DeepClone(),
+                        ["property"] = (detail["property"] ?? detail["Property"])?.DeepClone(),
+                        ["code"] = (detail["code"] ?? detail["Code"])?.DeepClone(),
+                        ["message"] = (detail["message"] ?? detail["Message"])?.DeepClone()
+                    });
+                }
+                else if (item != null)
+                {
+                    normalizedErrors.Add(item.DeepClone());
+                }
+            }
+        }
+
+        return new JsonObject
+        {
+            ["error"] = error?.DeepClone() ?? JsonValue.Create(ErrorCodeForStatus(status)),
+            ["message"] = message?.DeepClone() ?? JsonValue.Create("The tool request failed."),
+            ["errors"] = normalizedErrors
+        };
+    }
+
+    private static string ErrorCodeForStatus(int status) => status switch
+    {
+        400 => "validation_failed",
+        404 => "not_found",
+        409 => "conflict",
+        _ => "request_failed"
+    };
 
     private static CallToolResult Error(JsonNode problem) => new()
     {

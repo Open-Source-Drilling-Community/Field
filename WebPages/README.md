@@ -6,7 +6,7 @@
 
 - `Field`
 - `FieldEdit`
-- `FieldBackupRestore`: versioned multi-field JSON backup and transactional restore UI
+- `FieldBackupRestore`: portable version-2 multi-field JSON backup and atomic restore UI, including referenced Field-owned catalogs and explicit mapping/creation policies
 - `FieldFeatures`
 - `FieldMemberships`
 - `FieldIdentities`
@@ -21,6 +21,7 @@
 Field editing supports:
 
 - reference point editing in north/east and latitude/longitude
+- reference-aware coordinates and labels for Field, cartographic grid, projection datum, and WGS 84 displays
 - field feature, membership, and identity assignments
 - delineation line editing, ASCII import, JSON import/export, margin/depth information, and calculated boundary lines
 
@@ -91,4 +92,4 @@ The current work has been funded by the [Research Council of Norway](https://www
 
 ## Contributors
 
-- Eric Cayeux, NORCE Energy Modelling and Automation
+- Eric Cayeux, NORCE Research

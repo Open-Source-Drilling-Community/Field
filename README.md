@@ -5,8 +5,8 @@ The Field solution provides a microservice (REST API), reusable Razor pages, and
 ## Purpose
 
 - Expose CRUD APIs for Field data and managed vocabularies, versioned batch export, plus synchronous stateless field coordinate conversion.
-- Expose an MCP endpoint mirroring the REST API for agent/tool integrations, with optional MCP hub registration from the shared `home/` volume.
-- Provide a web UI to browse and edit fields, manage field vocabularies, maintain delineation lines, display field-level trajectories and survey runs, and run cartographic and vertical datum conversions.
+- Expose an MCP endpoint for Field CRUD, portable batch transfer, and stateless conversion, with optional MCP hub registration from the shared `home/` volume.
+- Provide a web UI to browse and edit fields, manage field vocabularies, maintain delineation lines, display field-level trajectories and survey runs, and run cartographic, vertical datum, Earth gravity, and Earth magnetic-field calculations.
 - Share OpenAPI-generated clients/DTOs to keep contracts consistent across Service, WebApp, and tests.
 
 ## Installation
@@ -34,10 +34,8 @@ Configuration:
 - WebApp reads `FieldHostURL`, `ClusterHostURL`, `TrajectoryHostURL`, `EarthCartographicProjectionHostURL`, `EarthGeodesyHostURL`, `EarthGravityHostURL`, `EarthMagneticFieldHostURL`, `EarthVerticalDatumHostURL`, and `UnitConversionHostURL`.
 
 Code generation:
-- When model or controller contracts change, regenerate DTOs in this order:
-  - `dotnet run --project ModelSharedIn`
-  - `dotnet build Service\Service.csproj` to refresh `ModelSharedOut/json-schemas/FieldFullName.json`
-  - `dotnet run --project ModelSharedOut`
+- When a pinned EarthCartographicProjection or EarthGeodesy contract changes, run `dotnet run --project ModelSharedIn` and commit its schemas and generated outputs.
+- When a Field model or controller contract changes, run `dotnet build Service/Service.csproj -c Debug` to refresh `ModelSharedOut/json-schemas/FieldFullName.json`, then run `dotnet run --project ModelSharedOut` and commit the generated outputs.
 
 ## Usage Examples
 
@@ -128,39 +126,44 @@ MCP server:
 - Streamable HTTP: `/Field/api/mcp`
 - WebSocket: `/Field/api/mcp/ws`
 - Conversion tools are `field_forward_convert_coordinates` and `field_inverse_convert_coordinates`; requests and results are never persisted.
-- Optional MCP hub registration is configured with `McpHub` in `Field_Service_json`; MCP URLs are derived from `McpHub:PublicBaseUrl`.
+- Portable transfer tools are `field_batch_export` and `field_batch_restore`. The restore tool is marked destructive and exposes the schema-version-2 catalog mapping/creation policies and atomic transaction contract.
+- Usage statistics remain available through REST and are intentionally not exposed as an MCP tool.
+- Optional MCP hub registration is configured with `McpHub` in `Field.Service.json`; MCP URLs are derived from `McpHub:PublicBaseUrl`.
 
 # Solution architecture
 
 The solution is composed of:
 - **ModelSharedIn**
-  - contains C# auto-generated classes of Model dependencies
-  - these dependencies are stored as json files (following the OpenApi standard) and C# classes are generated on execution of the program
-  - *dependencies* = some external microservices (OpenApi schemas in json format)
+  - pins the EarthCartographicProjection and EarthGeodesy OpenAPI schemas and generates their C# clients/DTOs
+  - *dependencies* = dependency OpenAPI schemas + NSwag
 - **Model**
-  - defines the main classes and methods to run the microservice
-  - *dependencies* = BaseModels
+  - defines Field entities, managed vocabularies, batch-transfer contracts, coordinate-conversion contracts, and usage counters
+  - *dependencies* = ModelSharedIn + OSDC domain packages
 - **Service**
   - defines the proper microservice API
   - exposes CRUD controllers for Field-owned data and synchronous forward/inverse field coordinate conversion
-  - exposes MCP tools for the same endpoint surface and can publish its MCP endpoint to an MCP hub
+  - exposes MCP CRUD, portable batch transfer, and stateless conversion tools and can publish its MCP endpoint to an MCP hub; usage statistics remain REST-only
   - computes delineation boundary lines during Field create/update
   - *dependencies* = Model
 - **ModelSharedOut**
-  - contains C# auto-generated classes for microservice clients dependencies
-  - these dependencies are stored as json files (following the OpenAPI standard) and C# classes are generated on execution of the program
-  - these dependencies include the OpenApi schema of the microservice itself as well as other dependencies that may be useful to run the microservice
-  - *dependencies* = Field.json + some external microservices (OpenApi schemas in json format)
+  - generates the Field client/DTOs and merged OpenAPI document used by the WebApp, tests, and Swagger UI
+  - *dependencies* = Field and selected dependency OpenAPI schemas + NSwag
 - **ModelTest**
   - performs unit tests on the Model (in particular for base computations)
   - *dependencies* = Model
 - **ServiceTest**
-  - microservice client that performs unit tests on the microservice (by default, an instance of the microservice must be running on http port 8080 to run tests)
+  - end-to-end client tests against a running Service (the configured default is `https://localhost:5001/`)
   - *dependencies* = ModelShared
+- **ServiceUnitTest**
+  - in-process tests for controllers, managers, MCP contracts, batch transfer, and conversion orchestration
+  - *dependencies* = Service + Model
+- **ServiceMcpTest**
+  - protocol-level tests against a running Field MCP endpoint
+  - *dependencies* = MCP client packages + a running Service
 - **WebApp**
   - Blazor Server webapp named `Field Management`
   - hosts field management, vocabulary management, field trajectory and survey run displays, contextual data pages, and calculator pages
-  - *dependencies* = WebPages + reusable EarthGeodesy and EarthVerticalDatum web page packages
+  - *dependencies* = WebPages plus reusable EarthCartographicProjection, EarthGeodesy, EarthVerticalDatum, EarthGravity, and EarthMagneticField web page packages
 - **WebPages**
   - reusable Razor class library containing the Field web pages
   - includes field management, vocabulary management, delineation editing/import/export, field trajectory display, field survey run display, cartographic conversions, and usage statistics pages
@@ -173,14 +176,14 @@ The solution is composed of:
 
 - Core runtime: .NET 8
 - Service: ASP.NET Core, `Microsoft.Data.Sqlite`, `Swashbuckle.AspNetCore`, `Microsoft.OpenApi`
-- WebApp: Blazor Server, MudBlazor, external Razor page packages for cartographic projection, geodetic datum, and vertical datum
-- WebPages: MudBlazor, `OSDC.UnitConversion.DrillingRazorMudComponents`, Plotly.Blazor
+- WebApp: Blazor Server, MudBlazor, and reusable EarthCartographicProjection, EarthGeodesy, EarthVerticalDatum, EarthGravity, and EarthMagneticField Razor page packages
+- WebPages: MudBlazor, `OSDC.DotnetLibraries.Drilling.WebAppUtils`, `OSDC.DotnetLibraries.General.Math`, Plotly.Blazor
 - Shared model/codegen: `NSwag.CodeGeneration.CSharp`, `Microsoft.OpenApi.Readers`
-- Domain model: OSDC DotnetLibraries (General.DataManagement, General.Common, General.Statistics, DrillingProperties)
+- Domain model: OSDC DotnetLibraries (`General.DataManagement` and `DrillingProperties`)
 
 # Security/Confidentiality
 
-Data are persisted as clear text in a unique Sqlite database hosted in the docker container.
+Data are persisted as clear text in a SQLite database under the configured `home` directory, normally backed by a Docker volume or Kubernetes persistent volume.
 Neither authentication nor authorization have been implemented.
 Would you like or need to protect your data, docker containers of the microservice and webapp are available on dockerhub, under the digiwells organization, at:
 
@@ -218,8 +221,8 @@ https://github.com/NORCE-DrillingAndWells/DrillingAndWells/wiki
 
 # Funding
 
-The current work has been funded by the [Research Council of Norway](https://www.forskningsradet.no/) and [Industry partners](https://www.digiwells.no/about/board/) in the framework of the cent for research-based innovation [SFI Digiwells (2020-2028)](https://www.digiwells.no/) focused on Digitalization, Drilling Engineering and GeoSteering. 
+The current work has been funded by the [Research Council of Norway](https://www.forskningsradet.no/) and [Industry partners](https://www.digiwells.no/about/board/) in the framework of the center for research-based innovation [SFI Digiwells (2020-2028)](https://www.digiwells.no/) focused on Digitalization, Drilling Engineering and GeoSteering.
 
 # Contributors
 
-**Eric Cayeux**, *NORCE Energy Modelling and Automation*
+**Eric Cayeux**, *NORCE Research*

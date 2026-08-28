@@ -16,6 +16,7 @@ The Model project contains the domain types and supporting utilities for the Fie
 - FieldIdentity and FieldIdentityAssignment: Define user-managed symbolic identity names and field-specific identity values such as official names, external database IDs, WITSML UIDs, or report IDs.
 - FieldDelineationLineType, FieldDelineationLine, FieldDelineationBoundaryLine: Define managed delineation line types, input line geometry, optional margin/depth ranges, and calculated boundary lines.
 - FieldForwardConversionRequest, FieldInverseConversionRequest and FieldCoordinateConversionResponse are ordered, atomic synchronous contracts that are never persisted.
+- FieldBatchExportDocument and the batch request/response types define schema-version-2 portable backups. They carry referenced feature, membership, identity, and delineation-line-type definitions so a restore can remap equivalent local records or create missing records atomically.
 - UsageStatisticsField: Aggregates per-day REST counters with periodic JSON backup to `../home/history.json`.
 
 Namespaces: All types live under `OSDC.Drilling.Field.Model`.
@@ -45,8 +46,6 @@ Top and bottom depth limits are optional. If both are missing, the delineation a
 - .NET: `net8.0`
 - NuGet packages:
   - `OSDC.DotnetLibraries.General.DataManagement` (MetaInfo, JSON settings, etc.)
-  - `OSDC.DotnetLibraries.General.Common`
-  - `OSDC.DotnetLibraries.General.Statistics`
   - `OSDC.DotnetLibraries.Drilling.DrillingProperties`
 - Project reference: `ModelSharedIn`, containing pinned EarthCartographicProjection and EarthGeodesy contracts used by the Service.
 
@@ -58,6 +57,7 @@ See `Model/Model.csproj` for exact versions.
   - Controllers (`Service/Controllers/*Controller.cs`) accept and return these models.
   - Managers (`Service/Managers/*Manager.cs`) serialize/deserialize these models to SQLite and orchestrate calls to external microservices.
   - `UsageStatisticsField` is invoked from controllers to increment usage counters per endpoint.
+  - Usage counters are available through REST, not through MCP.
 - ModelSharedOut: NSwag-generated client and DTOs used by tests and possibly the WebApp to call the Service. These are compatible with the models defined here.
 - WebApp: Displays and edits entities shaped by these models through the Service API.
 - ServiceTest: Uses the NSwag `Client` to exercise endpoints that return/accept the models defined here.
@@ -116,7 +116,7 @@ UsageStatisticsField.Instance.IncrementGetAllFieldIdPerDay();
 - Restore and build from the solution root:
 
 ```bash
- dotnet build Field.sln
+dotnet build Field.sln
 ```
 
 The Model project builds as a class library targeting .NET 8 and is referenced by the Service and other projects in this solution.
@@ -127,4 +127,4 @@ The current work has been funded by the [Research Council of Norway](https://www
 
 ## Contributors
 
-- Eric Cayeux, NORCE Energy Modelling and Automation
+- Eric Cayeux, NORCE Research

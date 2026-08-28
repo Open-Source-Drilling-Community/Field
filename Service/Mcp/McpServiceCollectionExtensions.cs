@@ -33,7 +33,19 @@ public static class McpServiceCollectionExtensions
         JsonNode? inputSchema,
         Func<IServiceProvider, JsonObject?, CancellationToken, Task<JsonNode?>> invokeAsync)
     {
-        services.AddSingleton<IMcpTool>(sp => new DelegateMcpTool(name, description, inputSchema ?? EmptyInputSchema(), DefaultOutputSchema(), InferBehavior(name), arguments => invokeAsync(sp, arguments.Arguments, arguments.CancellationToken)));
+        return services.AddLegacyMcpTool(name, description, inputSchema, DefaultOutputSchema(), InferBehavior(name), invokeAsync);
+    }
+
+    public static IServiceCollection AddLegacyMcpTool(
+        this IServiceCollection services,
+        string name,
+        string description,
+        JsonNode? inputSchema,
+        JsonNode outputSchema,
+        McpToolBehavior behavior,
+        Func<IServiceProvider, JsonObject?, CancellationToken, Task<JsonNode?>> invokeAsync)
+    {
+        services.AddSingleton<IMcpTool>(sp => new DelegateMcpTool(name, description, inputSchema ?? EmptyInputSchema(), outputSchema, behavior, arguments => invokeAsync(sp, arguments.Arguments, arguments.CancellationToken)));
         services.AddSingleton<McpServerTool>(sp =>
         {
             var tools = sp.GetServices<IMcpTool>();

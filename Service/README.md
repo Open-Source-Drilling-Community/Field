@@ -16,8 +16,7 @@ stored.
 
 ## REST API
 
-The service uses path base `/field/api` (routing is case-insensitive in the
-provided ingress).
+The service uses path base `/Field/api`.
 
 - `Field`: Field CRUD. A Field optionally carries `ProjectionDefinitionID`,
   which identifies an EarthCartographicProjection definition.
@@ -25,10 +24,15 @@ provided ingress).
   every field or an explicitly ordered UUID selection. Selected exports are
   atomic: an invalid, duplicate, or missing UUID returns a stable error envelope
   and no partial document. `All` exports are ordered by UUID.
-- `Field/BatchRestore`: validates and restores a version-1 batch-export
+- `Field/BatchRestore`: validates and restores a version-2 batch-export
   document in one SQLite transaction. `FailIfExists` rejects the complete batch
   on any existing field UUID; `ReplaceExisting` atomically inserts new fields
-  and replaces existing fields. No partial restore is committed.
+  and replaces existing fields. `MapExisting` resolves referenced catalog
+  records by compatible UUID or unique normalized name, while
+  `MapOrCreateMissing` may create missing local records with server-generated
+  UUIDs. Catalog mapping, reference rewriting, optional catalog creation, and
+  every field write are atomic. Version-1 documents are accepted for same-server
+  recovery only when all referenced catalog UUIDs already exist locally.
 - `FieldCoordinateConversion/Forward`: converts an ordered geographic batch
   in the projection datum or WGS 84 to canonical easting/northing.
 - `FieldCoordinateConversion/Inverse`: converts canonical easting/northing to
@@ -52,12 +56,18 @@ Swagger is available at `/Field/api/swagger` and the merged contract at
 - WebSocket: `/Field/api/mcp/ws`
 - Stateless conversion: `field_forward_convert_coordinates` and
   `field_inverse_convert_coordinates` (maximum 1,000 positions per call)
+- Portable transfer: `field_batch_export` and `field_batch_restore`; restore is
+  marked destructive and exposes conflict and catalog-mapping policies
 - CRUD tool groups: `field_...`, `field_feature_category_...`,
   `field_membership_category_...`, `field_identity_...`, and
   `field_delineation_line_type_...`
-- Usage: `field_usage_statistics_get`
 
-Tool names use underscores only and publish explicit JSON input schemas.
+Tool names use underscores only. Tools publish explicit JSON input/output
+schemas and MCP annotations. Successes contain schema-conforming structured
+content plus a JSON text fallback; failures set `isError=true`, return the
+stable `{error,message,errors}` JSON envelope, and omit success-shaped
+structured content. Usage statistics remain available through REST and are
+intentionally not exposed through MCP.
 
 ## Persistence compatibility
 

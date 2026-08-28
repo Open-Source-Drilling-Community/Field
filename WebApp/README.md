@@ -5,7 +5,7 @@ The WebApp is a Blazor Server front end for the Field microservice. It hosts the
 ## Purpose
 
 - Manage Field records through the Field REST API.
-- Back up all or selected fields and atomically restore versioned JSON backups.
+- Back up all or selected fields and atomically restore portable version-2 JSON backups, including referenced Field-owned catalog definitions.
 - Manage field features, field memberships, field identities, and delineation line types.
 - Display trajectories and survey runs for a selected field, including delineation line overlays.
 - Configure field-level depth and position references for plotting.
@@ -67,7 +67,7 @@ The app sets `UsePathBase("/Field/webapp")`, so all pages are rooted under that 
 Field Management:
 
 - `Field` (`/Field/webapp/Field`): create, edit, delete, and search Field records.
-- `Backup and Restore` (`/Field/webapp/FieldBackupRestore`): export all or selected fields to one versioned JSON file, preview an uploaded backup, and restore it atomically with explicit conflict handling.
+- `Backup and Restore` (`/Field/webapp/FieldBackupRestore`): export all or selected fields and their referenced Field-owned catalog definitions to one versioned JSON file, preview an uploaded backup, and restore it atomically with explicit field-conflict and catalog-mapping policies.
 - `Field Features` (`/Field/webapp/FieldFeatures`): manage field feature categories, options, exclusivity, and validity behavior.
 - `Field Memberships` (`/Field/webapp/FieldMemberships`): manage membership categories and options such as basin, play, license, operator, or pipeline network.
 - `Field Identities` (`/Field/webapp/FieldIdentities`): manage symbolic identity definitions such as Official name, WITSML UID, or External database ID.
@@ -102,7 +102,10 @@ Runtime and packages:
 - ASP.NET Core Blazor Server, .NET 8
 - MudBlazor
 - `OSDC.Drilling.Field.WebPages`
+- `OSDC.Drilling.EarthCartographicProjection.WebPages`
 - `OSDC.Drilling.EarthGeodesy.WebPages`
+- `OSDC.Drilling.EarthGravity.WebPages`
+- `OSDC.Drilling.EarthMagneticField.WebPages`
 - `OSDC.Drilling.EarthVerticalDatum.WebPages`
 - `OSDC.DotnetLibraries.General.DataManagement`
 
@@ -125,14 +128,16 @@ docker build -t digiwells/osdcdrillingfieldwebappclient:stable -f WebApp/Dockerf
 Run:
 
 ```bash
-docker run --rm -p 5011:5011 -p 5012:5012 \
-  -e ASPNETCORE_URLS="https://+:5011;http://+:5012" \
+docker run --rm -p 5012:8080 \
+  -e ASPNETCORE_URLS="http://+:8080" \
   -e FieldHostURL="https://host.docker.internal:5001/" \
   -e ClusterHostURL="https://dev.your-host/" \
   -e TrajectoryHostURL="https://dev.your-host/" \
   -e EarthCartographicProjectionHostURL="https://dev.your-host/" \
   -e EarthGeodesyHostURL="https://dev.your-host/" \
-  -e EarthVerticalDatumHostURL="https://dev.digiwells.no/" \
+  -e EarthGravityHostURL="https://dev.your-host/" \
+  -e EarthMagneticFieldHostURL="https://dev.your-host/" \
+  -e EarthVerticalDatumHostURL="https://dev.your-host/" \
   -e UnitConversionHostURL="https://dev.your-host/" \
   digiwells/osdcdrillingfieldwebappclient:stable
 ```
@@ -140,7 +145,8 @@ docker run --rm -p 5011:5011 -p 5012:5012 \
 The Helm chart is `WebApp/charts/osdcdrillingfieldwebappclient`; its Kubernetes
 Service name is `osdcfieldwebappclient`.
 
-Then open `https://localhost:5011/Field/webapp/Field`.
+Then open `http://localhost:5012/Field/webapp/Field`. TLS is normally
+terminated by the Kubernetes ingress in deployed environments.
 
 ## Funding
 
@@ -148,4 +154,4 @@ The current work has been funded by the [Research Council of Norway](https://www
 
 ## Contributors
 
-- Eric Cayeux, NORCE Energy Modelling and Automation
+- Eric Cayeux, NORCE Research

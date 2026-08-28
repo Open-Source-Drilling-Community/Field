@@ -1,86 +1,67 @@
 # ModelSharedIn Project
 
-ModelSharedIn manages the shared input data model that the Field solution depends on. It bundles external OpenAPI documents into a single merged schema and generates a C# client + DTOs that are used across the solution.
+ModelSharedIn pins the external API contracts consumed by the Field service. It
+merges dependency OpenAPI documents and generates the C# clients and DTOs used
+to call those services.
 
-## Purpose
+## Inputs and outputs
 
-- Collect and version the OpenAPI schemas of dependent microservices (as JSON files in `json-schemas/`).
-- Merge those schemas into a single OpenAPI document (`MergedModel.json`).
-- Generate a strongly-typed C# client and DTOs (`MergedModel.cs`) under the namespace `OSDC.Drilling.Field.ModelShared` for consumption by other projects.
+Pinned inputs in `json-schemas/`:
 
-This implements a “distributed shared model” pattern: each microservice owns the subset of external types it needs, generated directly from the source OpenAPI specs.
+- `EarthCartographicProjectionModel.json`
+- `EarthGeodesyModel.json`
 
-## How It Works
+Generated, version-controlled outputs:
 
-- The console program (`Program.cs`) scans `json-schemas/*.json` for dependency schemas, merges paths and schemas, normalizes schema names (short type names), and writes:
-  - `MergedModel.json`: merged OpenAPI (for inspection/verification)
-  - `MergedModel.cs`: NSwag-generated C# client and DTOs
-- The generated types live in `OSDC.Drilling.Field.ModelShared`, aligning with consumers like `Service`, `WebApp`, and `ServiceTest`.
+- `MergedModel.json`: merged OpenAPI 3.0.3 document
+- `MergedModel.cs`: NSwag client and DTO source in
+  `OSDC.Drilling.Field.ModelShared`
 
-## Installation and Generation
+This is the distributed shared model pattern: each microservice versions the
+specific external contracts that it consumes instead of sharing runtime model
+assemblies with dependent services.
 
-Prerequisites:
-- .NET SDK 8.0+
+## Regeneration
 
-Steps:
-1. Place dependency OpenAPI JSON files into `ModelSharedIn/json-schemas/`.
-   - Typically fetched from dependency Swagger endpoints, e.g. `https://host/SomeService/api/swagger/merged/swagger.json` or `.../swagger/v1/swagger.json`.
-2. Generate the merged model and client:
-   - From the solution root:
-     ```bash
-     dotnet run --project ModelSharedIn
-     ```
-   - Or from the project directory:
-     ```bash
-     dotnet run
-     ```
-3. Commit the updated `MergedModel.cs` (and optionally `MergedModel.json`).
+From the solution root:
 
-When changing Field model classes or Service controller contracts, run this project before rebuilding the Service and regenerating `ModelSharedOut`.
-
-Outputs:
-- `ModelSharedIn/MergedModel.cs`
-- `ModelSharedIn/MergedModel.json`
-
-## Usage Examples
-
-Using the generated DTOs in code:
-```csharp
-using OSDC.Drilling.Field.ModelShared;
-
-var projectionRequest = new ForwardProjectionRequest();
-var datumRequest = new TransformCoordinatesRequest();
+```bash
+dotnet run --project ModelSharedIn
 ```
 
-Using the generated client against a base URL:
-```csharp
-using OSDC.Drilling.Field.ModelShared;
+Run this generator whenever either pinned dependency contract changes. Review
+and commit both generated outputs and the updated source schemas. Changes that
+only affect Field-owned models or controllers do not require ModelSharedIn to
+be regenerated.
 
-var baseUrl = "https://localhost:5001/Field/api/";
-using var http = new HttpClient(new HttpClientHandler { ServerCertificateCustomValidationCallback = (_,_,_,_) => true })
-{ BaseAddress = new Uri(baseUrl) };
-var client = new Client(baseUrl, http);
+For a complete dependency and Field contract refresh, use:
 
-var ids = await client.GetAllFieldIdAsync();
+```bash
+dotnet run --project ModelSharedIn
+dotnet build Service/Service.csproj -c Debug
+dotnet run --project ModelSharedOut
 ```
 
-Note: The available operations depend on the OpenAPI docs you included in `json-schemas/`.
+## Use in the solution
+
+- `Model` references this project so the Service can use the pinned
+  EarthCartographicProjection and EarthGeodesy clients and DTOs.
+- The Service uses those clients for stateless field coordinate conversion and
+  live datum-path resolution.
+- The WebApp calls the Field API through the separately generated
+  `ModelSharedOut` client.
+
+The available generated client methods are determined by the OpenAPI paths in
+the two pinned input documents. Do not edit `MergedModel.cs` manually.
 
 ## Dependencies
 
-NuGet packages (see `ModelSharedIn.csproj`):
-- `Microsoft.OpenApi.Readers` — parse OpenAPI documents
-- `NSwag.CodeGeneration.CSharp` — generate C# client and DTOs
+- `Microsoft.OpenApi.Readers`: parses OpenAPI documents
+- `NSwag.CodeGeneration.CSharp`: generates the C# clients and DTOs
 
-## Integration in the Solution
+The generator normalizes schema names to short names. Review generation errors
+and diffs for collisions whenever a dependency introduces or renames a schema.
 
-- Service: Uses the pinned EarthCartographicProjection and EarthGeodesy clients and DTOs to orchestrate field-level conversion.
-- Service and WebApp: Use types under `OSDC.Drilling.Field.ModelShared` to communicate and to construct payloads consistent with the OpenAPI contracts.
-- ServiceTest: Uses the NSwag `Client` and DTOs from the same namespace to perform end-to-end API tests.
+## Contributors
 
-## Tips
-
-- Keep `json-schemas/` updated when dependencies evolve. Re-run the generator and review diffs in `MergedModel.cs`.
-- The program normalizes type names to short names to avoid verbose schema identifiers; ensure names across dependencies do not collide.
-- The generator forces OpenAPI `3.0.3` in output for better tooling compatibility.
-
+- Eric Cayeux, NORCE Research

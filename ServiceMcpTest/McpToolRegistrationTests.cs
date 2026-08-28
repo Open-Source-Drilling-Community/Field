@@ -30,7 +30,7 @@ public sealed class McpToolRegistrationTests
     public void Rest_tools_have_detailed_descriptions_and_explicit_schemas()
     {
         Assert.That(_tools.Keys, Is.Unique);
-        Assert.That(_tools.Keys.All(name => !name.Contains('.')), Is.True);
+        Assert.That(_tools.Keys.All(name => name.All(character => character == '_' || char.IsAsciiLetterLower(character) || char.IsDigit(character))), Is.True);
         foreach (IMcpTool tool in _tools.Values.Where(tool => tool.Name != "ping"))
         {
             Assert.That(tool.Description, Has.Length.GreaterThan(100), tool.Name);
@@ -66,6 +66,43 @@ public sealed class McpToolRegistrationTests
             Assert.That(_tools.Keys.Any(name => name.Contains("cartographic_conversion_set", StringComparison.Ordinal)), Is.False);
             Assert.That(_tools["field_forward_convert_coordinates"].Description, Does.Contain("no request or result is persisted"));
             Assert.That(_tools["field_inverse_convert_coordinates"].Description, Does.Contain("atomic ordered batch"));
+        });
+    }
+
+    [Test]
+    public void Batch_transfer_tools_publish_current_portable_contract_and_safety_annotations()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(_tools, Does.ContainKey("field_batch_export"));
+            Assert.That(_tools, Does.ContainKey("field_batch_restore"));
+            Assert.That(_tools, Does.Not.ContainKey("field_usage_statistics_get"));
+        });
+
+        McpToolBehavior export = _tools["field_batch_export"].Behavior;
+        McpToolBehavior restore = _tools["field_batch_restore"].Behavior;
+        Assert.Multiple(() =>
+        {
+            Assert.That(export.ReadOnlyHint, Is.True);
+            Assert.That(export.DestructiveHint, Is.False);
+            Assert.That(export.IdempotentHint, Is.True);
+            Assert.That(restore.ReadOnlyHint, Is.False);
+            Assert.That(restore.DestructiveHint, Is.True);
+            Assert.That(restore.IdempotentHint, Is.False);
+            Assert.That(_tools["field_batch_export"].Description, Does.Contain("schema-version-2"));
+            Assert.That(_tools["field_batch_restore"].Description, Does.Contain("MapOrCreateMissing"));
+        });
+
+        JsonObject exportInput = Property(RequireObject(_tools["field_batch_export"].InputSchema), "request");
+        JsonObject restoreInput = Property(RequireObject(_tools["field_batch_restore"].InputSchema), "request");
+        JsonObject exportData = Property(RequireObject(_tools["field_batch_export"].OutputSchema), "data");
+        JsonObject restoreData = Property(RequireObject(_tools["field_batch_restore"].OutputSchema), "data");
+        Assert.Multiple(() =>
+        {
+            Assert.That(RequiredNames(exportInput), Does.Contain("Scope"));
+            Assert.That(RequiredNames(restoreInput), Is.EquivalentTo(new[] { "ConflictPolicy", "CatalogPolicy", "Document" }));
+            Assert.That(Property(exportData, "CatalogDependencies"), Is.Not.Null);
+            Assert.That(Property(restoreData, "CatalogMappings"), Is.Not.Null);
         });
     }
 

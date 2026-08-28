@@ -152,6 +152,7 @@ public sealed class FieldBatchRestorerTests
             ConflictPolicy = policy,
             Document = new FieldBatchExportDocument
             {
+                SchemaVersion = FieldBatchExportDocument.LegacySchemaVersion,
                 ExportedAtUtc = DateTimeOffset.UtcNow,
                 Fields = fields.ToList()
             }
@@ -163,7 +164,13 @@ public sealed class FieldBatchRestorerTests
         var connection = new SqliteConnection("Data Source=:memory:");
         connection.Open();
         using SqliteCommand command = connection.CreateCommand();
-        command.CommandText = "CREATE TABLE FieldTable (ID text primary key, MetaInfo text, Field text)";
+        command.CommandText = """
+            CREATE TABLE FieldTable (ID text primary key, MetaInfo text, Field text);
+            CREATE TABLE FieldFeatureCategoryTable (ID text primary key, FieldFeatureCategory text);
+            CREATE TABLE FieldMembershipCategoryTable (ID text primary key, FieldMembershipCategory text);
+            CREATE TABLE FieldIdentityTable (ID text primary key, FieldIdentity text);
+            CREATE TABLE FieldDelineationLineTypeTable (ID text primary key, FieldDelineationLineType text);
+            """;
         command.ExecuteNonQuery();
         return connection;
     }
