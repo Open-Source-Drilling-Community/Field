@@ -30,9 +30,9 @@ public class FieldAPIUtils : APIUtils, IFieldAPIUtils
 
         HostNameUnitConversion = Require(configuration.UnitConversionHostURL, nameof(configuration.UnitConversionHostURL));
 
-        HostNameVerticalDatum = Require(configuration.VerticalDatumHostURL, nameof(configuration.VerticalDatumHostURL));
-        HttpClientVerticalDatum = SetHttpClient(HostNameVerticalDatum, HostBasePathVerticalDatum);
-        ClientVerticalDatum = new FieldModelShared.Client(HttpClientVerticalDatum.BaseAddress!.ToString(), HttpClientVerticalDatum);
+        HostNameEarthVerticalDatum = Require(configuration.EarthVerticalDatumHostURL, nameof(configuration.EarthVerticalDatumHostURL));
+        HttpClientEarthVerticalDatum = SetHttpClient(HostNameEarthVerticalDatum, HostBasePathEarthVerticalDatum);
+        ClientEarthVerticalDatum = new FieldModelShared.Client(HttpClientEarthVerticalDatum.BaseAddress!.ToString(), HttpClientEarthVerticalDatum);
     }
 
     private static string Require(string? value, string propertyName)
@@ -109,8 +109,8 @@ public class FieldAPIUtils : APIUtils, IFieldAPIUtils
     public string HostNameUnitConversion { get; }
     public string HostBasePathUnitConversion { get; } = "UnitConversion/api/";
 
-    public string HostNameVerticalDatum { get; }
-    public string HostBasePathVerticalDatum { get; } = "VerticalDatum/api/";
-    public HttpClient HttpClientVerticalDatum { get; }
-    public FieldModelShared.Client ClientVerticalDatum { get; }
+    public string HostNameEarthVerticalDatum { get; }
+    public string HostBasePathEarthVerticalDatum { get; } = "EarthVerticalDatum/api/";
+    public HttpClient HttpClientEarthVerticalDatum { get; }
+    public FieldModelShared.Client ClientEarthVerticalDatum { get; }
 }

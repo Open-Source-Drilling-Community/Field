@@ -28,8 +28,8 @@ public interface IFieldAPIUtils
     string HostNameUnitConversion { get; }
     string HostBasePathUnitConversion { get; }
 
-    string HostNameVerticalDatum { get; }
-    string HostBasePathVerticalDatum { get; }
-    HttpClient HttpClientVerticalDatum { get; }
-    FieldModelShared.Client ClientVerticalDatum { get; }
+    string HostNameEarthVerticalDatum { get; }
+    string HostBasePathEarthVerticalDatum { get; }
+    HttpClient HttpClientEarthVerticalDatum { get; }
+    FieldModelShared.Client ClientEarthVerticalDatum { get; }
 }

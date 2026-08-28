@@ -930,7 +930,20 @@
 
     private static ReferencePositionSample? TryBuildBarycenterSample(IEnumerable<(double? North, double? East, double? Latitude, double? Longitude)> points)
     {
-        List<(double North, double East)> northEastPoints = points
+        List<(double? North, double? East, double? Latitude, double? Longitude)> pointList = points.ToList();
+        List<(double? North, double? East, double? Latitude, double? Longitude)> completePoints = pointList
+            .Where(point => point.North != null && point.East != null && point.Latitude != null && point.Longitude != null)
+            .ToList();
+        if (completePoints.Count > 0)
+        {
+            return new ReferencePositionSample(
+                completePoints.Average(point => point.North!.Value),
+                completePoints.Average(point => point.East!.Value),
+                completePoints.Average(point => point.Latitude!.Value),
+                completePoints.Average(point => point.Longitude!.Value));
+        }
+
+        List<(double North, double East)> northEastPoints = pointList
             .Where(point => point.North != null && point.East != null)
             .Select(point => (point.North!.Value, point.East!.Value))
             .ToList();
@@ -999,6 +1012,12 @@
             FieldID = fieldId,
             SourceGeographicReference = FieldGeographicReference.Wgs84,
             ProjectionApplicabilityPolicy = FieldApplicabilityPolicy.AllowUnknown,
+            Transformation = new FieldTransformationOptions
+            {
+                SelectionPolicy = FieldTransformationSelectionPolicy.FirstAvailable,
+                ApplicabilityPolicy = FieldApplicabilityPolicy.AllowUnknown,
+                DepthPolicy = FieldDepthTransformationPolicy.AllowUntransformedDepthFor2D
+            },
             Positions =
             [
                 new FieldForwardConversionPosition
@@ -1681,9 +1700,20 @@
         return CartographicProjections.FirstOrDefault(projection => projection.Id == cartographicProjectionID);
     }
 
-    private static void UpdateFieldPositionReferenceName(string value)
+    private async Task UpdateFieldPositionReferenceName(string value)
     {
         DataUtils.UnitAndReferenceParameters.PositionReferenceName = value;
+        if (string.Equals(value, "Cartographic", StringComparison.OrdinalIgnoreCase))
+        {
+            await RefreshCartographicGridPositionReferenceAsync();
+            if (DataUtils.CartographicGridPositionReferenceSource.CartographicGridNorthPositionReference == null ||
+                DataUtils.CartographicGridPositionReferenceSource.CartographicGridEastPositionReference == null)
+            {
+                Snackbar.Add(
+                    "Cartographic coordinates are unavailable. Set a WGS84 field reference point inside the projection area and ensure that EarthGeodesy provides a datum-transformation path.",
+                    Severity.Warning);
+            }
+        }
     }
 
     private bool TryValidateDelineationLines()

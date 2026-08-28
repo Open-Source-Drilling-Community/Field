@@ -1,0 +1,9 @@
+@page "/ProjectionDefinition/new"
+@page "/ProjectionDefinition/{Id:guid}/edit"
+
+<OSDC.Drilling.EarthCartographicProjection.WebPages.ProjectionDefinitionEdit Id="Id" />
+
+@code {
+    [Parameter]
+    public Guid? Id { get; set; }
+}

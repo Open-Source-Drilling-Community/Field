@@ -167,6 +167,27 @@
                     </PagerContent>
                 </MudDataGrid>
 
+                @if (_restoreDocument.SchemaVersion >= 2)
+                {
+                    <MudText Typo="Typo.subtitle2" Class="mt-4 mb-1">Referenced definitions</MudText>
+                    <MudRadioGroup T="FieldBatchCatalogRestorePolicy" @bind-Value="_catalogRestorePolicy">
+                        <MudRadio T="FieldBatchCatalogRestorePolicy"
+                                  Value="FieldBatchCatalogRestorePolicy.MapExisting"
+                                  Color="Color.Primary">
+                            Map compatible definitions already present on this server
+                        </MudRadio>
+                        <MudRadio T="FieldBatchCatalogRestorePolicy"
+                                  Value="FieldBatchCatalogRestorePolicy.MapOrCreateMissing"
+                                  Color="Color.Primary">
+                            Map compatible definitions and create any missing definitions
+                        </MudRadio>
+                    </MudRadioGroup>
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-2">
+                        Names are matched exactly after case, whitespace and Unicode normalization. Ambiguous or
+                        incompatible definitions reject the complete restore; existing definitions are never overwritten.
+                    </MudAlert>
+                }
+
                 <MudText Typo="Typo.subtitle2" Class="mt-4 mb-1">If a field UUID already exists</MudText>
                 <MudRadioGroup T="FieldBatchRestoreConflictPolicy" Value="_restorePolicy" ValueChanged="RestorePolicyChanged">
                     <MudRadio T="FieldBatchRestoreConflictPolicy"
@@ -214,7 +235,8 @@
 @code {
     private const long MaximumBackupFileBytes = 256L * 1024L * 1024L;
     private const string ExpectedFormatIdentifier = "OSDC.Drilling.Field.BatchExport";
-    private const int ExpectedSchemaVersion = 1;
+    private const int CurrentSchemaVersion = 2;
+    private const int LegacySchemaVersion = 1;
 
     private List<FieldLight>? _fields;
     private HashSet<FieldLight> _selectedFields = [];
@@ -226,6 +248,7 @@
     private string? _restoreFileName;
     private FieldBatchExportDocument? _restoreDocument;
     private FieldBatchRestoreConflictPolicy _restorePolicy = FieldBatchRestoreConflictPolicy.FailIfExists;
+    private FieldBatchCatalogRestorePolicy _catalogRestorePolicy = FieldBatchCatalogRestorePolicy.MapExisting;
     private readonly List<string> _restoreValidationErrors = [];
     private readonly List<string> _serverErrors = [];
     private string? _restoreSearch;
@@ -353,9 +376,13 @@
         {
             _restoreValidationErrors.Add($"FormatIdentifier must be '{ExpectedFormatIdentifier}'.");
         }
-        if (_restoreDocument.SchemaVersion != ExpectedSchemaVersion)
+        if (_restoreDocument.SchemaVersion is not LegacySchemaVersion and not CurrentSchemaVersion)
         {
-            _restoreValidationErrors.Add($"SchemaVersion must be {ExpectedSchemaVersion}.");
+            _restoreValidationErrors.Add($"SchemaVersion must be {LegacySchemaVersion} or {CurrentSchemaVersion}.");
+        }
+        if (_restoreDocument.SchemaVersion == CurrentSchemaVersion && _restoreDocument.CatalogDependencies == null)
+        {
+            _restoreValidationErrors.Add("Schema version 2 must contain catalog dependencies.");
         }
         if (_restoreDocument.ExportedAtUtc == default || _restoreDocument.ExportedAtUtc.Offset != TimeSpan.Zero)
         {
@@ -426,9 +453,14 @@
             FieldBatchRestoreResponse response = await Api.ClientField.BatchRestoreFieldsAsync(new FieldBatchRestoreRequest
             {
                 ConflictPolicy = _restorePolicy,
+                CatalogPolicy = _restoreDocument.SchemaVersion >= 2
+                    ? _catalogRestorePolicy
+                    : FieldBatchCatalogRestorePolicy.Unspecified,
                 Document = _restoreDocument
             });
-            Snackbar.Add($"Restore completed: {response.CreatedCount} created, {response.ReplacedCount} replaced.", Severity.Success);
+            Snackbar.Add($"Restore completed: {response.CreatedCount} field(s) created, {response.ReplacedCount} replaced; " +
+                         $"{response.CreatedCatalogDefinitionCount} definition(s) and {response.CreatedCatalogOptionCount} option(s) created.",
+                Severity.Success);
             await LoadFieldsAsync();
         }
         catch (ApiException<FieldBatchErrorEnvelope> ex)

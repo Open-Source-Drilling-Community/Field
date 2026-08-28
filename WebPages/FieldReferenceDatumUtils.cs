@@ -57,63 +57,23 @@ public static class FieldReferenceDatumUtils
             return null;
         }
 
-        Guid orderId = Guid.NewGuid();
-        DateTimeOffset now = DateTimeOffset.UtcNow;
-        FieldModelShared.VerticalDatumOrder order = new()
+        FieldModelShared.MeanSeaLevelToWgs84Request request = new()
         {
-            MetaInfo = CreateMetaInfo(orderId, api.HostNameVerticalDatum, api.HostBasePathVerticalDatum, "VerticalDatumOrder/"),
-            Name = $"MSL reference {orderId}",
-            Description = "Temporary MSL-to-WGS84 conversion.",
-            CreationDate = now,
-            LastModificationDate = now,
-            VerticalDatum = new FieldModelShared.VerticalDatum
-            {
-                MetaInfo = CreateMetaInfo(Guid.NewGuid(), api.HostNameVerticalDatum, api.HostBasePathVerticalDatum, "VerticalDatum/"),
-                Name = $"MSL reference {orderId}",
-                Description = "Temporary MSL-to-WGS84 conversion.",
-                CreationDate = now,
-                LastModificationDate = now,
-                DatumSet =
-                [
-                    new FieldModelShared.VerticalDatumSet
-                    {
-                        Latitude = latitude.Value,
-                        Longitude = longitude.Value,
-                        GenericVerticalDatum = 0
-                    }
-                ],
-                ConversionFrom = FieldModelShared.VerticalDatumConversion.FromMeanSeaLevel,
-                Type = FieldModelShared.VerticalDatumType.Raw
-            }
+            Positions =
+            [
+                new FieldModelShared.EarthVerticalDatumPosition
+                {
+                    Latitude = latitude.Value,
+                    Longitude = longitude.Value,
+                    MeanSeaLevelDepth = 0
+                }
+            ]
         };
 
-        try
-        {
-            await api.ClientVerticalDatum.PostVerticalDatumOrderAsync(order);
-            FieldModelShared.VerticalDatumOrder completed = await api.ClientVerticalDatum.GetVerticalDatumOrderByIdAsync(orderId);
-            double? verticalDatumWgs64 = completed.VerticalDatum?.DatumSet?.FirstOrDefault()?.VerticalDatumWGS64;
-            return verticalDatumWgs64;
-        }
-        finally
-        {
-            try
-            {
-                await api.ClientVerticalDatum.DeleteVerticalDatumOrderByIdAsync(orderId);
-            }
-            catch
-            {
-            }
-        }
+        FieldModelShared.MeanSeaLevelToWgs84Response response =
+            await api.ClientEarthVerticalDatum.ConvertMeanSeaLevelToWgs84Async(request);
+        return response.Samples?.FirstOrDefault()?.Wgs84EllipsoidalDepth;
     }
-
-    private static FieldModelShared.MetaInfo CreateMetaInfo(Guid id, string hostName, string hostBasePath, string endPoint) =>
-        new()
-        {
-            ID = id,
-            HttpHostName = hostName,
-            HttpHostBasePath = hostBasePath,
-            HttpEndPoint = endPoint
-        };
 
     private static double? Average(IEnumerable<double?>? values)
     {

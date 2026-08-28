@@ -69,7 +69,8 @@ namespace OSDC.Drilling.Field.ServiceTest
                 Assert.Multiple(() =>
                 {
                     Assert.That(batchExport.FormatIdentifier, Is.EqualTo("OSDC.Drilling.Field.BatchExport"));
-                    Assert.That(batchExport.SchemaVersion, Is.EqualTo(1));
+                    Assert.That(batchExport.SchemaVersion, Is.EqualTo(2));
+                    Assert.That(batchExport.CatalogDependencies, Is.Not.Null);
                     Assert.That(batchExport.Fields.Select(exported => exported.MetaInfo.ID), Is.EqualTo(new[] { fieldId }));
                 });
 
@@ -78,6 +79,7 @@ namespace OSDC.Drilling.Field.ServiceTest
                     await api.BatchRestoreFieldsAsync(new FieldBatchRestoreRequest
                     {
                         ConflictPolicy = FieldBatchRestoreConflictPolicy.FailIfExists,
+                        CatalogPolicy = FieldBatchCatalogRestorePolicy.MapExisting,
                         Document = batchExport
                     });
                     Assert.Fail("FailIfExists should reject an existing field UUID.");
@@ -95,6 +97,7 @@ namespace OSDC.Drilling.Field.ServiceTest
                 var restore = await api.BatchRestoreFieldsAsync(new FieldBatchRestoreRequest
                 {
                     ConflictPolicy = FieldBatchRestoreConflictPolicy.ReplaceExisting,
+                    CatalogPolicy = FieldBatchCatalogRestorePolicy.MapExisting,
                     Document = batchExport
                 });
                 Assert.Multiple(() =>

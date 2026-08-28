@@ -38,7 +38,8 @@ namespace OSDC.Drilling.Field.Model
     public sealed class FieldBatchExportDocument
     {
         public const string CurrentFormatIdentifier = "OSDC.Drilling.Field.BatchExport";
-        public const int CurrentSchemaVersion = 1;
+        public const int CurrentSchemaVersion = 2;
+        public const int LegacySchemaVersion = 1;
 
         /// <summary>
         /// Stable discriminator used to reject unrelated JSON documents during import.
@@ -46,7 +47,8 @@ namespace OSDC.Drilling.Field.Model
         public string FormatIdentifier { get; set; } = CurrentFormatIdentifier;
 
         /// <summary>
-        /// Version of the batch document envelope. Version 1 embeds complete Field records.
+        /// Version of the batch document envelope. Version 2 embeds complete Field records
+        /// and the server-managed catalog definitions referenced by those records.
         /// </summary>
         public int SchemaVersion { get; set; } = CurrentSchemaVersion;
 
@@ -56,10 +58,28 @@ namespace OSDC.Drilling.Field.Model
         public DateTimeOffset ExportedAtUtc { get; set; }
 
         /// <summary>
+        /// The portable dependency closure for the exported fields. Only referenced
+        /// definitions and referenced category options are included.
+        /// </summary>
+        public FieldBatchCatalogDependencies? CatalogDependencies { get; set; }
+
+        /// <summary>
         /// Complete field records. Selected exports preserve request order; All
         /// exports are ordered by field UUID for deterministic output.
         /// </summary>
         public List<Field> Fields { get; set; } = [];
+    }
+
+    /// <summary>
+    /// Server-managed definitions required to interpret the references in an export.
+    /// Source UUIDs are retained for remapping and are not imposed on the destination.
+    /// </summary>
+    public sealed class FieldBatchCatalogDependencies
+    {
+        public List<FieldFeatureCategory> FeatureCategories { get; set; } = [];
+        public List<FieldMembershipCategory> MembershipCategories { get; set; } = [];
+        public List<FieldIdentity> Identities { get; set; } = [];
+        public List<FieldDelineationLineType> DelineationLineTypes { get; set; } = [];
     }
 
     /// <summary>
@@ -98,11 +118,32 @@ namespace OSDC.Drilling.Field.Model
     }
 
     /// <summary>
+    /// Controls how source catalog definitions are resolved on the destination server.
+    /// </summary>
+    public enum FieldBatchCatalogRestorePolicy
+    {
+        Unspecified = 0,
+
+        /// <summary>Use a compatible local UUID or unique normalized-name match; fail when missing.</summary>
+        MapExisting = 1,
+
+        /// <summary>Map compatible definitions and create locally missing definitions/options.</summary>
+        MapOrCreateMissing = 2
+    }
+
+    /// <summary>
     /// Request to validate and atomically restore a versioned batch-export document.
     /// </summary>
     public sealed class FieldBatchRestoreRequest
     {
         public FieldBatchRestoreConflictPolicy ConflictPolicy { get; set; }
+
+        /// <summary>
+        /// Required for schema version 2. Schema version 1 always requires every
+        /// referenced UUID to exist locally because it contains no dependency metadata.
+        /// </summary>
+        public FieldBatchCatalogRestorePolicy CatalogPolicy { get; set; }
+
         public FieldBatchExportDocument? Document { get; set; }
     }
 
@@ -114,10 +155,24 @@ namespace OSDC.Drilling.Field.Model
         public DateTimeOffset RestoredAtUtc { get; set; }
         public int CreatedCount { get; set; }
         public int ReplacedCount { get; set; }
+        public int CreatedCatalogDefinitionCount { get; set; }
+        public int CreatedCatalogOptionCount { get; set; }
+
+        /// <summary>Every source-to-local catalog UUID translation applied by the restore.</summary>
+        public List<FieldBatchCatalogMapping> CatalogMappings { get; set; } = [];
 
         /// <summary>
         /// Restored field UUIDs in document order.
         /// </summary>
         public List<Guid> FieldIDs { get; set; } = [];
+    }
+
+    public sealed class FieldBatchCatalogMapping
+    {
+        public string Catalog { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public Guid SourceID { get; set; }
+        public Guid LocalID { get; set; }
+        public string Resolution { get; set; } = string.Empty;
     }
 }

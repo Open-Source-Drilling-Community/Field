@@ -1,9 +1,9 @@
 {
-  "openapi": "3.0.4",
+  "openapi": "3.0.3",
   "info": {
-    "title": "OSDC Earth Geodesy API",
-    "description": "Reference ellipsoid, geodetic datum, and coordinate-operation catalog with stateless SI batch coordinate transformation.",
-    "version": "v1"
+    "title": "OSDC Earth Geodesy distributed shared model",
+    "description": "Generated API client and DTO contract consumed by WebPages and ServiceTest.",
+    "version": "1.0"
   },
   "paths": {
     "/EarthGeodesy": {
@@ -17,17 +17,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.EarthGeodesyServiceInfo"
+                  "$ref": "#/components/schemas/EarthGeodesyServiceInfo"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.EarthGeodesyServiceInfo"
+                  "$ref": "#/components/schemas/EarthGeodesyServiceInfo"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.EarthGeodesyServiceInfo"
+                  "$ref": "#/components/schemas/EarthGeodesyServiceInfo"
                 }
               }
             }
@@ -44,17 +44,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.TransformCoordinatesRequest"
+                "$ref": "#/components/schemas/TransformCoordinatesRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.TransformCoordinatesRequest"
+                "$ref": "#/components/schemas/TransformCoordinatesRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.TransformCoordinatesRequest"
+                "$ref": "#/components/schemas/TransformCoordinatesRequest"
               }
             }
           }
@@ -65,17 +65,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.TransformCoordinatesResponse"
+                  "$ref": "#/components/schemas/TransformCoordinatesResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.TransformCoordinatesResponse"
+                  "$ref": "#/components/schemas/TransformCoordinatesResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.TransformCoordinatesResponse"
+                  "$ref": "#/components/schemas/TransformCoordinatesResponse"
                 }
               }
             }
@@ -92,17 +92,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ResolveTransformationPathsRequest"
+                "$ref": "#/components/schemas/ResolveTransformationPathsRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ResolveTransformationPathsRequest"
+                "$ref": "#/components/schemas/ResolveTransformationPathsRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ResolveTransformationPathsRequest"
+                "$ref": "#/components/schemas/ResolveTransformationPathsRequest"
               }
             }
           }
@@ -113,17 +113,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ResolveTransformationPathsResponse"
+                  "$ref": "#/components/schemas/ResolveTransformationPathsResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ResolveTransformationPathsResponse"
+                  "$ref": "#/components/schemas/ResolveTransformationPathsResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ResolveTransformationPathsResponse"
+                  "$ref": "#/components/schemas/ResolveTransformationPathsResponse"
                 }
               }
             }
@@ -142,17 +142,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.EarthGeodesyServiceInfo"
+                  "$ref": "#/components/schemas/EarthGeodesyServiceInfo"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.EarthGeodesyServiceInfo"
+                  "$ref": "#/components/schemas/EarthGeodesyServiceInfo"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.EarthGeodesyServiceInfo"
+                  "$ref": "#/components/schemas/EarthGeodesyServiceInfo"
                 }
               }
             }
@@ -191,7 +191,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.DatumTransformationConnection"
+                    "$ref": "#/components/schemas/DatumTransformationConnection"
                   }
                 }
               },
@@ -199,7 +199,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.DatumTransformationConnection"
+                    "$ref": "#/components/schemas/DatumTransformationConnection"
                   }
                 }
               },
@@ -207,7 +207,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.DatumTransformationConnection"
+                    "$ref": "#/components/schemas/DatumTransformationConnection"
                   }
                 }
               }
@@ -227,17 +227,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.UsageStatisticsEarthGeodesy"
+                  "$ref": "#/components/schemas/UsageStatisticsEarthGeodesy"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.UsageStatisticsEarthGeodesy"
+                  "$ref": "#/components/schemas/UsageStatisticsEarthGeodesy"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.UsageStatisticsEarthGeodesy"
+                  "$ref": "#/components/schemas/UsageStatisticsEarthGeodesy"
                 }
               }
             }
@@ -288,7 +288,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticDatum"
+                    "$ref": "#/components/schemas/GeodeticDatum"
                   }
                 }
               },
@@ -296,7 +296,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticDatum"
+                    "$ref": "#/components/schemas/GeodeticDatum"
                   }
                 }
               },
@@ -304,7 +304,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticDatum"
+                    "$ref": "#/components/schemas/GeodeticDatum"
                   }
                 }
               }
@@ -320,17 +320,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CreateGeodeticDatumRequest"
+                "$ref": "#/components/schemas/CreateGeodeticDatumRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CreateGeodeticDatumRequest"
+                "$ref": "#/components/schemas/CreateGeodeticDatumRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CreateGeodeticDatumRequest"
+                "$ref": "#/components/schemas/CreateGeodeticDatumRequest"
               }
             }
           }
@@ -341,17 +341,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticDatum"
+                  "$ref": "#/components/schemas/GeodeticDatum"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticDatum"
+                  "$ref": "#/components/schemas/GeodeticDatum"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticDatum"
+                  "$ref": "#/components/schemas/GeodeticDatum"
                 }
               }
             }
@@ -368,17 +368,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchRequest"
+                "$ref": "#/components/schemas/CatalogSearchRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchRequest"
+                "$ref": "#/components/schemas/CatalogSearchRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchRequest"
+                "$ref": "#/components/schemas/CatalogSearchRequest"
               }
             }
           }
@@ -389,17 +389,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchResult_OSDC.Drilling.EarthGeodesy.Model.GeodeticDatumSummary"
+                  "$ref": "#/components/schemas/CatalogSearchResult_GeodeticDatumSummary"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchResult_OSDC.Drilling.EarthGeodesy.Model.GeodeticDatumSummary"
+                  "$ref": "#/components/schemas/CatalogSearchResult_GeodeticDatumSummary"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchResult_OSDC.Drilling.EarthGeodesy.Model.GeodeticDatumSummary"
+                  "$ref": "#/components/schemas/CatalogSearchResult_GeodeticDatumSummary"
                 }
               }
             }
@@ -429,17 +429,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticDatum"
+                  "$ref": "#/components/schemas/GeodeticDatum"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticDatum"
+                  "$ref": "#/components/schemas/GeodeticDatum"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticDatum"
+                  "$ref": "#/components/schemas/GeodeticDatum"
                 }
               }
             }
@@ -465,17 +465,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.UpdateGeodeticDatumRequest"
+                "$ref": "#/components/schemas/UpdateGeodeticDatumRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.UpdateGeodeticDatumRequest"
+                "$ref": "#/components/schemas/UpdateGeodeticDatumRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.UpdateGeodeticDatumRequest"
+                "$ref": "#/components/schemas/UpdateGeodeticDatumRequest"
               }
             }
           }
@@ -486,17 +486,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticDatum"
+                  "$ref": "#/components/schemas/GeodeticDatum"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticDatum"
+                  "$ref": "#/components/schemas/GeodeticDatum"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticDatum"
+                  "$ref": "#/components/schemas/GeodeticDatum"
                 }
               }
             }
@@ -527,17 +527,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               }
             }
@@ -547,17 +547,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               }
             }
@@ -608,7 +608,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformation"
+                    "$ref": "#/components/schemas/GeodeticTransformation"
                   }
                 }
               },
@@ -616,7 +616,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformation"
+                    "$ref": "#/components/schemas/GeodeticTransformation"
                   }
                 }
               },
@@ -624,7 +624,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformation"
+                    "$ref": "#/components/schemas/GeodeticTransformation"
                   }
                 }
               }
@@ -640,17 +640,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CreateGeodeticTransformationRequest"
+                "$ref": "#/components/schemas/CreateGeodeticTransformationRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CreateGeodeticTransformationRequest"
+                "$ref": "#/components/schemas/CreateGeodeticTransformationRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CreateGeodeticTransformationRequest"
+                "$ref": "#/components/schemas/CreateGeodeticTransformationRequest"
               }
             }
           }
@@ -661,17 +661,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformation"
+                  "$ref": "#/components/schemas/GeodeticTransformation"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformation"
+                  "$ref": "#/components/schemas/GeodeticTransformation"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformation"
+                  "$ref": "#/components/schemas/GeodeticTransformation"
                 }
               }
             }
@@ -688,17 +688,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchRequest"
+                "$ref": "#/components/schemas/CatalogSearchRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchRequest"
+                "$ref": "#/components/schemas/CatalogSearchRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchRequest"
+                "$ref": "#/components/schemas/CatalogSearchRequest"
               }
             }
           }
@@ -709,17 +709,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchResult_OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformationSummary"
+                  "$ref": "#/components/schemas/CatalogSearchResult_GeodeticTransformationSummary"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchResult_OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformationSummary"
+                  "$ref": "#/components/schemas/CatalogSearchResult_GeodeticTransformationSummary"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchResult_OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformationSummary"
+                  "$ref": "#/components/schemas/CatalogSearchResult_GeodeticTransformationSummary"
                 }
               }
             }
@@ -749,17 +749,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformation"
+                  "$ref": "#/components/schemas/GeodeticTransformation"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformation"
+                  "$ref": "#/components/schemas/GeodeticTransformation"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformation"
+                  "$ref": "#/components/schemas/GeodeticTransformation"
                 }
               }
             }
@@ -785,17 +785,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.UpdateGeodeticTransformationRequest"
+                "$ref": "#/components/schemas/UpdateGeodeticTransformationRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.UpdateGeodeticTransformationRequest"
+                "$ref": "#/components/schemas/UpdateGeodeticTransformationRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.UpdateGeodeticTransformationRequest"
+                "$ref": "#/components/schemas/UpdateGeodeticTransformationRequest"
               }
             }
           }
@@ -806,17 +806,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformation"
+                  "$ref": "#/components/schemas/GeodeticTransformation"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformation"
+                  "$ref": "#/components/schemas/GeodeticTransformation"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformation"
+                  "$ref": "#/components/schemas/GeodeticTransformation"
                 }
               }
             }
@@ -847,17 +847,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               }
             }
@@ -867,17 +867,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               }
             }
@@ -928,7 +928,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoid"
+                    "$ref": "#/components/schemas/ReferenceEllipsoid"
                   }
                 }
               },
@@ -936,7 +936,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoid"
+                    "$ref": "#/components/schemas/ReferenceEllipsoid"
                   }
                 }
               },
@@ -944,7 +944,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoid"
+                    "$ref": "#/components/schemas/ReferenceEllipsoid"
                   }
                 }
               }
@@ -960,17 +960,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CreateReferenceEllipsoidRequest"
+                "$ref": "#/components/schemas/CreateReferenceEllipsoidRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CreateReferenceEllipsoidRequest"
+                "$ref": "#/components/schemas/CreateReferenceEllipsoidRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CreateReferenceEllipsoidRequest"
+                "$ref": "#/components/schemas/CreateReferenceEllipsoidRequest"
               }
             }
           }
@@ -981,17 +981,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoid"
+                  "$ref": "#/components/schemas/ReferenceEllipsoid"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoid"
+                  "$ref": "#/components/schemas/ReferenceEllipsoid"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoid"
+                  "$ref": "#/components/schemas/ReferenceEllipsoid"
                 }
               }
             }
@@ -1008,17 +1008,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchRequest"
+                "$ref": "#/components/schemas/CatalogSearchRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchRequest"
+                "$ref": "#/components/schemas/CatalogSearchRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchRequest"
+                "$ref": "#/components/schemas/CatalogSearchRequest"
               }
             }
           }
@@ -1029,17 +1029,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchResult_OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoidSummary"
+                  "$ref": "#/components/schemas/CatalogSearchResult_ReferenceEllipsoidSummary"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchResult_OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoidSummary"
+                  "$ref": "#/components/schemas/CatalogSearchResult_ReferenceEllipsoidSummary"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchResult_OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoidSummary"
+                  "$ref": "#/components/schemas/CatalogSearchResult_ReferenceEllipsoidSummary"
                 }
               }
             }
@@ -1069,17 +1069,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoid"
+                  "$ref": "#/components/schemas/ReferenceEllipsoid"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoid"
+                  "$ref": "#/components/schemas/ReferenceEllipsoid"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoid"
+                  "$ref": "#/components/schemas/ReferenceEllipsoid"
                 }
               }
             }
@@ -1105,17 +1105,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.UpdateReferenceEllipsoidRequest"
+                "$ref": "#/components/schemas/UpdateReferenceEllipsoidRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.UpdateReferenceEllipsoidRequest"
+                "$ref": "#/components/schemas/UpdateReferenceEllipsoidRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.UpdateReferenceEllipsoidRequest"
+                "$ref": "#/components/schemas/UpdateReferenceEllipsoidRequest"
               }
             }
           }
@@ -1126,17 +1126,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoid"
+                  "$ref": "#/components/schemas/ReferenceEllipsoid"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoid"
+                  "$ref": "#/components/schemas/ReferenceEllipsoid"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoid"
+                  "$ref": "#/components/schemas/ReferenceEllipsoid"
                 }
               }
             }
@@ -1167,17 +1167,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               }
             }
@@ -1187,17 +1187,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                  "$ref": "#/components/schemas/Microsoft_AspNetCore_Mvc_ProblemDetails"
                 }
               }
             }
@@ -1208,7 +1208,7 @@
   },
   "components": {
     "schemas": {
-      "Microsoft.AspNetCore.Mvc.ProblemDetails": {
+      "Microsoft_AspNetCore_Mvc_ProblemDetails": {
         "type": "object",
         "properties": {
           "type": {
@@ -1235,14 +1235,14 @@
         },
         "additionalProperties": { }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.ApplicabilityPolicy": {
+      "ApplicabilityPolicy": {
         "enum": [
           "RequireApplicable",
           "AllowUnknown"
         ],
         "type": "string"
       },
-      "OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier": {
+      "AuthorityIdentifier": {
         "required": [
           "Authority",
           "Code"
@@ -1265,10 +1265,9 @@
             "type": "string",
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CatalogEntryStatus": {
+      "CatalogEntryStatus": {
         "enum": [
           "Authoritative",
           "Legacy",
@@ -1277,7 +1276,7 @@
         ],
         "type": "string"
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CatalogMatchStatus": {
+      "CatalogMatchStatus": {
         "enum": [
           "VerifiedExact",
           "VerifiedAlias",
@@ -1287,7 +1286,7 @@
         ],
         "type": "string"
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CatalogProvenance": {
+      "CatalogProvenance": {
         "required": [
           "Source"
         ],
@@ -1298,7 +1297,7 @@
             "nullable": true
           },
           "MatchStatus": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogMatchStatus"
+            "$ref": "#/components/schemas/CatalogMatchStatus"
           },
           "SourceVersion": {
             "type": "string",
@@ -1325,10 +1324,9 @@
           "IsLegacyCombinedDefinition": {
             "type": "boolean"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CatalogReference": {
+      "CatalogReference": {
         "required": [
           "Name"
         ],
@@ -1343,12 +1341,11 @@
             "nullable": true
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CatalogSearchItem_OSDC.Drilling.EarthGeodesy.Model.GeodeticDatumSummary": {
+      "CatalogSearchItem_GeodeticDatumSummary": {
         "required": [
           "MatchReason",
           "Value"
@@ -1356,7 +1353,7 @@
         "type": "object",
         "properties": {
           "Value": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticDatumSummary"
+            "$ref": "#/components/schemas/GeodeticDatumSummary"
           },
           "MatchScore": {
             "type": "number",
@@ -1366,10 +1363,9 @@
             "type": "string",
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CatalogSearchItem_OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformationSummary": {
+      "CatalogSearchItem_GeodeticTransformationSummary": {
         "required": [
           "MatchReason",
           "Value"
@@ -1377,7 +1373,7 @@
         "type": "object",
         "properties": {
           "Value": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformationSummary"
+            "$ref": "#/components/schemas/GeodeticTransformationSummary"
           },
           "MatchScore": {
             "type": "number",
@@ -1387,10 +1383,9 @@
             "type": "string",
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CatalogSearchItem_OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoidSummary": {
+      "CatalogSearchItem_ReferenceEllipsoidSummary": {
         "required": [
           "MatchReason",
           "Value"
@@ -1398,7 +1393,7 @@
         "type": "object",
         "properties": {
           "Value": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoidSummary"
+            "$ref": "#/components/schemas/ReferenceEllipsoidSummary"
           },
           "MatchScore": {
             "type": "number",
@@ -1408,10 +1403,9 @@
             "type": "string",
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CatalogSearchRequest": {
+      "CatalogSearchRequest": {
         "type": "object",
         "properties": {
           "Query": {
@@ -1427,7 +1421,7 @@
             "nullable": true
           },
           "CatalogStatus": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogEntryStatus"
+            "$ref": "#/components/schemas/CatalogEntryStatus"
           },
           "IncludeLegacy": {
             "type": "boolean"
@@ -1443,10 +1437,9 @@
             "type": "integer",
             "format": "int32"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CatalogSearchResult_OSDC.Drilling.EarthGeodesy.Model.GeodeticDatumSummary": {
+      "CatalogSearchResult_GeodeticDatumSummary": {
         "type": "object",
         "properties": {
           "TotalCount": {
@@ -1469,14 +1462,13 @@
           "Items": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchItem_OSDC.Drilling.EarthGeodesy.Model.GeodeticDatumSummary"
+              "$ref": "#/components/schemas/CatalogSearchItem_GeodeticDatumSummary"
             },
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CatalogSearchResult_OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformationSummary": {
+      "CatalogSearchResult_GeodeticTransformationSummary": {
         "type": "object",
         "properties": {
           "TotalCount": {
@@ -1499,14 +1491,13 @@
           "Items": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchItem_OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformationSummary"
+              "$ref": "#/components/schemas/CatalogSearchItem_GeodeticTransformationSummary"
             },
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CatalogSearchResult_OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoidSummary": {
+      "CatalogSearchResult_ReferenceEllipsoidSummary": {
         "type": "object",
         "properties": {
           "TotalCount": {
@@ -1529,14 +1520,13 @@
           "Items": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogSearchItem_OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoidSummary"
+              "$ref": "#/components/schemas/CatalogSearchItem_ReferenceEllipsoidSummary"
             },
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CoordinateOperationDomain": {
+      "CoordinateOperationDomain": {
         "enum": [
           "Geographic2D",
           "Geographic3D",
@@ -1545,7 +1535,7 @@
         ],
         "type": "string"
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CoordinateOperationParameterValue": {
+      "CoordinateOperationParameterValue": {
         "required": [
           "Identifier",
           "Name"
@@ -1553,7 +1543,7 @@
         "type": "object",
         "properties": {
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "Name": {
             "type": "string",
@@ -1569,16 +1559,15 @@
             "nullable": true
           },
           "Unit": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "UnitName": {
             "type": "string",
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CoordinateReferenceSystemReference": {
+      "CoordinateReferenceSystemReference": {
         "required": [
           "Identifier",
           "Name"
@@ -1586,19 +1575,18 @@
         "type": "object",
         "properties": {
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "Name": {
             "type": "string",
             "nullable": true
           },
           "Domain": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CoordinateOperationDomain"
+            "$ref": "#/components/schemas/CoordinateOperationDomain"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CreateGeodeticDatumRequest": {
+      "CreateGeodeticDatumRequest": {
         "required": [
           "Name"
         ],
@@ -1617,10 +1605,10 @@
             "format": "uuid"
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "ReferenceObjectType": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticReferenceObjectType"
+            "$ref": "#/components/schemas/GeodeticReferenceObjectType"
           },
           "IsDeprecated": {
             "type": "boolean"
@@ -1630,7 +1618,7 @@
             "nullable": true
           },
           "PrimeMeridianIdentifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "PrimeMeridianLongitude": {
             "type": "number",
@@ -1682,7 +1670,7 @@
           "Usage": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticUsage"
+              "$ref": "#/components/schemas/GeodeticUsage"
             },
             "nullable": true
           },
@@ -1690,10 +1678,9 @@
             "type": "string",
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CreateGeodeticTransformationRequest": {
+      "CreateGeodeticTransformationRequest": {
         "required": [
           "Name"
         ],
@@ -1716,7 +1703,7 @@
             "format": "uuid"
           },
           "Method": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformationMethod"
+            "$ref": "#/components/schemas/GeodeticTransformationMethod"
           },
           "TranslationX": {
             "type": "number",
@@ -1756,15 +1743,14 @@
             "nullable": true
           },
           "AreaOfUseBounds": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeographicBoundingBox"
+            "$ref": "#/components/schemas/GeographicBoundingBox"
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.CreateReferenceEllipsoidRequest": {
+      "CreateReferenceEllipsoidRequest": {
         "required": [
           "Name"
         ],
@@ -1779,7 +1765,7 @@
             "nullable": true
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SemiMajorAxis": {
             "type": "number",
@@ -1789,10 +1775,9 @@
             "type": "number",
             "format": "double"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.DatumReference": {
+      "DatumReference": {
         "required": [
           "Name",
           "ReferenceEllipsoid"
@@ -1808,18 +1793,17 @@
             "nullable": true
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "ReferenceEllipsoid": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.EllipsoidReference"
+            "$ref": "#/components/schemas/EllipsoidReference"
           },
           "CatalogStatus": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogEntryStatus"
+            "$ref": "#/components/schemas/CatalogEntryStatus"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.DatumTransformationConnection": {
+      "DatumTransformationConnection": {
         "required": [
           "TransformationName"
         ],
@@ -1834,7 +1818,7 @@
             "nullable": true
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SourceDatumId": {
             "type": "string",
@@ -1860,12 +1844,11 @@
             "nullable": true
           },
           "AreaOfUseBounds": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeographicBoundingBox"
+            "$ref": "#/components/schemas/GeographicBoundingBox"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.DepthTransformationPolicy": {
+      "DepthTransformationPolicy": {
         "enum": [
           "Unspecified",
           "PreservePhysicalPoint",
@@ -1873,7 +1856,7 @@
         ],
         "type": "string"
       },
-      "OSDC.Drilling.EarthGeodesy.Model.EarthGeodesyServiceInfo": {
+      "EarthGeodesyServiceInfo": {
         "type": "object",
         "properties": {
           "Service": {
@@ -1940,10 +1923,9 @@
             "type": "integer",
             "format": "int32"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.EllipsoidReference": {
+      "EllipsoidReference": {
         "required": [
           "Name"
         ],
@@ -1958,7 +1940,7 @@
             "nullable": true
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SemiMajorAxis": {
             "type": "number",
@@ -1968,10 +1950,9 @@
             "type": "number",
             "format": "double"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.GeodeticDatum": {
+      "GeodeticDatum": {
         "required": [
           "Name",
           "Provenance"
@@ -1995,7 +1976,7 @@
             "format": "uuid"
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "IsBuiltIn": {
             "type": "boolean"
@@ -2004,7 +1985,7 @@
             "type": "boolean"
           },
           "Provenance": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogProvenance"
+            "$ref": "#/components/schemas/CatalogProvenance"
           },
           "CreatedUtc": {
             "type": "string",
@@ -2022,7 +2003,7 @@
             "nullable": true
           },
           "ReferenceObjectType": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticReferenceObjectType"
+            "$ref": "#/components/schemas/GeodeticReferenceObjectType"
           },
           "IsDeprecated": {
             "type": "boolean"
@@ -2035,7 +2016,7 @@
             "nullable": true
           },
           "PrimeMeridianIdentifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "PrimeMeridianLongitude": {
             "type": "number",
@@ -2087,7 +2068,7 @@
           "Usage": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticUsage"
+              "$ref": "#/components/schemas/GeodeticUsage"
             },
             "nullable": true
           },
@@ -2105,12 +2086,11 @@
             "nullable": true
           },
           "CatalogStatus": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogEntryStatus"
+            "$ref": "#/components/schemas/CatalogEntryStatus"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.GeodeticDatumSummary": {
+      "GeodeticDatumSummary": {
         "required": [
           "Name",
           "Provenance",
@@ -2131,19 +2111,19 @@
             "nullable": true
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "ReferenceEllipsoid": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.EllipsoidReference"
+            "$ref": "#/components/schemas/EllipsoidReference"
           },
           "CatalogStatus": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogEntryStatus"
+            "$ref": "#/components/schemas/CatalogEntryStatus"
           },
           "IsDefault": {
             "type": "boolean"
           },
           "ReferenceObjectType": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticReferenceObjectType"
+            "$ref": "#/components/schemas/GeodeticReferenceObjectType"
           },
           "IsDeprecated": {
             "type": "boolean"
@@ -2156,7 +2136,7 @@
             "nullable": true
           },
           "PrimeMeridianIdentifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "PrimeMeridianLongitude": {
             "type": "number",
@@ -2208,7 +2188,7 @@
           "Usage": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticUsage"
+              "$ref": "#/components/schemas/GeodeticUsage"
             },
             "nullable": true
           },
@@ -2226,12 +2206,11 @@
             "nullable": true
           },
           "Provenance": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogProvenance"
+            "$ref": "#/components/schemas/CatalogProvenance"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.GeodeticPosition": {
+      "GeodeticPosition": {
         "type": "object",
         "properties": {
           "Latitude": {
@@ -2251,10 +2230,9 @@
             "format": "date-time",
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.GeodeticReferenceObjectType": {
+      "GeodeticReferenceObjectType": {
         "enum": [
           "StaticReferenceFrame",
           "DynamicReferenceFrame",
@@ -2262,7 +2240,7 @@
         ],
         "type": "string"
       },
-      "OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformation": {
+      "GeodeticTransformation": {
         "required": [
           "Name",
           "Provenance"
@@ -2290,20 +2268,20 @@
             "format": "uuid"
           },
           "Method": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformationMethod"
+            "$ref": "#/components/schemas/GeodeticTransformationMethod"
           },
           "MethodName": {
             "type": "string",
             "nullable": true
           },
           "MethodIdentifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SourceCrs": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CoordinateReferenceSystemReference"
+            "$ref": "#/components/schemas/CoordinateReferenceSystemReference"
           },
           "TargetCrs": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CoordinateReferenceSystemReference"
+            "$ref": "#/components/schemas/CoordinateReferenceSystemReference"
           },
           "IsReversible": {
             "type": "boolean"
@@ -2311,14 +2289,14 @@
           "ComponentOperationIdentifiers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+              "$ref": "#/components/schemas/AuthorityIdentifier"
             },
             "nullable": true
           },
           "Parameters": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CoordinateOperationParameterValue"
+              "$ref": "#/components/schemas/CoordinateOperationParameterValue"
             },
             "nullable": true
           },
@@ -2368,10 +2346,10 @@
             "nullable": true
           },
           "AreaOfUseBounds": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeographicBoundingBox"
+            "$ref": "#/components/schemas/GeographicBoundingBox"
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "IsBuiltIn": {
             "type": "boolean"
@@ -2383,7 +2361,7 @@
             "type": "boolean"
           },
           "Provenance": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogProvenance"
+            "$ref": "#/components/schemas/CatalogProvenance"
           },
           "CreatedUtc": {
             "type": "string",
@@ -2394,12 +2372,11 @@
             "format": "date-time"
           },
           "CatalogStatus": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogEntryStatus"
+            "$ref": "#/components/schemas/CatalogEntryStatus"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformationMethod": {
+      "GeodeticTransformationMethod": {
         "enum": [
           "GeocentricTranslations",
           "PositionVectorSevenParameter",
@@ -2407,7 +2384,7 @@
         ],
         "type": "string"
       },
-      "OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformationSummary": {
+      "GeodeticTransformationSummary": {
         "required": [
           "Name",
           "Provenance",
@@ -2429,29 +2406,29 @@
             "nullable": true
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SourceDatum": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogReference"
+            "$ref": "#/components/schemas/CatalogReference"
           },
           "TargetDatum": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogReference"
+            "$ref": "#/components/schemas/CatalogReference"
           },
           "Method": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformationMethod"
+            "$ref": "#/components/schemas/GeodeticTransformationMethod"
           },
           "MethodName": {
             "type": "string",
             "nullable": true
           },
           "MethodIdentifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SourceCrs": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CoordinateReferenceSystemReference"
+            "$ref": "#/components/schemas/CoordinateReferenceSystemReference"
           },
           "TargetCrs": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CoordinateReferenceSystemReference"
+            "$ref": "#/components/schemas/CoordinateReferenceSystemReference"
           },
           "IsReversible": {
             "type": "boolean"
@@ -2459,14 +2436,14 @@
           "ComponentOperationIdentifiers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+              "$ref": "#/components/schemas/AuthorityIdentifier"
             },
             "nullable": true
           },
           "Parameters": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CoordinateOperationParameterValue"
+              "$ref": "#/components/schemas/CoordinateOperationParameterValue"
             },
             "nullable": true
           },
@@ -2519,18 +2496,17 @@
             "nullable": true
           },
           "AreaOfUseBounds": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeographicBoundingBox"
+            "$ref": "#/components/schemas/GeographicBoundingBox"
           },
           "CatalogStatus": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogEntryStatus"
+            "$ref": "#/components/schemas/CatalogEntryStatus"
           },
           "Provenance": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogProvenance"
+            "$ref": "#/components/schemas/CatalogProvenance"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.GeodeticUsage": {
+      "GeodeticUsage": {
         "type": "object",
         "properties": {
           "Scope": {
@@ -2541,10 +2517,9 @@
             "type": "string",
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.GeographicBoundingBox": {
+      "GeographicBoundingBox": {
         "type": "object",
         "properties": {
           "SouthLatitude": {
@@ -2563,10 +2538,9 @@
             "type": "number",
             "format": "double"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoid": {
+      "ReferenceEllipsoid": {
         "required": [
           "Name",
           "Provenance"
@@ -2586,7 +2560,7 @@
             "nullable": true
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SemiMajorAxis": {
             "type": "number",
@@ -2603,7 +2577,7 @@
             "type": "boolean"
           },
           "Provenance": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogProvenance"
+            "$ref": "#/components/schemas/CatalogProvenance"
           },
           "CreatedUtc": {
             "type": "string",
@@ -2640,20 +2614,19 @@
             "nullable": true
           },
           "SourceUnit": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "CatalogStatus": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogEntryStatus"
+            "$ref": "#/components/schemas/CatalogEntryStatus"
           },
           "SemiMinorAxis": {
             "type": "number",
             "format": "double",
             "readOnly": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.ReferenceEllipsoidSummary": {
+      "ReferenceEllipsoidSummary": {
         "required": [
           "Name",
           "Provenance"
@@ -2673,7 +2646,7 @@
             "nullable": true
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SemiMajorAxis": {
             "type": "number",
@@ -2688,10 +2661,10 @@
             "format": "double"
           },
           "SourceUnit": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "CatalogStatus": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogEntryStatus"
+            "$ref": "#/components/schemas/CatalogEntryStatus"
           },
           "IsDefault": {
             "type": "boolean"
@@ -2716,12 +2689,11 @@
             "nullable": true
           },
           "Provenance": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogProvenance"
+            "$ref": "#/components/schemas/CatalogProvenance"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.ResolveTransformationPathsRequest": {
+      "ResolveTransformationPathsRequest": {
         "type": "object",
         "properties": {
           "SourceDatumId": {
@@ -2735,7 +2707,7 @@
           "Positions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticPosition"
+              "$ref": "#/components/schemas/GeodeticPosition"
             },
             "nullable": true
           },
@@ -2743,10 +2715,9 @@
             "type": "integer",
             "format": "int32"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.ResolveTransformationPathsResponse": {
+      "ResolveTransformationPathsResponse": {
         "required": [
           "SelectionGuidance",
           "SourceDatum",
@@ -2755,10 +2726,10 @@
         "type": "object",
         "properties": {
           "SourceDatum": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.DatumReference"
+            "$ref": "#/components/schemas/DatumReference"
           },
           "TargetDatum": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.DatumReference"
+            "$ref": "#/components/schemas/DatumReference"
           },
           "IsAmbiguous": {
             "type": "boolean"
@@ -2770,14 +2741,13 @@
           "Candidates": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.TransformationPathCandidate"
+              "$ref": "#/components/schemas/TransformationPathCandidate"
             },
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.ServiceWarning": {
+      "ServiceWarning": {
         "required": [
           "Code",
           "Message"
@@ -2792,10 +2762,9 @@
             "type": "string",
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.TransformCoordinatesRequest": {
+      "TransformCoordinatesRequest": {
         "type": "object",
         "properties": {
           "SourceDatumId": {
@@ -2809,12 +2778,12 @@
           "Positions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticPosition"
+              "$ref": "#/components/schemas/GeodeticPosition"
             },
             "nullable": true
           },
           "SelectionPolicy": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.TransformationSelectionPolicy"
+            "$ref": "#/components/schemas/TransformationSelectionPolicy"
           },
           "TransformationPathIds": {
             "type": "array",
@@ -2829,15 +2798,14 @@
             "nullable": true
           },
           "ApplicabilityPolicy": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ApplicabilityPolicy"
+            "$ref": "#/components/schemas/ApplicabilityPolicy"
           },
           "DepthPolicy": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.DepthTransformationPolicy"
+            "$ref": "#/components/schemas/DepthTransformationPolicy"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.TransformCoordinatesResponse": {
+      "TransformCoordinatesResponse": {
         "required": [
           "SourceDatum",
           "TargetDatum"
@@ -2845,27 +2813,27 @@
         "type": "object",
         "properties": {
           "SourceDatum": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogReference"
+            "$ref": "#/components/schemas/CatalogReference"
           },
           "TargetDatum": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogReference"
+            "$ref": "#/components/schemas/CatalogReference"
           },
           "TransformationPath": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.TransformationReference"
+              "$ref": "#/components/schemas/TransformationReference"
             },
             "nullable": true
           },
           "Positions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticPosition"
+              "$ref": "#/components/schemas/GeodeticPosition"
             },
             "nullable": true
           },
           "Applicability": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.TransformationApplicability"
+            "$ref": "#/components/schemas/TransformationApplicability"
           },
           "DepthReferenceChanged": {
             "type": "boolean"
@@ -2885,14 +2853,13 @@
           "Warnings": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ServiceWarning"
+              "$ref": "#/components/schemas/ServiceWarning"
             },
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.TransformationApplicability": {
+      "TransformationApplicability": {
         "enum": [
           "NotEvaluated",
           "Applicable",
@@ -2901,7 +2868,7 @@
         ],
         "type": "string"
       },
-      "OSDC.Drilling.EarthGeodesy.Model.TransformationPathCandidate": {
+      "TransformationPathCandidate": {
         "required": [
           "ApplicabilityMessage",
           "RecommendationReason"
@@ -2920,7 +2887,7 @@
             "nullable": true
           },
           "Applicability": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.TransformationApplicability"
+            "$ref": "#/components/schemas/TransformationApplicability"
           },
           "ApplicabilityMessage": {
             "type": "string",
@@ -2932,7 +2899,7 @@
           "ExecutionIssues": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.ServiceWarning"
+              "$ref": "#/components/schemas/ServiceWarning"
             },
             "nullable": true
           },
@@ -2953,14 +2920,13 @@
           "Operations": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.TransformationReference"
+              "$ref": "#/components/schemas/TransformationReference"
             },
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.TransformationReference": {
+      "TransformationReference": {
         "required": [
           "Name"
         ],
@@ -2975,28 +2941,28 @@
             "nullable": true
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "Method": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformationMethod"
+            "$ref": "#/components/schemas/GeodeticTransformationMethod"
           },
           "MethodName": {
             "type": "string",
             "nullable": true
           },
           "MethodIdentifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SourceCrs": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CoordinateReferenceSystemReference"
+            "$ref": "#/components/schemas/CoordinateReferenceSystemReference"
           },
           "TargetCrs": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CoordinateReferenceSystemReference"
+            "$ref": "#/components/schemas/CoordinateReferenceSystemReference"
           },
           "ComponentOperationIdentifiers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+              "$ref": "#/components/schemas/AuthorityIdentifier"
             },
             "nullable": true
           },
@@ -3021,18 +2987,17 @@
             "nullable": true
           },
           "AreaOfUseBounds": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeographicBoundingBox"
+            "$ref": "#/components/schemas/GeographicBoundingBox"
           },
           "AppliedInReverse": {
             "type": "boolean"
           },
           "CatalogStatus": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.CatalogEntryStatus"
+            "$ref": "#/components/schemas/CatalogEntryStatus"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.TransformationSelectionPolicy": {
+      "TransformationSelectionPolicy": {
         "enum": [
           "RequireUnambiguous",
           "FirstAvailable",
@@ -3040,7 +3005,7 @@
         ],
         "type": "string"
       },
-      "OSDC.Drilling.EarthGeodesy.Model.UpdateGeodeticDatumRequest": {
+      "UpdateGeodeticDatumRequest": {
         "required": [
           "Name"
         ],
@@ -3059,10 +3024,10 @@
             "format": "uuid"
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "ReferenceObjectType": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticReferenceObjectType"
+            "$ref": "#/components/schemas/GeodeticReferenceObjectType"
           },
           "IsDeprecated": {
             "type": "boolean"
@@ -3072,7 +3037,7 @@
             "nullable": true
           },
           "PrimeMeridianIdentifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "PrimeMeridianLongitude": {
             "type": "number",
@@ -3124,7 +3089,7 @@
           "Usage": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticUsage"
+              "$ref": "#/components/schemas/GeodeticUsage"
             },
             "nullable": true
           },
@@ -3132,10 +3097,9 @@
             "type": "string",
             "nullable": true
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.UpdateGeodeticTransformationRequest": {
+      "UpdateGeodeticTransformationRequest": {
         "required": [
           "Name"
         ],
@@ -3158,7 +3122,7 @@
             "format": "uuid"
           },
           "Method": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeodeticTransformationMethod"
+            "$ref": "#/components/schemas/GeodeticTransformationMethod"
           },
           "TranslationX": {
             "type": "number",
@@ -3198,15 +3162,14 @@
             "nullable": true
           },
           "AreaOfUseBounds": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.GeographicBoundingBox"
+            "$ref": "#/components/schemas/GeographicBoundingBox"
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.UpdateReferenceEllipsoidRequest": {
+      "UpdateReferenceEllipsoidRequest": {
         "required": [
           "Name"
         ],
@@ -3221,7 +3184,7 @@
             "nullable": true
           },
           "Identifier": {
-            "$ref": "#/components/schemas/OSDC.Drilling.EarthGeodesy.Model.AuthorityIdentifier"
+            "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SemiMajorAxis": {
             "type": "number",
@@ -3231,10 +3194,9 @@
             "type": "number",
             "format": "double"
           }
-        },
-        "additionalProperties": false
+        }
       },
-      "OSDC.Drilling.EarthGeodesy.Model.UsageStatisticsEarthGeodesy": {
+      "UsageStatisticsEarthGeodesy": {
         "type": "object",
         "properties": {
           "RestTransforms": {
@@ -3267,8 +3229,7 @@
             "format": "int64",
             "readOnly": true
           }
-        },
-        "additionalProperties": false
+        }
       }
     }
   }

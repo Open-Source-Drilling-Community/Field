@@ -46,6 +46,30 @@
             </MudTable>
         </MudItem>
 
+        @if (PlotNameList.Count > 0)
+        {
+            <MudItem xs="12">
+                <MudDivider Class="mt-4 mb-3" />
+                <ScatterPlot NameList="@PlotNameList"
+                             ModeFlagList="@PlotModeList"
+                             ColorList="@PlotColorList"
+                             LineDashList="@PlotDashList"
+                             ShowLegends="@PlotLegendList"
+                             XValuesList="@PlotEastValuesList"
+                             YValuesList="@PlotNorthValuesList"
+                             XUnit="PositionDrilling"
+                             YUnit="PositionDrilling"
+                             XAxisTitle="East"
+                             YAxisTitle="North"
+                             XAxisUsesPositionReference="true"
+                             YAxisUsesPositionReference="true"
+                             XAxisPositionDirection="PositionDirectionType.East"
+                             YAxisPositionDirection="PositionDirectionType.North"
+                             PlotHeight="420"
+                             AspectRatio="1" />
+            </MudItem>
+        }
+
         <MudItem xs="12">
             @if (SelectedLine != null)
             {
@@ -216,28 +240,6 @@
             }
         </MudItem>
 </MudGrid>
-
-@if (PlotNameList.Count > 0)
-{
-    <MudDivider Class="mt-4 mb-3" />
-    <ScatterPlot NameList="@PlotNameList"
-                 ModeFlagList="@PlotModeList"
-                 ColorList="@PlotColorList"
-                 LineDashList="@PlotDashList"
-                 ShowLegends="@PlotLegendList"
-                 XValuesList="@PlotEastValuesList"
-                 YValuesList="@PlotNorthValuesList"
-                 XUnit="PositionDrilling"
-                 YUnit="PositionDrilling"
-                 XAxisTitle="East"
-                 YAxisTitle="North"
-                 XAxisUsesPositionReference="true"
-                 YAxisUsesPositionReference="true"
-                 XAxisPositionDirection="PositionDirectionType.East"
-                 YAxisPositionDirection="PositionDirectionType.North"
-                 PlotHeight="420"
-                 AspectRatio="1" />
-}
 @code {
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Inject] public IJSRuntime JSRuntime { get; set; } = null!;

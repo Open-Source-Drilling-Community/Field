@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using OSDC.DotnetLibraries.General.DataManagement;
 using Microsoft.Data.Sqlite;
 using System.Text.Json;
+using System.Linq;
 using OSDC.Drilling.Field.Model;
 
 namespace OSDC.Drilling.Field.Service.Managers
@@ -325,6 +326,62 @@ namespace OSDC.Drilling.Field.Service.Managers
                 _logger.LogError(ex, "Impossible to read a verified Field snapshot for batch export");
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Reads fields and all locally managed reference catalogs from one SQLite
+        /// snapshot, then produces the dependency-closed versioned export.
+        /// </summary>
+        public FieldBatchExportOutcome ExportBatch(FieldBatchExportRequest? request)
+        {
+            SqliteConnection? connection = _connectionManager.GetConnection();
+            if (connection == null)
+            {
+                return FieldBatchExporter.StorageFailure("The field database is unavailable.");
+            }
+
+            using SqliteTransaction transaction = connection.BeginTransaction();
+            try
+            {
+                List<Model.Field?> fields = ReadDocuments<Model.Field>(connection, transaction, "FieldTable", "Field");
+                List<FieldFeatureCategory> features = ReadDocuments<FieldFeatureCategory>(connection, transaction,
+                    "FieldFeatureCategoryTable", "FieldFeatureCategory").Where(value => value != null).Cast<FieldFeatureCategory>().ToList();
+                List<FieldMembershipCategory> memberships = ReadDocuments<FieldMembershipCategory>(connection, transaction,
+                    "FieldMembershipCategoryTable", "FieldMembershipCategory").Where(value => value != null).Cast<FieldMembershipCategory>().ToList();
+                List<FieldIdentity> identities = ReadDocuments<FieldIdentity>(connection, transaction,
+                    "FieldIdentityTable", "FieldIdentity").Where(value => value != null).Cast<FieldIdentity>().ToList();
+                List<FieldDelineationLineType> lineTypes = ReadDocuments<FieldDelineationLineType>(connection, transaction,
+                    "FieldDelineationLineTypeTable", "FieldDelineationLineType").Where(value => value != null).Cast<FieldDelineationLineType>().ToList();
+
+                FieldBatchExportOutcome outcome = FieldBatchExporter.Create(request, fields, DateTimeOffset.UtcNow,
+                    features, memberships, identities, lineTypes);
+                transaction.Commit();
+                return outcome;
+            }
+            catch (Exception ex) when (ex is SqliteException or JsonException or InvalidOperationException)
+            {
+                try { transaction.Rollback(); } catch (InvalidOperationException) { }
+                _logger.LogError(ex, "Impossible to read a dependency-closed Field batch export");
+                return FieldBatchExporter.StorageFailure("The stored fields or their catalog dependencies could not be read.");
+            }
+        }
+
+        private static List<T?> ReadDocuments<T>(SqliteConnection connection, SqliteTransaction transaction,
+            string table, string documentColumn)
+        {
+            using SqliteCommand command = connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText = $"SELECT {documentColumn} FROM {table} ORDER BY ID";
+            using SqliteDataReader reader = command.ExecuteReader();
+            List<T?> result = [];
+            while (reader.Read())
+            {
+                if (reader.IsDBNull(0)) throw new JsonException($"{table} contains a null document.");
+                T? value = JsonSerializer.Deserialize<T>(reader.GetString(0), JsonSettings.Options);
+                if (value == null) throw new JsonException($"{table} contains an invalid document.");
+                result.Add(value);
+            }
+            return result;
         }
 
         /// <summary>

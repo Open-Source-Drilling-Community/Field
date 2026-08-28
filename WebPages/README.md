@@ -59,7 +59,7 @@ builder.Services.AddSingleton<IFieldWebPagesConfiguration>(new WebPagesHostConfi
     ClusterHostURL = builder.Configuration["ClusterHostURL"] ?? string.Empty,
     TrajectoryHostURL = builder.Configuration["TrajectoryHostURL"] ?? string.Empty,
     EarthCartographicProjectionHostURL = builder.Configuration["EarthCartographicProjectionHostURL"] ?? string.Empty,
-    VerticalDatumHostURL = builder.Configuration["VerticalDatumHostURL"] ?? string.Empty,
+    EarthVerticalDatumHostURL = builder.Configuration["EarthVerticalDatumHostURL"] ?? string.Empty,
     UnitConversionHostURL = builder.Configuration["UnitConversionHostURL"] ?? string.Empty
 });
 builder.Services.AddSingleton<IFieldAPIUtils, FieldAPIUtils>();

@@ -109,9 +109,9 @@ namespace OSDC.Drilling.Field.Service.Controllers
         }
 
         /// <summary>
-        /// Exports every stored field or an explicitly ordered selection as one
-        /// versioned JSON backup document. The operation is read-only and never
-        /// returns a partial selected batch.
+        /// Exports every stored field or an explicitly ordered selection together
+        /// with its referenced Field-owned catalog definitions. The operation is
+        /// read-only and never returns a partial selected batch.
         /// </summary>
         [HttpPost("BatchExport", Name = "BatchExportFields")]
         [ProducesResponseType<FieldBatchExportDocument>(StatusCodes.Status200OK)]
@@ -121,26 +121,7 @@ namespace OSDC.Drilling.Field.Service.Controllers
         public ActionResult<FieldBatchExportDocument> BatchExportFields([FromBody] FieldBatchExportRequest? request)
         {
             UsageStatisticsField.Instance.IncrementBatchExportFieldsPerDay();
-            List<Model.Field?>? snapshot = _fieldManager.GetAllFieldForExport();
-            if (snapshot == null)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new FieldBatchErrorEnvelope
-                {
-                    Error = "field_export_failed",
-                    Message = "The stored fields could not be read for export.",
-                    Errors =
-                    [
-                        new FieldBatchError
-                        {
-                            Property = "Fields",
-                            Code = "storage_unavailable",
-                            Message = "The field database is unavailable or could not be read."
-                        }
-                    ]
-                });
-            }
-
-            FieldBatchExportOutcome outcome = FieldBatchExporter.Create(request, snapshot, DateTimeOffset.UtcNow);
+            FieldBatchExportOutcome outcome = _fieldManager.ExportBatch(request);
             if (outcome.IsSuccess)
             {
                 return Ok(outcome.Document);
@@ -155,9 +136,9 @@ namespace OSDC.Drilling.Field.Service.Controllers
         }
 
         /// <summary>
-        /// Validates and atomically restores every field in a versioned batch-export
-        /// document. FailIfExists rejects the complete batch on any UUID conflict;
-        /// ReplaceExisting inserts new fields and replaces existing fields together.
+        /// Resolves portable catalog references and atomically restores definitions,
+        /// options and fields. FailIfExists rejects the complete transaction on any
+        /// field UUID conflict; ReplaceExisting replaces existing fields together.
         /// </summary>
         [HttpPost("BatchRestore", Name = "BatchRestoreFields")]
         [ProducesResponseType<FieldBatchRestoreResponse>(StatusCodes.Status200OK)]

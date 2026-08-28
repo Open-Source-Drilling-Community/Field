@@ -31,7 +31,7 @@ Steps (dev):
 Configuration:
 - Service reads `EarthCartographicProjectionHostURL` and `EarthGeodesyHostURL` (see `Service/appsettings.*.json`).
 - Service can read optional external configuration from `home/Field.Service.json`, or from the path specified by `FIELD_EXTERNAL_CONFIG`.
-- WebApp reads `FieldHostURL`, `ClusterHostURL`, `TrajectoryHostURL`, `EarthCartographicProjectionHostURL`, `GeodeticDatumHostURL`, `VerticalDatumHostURL`, and `UnitConversionHostURL`.
+- WebApp reads `FieldHostURL`, `ClusterHostURL`, `TrajectoryHostURL`, `EarthCartographicProjectionHostURL`, `EarthGeodesyHostURL`, `EarthGravityHostURL`, `EarthMagneticFieldHostURL`, `EarthVerticalDatumHostURL`, and `UnitConversionHostURL`.
 
 Code generation:
 - When model or controller contracts change, regenerate DTOs in this order:
@@ -67,9 +67,10 @@ curl -k -X POST "https://localhost:5001/Field/api/Field/BatchExport" \
 Use `Scope: "Selected"` with a non-empty, unique `FieldIDs` array to export
 specific fields in the requested order. The complete request fails if any UUID
 is empty, duplicated, or absent. An `All` export is ordered by UUID for stable
-output. The version-1 document identifies itself as
-`OSDC.Drilling.Field.BatchExport` and contains complete Field records; referenced
-projection definitions and Field-owned catalog definitions remain external
+output. The version-2 document identifies itself as
+`OSDC.Drilling.Field.BatchExport` and contains complete Field records together
+with the referenced Field Feature, Field Membership, Field Identity and
+Delineation Line Type definitions. Projection definitions remain external
 resources identified by UUID.
 
 Atomically restore that document without overwriting existing fields:
@@ -79,10 +80,17 @@ curl -k -X POST "https://localhost:5001/Field/api/Field/BatchRestore" \
   --data-binary @- <<'JSON'
 {
   "ConflictPolicy": "FailIfExists",
+  "CatalogPolicy": "MapOrCreateMissing",
   "Document": {
     "FormatIdentifier": "OSDC.Drilling.Field.BatchExport",
-    "SchemaVersion": 1,
+    "SchemaVersion": 2,
     "ExportedAtUtc": "2026-08-27T12:00:00Z",
+    "CatalogDependencies": {
+      "FeatureCategories": [],
+      "MembershipCategories": [],
+      "Identities": [],
+      "DelineationLineTypes": []
+    },
     "Fields": [
       {
         "MetaInfo": { "ID": "11111111-1111-1111-1111-111111111111" },
@@ -98,7 +106,13 @@ JSON
 `ReplaceExisting` inserts missing fields and replaces existing fields in the
 same transaction. Format, version, UTC timestamp, field identities, duplicate
 UUIDs, and projection UUIDs are validated before writing. A storage failure at
-any position rolls back every earlier write.
+any position rolls back every earlier write. `MapExisting` resolves catalog
+UUIDs by compatible local UUID or a unique normalized-name match and rejects
+missing definitions. `MapOrCreateMissing` additionally creates missing local
+definitions and options with server-generated UUIDs. Catalog matching,
+reference rewriting, catalog creation and field restoration are atomic.
+Schema-version 1 documents remain accepted for same-server recovery only when
+every referenced catalog UUID already exists locally.
 
 WebApp (UI):
 - Local Field page: `https://localhost:5011/Field/webapp/Field`
@@ -146,7 +160,7 @@ The solution is composed of:
 - **WebApp**
   - Blazor Server webapp named `Field Management`
   - hosts field management, vocabulary management, field trajectory and survey run displays, contextual data pages, and calculator pages
-  - *dependencies* = WebPages + reusable CartographicProjection, GeodeticDatum, and VerticalDatum web page packages
+  - *dependencies* = WebPages + reusable EarthGeodesy and EarthVerticalDatum web page packages
 - **WebPages**
   - reusable Razor class library containing the Field web pages
   - includes field management, vocabulary management, delineation editing/import/export, field trajectory display, field survey run display, cartographic conversions, and usage statistics pages

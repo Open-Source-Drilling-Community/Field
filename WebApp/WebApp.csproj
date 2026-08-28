@@ -25,8 +25,11 @@
 
   <ItemGroup>
     <PackageReference Include="MudBlazor" Version="8.14.0" />
-    <PackageReference Include="NORCE.Drilling.GeodeticDatum.WebPages" Version="1.0.7" />
-    <PackageReference Include="NORCE.Drilling.VerticalDatum.WebPage" Version="1.0.2" />
+    <PackageReference Include="OSDC.Drilling.EarthCartographicProjection.WebPages" Version="1.1.0" />
+    <PackageReference Include="OSDC.Drilling.EarthGeodesy.WebPages" Version="1.1.0" />
+    <PackageReference Include="OSDC.Drilling.EarthGravity.WebPages" Version="1.0.1" />
+    <PackageReference Include="OSDC.Drilling.EarthMagneticField.WebPages" Version="1.0.1" />
+    <PackageReference Include="OSDC.Drilling.EarthVerticalDatum.WebPages" Version="1.1.0" />
     <PackageReference Include="OSDC.DotnetLibraries.General.DataManagement" Version="2.2.0" />
   </ItemGroup>
 

@@ -12,13 +12,16 @@ WebPagesHostConfiguration webPagesConfiguration = new()
     ClusterHostURL = builder.Configuration["ClusterHostURL"] ?? string.Empty,
     TrajectoryHostURL = builder.Configuration["TrajectoryHostURL"] ?? string.Empty,
     EarthCartographicProjectionHostURL = builder.Configuration["EarthCartographicProjectionHostURL"] ?? string.Empty,
-    GeodeticDatumHostURL = builder.Configuration["GeodeticDatumHostURL"] ?? string.Empty,
-    VerticalDatumHostURL = builder.Configuration["VerticalDatumHostURL"] ?? string.Empty,
+    EarthGeodesyHostURL = builder.Configuration["EarthGeodesyHostURL"] ?? string.Empty,
+    EarthGravityHostURL = builder.Configuration["EarthGravityHostURL"] ?? string.Empty,
+    EarthMagneticFieldHostURL = builder.Configuration["EarthMagneticFieldHostURL"] ?? string.Empty,
+    EarthVerticalDatumHostURL = builder.Configuration["EarthVerticalDatumHostURL"] ?? string.Empty,
     UnitConversionHostURL = builder.Configuration["UnitConversionHostURL"] ?? string.Empty,
 };
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddHttpClient();
 builder.Services.AddMudServices(config =>
 {
     config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;

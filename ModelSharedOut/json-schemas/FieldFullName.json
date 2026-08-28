@@ -1469,6 +1469,74 @@
         ],
         "type": "string"
       },
+      "OSDC.Drilling.Field.Model.FieldBatchCatalogDependencies": {
+        "type": "object",
+        "properties": {
+          "FeatureCategories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldFeatureCategory"
+            },
+            "nullable": true
+          },
+          "MembershipCategories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldMembershipCategory"
+            },
+            "nullable": true
+          },
+          "Identities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldIdentity"
+            },
+            "nullable": true
+          },
+          "DelineationLineTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldDelineationLineType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Field.Model.FieldBatchCatalogMapping": {
+        "type": "object",
+        "properties": {
+          "Catalog": {
+            "type": "string",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "SourceID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "LocalID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Resolution": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Field.Model.FieldBatchCatalogRestorePolicy": {
+        "enum": [
+          "Unspecified",
+          "MapExisting",
+          "MapOrCreateMissing"
+        ],
+        "type": "string"
+      },
       "OSDC.Drilling.Field.Model.FieldBatchError": {
         "type": "object",
         "properties": {
@@ -1528,6 +1596,9 @@
             "type": "string",
             "format": "date-time"
           },
+          "CatalogDependencies": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldBatchCatalogDependencies"
+          },
           "Fields": {
             "type": "array",
             "items": {
@@ -1577,6 +1648,9 @@
           "ConflictPolicy": {
             "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldBatchRestoreConflictPolicy"
           },
+          "CatalogPolicy": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldBatchCatalogRestorePolicy"
+          },
           "Document": {
             "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldBatchExportDocument"
           }
@@ -1597,6 +1671,21 @@
           "ReplacedCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "CreatedCatalogDefinitionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CreatedCatalogOptionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CatalogMappings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldBatchCatalogMapping"
+            },
+            "nullable": true
           },
           "FieldIDs": {
             "type": "array",

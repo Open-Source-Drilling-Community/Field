@@ -9,5 +9,5 @@ public interface IFieldWebPagesConfiguration :
     IUnitConversionHostURL
 {
     string? EarthCartographicProjectionHostURL { get; set; }
-    string? VerticalDatumHostURL { get; set; }
+    string? EarthVerticalDatumHostURL { get; set; }
 }

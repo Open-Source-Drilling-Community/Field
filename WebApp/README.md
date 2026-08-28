@@ -9,8 +9,8 @@ The WebApp is a Blazor Server front end for the Field microservice. It hosts the
 - Manage field features, field memberships, field identities, and delineation line types.
 - Display trajectories and survey runs for a selected field, including delineation line overlays.
 - Configure field-level depth and position references for plotting.
-- Provide calculators for cartographic conversions and single vertical datum conversion.
-- Link to the standalone EarthCartographicProjection web app and reuse the remaining contextual page packages.
+- Provide calculators for cartographic conversion, vertical datum conversion, Earth gravity, and Earth magnetic field.
+- Host the reusable EarthCartographicProjection projection-definition pages and the remaining contextual page packages.
 
 ## Installation
 
@@ -24,8 +24,10 @@ Configuration keys:
 - `ClusterHostURL`: base URL of the Cluster service.
 - `TrajectoryHostURL`: base URL of the Trajectory service.
 - `EarthCartographicProjectionHostURL`: base URL of EarthCartographicProjection.
-- `GeodeticDatumHostURL`: base URL of the GeodeticDatum service used by its hosted pages.
-- `VerticalDatumHostURL`: base URL of the VerticalDatum service.
+- `EarthGeodesyHostURL`: base URL of the EarthGeodesy service used by its hosted pages.
+- `EarthGravityHostURL`: base URL of the EarthGravity service.
+- `EarthMagneticFieldHostURL`: base URL of the EarthMagneticField service.
+- `EarthVerticalDatumHostURL`: base URL of the EarthVerticalDatum service.
 - `UnitConversionHostURL`: base URL of the UnitConversion service.
 
 Example `WebApp/appsettings.Development.json`:
@@ -37,8 +39,10 @@ Example `WebApp/appsettings.Development.json`:
   "ClusterHostURL": "https://dev.digiwells.no/",
   "TrajectoryHostURL": "https://dev.digiwells.no/",
   "EarthCartographicProjectionHostURL": "https://dev.digiwells.no/",
-  "GeodeticDatumHostURL": "https://dev.digiwells.no/",
-  "VerticalDatumHostURL": "https://app.digiwells.no/",
+  "EarthGeodesyHostURL": "https://dev.digiwells.no/",
+  "EarthGravityHostURL": "https://dev.digiwells.no/",
+  "EarthMagneticFieldHostURL": "https://dev.digiwells.no/",
+  "EarthVerticalDatumHostURL": "https://dev.digiwells.no/",
   "UnitConversionHostURL": "https://dev.digiwells.no/"
 }
 ```
@@ -76,14 +80,16 @@ Survey Display:
 
 Contextual Data:
 
-- `Projection definitions` links to `/EarthCartographicProjection/webapp/ProjectionDefinition`.
+- `Cartographic Projections` (`/Field/webapp/ProjectionDefinition`): list, display, create, and edit projection definitions using the EarthCartographicProjection WebPages package.
 - `Geodetic Datum` (`/Field/webapp/GeodeticDatum`)
 - `Spheroid` (`/Field/webapp/Spheroid`)
 
 Calculators:
 
-- `Cartographic Conversions` (`/Field/webapp/FieldCartographicConverter`)
-- `Vertical Datum Single Conversion` (`/Field/webapp/VerticalDatumConversion`)
+- `Cartographic Conversion` (`/Field/webapp/FieldCartographicConverter`)
+- `Vertical Datum Conversion` (`/Field/webapp/EarthVerticalDatumCalculation`)
+- `Earth Gravity Evaluation` (`/Field/webapp/EarthGravityCalculation`)
+- `Earth Magnetic Field Evaluation` (`/Field/webapp/EarthMagneticFieldCalculation`)
 
 Monitoring:
 
@@ -96,8 +102,8 @@ Runtime and packages:
 - ASP.NET Core Blazor Server, .NET 8
 - MudBlazor
 - `OSDC.Drilling.Field.WebPages`
-- `NORCE.Drilling.GeodeticDatum.WebPages`
-- `NORCE.Drilling.VerticalDatum.WebPage`
+- `OSDC.Drilling.EarthGeodesy.WebPages`
+- `OSDC.Drilling.EarthVerticalDatum.WebPages`
 - `OSDC.DotnetLibraries.General.DataManagement`
 
 Internal structure:
@@ -125,8 +131,8 @@ docker run --rm -p 5011:5011 -p 5012:5012 \
   -e ClusterHostURL="https://dev.your-host/" \
   -e TrajectoryHostURL="https://dev.your-host/" \
   -e EarthCartographicProjectionHostURL="https://dev.your-host/" \
-  -e GeodeticDatumHostURL="https://dev.your-host/" \
-  -e VerticalDatumHostURL="https://app.digiwells.no/" \
+  -e EarthGeodesyHostURL="https://dev.your-host/" \
+  -e EarthVerticalDatumHostURL="https://dev.digiwells.no/" \
   -e UnitConversionHostURL="https://dev.your-host/" \
   digiwells/osdcdrillingfieldwebappclient:stable
 ```

@@ -14,14 +14,17 @@
     </MudNavGroup>
 
     <MudNavGroup Title="Contextual Data" Expanded="false">
-        <MudNavLink Href="/EarthCartographicProjection/webapp/ProjectionDefinition" Match="NavLinkMatch.All">Projection definitions</MudNavLink>
+        <MudNavLink Href="/Field/webapp/ProjectionDefinition"
+                    Match="NavLinkMatch.Prefix">Cartographic Projections</MudNavLink>
         <MudNavLink Href="/Field/webapp/GeodeticDatum" Match="NavLinkMatch.All">Geodetic Datum</MudNavLink>
         <MudNavLink Href="/Field/webapp/Spheroid" Match="NavLinkMatch.All">Spheroid</MudNavLink>
     </MudNavGroup>
 
     <MudNavGroup Title="Calculators" Expanded="false">
-        <MudNavLink Href="/Field/webapp/FieldCartographicConverter" Match="NavLinkMatch.All">Cartographic Conversions</MudNavLink>
-        <MudNavLink Href="/Field/webapp/VerticalDatumConversion" Match="NavLinkMatch.All">Vertical Datum Single Conversion</MudNavLink>
+        <MudNavLink Href="/Field/webapp/FieldCartographicConverter" Match="NavLinkMatch.All">Cartographic Conversion</MudNavLink>
+        <MudNavLink Href="/Field/webapp/EarthVerticalDatumCalculation" Match="NavLinkMatch.All">Vertical Datum Conversion</MudNavLink>
+        <MudNavLink Href="/Field/webapp/EarthGravityCalculation" Match="NavLinkMatch.All">Earth Gravity Evaluation</MudNavLink>
+        <MudNavLink Href="/Field/webapp/EarthMagneticFieldCalculation" Match="NavLinkMatch.All">Earth Magnetic Field Evaluation</MudNavLink>
     </MudNavGroup>
 
     <MudNavGroup Title="Monitoring" Expanded="false">
