@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
@@ -19,16 +18,11 @@ string externalConfigPath = builder.Configuration["FIELD_EXTERNAL_CONFIG"]
     ?? Path.Combine(SqlConnectionManager.HOME_DIRECTORY, "Field.Service.json");
 builder.Configuration.AddJsonFile(externalConfigPath, optional: true, reloadOnChange: true);
 
-string projectionMappingsConfigPath = builder.Configuration["FIELD_PROJECTION_MAPPINGS_CONFIG"]
-    ?? Path.Combine(SqlConnectionManager.HOME_DIRECTORY, "Field.ProjectionMappings.json");
-builder.Configuration.AddJsonFile(projectionMappingsConfigPath, optional: true, reloadOnChange: false);
-
 // registering the manager of SQLite connections through dependency injection
 builder.Services.AddSingleton(sp =>
     new SqlConnectionManager(
         $"Data Source={SqlConnectionManager.HOME_DIRECTORY}{SqlConnectionManager.DATABASE_FILENAME}",
-        sp.GetRequiredService<ILogger<SqlConnectionManager>>(),
-        ParseProjectionMappings(sp.GetRequiredService<IConfiguration>())));
+        sp.GetRequiredService<ILogger<SqlConnectionManager>>()));
 
 
 // serialization settings (using System.Json)
@@ -74,12 +68,10 @@ builder.Services.AddFieldRestMcpTools();
 
 var app = builder.Build();
 
-// Resolve the database manager before the web host starts accepting requests.
-// Its constructor validates the database and applies the projection-reference
-// migration, so a missing reviewed mapping must fail pod startup rather than
-// remaining hidden until the first API or web-app request.
+// Resolve the database manager before the web host starts accepting requests so
+// an unsupported schema or malformed database fails startup.
 _ = app.Services.GetRequiredService<SqlConnectionManager>();
-app.Logger.LogInformation("Field database initialization and migrations completed.");
+app.Logger.LogInformation("Field database initialization and validation completed.");
 
 var basePath = "/field/api";
 app.UsePathBase(basePath);
@@ -145,16 +137,3 @@ app.MapControllers();
 app.MapFallbackToFile("index.html");
 
 app.Run();
-
-static IReadOnlyDictionary<Guid, Guid> ParseProjectionMappings(IConfiguration configuration)
-{
-    Dictionary<Guid, Guid> result = [];
-    foreach (IConfigurationSection entry in configuration.GetSection("ProjectionDefinitionIdMappings").GetChildren())
-    {
-        if (!Guid.TryParse(entry.Key, out Guid legacyId) || legacyId == Guid.Empty ||
-            !Guid.TryParse(entry.Value, out Guid replacementId) || replacementId == Guid.Empty)
-            throw new InvalidOperationException($"ProjectionDefinitionIdMappings entry '{entry.Key}' must map one non-empty UUID to another.");
-        result.Add(legacyId, replacementId);
-    }
-    return result;
-}

@@ -30,7 +30,6 @@ namespace OSDC.Drilling.Field.Service.Managers
     {
         private readonly ILogger<SqlConnectionManager> _logger;
         private readonly string _connectionString;
-        private readonly IReadOnlyDictionary<Guid, Guid> _projectionMappings;
         public static readonly string HOME_DIRECTORY = ".." + Path.DirectorySeparatorChar + "home" + Path.DirectorySeparatorChar;
         public static readonly string DATABASE_FILENAME = "Field.db";
         public static readonly string DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -84,12 +83,10 @@ namespace OSDC.Drilling.Field.Service.Managers
 
         public SqlConnectionManager(
             string connectionString,
-            ILogger<SqlConnectionManager> logger,
-            IReadOnlyDictionary<Guid, Guid>? projectionMappings = null)
+            ILogger<SqlConnectionManager> logger)
         {
             _connectionString = connectionString;
             _logger = logger;
-            _projectionMappings = projectionMappings ?? new Dictionary<Guid, Guid>();
             _logger.LogInformation("SqliteConnectionManager created");
             if (Initialize())
             {
@@ -194,48 +191,6 @@ namespace OSDC.Drilling.Field.Service.Managers
                         $"Field database schema version {schemaVersion} is newer than the supported version {CURRENT_SCHEMA_VERSION}.");
                 }
 
-                // Legacy JSON inspection is deliberately version-gated. Once a database has
-                // reached v2, startup validates its table structure but does not repeatedly scan
-                // every persisted Field or require the one-time migration mapping configuration.
-                bool requiresSchemaMigration = schemaVersion < CURRENT_SCHEMA_VERSION;
-                bool hasObsoleteCalculationTable = tableNameList.Contains("FieldCartographicConversionSetTable", StringComparer.Ordinal);
-                FieldProjectionMigrationPlan projectionPlan = requiresSchemaMigration && tableNameList.Contains("FieldTable", StringComparer.Ordinal)
-                    ? FieldProjectionReferenceMigrator.Plan(connection, _projectionMappings)
-                    : new FieldProjectionMigrationPlan([]);
-
-                // Back up the complete SQLite database before the first persisted migration.
-                // The backup remains alongside Field.db and is independent of the logical
-                // off-machine JSON backup made before deployment.
-                if (requiresSchemaMigration && (hasObsoleteCalculationTable || projectionPlan.HasChanges))
-                {
-                    BackupBeforeMigration(connection);
-                    using SqliteTransaction transaction = connection.BeginTransaction();
-                    try
-                    {
-                        FieldProjectionReferenceMigrator.Apply(connection, transaction, projectionPlan);
-                        if (hasObsoleteCalculationTable)
-                        {
-                            using SqliteCommand drop = connection.CreateCommand();
-                            drop.Transaction = transaction;
-                            drop.CommandText = "DROP TABLE FieldCartographicConversionSetTable";
-                            drop.ExecuteNonQuery();
-                        }
-                        using SqliteCommand version = connection.CreateCommand();
-                        version.Transaction = transaction;
-                        version.CommandText = $"PRAGMA user_version = {CURRENT_SCHEMA_VERSION}";
-                        version.ExecuteNonQuery();
-                        transaction.Commit();
-                        schemaVersion = CURRENT_SCHEMA_VERSION;
-                        tableNameList.Remove("FieldCartographicConversionSetTable");
-                        _logger.LogInformation("Migrated Field database to schema version {Version}; {FieldCount} field projection references changed and obsolete calculation cases removed={RemovedCases}", CURRENT_SCHEMA_VERSION, projectionPlan.Changes.Count, hasObsoleteCalculationTable);
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-                        throw;
-                    }
-                }
-
                 if (tableNameList.Count == 0)
                 {
                     _logger.LogInformation("Creating Field database schema version {Version}", CURRENT_SCHEMA_VERSION);
@@ -250,6 +205,14 @@ namespace OSDC.Drilling.Field.Service.Managers
                     return;
                 }
 
+                if (schemaVersion < CURRENT_SCHEMA_VERSION)
+                {
+                    throw new InvalidOperationException(
+                        $"Field database schema version {schemaVersion} is no longer supported. " +
+                        $"Migrate it to version {CURRENT_SCHEMA_VERSION} with a pre-cleanup Field service release, " +
+                        "then start this version again.");
+                }
+
                 List<string> unexpected = tableNameList.Except(_tableStructureDict.Keys, StringComparer.Ordinal).ToList();
                 List<string> missing = _tableStructureDict.Keys.Except(tableNameList, StringComparer.Ordinal).ToList();
                 List<string> malformed = _tableStructureDict
@@ -261,31 +224,11 @@ namespace OSDC.Drilling.Field.Service.Managers
                     throw new InvalidOperationException(
                         $"Unexpected Field database structure. No data was changed. Unexpected=[{string.Join(',', unexpected)}], missing=[{string.Join(',', missing)}], malformed=[{string.Join(',', malformed)}].");
                 }
-                if (schemaVersion < CURRENT_SCHEMA_VERSION)
-                {
-                    using SqliteCommand updateVersion = connection.CreateCommand();
-                    updateVersion.CommandText = $"PRAGMA user_version = {CURRENT_SCHEMA_VERSION}";
-                    updateVersion.ExecuteNonQuery();
-                    _logger.LogInformation("Advanced Field database schema metadata to version {Version}", CURRENT_SCHEMA_VERSION);
-                }
             }
             else
             {
                 _logger.LogError("Problem opening a new connection while managing database");
             }
-        }
-
-        private void BackupBeforeMigration(SqliteConnection source)
-        {
-            var builder = new SqliteConnectionStringBuilder(_connectionString);
-            string sourcePath = Path.GetFullPath(builder.DataSource);
-            string directory = Path.GetDirectoryName(sourcePath)
-                ?? throw new InvalidOperationException("The Field database path has no parent directory.");
-            string backupPath = Path.Combine(directory, $"Field.pre-v{CURRENT_SCHEMA_VERSION}.{DateTime.UtcNow:yyyyMMddTHHmmssfffZ}.db");
-            using var destination = new SqliteConnection($"Data Source={backupPath}");
-            destination.Open();
-            source.BackupDatabase(destination);
-            _logger.LogWarning("Created pre-migration Field database backup at {BackupPath}", backupPath);
         }
 
         /// <summary>

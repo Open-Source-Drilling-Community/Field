@@ -90,6 +90,3 @@ persistence:
   accessModes:
     - ReadWriteMany
   size: 500Mi
-# Reviewed legacy CartographicProjection UUID to EarthCartographicProjection
-# projection-definition UUID mappings. Leave empty when no migration is needed.
-projectionDefinitionIdMappings: {}

@@ -12,30 +12,7 @@ stored.
 - `FIELD_EXTERNAL_CONFIG`: optional path overriding the default external
   configuration file `../home/Field.Service.json` (`/home/Field.Service.json`
   in the container).
-- `FIELD_PROJECTION_MAPPINGS_CONFIG`: optional path overriding the dedicated
-  migration mapping file `../home/Field.ProjectionMappings.json`
-  (`/home/Field.ProjectionMappings.json` in the container).
 - `McpHub`: optional MCP hub registration settings.
-- `ProjectionDefinitionIdMappings`: reviewed legacy projection UUID to new
-  EarthCartographicProjection definition UUID mappings used only by schema-v2
-  startup migration.
-
-Example projection-mapping configuration:
-
-```json
-{
-  "ProjectionDefinitionIdMappings": {
-    "acf0f15f-8ed0-4030-ad9c-3e4e8d7cd29b": "30000000-0000-4000-8000-000000023031"
-  }
-}
-```
-
-The Helm chart accepts the inner mapping object as
-`projectionDefinitionIdMappings` and mounts the generated file separately
-from the Field database persistent volume.
-
-Environment-specific reviewed files and the live verification report are in
-`migration/projection-references/`.
 
 ## REST API
 
@@ -82,16 +59,12 @@ Swagger is available at `/Field/api/swagger` and the merged contract at
 
 Tool names use underscores only and publish explicit JSON input schemas.
 
-## Persistence migration safety
+## Persistence compatibility
 
-Schema version 2 removes the obsolete persisted calculation-case table and
-renames the projection reference inside stored Field JSON. Startup first plans
-the complete migration. If any non-empty legacy `CartographicProjectionID`
-lacks an explicit mapping, startup fails and changes nothing. A valid plan
-creates `Field.pre-v2.<UTC>.db` alongside `Field.db`, then updates all affected
-Field rows and drops the obsolete table in one SQLite transaction. It does not
-change Field IDs, names, timestamps, assignments, delineation lines, or other
-catalog tables.
+The current database schema version is 2. New databases are created at this
+version and existing version-2 databases are validated at startup. Pre-v2
+databases are rejected without modification; restore and migrate such a backup
+with a pre-cleanup service release before using this version.
 
 ## Build and run
 
@@ -113,8 +86,8 @@ docker run --rm -p 5002:5002 \
 ```
 
 The Helm chart is `Service/charts/osdcdrillingfieldservice`; its Kubernetes
-Service name is `osdcfieldservice`. Existing clusters must adopt the preserved
-`field-claim` PVC as described in `deployment/identity-cutover.md`.
+Service name is `osdcfieldservice`. Set `persistence.existingClaim` to adopt an
+existing `field-claim` PVC.
 
 ## Contract generation
 
