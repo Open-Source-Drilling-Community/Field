@@ -1,6 +1,6 @@
 # Field Management WebApp
 
-The WebApp is a Blazor Server front end for the Field microservice. It hosts the Field management page, field-level vocabulary pages, field-level trajectory and survey run displays, contextual data pages, and calculator pages.
+The WebApp is a Blazor Server front end for the Field microservice. It hosts the Field and Cluster management packages, field-level vocabulary pages, trajectory and survey-run displays, contextual data pages, and calculator pages.
 
 ## Purpose
 
@@ -11,6 +11,7 @@ The WebApp is a Blazor Server front end for the Field microservice. It hosts the
 - Configure field-level depth and position references for plotting.
 - Provide calculators for cartographic conversion, vertical datum conversion, Earth gravity, and Earth magnetic field.
 - Host the reusable EarthCartographicProjection projection-definition pages and the remaining contextual page packages.
+- Host the reusable Cluster management, catalog, backup/restore, display, and statistics pages.
 
 ## Installation
 
@@ -22,6 +23,7 @@ Configuration keys:
 
 - `FieldHostURL`: base URL of the Field service.
 - `ClusterHostURL`: base URL of the Cluster service.
+- `RigHostURL`: base URL of the Rig service used to resolve Cluster rig references.
 - `TrajectoryHostURL`: base URL of the Trajectory service.
 - `EarthCartographicProjectionHostURL`: base URL of EarthCartographicProjection.
 - `EarthGeodesyHostURL`: base URL of the EarthGeodesy service used by its hosted pages.
@@ -37,6 +39,7 @@ Example `WebApp/appsettings.Development.json`:
   "DetailedErrors": true,
   "FieldHostURL": "https://dev.digiwells.no/",
   "ClusterHostURL": "https://dev.digiwells.no/",
+  "RigHostURL": "https://dev.digiwells.no/",
   "TrajectoryHostURL": "https://dev.digiwells.no/",
   "EarthCartographicProjectionHostURL": "https://dev.digiwells.no/",
   "EarthGeodesyHostURL": "https://dev.digiwells.no/",
@@ -73,10 +76,20 @@ Field Management:
 - `Field Identities` (`/Field/webapp/FieldIdentities`): manage symbolic identity definitions such as Official name, WITSML UID, or External database ID.
 - `Delineation Line Types` (`/Field/webapp/FieldDelineationLineTypes`): manage delineation line type names.
 
+Cluster Management:
+
+- `Clusters` (`/Field/webapp/Cluster`)
+- `Cluster Identities` (`/Field/webapp/ClusterIdentities`)
+- `Cluster Features` (`/Field/webapp/ClusterFeatures`)
+- `Slot Features` (`/Field/webapp/SlotFeatures`)
+- `Cluster Backup and Restore` (`/Field/webapp/ClusterBackupRestore`)
+
 Survey Display:
 
 - `Field Trajectories` (`/Field/webapp/FieldTrajectories`): display all trajectories for the selected field in 3D and horizontal projection, with field delineation overlays.
 - `Field Survey Runs` (`/Field/webapp/FieldSurveyRuns`): display all survey runs for the selected field in 3D and horizontal projection, with field delineation overlays.
+- `Cluster Trajectories` (`/Field/webapp/ClusterTrajectories`)
+- `Cluster Survey Runs` (`/Field/webapp/ClusterSurveyRuns`)
 
 Contextual Data:
 
@@ -93,7 +106,8 @@ Calculators:
 
 Monitoring:
 
-- `Usage Statistics` (`/Field/webapp/StatisticsField`): display per-endpoint usage counters returned by the Field service.
+- `Field Usage Statistics` (`/Field/webapp/StatisticsField`)
+- `Cluster Usage Statistics` (`/Field/webapp/StatisticsCluster`)
 
 ## Dependencies
 
@@ -102,6 +116,7 @@ Runtime and packages:
 - ASP.NET Core Blazor Server, .NET 8
 - MudBlazor
 - `OSDC.Drilling.Field.WebPages`
+- `OSDC.Drilling.Cluster.WebPages` 1.1.0
 - `OSDC.Drilling.EarthCartographicProjection.WebPages`
 - `OSDC.Drilling.EarthGeodesy.WebPages`
 - `OSDC.Drilling.EarthGravity.WebPages`
@@ -132,6 +147,7 @@ docker run --rm -p 5012:8080 \
   -e ASPNETCORE_URLS="http://+:8080" \
   -e FieldHostURL="https://host.docker.internal:5001/" \
   -e ClusterHostURL="https://dev.your-host/" \
+  -e RigHostURL="https://dev.your-host/" \
   -e TrajectoryHostURL="https://dev.your-host/" \
   -e EarthCartographicProjectionHostURL="https://dev.your-host/" \
   -e EarthGeodesyHostURL="https://dev.your-host/" \

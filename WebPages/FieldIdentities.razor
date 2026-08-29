@@ -169,7 +169,7 @@ else
 
     private async Task<bool> ConfirmDeletionAsync(FieldIdentity identity)
     {
-        bool? result = await DialogService.ShowMessageBox(
+        bool? result = await DialogService.ShowMessageBoxAsync(
             "Delete",
             $"Delete field identity '{identity.Name ?? identity.MetaInfo?.ID.ToString()}'?",
             yesText: "Delete",

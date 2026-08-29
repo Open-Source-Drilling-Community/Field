@@ -167,7 +167,7 @@ else
 
     private async Task<bool> ConfirmDeletionAsync(FieldDelineationLineType lineType)
     {
-        bool? result = await DialogService.ShowMessageBox(
+        bool? result = await DialogService.ShowMessageBoxAsync(
             "Delete",
             $"Delete delineation line type '{lineType.Name ?? lineType.MetaInfo?.ID.ToString()}'?",
             yesText: "Delete",

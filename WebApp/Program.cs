@@ -10,6 +10,7 @@ WebPagesHostConfiguration webPagesConfiguration = new()
 {
     FieldHostURL = builder.Configuration["FieldHostURL"] ?? string.Empty,
     ClusterHostURL = builder.Configuration["ClusterHostURL"] ?? string.Empty,
+    RigHostURL = builder.Configuration["RigHostURL"] ?? string.Empty,
     TrajectoryHostURL = builder.Configuration["TrajectoryHostURL"] ?? string.Empty,
     EarthCartographicProjectionHostURL = builder.Configuration["EarthCartographicProjectionHostURL"] ?? string.Empty,
     EarthGeodesyHostURL = builder.Configuration["EarthGeodesyHostURL"] ?? string.Empty,

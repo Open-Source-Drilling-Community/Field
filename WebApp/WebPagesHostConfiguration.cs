@@ -5,6 +5,7 @@ namespace OSDC.Drilling.Field.WebApp;
 
 public class WebPagesHostConfiguration :
     IFieldWebPagesConfiguration,
+    OSDC.Drilling.Cluster.WebPages.IClusterWebPagesConfiguration,
     OSDC.Drilling.EarthCartographicProjection.WebPages.IEarthCartographicProjectionConfiguration,
     OSDC.Drilling.EarthGeodesy.WebPages.IEarthGeodesyWebPagesConfiguration,
     OSDC.Drilling.EarthGravity.WebPages.IEarthGravityWebPagesConfiguration,
@@ -13,6 +14,7 @@ public class WebPagesHostConfiguration :
 {
     public string? FieldHostURL { get; set; } = string.Empty;
     public string? ClusterHostURL { get; set; } = string.Empty;
+    public string? RigHostURL { get; set; } = string.Empty;
     public string? TrajectoryHostURL { get; set; } = string.Empty;
     public string? EarthCartographicProjectionHostURL { get; set; } = string.Empty;
     public string? EarthGeodesyHostURL { get; set; } = string.Empty;

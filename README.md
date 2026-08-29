@@ -38,7 +38,7 @@ Steps (dev):
 Configuration:
 - Service reads `EarthCartographicProjectionHostURL` and `EarthGeodesyHostURL` (see `Service/appsettings.*.json`).
 - Service can read optional external configuration from `home/Field.Service.json`, or from the path specified by `FIELD_EXTERNAL_CONFIG`.
-- WebApp reads `FieldHostURL`, `ClusterHostURL`, `TrajectoryHostURL`, `EarthCartographicProjectionHostURL`, `EarthGeodesyHostURL`, `EarthGravityHostURL`, `EarthMagneticFieldHostURL`, `EarthVerticalDatumHostURL`, and `UnitConversionHostURL`.
+- WebApp reads `FieldHostURL`, `ClusterHostURL`, `RigHostURL`, `TrajectoryHostURL`, `EarthCartographicProjectionHostURL`, `EarthGeodesyHostURL`, `EarthGravityHostURL`, `EarthMagneticFieldHostURL`, `EarthVerticalDatumHostURL`, and `UnitConversionHostURL`.
 
 Code generation:
 - When a pinned EarthCartographicProjection or EarthGeodesy contract changes, run `dotnet run --project ModelSharedIn` and commit its schemas and generated outputs.
@@ -126,6 +126,8 @@ WebApp (UI):
   - `/Field/webapp/FieldIdentities`
   - `/Field/webapp/FieldDelineationLineTypes`
 - Batch backup and restore: `/Field/webapp/FieldBackupRestore`
+- Hosted Cluster management: `/Field/webapp/Cluster`
+- Hosted Cluster backup and restore: `/Field/webapp/ClusterBackupRestore`
 
 MCP server:
 - Streamable HTTP: `/Field/api/mcp`
@@ -152,7 +154,7 @@ The solution is composed of:
   - *dependencies* = Model
 - **ModelSharedOut**
   - generates the Field client/DTOs and merged OpenAPI document used by the WebApp, tests, and Swagger UI
-  - *dependencies* = Field and selected dependency OpenAPI schemas + NSwag
+  - *dependencies* = Field, Cluster, and selected dependency OpenAPI schemas + NSwag
 - **ModelTest**
   - performs unit tests on the Model (in particular for base computations)
   - *dependencies* = Model
@@ -167,8 +169,8 @@ The solution is composed of:
   - *dependencies* = MCP client packages + a running Service
 - **WebApp**
   - Blazor Server webapp named `Field Management`
-  - hosts field management, vocabulary management, field trajectory and survey run displays, contextual data pages, and calculator pages
-  - *dependencies* = WebPages plus reusable EarthCartographicProjection, EarthGeodesy, EarthVerticalDatum, EarthGravity, and EarthMagneticField web page packages
+  - hosts Field and Cluster management, vocabulary management, trajectory and survey-run displays, contextual data pages, and calculator pages
+  - *dependencies* = WebPages plus reusable Cluster, EarthCartographicProjection, EarthGeodesy, EarthVerticalDatum, EarthGravity, and EarthMagneticField web page packages
 - **WebPages**
   - reusable Razor class library containing the Field web pages
   - includes field management, vocabulary management, delineation editing/import/export, field trajectory display, field survey run display, cartographic conversions, and usage statistics pages
@@ -181,7 +183,7 @@ The solution is composed of:
 
 - Core runtime: .NET 8
 - Service: ASP.NET Core, `Microsoft.Data.Sqlite`, `Swashbuckle.AspNetCore`, `Microsoft.OpenApi`
-- WebApp: Blazor Server, MudBlazor, and reusable EarthCartographicProjection, EarthGeodesy, EarthVerticalDatum, EarthGravity, and EarthMagneticField Razor page packages
+- WebApp: Blazor Server, MudBlazor, and reusable Cluster, EarthCartographicProjection, EarthGeodesy, EarthVerticalDatum, EarthGravity, and EarthMagneticField Razor page packages
 - WebPages: MudBlazor, `OSDC.DotnetLibraries.Drilling.WebAppUtils`, `OSDC.DotnetLibraries.General.Math`, Plotly.Blazor
 - Shared model/codegen: `NSwag.CodeGeneration.CSharp`, `Microsoft.OpenApi.Readers`
 - Domain model: OSDC DotnetLibraries (`General.DataManagement` and `DrillingProperties`)

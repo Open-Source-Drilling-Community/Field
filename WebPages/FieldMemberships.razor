@@ -223,7 +223,7 @@ else
 
     private async Task<bool> ConfirmDeletionAsync(FieldMembershipCategory category)
     {
-        bool? result = await DialogService.ShowMessageBox(
+        bool? result = await DialogService.ShowMessageBoxAsync(
             "Delete",
             $"Delete field membership category '{category.Name ?? category.MetaInfo?.ID.ToString()}'?",
             yesText: "Delete",

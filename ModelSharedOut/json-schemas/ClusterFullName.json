@@ -37,17 +37,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.Cluster"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.Cluster"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.Cluster"
               }
             }
           }
@@ -105,7 +105,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.Cluster"
                 }
               }
             }
@@ -132,17 +132,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.Cluster"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.Cluster"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.Cluster"
               }
             }
           }
@@ -190,8 +190,176 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                    "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.Cluster"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Cluster/BatchExport": {
+      "post": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "BatchExportClusters",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchExportRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchExportRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchExportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchExportDocument"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchErrorEnvelope"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Cluster/BatchRestore": {
+      "post": {
+        "tags": [
+          "Cluster"
+        ],
+        "operationId": "BatchRestoreClusters",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchRestoreRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchRestoreRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchRestoreRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchRestoreResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchErrorEnvelope"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchErrorEnvelope"
                 }
               }
             }
@@ -213,7 +381,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterLight"
+                    "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterLight"
                   }
                 }
               }
@@ -246,7 +414,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                    "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.Cluster"
                   }
                 }
               }
@@ -279,7 +447,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                    "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.Cluster"
                   }
                 }
               }
@@ -311,7 +479,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                    "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.Cluster"
                   }
                 }
               }
@@ -343,7 +511,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Cluster"
+                    "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.Cluster"
                   }
                 }
               }
@@ -384,17 +552,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterFeatureCategory"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterFeatureCategory"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterFeatureCategory"
               }
             }
           }
@@ -452,7 +620,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterFeatureCategory"
                 }
               }
             }
@@ -479,17 +647,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterFeatureCategory"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterFeatureCategory"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterFeatureCategory"
               }
             }
           }
@@ -537,7 +705,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureCategory"
+                    "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterFeatureCategory"
                   }
                 }
               }
@@ -578,17 +746,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterIdentity"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterIdentity"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterIdentity"
               }
             }
           }
@@ -646,7 +814,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterIdentity"
                 }
               }
             }
@@ -673,17 +841,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterIdentity"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterIdentity"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterIdentity"
               }
             }
           }
@@ -731,7 +899,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentity"
+                    "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterIdentity"
                   }
                 }
               }
@@ -752,7 +920,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.UsageStatisticsCluster"
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.UsageStatisticsCluster"
                 }
               }
             }
@@ -792,17 +960,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.SlotFeatureCategory"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.SlotFeatureCategory"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.SlotFeatureCategory"
               }
             }
           }
@@ -860,7 +1028,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+                  "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.SlotFeatureCategory"
                 }
               }
             }
@@ -887,17 +1055,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.SlotFeatureCategory"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.SlotFeatureCategory"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+                "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.SlotFeatureCategory"
               }
             }
           }
@@ -945,7 +1113,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureCategory"
+                    "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.SlotFeatureCategory"
                   }
                 }
               }
@@ -957,517 +1125,6 @@
   },
   "components": {
     "schemas": {
-      "NORCE.Drilling.Cluster.Model.Cluster": {
-        "type": "object",
-        "properties": {
-          "MetaInfo": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
-          },
-          "Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "Description": {
-            "type": "string",
-            "nullable": true
-          },
-          "CreationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "LastModificationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "FieldID": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "IsSingleWell": {
-            "type": "boolean"
-          },
-          "RigID": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "IsFixedPlatform": {
-            "type": "boolean"
-          },
-          "ClusterIdentityAssignments": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterIdentityAssignment"
-            },
-            "nullable": true
-          },
-          "ClusterFeatureAssignments": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureAssignment"
-            },
-            "nullable": true
-          },
-          "ReferencePoint": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.Math.Point3DGlobalCoordinates"
-          },
-          "GroundMudLineDepth": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
-          },
-          "TopWaterDepth": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
-          },
-          "Slots": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.Slot"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "NORCE.Drilling.Cluster.Model.ClusterFeatureAssignment": {
-        "type": "object",
-        "properties": {
-          "ID": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "FeatureCategoryID": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "FeatureOptionID": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "FromDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "ToDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "NORCE.Drilling.Cluster.Model.ClusterFeatureCategory": {
-        "type": "object",
-        "properties": {
-          "MetaInfo": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
-          },
-          "Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "IsExclusive": {
-            "type": "boolean"
-          },
-          "HasValidityPeriod": {
-            "type": "boolean"
-          },
-          "Options": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.ClusterFeatureOption"
-            },
-            "nullable": true
-          },
-          "CreationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "LastModificationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "NORCE.Drilling.Cluster.Model.ClusterFeatureOption": {
-        "type": "object",
-        "properties": {
-          "ID": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "Name": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "NORCE.Drilling.Cluster.Model.ClusterIdentity": {
-        "type": "object",
-        "properties": {
-          "MetaInfo": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
-          },
-          "Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "CreationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "LastModificationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "NORCE.Drilling.Cluster.Model.ClusterIdentityAssignment": {
-        "type": "object",
-        "properties": {
-          "ID": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "IdentityID": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "Value": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "NORCE.Drilling.Cluster.Model.ClusterLight": {
-        "type": "object",
-        "properties": {
-          "MetaInfo": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
-          },
-          "Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "Description": {
-            "type": "string",
-            "nullable": true
-          },
-          "CreationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "LastModificationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "FieldID": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "IsSingleWell": {
-            "type": "boolean"
-          },
-          "RigID": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "IsFixedPlatform": {
-            "type": "boolean"
-          },
-          "ReferencePoint": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.Math.Point3DGlobalCoordinates"
-          },
-          "GroundMudLineDepth": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
-          },
-          "TopWaterDepth": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
-          }
-        },
-        "additionalProperties": false
-      },
-      "NORCE.Drilling.Cluster.Model.CountPerDay": {
-        "type": "object",
-        "properties": {
-          "Date": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "Count": {
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        "additionalProperties": false
-      },
-      "NORCE.Drilling.Cluster.Model.History": {
-        "type": "object",
-        "properties": {
-          "Data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.CountPerDay"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "NORCE.Drilling.Cluster.Model.Slot": {
-        "type": "object",
-        "properties": {
-          "ID": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "Description": {
-            "type": "string",
-            "nullable": true
-          },
-          "CreationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "LastModificationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "Latitude": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
-          },
-          "Longitude": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
-          },
-          "SlotFeatureAssignments": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureAssignment"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "NORCE.Drilling.Cluster.Model.SlotFeatureAssignment": {
-        "type": "object",
-        "properties": {
-          "ID": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "FeatureCategoryID": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "FeatureOptionID": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "FromDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "ToDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "NORCE.Drilling.Cluster.Model.SlotFeatureCategory": {
-        "type": "object",
-        "properties": {
-          "MetaInfo": {
-            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
-          },
-          "Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "IsExclusive": {
-            "type": "boolean"
-          },
-          "HasValidityPeriod": {
-            "type": "boolean"
-          },
-          "Options": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.SlotFeatureOption"
-            },
-            "nullable": true
-          },
-          "CreationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "LastModificationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "NORCE.Drilling.Cluster.Model.SlotFeatureOption": {
-        "type": "object",
-        "properties": {
-          "ID": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "Name": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "NORCE.Drilling.Cluster.Model.UsageStatisticsCluster": {
-        "type": "object",
-        "properties": {
-          "LastSaved": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "BackUpInterval": {
-            "type": "string",
-            "format": "date-span"
-          },
-          "GetAllClusterIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllClusterMetaInfoPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetClusterByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllClusterPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllClusterLightPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllClusterByFieldIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllClusterByRigIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllSingleWellClusterPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllFixedPlatformClusterPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "PostClusterPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "PutClusterByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "DeleteClusterByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllClusterIdentityIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllClusterIdentityMetaInfoPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetClusterIdentityByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllClusterIdentityPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "PostClusterIdentityPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "PutClusterIdentityByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "DeleteClusterIdentityByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllClusterFeatureCategoryIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllClusterFeatureCategoryMetaInfoPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetClusterFeatureCategoryByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllClusterFeatureCategoryPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "PostClusterFeatureCategoryPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "PutClusterFeatureCategoryByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "DeleteClusterFeatureCategoryByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllSlotFeatureCategoryIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllSlotFeatureCategoryMetaInfoPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetSlotFeatureCategoryByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetAllSlotFeatureCategoryPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "PostSlotFeatureCategoryPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "PutSlotFeatureCategoryByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "DeleteSlotFeatureCategoryByIdPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          },
-          "GetClusterUsageStatisticsPerDay": {
-            "$ref": "#/components/schemas/NORCE.Drilling.Cluster.Model.History"
-          }
-        },
-        "additionalProperties": false
-      },
       "OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty": {
         "type": "object",
         "properties": {
@@ -1565,6 +1222,815 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.Cluster": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "FieldID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "IsSingleWell": {
+            "type": "boolean"
+          },
+          "RigID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "IsFixedPlatform": {
+            "type": "boolean"
+          },
+          "ClusterIdentityAssignments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterIdentityAssignment"
+            },
+            "nullable": true
+          },
+          "ClusterFeatureAssignments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterFeatureAssignment"
+            },
+            "nullable": true
+          },
+          "ReferencePoint": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.Math.Point3DGlobalCoordinates"
+          },
+          "GroundMudLineDepth": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
+          },
+          "TopWaterDepth": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
+          },
+          "Slots": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.Slot"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterBatchCatalogDependencies": {
+        "type": "object",
+        "properties": {
+          "Identities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterIdentity"
+            },
+            "nullable": true
+          },
+          "ClusterFeatureCategories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterFeatureCategory"
+            },
+            "nullable": true
+          },
+          "SlotFeatureCategories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.SlotFeatureCategory"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterBatchCatalogMapping": {
+        "type": "object",
+        "properties": {
+          "Catalog": {
+            "type": "string",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "SourceID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "LocalID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Resolution": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterBatchCatalogRestorePolicy": {
+        "enum": [
+          "Unspecified",
+          "MapExisting",
+          "MapOrCreateMissing"
+        ],
+        "type": "string"
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterBatchError": {
+        "type": "object",
+        "properties": {
+          "PositionIndex": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "Property": {
+            "type": "string",
+            "nullable": true
+          },
+          "Code": {
+            "type": "string",
+            "nullable": true
+          },
+          "Message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterBatchErrorEnvelope": {
+        "type": "object",
+        "properties": {
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "Message": {
+            "type": "string",
+            "nullable": true
+          },
+          "Errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchError"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterBatchExportDocument": {
+        "type": "object",
+        "properties": {
+          "FormatIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "SchemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ExportedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "CatalogDependencies": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchCatalogDependencies"
+          },
+          "ExternalReferences": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchExternalReferences"
+          },
+          "Clusters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.Cluster"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterBatchExportRequest": {
+        "type": "object",
+        "properties": {
+          "Scope": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchExportScope"
+          },
+          "ClusterIDs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterBatchExportScope": {
+        "enum": [
+          "Unspecified",
+          "All",
+          "Selected"
+        ],
+        "type": "string"
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterBatchExternalReference": {
+        "type": "object",
+        "properties": {
+          "SourceID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterBatchExternalReferenceMapping": {
+        "type": "object",
+        "properties": {
+          "Resource": {
+            "type": "string",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "SourceID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "LocalID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Resolution": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterBatchExternalReferences": {
+        "type": "object",
+        "properties": {
+          "Fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchExternalReference"
+            },
+            "nullable": true
+          },
+          "Rigs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchExternalReference"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterBatchRestoreConflictPolicy": {
+        "enum": [
+          "Unspecified",
+          "FailIfExists",
+          "ReplaceExisting"
+        ],
+        "type": "string"
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterBatchRestoreRequest": {
+        "type": "object",
+        "properties": {
+          "ConflictPolicy": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchRestoreConflictPolicy"
+          },
+          "CatalogPolicy": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchCatalogRestorePolicy"
+          },
+          "Document": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchExportDocument"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterBatchRestoreResponse": {
+        "type": "object",
+        "properties": {
+          "RestoredAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "CreatedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ReplacedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CreatedCatalogDefinitionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CreatedCatalogOptionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CatalogMappings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchCatalogMapping"
+            },
+            "nullable": true
+          },
+          "ExternalReferenceMappings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterBatchExternalReferenceMapping"
+            },
+            "nullable": true
+          },
+          "ClusterIDs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterFeatureAssignment": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "FeatureCategoryID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "FeatureOptionID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "FromDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ToDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterFeatureCategory": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsExclusive": {
+            "type": "boolean"
+          },
+          "HasValidityPeriod": {
+            "type": "boolean"
+          },
+          "Options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.ClusterFeatureOption"
+            },
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterFeatureOption": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterIdentity": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterIdentityAssignment": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "IdentityID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "Value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.ClusterLight": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "FieldID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "IsSingleWell": {
+            "type": "boolean"
+          },
+          "RigID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "IsFixedPlatform": {
+            "type": "boolean"
+          },
+          "ReferencePoint": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.Math.Point3DGlobalCoordinates"
+          },
+          "GroundMudLineDepth": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
+          },
+          "TopWaterDepth": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.CountPerDay": {
+        "type": "object",
+        "properties": {
+          "Date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Count": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.History": {
+        "type": "object",
+        "properties": {
+          "Data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.CountPerDay"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.Slot": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Latitude": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
+          },
+          "Longitude": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.Drilling.DrillingProperties.GaussianDrillingProperty"
+          },
+          "SlotFeatureAssignments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.SlotFeatureAssignment"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.SlotFeatureAssignment": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "FeatureCategoryID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "FeatureOptionID": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "FromDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ToDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.SlotFeatureCategory": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsExclusive": {
+            "type": "boolean"
+          },
+          "HasValidityPeriod": {
+            "type": "boolean"
+          },
+          "Options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.SlotFeatureOption"
+            },
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.SlotFeatureOption": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Cluster.Model.UsageStatisticsCluster": {
+        "type": "object",
+        "properties": {
+          "LastSaved": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "BackUpInterval": {
+            "type": "string",
+            "format": "date-span"
+          },
+          "GetAllClusterIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterMetaInfoPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetClusterByIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterLightPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterByFieldIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterByRigIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllSingleWellClusterPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllFixedPlatformClusterPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "PostClusterPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "PutClusterByIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "DeleteClusterByIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "BatchExportClustersPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "BatchRestoreClustersPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterIdentityIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterIdentityMetaInfoPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetClusterIdentityByIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterIdentityPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "PostClusterIdentityPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "PutClusterIdentityByIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "DeleteClusterIdentityByIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterFeatureCategoryIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterFeatureCategoryMetaInfoPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetClusterFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllClusterFeatureCategoryPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "PostClusterFeatureCategoryPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "PutClusterFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "DeleteClusterFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllSlotFeatureCategoryIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllSlotFeatureCategoryMetaInfoPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetSlotFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetAllSlotFeatureCategoryPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "PostSlotFeatureCategoryPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "PutSlotFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "DeleteSlotFeatureCategoryByIdPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
+          },
+          "GetClusterUsageStatisticsPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Cluster.Model.History"
           }
         },
         "additionalProperties": false

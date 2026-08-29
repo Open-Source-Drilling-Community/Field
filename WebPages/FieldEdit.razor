@@ -1968,7 +1968,7 @@
 
     private async Task<bool> ConfirmCloseWithoutSavingAsync()
     {
-        bool? result = await DialogService.ShowMessageBox(
+        bool? result = await DialogService.ShowMessageBoxAsync(
             "Unsaved changes",
             "Some changes have not been saved. Close without saving?",
             yesText: "Close without saving",

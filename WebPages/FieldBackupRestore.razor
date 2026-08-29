@@ -434,7 +434,7 @@
         string confirmation = _restorePolicy == FieldBatchRestoreConflictPolicy.ReplaceExisting
             ? $"Restore {_restoreDocument.Fields.Count} field(s)? Existing fields with matching UUIDs will be replaced."
             : $"Restore {_restoreDocument.Fields.Count} field(s)? The operation will stop without changes if any UUID already exists.";
-        bool? confirmed = await DialogService.ShowMessageBox(
+        bool? confirmed = await DialogService.ShowMessageBoxAsync(
             "Restore fields",
             confirmation,
             yesText: _restorePolicy == FieldBatchRestoreConflictPolicy.ReplaceExisting ? "Restore and replace" : "Restore",

@@ -6,6 +6,10 @@ public static class ExternalWebPagesServiceCollectionExtensions
 {
     public static IServiceCollection AddExternalWebPages(this IServiceCollection services, WebPagesHostConfiguration configuration)
     {
+        services.AddSingleton<OSDC.Drilling.Cluster.WebPages.IClusterWebPagesConfiguration>(configuration);
+        services.AddSingleton<
+            OSDC.Drilling.Cluster.WebPages.IClusterAPIUtils,
+            OSDC.Drilling.Cluster.WebPages.ClusterAPIUtils>();
         services.AddSingleton<
             OSDC.Drilling.EarthCartographicProjection.WebPages.IEarthCartographicProjectionConfiguration>(configuration);
         services.AddSingleton<
