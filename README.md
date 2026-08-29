@@ -126,8 +126,7 @@ WebApp (UI):
   - `/Field/webapp/FieldIdentities`
   - `/Field/webapp/FieldDelineationLineTypes`
 - Batch backup and restore: `/Field/webapp/FieldBackupRestore`
-- Hosted Cluster management: `/Field/webapp/Cluster`
-- Hosted Cluster backup and restore: `/Field/webapp/ClusterBackupRestore`
+- Hosted Cluster list/editor: `/Field/webapp/Cluster`; other Cluster package pages are intentionally not routed by the Field webapp.
 
 MCP server:
 - Streamable HTTP: `/Field/api/mcp`
@@ -169,7 +168,7 @@ The solution is composed of:
   - *dependencies* = MCP client packages + a running Service
 - **WebApp**
   - Blazor Server webapp named `Field Management`
-  - hosts Field and Cluster management, vocabulary management, trajectory and survey-run displays, contextual data pages, and calculator pages
+  - hosts Field management and a single contextual Cluster list/editor, plus vocabulary management, trajectory and survey-run displays, contextual data pages, and calculator pages
   - *dependencies* = WebPages plus reusable Cluster, EarthCartographicProjection, EarthGeodesy, EarthVerticalDatum, EarthGravity, and EarthMagneticField web page packages
 - **WebPages**
   - reusable Razor class library containing the Field web pages

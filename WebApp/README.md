@@ -11,7 +11,7 @@ The WebApp is a Blazor Server front end for the Field microservice. It hosts the
 - Configure field-level depth and position references for plotting.
 - Provide calculators for cartographic conversion, vertical datum conversion, Earth gravity, and Earth magnetic field.
 - Host the reusable EarthCartographicProjection projection-definition pages and the remaining contextual page packages.
-- Host the reusable Cluster management, catalog, backup/restore, display, and statistics pages.
+- Host the reusable Cluster list/editor as a single contextual-data page.
 
 ## Installation
 
@@ -76,23 +76,13 @@ Field Management:
 - `Field Identities` (`/Field/webapp/FieldIdentities`): manage symbolic identity definitions such as Official name, WITSML UID, or External database ID.
 - `Delineation Line Types` (`/Field/webapp/FieldDelineationLineTypes`): manage delineation line type names.
 
-Cluster Management:
-
-- `Clusters` (`/Field/webapp/Cluster`)
-- `Cluster Identities` (`/Field/webapp/ClusterIdentities`)
-- `Cluster Features` (`/Field/webapp/ClusterFeatures`)
-- `Slot Features` (`/Field/webapp/SlotFeatures`)
-- `Cluster Backup and Restore` (`/Field/webapp/ClusterBackupRestore`)
-
 Survey Display:
 
 - `Field Trajectories` (`/Field/webapp/FieldTrajectories`): display all trajectories for the selected field in 3D and horizontal projection, with field delineation overlays.
 - `Field Survey Runs` (`/Field/webapp/FieldSurveyRuns`): display all survey runs for the selected field in 3D and horizontal projection, with field delineation overlays.
-- `Cluster Trajectories` (`/Field/webapp/ClusterTrajectories`)
-- `Cluster Survey Runs` (`/Field/webapp/ClusterSurveyRuns`)
-
 Contextual Data:
 
+- `Clusters` (`/Field/webapp/Cluster`): list, display, create, and edit clusters using the Cluster WebPages package. The package's catalog, backup/restore, display, and statistics routes are intentionally not exposed by the Field webapp.
 - `Cartographic Projections` (`/Field/webapp/ProjectionDefinition`): list, display, create, and edit projection definitions using the EarthCartographicProjection WebPages package.
 - `Geodetic Datum` (`/Field/webapp/GeodeticDatum`)
 - `Spheroid` (`/Field/webapp/Spheroid`)
@@ -106,8 +96,7 @@ Calculators:
 
 Monitoring:
 
-- `Field Usage Statistics` (`/Field/webapp/StatisticsField`)
-- `Cluster Usage Statistics` (`/Field/webapp/StatisticsCluster`)
+- `Usage Statistics` (`/Field/webapp/StatisticsField`): display per-endpoint usage counters returned by the Field service.
 
 ## Dependencies
 
