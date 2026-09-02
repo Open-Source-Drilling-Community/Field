@@ -15,7 +15,7 @@
 - `FieldTrajectories`
 - `FieldSurveyRuns`
 - `FieldCartographicConverter`
-- `StatisticsField`
+- `StatisticsField`: persistent aggregate request summaries and sortable endpoint activity
 - Field page support classes such as API access helpers, field reference datum helpers, and Plotly-based 2D/3D plotting components.
 
 Field editing supports:

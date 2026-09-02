@@ -1,0 +1,223 @@
+@page "/Home"
+
+<PageTitle>OSDC Field</PageTitle>
+
+<MudText Class="mx-4 px-4 mt-4" Typo="Typo.h2">OSDC Field</MudText>
+<MudDivider Class="mb-4" />
+<MudText Class="mx-6 px-6" Typo="Typo.body1">
+    This microservice manages Field records: their cartographic projection, WGS84 reference point, delineation and
+    other typed lines, feature/membership/identity assignments, and portable versioned backups. It persists to
+    SQLite, enforces optimistic concurrency on every mutation, and exposes the same operations through a REST API, an
+    MCP server, and a Blazor web application, so a field created or edited in one interface is immediately visible
+    through the others.
+</MudText>
+
+<MudGrid Class="mx-4 px-4 mt-2">
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-6 mt-4" Elevation="2">
+            <MudText Typo="Typo.h5" Class="mb-3">What is a Field</MudText>
+            <MudText Typo="Typo.body1" Class="mb-2">
+                In oil, gas, and geothermal exploitation, a <b>field</b> is the geographic and administrative area
+                that groups the wells, wellbores, clusters, pipelines, and other installations sharing one reservoir,
+                licence, or development project. It is a container for context, not for well trajectories: a Field
+                record carries a name, a description, server-owned creation and modification timestamps, an optional
+                geographic reference point, a cartographic projection, delineation lines, and the feature, membership,
+                and identity assignments that describe it — while trajectory geometry, casing, and survey stations
+                live in the Well and WellBore microservices, and platforms and slots live in Cluster.
+            </MudText>
+            <MudText Typo="Typo.body1">
+                Field UUIDs are caller-generated so that consuming systems can mint and reference an identifier before
+                the record exists on the server, which matters when a field is planned before any well is spudded in
+                it.
+            </MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-6 mt-4" Elevation="2">
+            <MudText Typo="Typo.h5" Class="mb-3">Cartographic projections and coordinates</MudText>
+            <MudText Typo="Typo.body1" Class="mb-2">
+                A Field can reference a <code>ProjectionDefinitionID</code> — an EarthCartographicProjection
+                definition that fixes the projected coordinate reference system (datum, ellipsoid, and projection
+                method) used for that field's easting/northing positions — and an optional WGS84
+                <code>ReferencePoint</code> giving the field a single global location. Once a projection is assigned,
+                the service performs synchronous, stateless <b>forward</b> (geographic to projected) and
+                <b>inverse</b> (projected to geographic) conversions for that field, accepting input in either the
+                projection datum or WGS84 and calling EarthGeodesy only when a datum transformation is actually
+                required.
+            </MudText>
+            <MudText Typo="Typo.body1">
+                Requests and results are never persisted, positions are ordered batches converted atomically, angles
+                are SI radians, and distances are SI metres. The same calculators are reachable directly from the
+                web application's <b>Calculators</b> menu for one-off conversions outside the context of a stored
+                field.
+            </MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-6 mt-4" Elevation="2">
+            <MudText Typo="Typo.h5" Class="mb-3">Delineation and other typed lines</MudText>
+            <MudText Typo="Typo.body1" Class="mb-2">
+                A field can carry any number of user-defined <b>delineation lines</b>: an ordered set of WGS84 points,
+                an optional top and bottom depth, an optional margin distance, and a reference to a
+                <code>DelineationLineTypeID</code> drawn from a local catalog. The type catalog is open-ended by
+                design — the same mechanism represents a field <b>boundary</b>, a <b>licence block</b> outline, a
+                <b>pipeline</b> route, or any other line a field needs to record, distinguished only by which type
+                each line references.
+            </MudText>
+            <MudText Typo="Typo.body1">
+                When a line's <code>Margin</code> is set, the service also computes offset
+                <b>boundary lines</b> — interior and/or exterior, closed or open depending on the input geometry —
+                and stores them as read-only <code>CalculatedBoundaryLines</code> alongside the original points. Lines
+                are drawn and edited on the <MudLink Href="/Field/webapp/Field">Field</MudLink> page, and their types
+                are managed on <MudLink Href="/Field/webapp/FieldDelineationLineTypes">Delineation Line Types</MudLink>.
+            </MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-6 mt-4" Elevation="2">
+            <MudText Typo="Typo.h5" Class="mb-3">Features, memberships, and identities</MudText>
+            <MudText Typo="Typo.body1" Class="mb-2">
+                Every field can carry any number of <b>feature</b> assignments (arbitrary field characteristics),
+                <b>membership</b> assignments (placing the field in a basin, licence, or operator grouping), and
+                <b>identity</b> assignments (symbolic references such as a licence number or an operator field name),
+                each drawn from a locally managed catalog of categories and options. A category can be marked
+                exclusive, so only one option from it applies at a time, and optionally time-bounded, so an
+                assignment carries a validity period.
+            </MudText>
+            <MudText Typo="Typo.body1">
+                The catalogs are managed on <MudLink Href="/Field/webapp/FieldFeatures">Field Features</MudLink>,
+                <MudLink Href="/Field/webapp/FieldMemberships">Field Memberships</MudLink>, and
+                <MudLink Href="/Field/webapp/FieldIdentities">Field Identities</MudLink> — a category, option, or
+                identity definition cannot be deleted while a field still references it, and removing an option from
+                a category is likewise rejected while any field assignment still uses it.
+            </MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+<MudPaper Class="mx-4 px-4 pa-6 mt-4" Elevation="2">
+    <MudText Typo="Typo.h5" Class="mb-3">Conventions this microservice follows</MudText>
+    <MudText Typo="Typo.body1" Class="mb-2">
+        Field follows the same conventions as the other OSDC drilling microservices, so behavior learned on one
+        transfers directly to the others. Resource identifiers are caller-generated UUIDs rather than server
+        sequence numbers. Every mutation is checked with <b>optimistic concurrency</b>: an update or delete must echo
+        back the <code>LastModificationDate</code> (as <code>expectedModifiedUtc</code>) from the caller's latest
+        read, and a stale request is rejected with HTTP 409 rather than silently overwriting a concurrent change.
+        Updates are full replacements — a PUT must include everything that should remain stored, not just the
+        changed fields.
+    </MudText>
+    <MudText Typo="Typo.body1">
+        Field-owned catalogs — features, memberships, identities, and delineation line types — are validated on every
+        write: a field cannot reference a category, option, or definition that does not exist, and none of those
+        catalog entries can be deleted, nor can an option be removed from a category, while any field still
+        references it. Conflicts are reported with the affected Field UUIDs rather than a generic failure.
+    </MudText>
+</MudPaper>
+
+<MudPaper Class="mx-4 px-4 pa-6 mt-4" Elevation="2">
+    <MudText Typo="Typo.h5" Class="mb-3">Backup and restore</MudText>
+    <MudText Typo="Typo.body1" Class="mb-2">
+        Backups are logical, portable JSON, not a raw database copy. From the
+        <MudLink Href="/Field/webapp/FieldBackupRestore">Backup and Restore</MudLink> page, export <b>all</b> fields
+        or an ordered <b>selection</b> into one versioned document that carries the complete fields together with
+        only the feature, membership, identity, and delineation-line-type catalog entries they actually reference —
+        enough to reproduce the fields on another installation without pulling in unrelated catalog clutter.
+        Referenced projection definitions travel as external UUIDs and are not resolved during export.
+    </MudText>
+    <MudText Typo="Typo.body1">
+        Restoring the same document back offers a <b>conflict policy</b> — fail if any field UUID already exists
+        (<code>FailIfExists</code>), or replace matching fields while creating the rest (<code>ReplaceExisting</code>)
+        — and a <b>catalog policy</b> — map onto existing local catalog entries by UUID or normalized name
+        (<code>MapExisting</code>), or additionally create the missing ones locally with server-generated UUIDs
+        (<code>MapOrCreateMissing</code>). Format, version, timestamps, and referenced UUIDs are validated before
+        writing, and catalog mapping, catalog creation, and every field write happen inside one SQLite transaction,
+        so a restore of many fields either commits completely or leaves the database untouched.
+    </MudText>
+</MudPaper>
+
+<MudPaper Class="mx-4 px-4 pa-6 mt-4" Elevation="2">
+    <MudText Typo="Typo.h5" Class="mb-3">Using this web application</MudText>
+    <MudText Typo="Typo.body1" Class="mb-2">
+        Open <MudLink Href="/Field/webapp/Field">Field</MudLink> to browse, search, create, edit, and remove fields,
+        draw and edit their delineation lines, and manage their feature, membership, and identity assignments. Manage
+        the shared catalogs on <MudLink Href="/Field/webapp/FieldFeatures">Field Features</MudLink>,
+        <MudLink Href="/Field/webapp/FieldMemberships">Field Memberships</MudLink>,
+        <MudLink Href="/Field/webapp/FieldIdentities">Field Identities</MudLink>, and
+        <MudLink Href="/Field/webapp/FieldDelineationLineTypes">Delineation Line Types</MudLink>, and move data
+        between installations on <MudLink Href="/Field/webapp/FieldBackupRestore">Backup and Restore</MudLink>.
+    </MudText>
+    <MudText Typo="Typo.body1" Class="mb-2">
+        The <b>Survey Display</b> menu shows <MudLink Href="/Field/webapp/FieldTrajectories">Field Trajectories</MudLink>
+        and <MudLink Href="/Field/webapp/FieldSurveyRuns">Field Survey Runs</MudLink> with the field's delineation
+        lines overlaid, so trajectories and survey runs can be reviewed in the context of the field boundary and any
+        other typed lines. The <b>Contextual Data</b> menu gives read access to
+        <MudLink Href="/Field/webapp/Cluster">Clusters</MudLink> and the
+        <MudLink Href="/Field/webapp/ProjectionDefinition">Cartographic Projection</MudLink>,
+        <MudLink Href="/Field/webapp/GeodeticDatum">Geodetic Datum</MudLink>, and
+        <MudLink Href="/Field/webapp/Spheroid">Spheroid</MudLink> definitions a field's coordinate conversions rely
+        on, each backed by its own microservice and shown here through reusable Razor components.
+    </MudText>
+    <MudText Typo="Typo.body1">
+        The <b>Calculators</b> menu exposes the same synchronous, stateless evaluations used elsewhere in OSDC —
+        <MudLink Href="/Field/webapp/FieldCartographicConverter">Cartographic Conversion</MudLink>,
+        <MudLink Href="/Field/webapp/EarthVerticalDatumCalculation">Vertical Datum Conversion</MudLink>,
+        <MudLink Href="/Field/webapp/EarthGravityCalculation">Earth Gravity Evaluation</MudLink>, and
+        <MudLink Href="/Field/webapp/EarthMagneticFieldCalculation">Earth Magnetic Field Evaluation</MudLink> — for
+        one-off conversions and lookups while working a field, and
+        <MudLink Href="/Field/webapp/StatisticsField">Usage Statistics</MudLink> reports per-endpoint request counts
+        for this service replica. All numeric fields follow the unit system selected for the page through the OSDC
+        unit-reference system.
+    </MudText>
+</MudPaper>
+
+<MudPaper Class="mx-4 px-4 pa-6 mt-4 mb-6" Elevation="2">
+    <MudText Typo="Typo.h5" Class="mb-3">Access methods</MudText>
+    <MudText Typo="Typo.body1" Class="mb-3">
+        The same field data is reachable through several interfaces built on the same underlying store, so it can be
+        managed interactively, scripted, embedded in other Blazor applications, or wired into AI agents.
+    </MudText>
+    <MudSimpleTable>
+        <thead>
+            <tr><th>Method</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Web page</b></td>
+                <td>
+                    This site — a server-side Blazor application (this page) for browsing, editing, backing up, and
+                    restoring fields, drawing delineation lines, inspecting contextual data, running calculators, and
+                    reviewing usage statistics.
+                </td>
+            </tr>
+            <tr>
+                <td><b>REST API</b></td>
+                <td>
+                    JSON endpoints under <code>/Field/api</code> for field CRUD, delineation-line-type, feature,
+                    membership, and identity catalog management, coordinate conversion, batch export/restore, and
+                    usage statistics, documented and explorable through the Swagger UI at
+                    <code>/Field/api/swagger</code>. Suited to scripts, backend integration, and any HTTP client.
+                </td>
+            </tr>
+            <tr>
+                <td><b>MCP</b></td>
+                <td>
+                    A Model Context Protocol server exposed as Streamable HTTP at <code>/Field/api/mcp</code> (and
+                    WebSocket at <code>/Field/api/mcp/ws</code>), publishing 41 tools — every non-statistics REST
+                    operation plus connectivity <code>ping</code> — with strict, closed input/output JSON Schemas, so
+                    AI agents and MCP-aware tooling can query, create, update, convert coordinates for, and back up
+                    fields directly. Coordinate-conversion and batch-restore tools are marked accordingly, and usage
+                    statistics stay REST-only.
+                </td>
+            </tr>
+            <tr>
+                <td><b>Reusable web pages</b></td>
+                <td>
+                    The Razor components behind the Field, catalog, delineation editing, backup/restore, and
+                    survey-display pages are published as the <code>OSDC.Drilling.Field.WebPages</code> NuGet
+                    package, so other Blazor applications — such as the Well and WellBore web apps — can embed the
+                    same field context and unit-aware controls instead of re-implementing this UI.
+                </td>
+            </tr>
+        </tbody>
+    </MudSimpleTable>
+</MudPaper>

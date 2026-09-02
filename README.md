@@ -118,7 +118,9 @@ definitions and options with server-generated UUIDs. Catalog matching,
 reference rewriting, catalog creation and field restoration are atomic.
 
 WebApp (UI):
+- Local Home page: `https://localhost:5011/Field/webapp/Home`
 - Local Field page: `https://localhost:5011/Field/webapp/Field`
+- Dev Home page: `https://dev.digiwells.no/Field/webapp/Home`
 - Dev example: `https://dev.digiwells.no/Field/webapp/Field`
 - Managed vocabulary pages:
   - `/Field/webapp/FieldFeatures`
@@ -209,9 +211,9 @@ https://app.digiwells.no/Field/api/Field
 
 Web app is available at:
 
-https://dev.digiwells.no/Field/webapp/Field
+https://dev.digiwells.no/Field/webapp/Home
 
-https://app.digiwells.no/Field/webapp/Field
+https://app.digiwells.no/Field/webapp/Home
 
 The OpenApi schema of the microservice is available and testable at:
 

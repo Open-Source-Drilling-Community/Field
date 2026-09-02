@@ -3,55 +3,93 @@
 @inject ISnackbar Snackbar
 @inject IFieldAPIUtils Api
 
-@if (statistics_ == null)
-{
-    <MudProgressCircular Indeterminate="true" />
-}
-else
-{
-    <MudText Class="mt-4 mb-4" Typo="Typo.h5"><strong>Usage Statistics</strong></MudText>
+<MudStack Spacing="3">
+    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mt-4">
+        <div>
+            <MudText Typo="Typo.h5"><strong>Usage Statistics</strong></MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                Field requests retained across service restarts by the persistent service data volume.
+            </MudText>
+        </div>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Refresh"
+                   Disabled="@isLoading_"
+                   OnClick="RefreshAsync">
+            Refresh
+        </MudButton>
+    </MudStack>
 
-    <MudGrid Class="mb-4">
-        <MudItem xs="12" sm="4">
-            <MudText Typo="Typo.subtitle2">Total count</MudText>
-            <MudText Typo="Typo.h6">@totalCount_</MudText>
-        </MudItem>
-        <MudItem xs="12" sm="4">
-            <MudText Typo="Typo.subtitle2">Tracked endpoints</MudText>
-            <MudText Typo="Typo.h6">@rows_.Count</MudText>
-        </MudItem>
-        <MudItem xs="12" sm="4">
-            <MudText Typo="Typo.subtitle2">Last saved</MudText>
-            <MudText Typo="Typo.h6">@FormatDate(statistics_.LastSaved)</MudText>
-        </MudItem>
-    </MudGrid>
+    @if (isLoading_)
+    {
+        <MudProgressLinear Indeterminate="true" />
+    }
+    else if (statistics_ == null)
+    {
+        <MudAlert Severity="Severity.Warning">Unable to load Field usage statistics.</MudAlert>
+    }
+    else
+    {
+        <MudGrid>
+            <MudItem xs="12" sm="6" md="3">
+                <MudText Typo="Typo.subtitle2">Total requests</MudText>
+                <MudText Typo="Typo.h6">@totalCount_</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudText Typo="Typo.subtitle2">GET requests</MudText>
+                <MudText Typo="Typo.h6">@getCount_</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudText Typo="Typo.subtitle2">POST requests</MudText>
+                <MudText Typo="Typo.h6">@postCount_</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudText Typo="Typo.subtitle2">PUT / DELETE requests</MudText>
+                <MudText Typo="Typo.h6">@putDeleteCount_</MudText>
+            </MudItem>
+        </MudGrid>
 
-    <MudTable Items="rows_" Dense="true" Hover="true" Bordered="true" SortLabel="Sort by">
-        <HeaderContent>
-            <MudTh><MudTableSortLabel SortBy="new Func<UsageRow, string>(row => row.Endpoint)">Endpoint</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UsageRow, string>(row => row.Area)">Area</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UsageRow, object>(row => row.Total)">Total</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<UsageRow, object>(row => row.LastUsed ?? DateTimeOffset.MinValue)">Last used</MudTableSortLabel></MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Endpoint">@context.Endpoint</MudTd>
-            <MudTd DataLabel="Area">@context.Area</MudTd>
-            <MudTd DataLabel="Total">@context.Total</MudTd>
-            <MudTd DataLabel="Last used">@FormatDate(context.LastUsed)</MudTd>
-        </RowTemplate>
-        <NoRecordsContent>
-            <MudText>No usage counters were returned by the Field service.</MudText>
-        </NoRecordsContent>
-    </MudTable>
-}
+        <MudTable Items="rows_" Dense="true" Hover="true" Bordered="true" Striped="true" SortLabel="Sort by">
+            <HeaderContent>
+                <MudTh><MudTableSortLabel SortBy="new Func<UsageRow, string>(row => row.Method)">Method</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<UsageRow, string>(row => row.Operation)">Endpoint / operation</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<UsageRow, string>(row => row.Area)">Area</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<UsageRow, object>(row => row.Total)">Total</MudTableSortLabel></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Method">
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@MethodColor(context.Method)">
+                        @context.Method
+                    </MudChip>
+                </MudTd>
+                <MudTd DataLabel="Endpoint / operation">@context.Operation</MudTd>
+                <MudTd DataLabel="Area">@context.Area</MudTd>
+                <MudTd DataLabel="Total">@context.Total</MudTd>
+            </RowTemplate>
+            <NoRecordsContent>
+                <MudText>No usage counters were returned by the Field service.</MudText>
+            </NoRecordsContent>
+        </MudTable>
+    }
+</MudStack>
 
 @code {
     private UsageStatisticsField? statistics_;
     private readonly List<UsageRow> rows_ = [];
     private long totalCount_;
+    private long getCount_;
+    private long postCount_;
+    private long putDeleteCount_;
+    private bool isLoading_ = true;
 
     protected override async Task OnInitializedAsync()
     {
+        await RefreshAsync();
+    }
+
+    private async Task RefreshAsync()
+    {
+        isLoading_ = true;
         try
         {
             statistics_ = await Api.ClientField.GetFieldUsageStatisticsAsync();
@@ -59,15 +97,20 @@ else
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Problem UsageStatistics initialization");
+            logger.LogError(ex, "Problem loading Field usage statistics");
+            statistics_ = null;
+            ResetRows();
             Snackbar.Add("Unable to load Field usage statistics.", Severity.Error);
+        }
+        finally
+        {
+            isLoading_ = false;
         }
     }
 
     private void BuildRows()
     {
-        rows_.Clear();
-        totalCount_ = 0;
+        ResetRows();
 
         if (statistics_ == null)
         {
@@ -84,23 +127,53 @@ else
             }
 
             long total = history.Data?.Sum(entry => entry?.Count ?? 0) ?? 0;
-            DateTimeOffset? lastUsed = history.Data?
-                .Where(entry => entry != null && entry.Count > 0)
-                .Select(entry => (DateTimeOffset?)entry.Date)
-                .OrderByDescending(date => date)
-                .FirstOrDefault();
-
             totalCount_ += total;
-            string endpoint = CleanEndpointName(property.Name);
-            rows_.Add(new UsageRow(endpoint, GuessArea(endpoint), total, lastUsed));
+            string method = GetMethod(property.Name);
+            string operation = CleanOperationName(property.Name, method);
+            rows_.Add(new UsageRow(method, operation, GuessArea(operation), total));
         }
+
+        getCount_ = TotalFor("GET");
+        postCount_ = TotalFor("POST");
+        putDeleteCount_ = TotalFor("PUT") + TotalFor("DELETE");
     }
 
-    private static string CleanEndpointName(string propertyName)
+    private void ResetRows()
+    {
+        rows_.Clear();
+        totalCount_ = 0;
+        getCount_ = 0;
+        postCount_ = 0;
+        putDeleteCount_ = 0;
+    }
+
+    private long TotalFor(string method) => rows_.Where(row => row.Method == method).Sum(row => row.Total);
+
+    private static string GetMethod(string propertyName) => propertyName switch
+    {
+        _ when propertyName.StartsWith("Get", StringComparison.Ordinal) => "GET",
+        _ when propertyName.StartsWith("Post", StringComparison.Ordinal) => "POST",
+        _ when propertyName.StartsWith("Put", StringComparison.Ordinal) => "PUT",
+        _ when propertyName.StartsWith("Delete", StringComparison.Ordinal) => "DELETE",
+        _ when propertyName.StartsWith("Batch", StringComparison.Ordinal) => "POST",
+        _ => "OTHER"
+    };
+
+    private static string CleanOperationName(string propertyName, string method)
     {
         string value = propertyName.EndsWith("PerDay", StringComparison.Ordinal)
             ? propertyName[..^"PerDay".Length]
             : propertyName;
+
+        string prefix = method switch
+        {
+            "GET" => "Get",
+            "POST" when value.StartsWith("Post", StringComparison.Ordinal) => "Post",
+            "PUT" => "Put",
+            "DELETE" => "Delete",
+            _ => string.Empty
+        };
+        value = value[prefix.Length..];
 
         return string.Concat(value.Select((ch, index) =>
             index > 0 && char.IsUpper(ch) && !char.IsUpper(value[index - 1])
@@ -134,10 +207,14 @@ else
         return "Fields";
     }
 
-    private static string FormatDate(DateTimeOffset? value) =>
-        value.HasValue && value.Value != default
-            ? value.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
-            : "-";
+    private static Color MethodColor(string method) => method switch
+    {
+        "GET" => Color.Info,
+        "POST" => Color.Success,
+        "PUT" => Color.Warning,
+        "DELETE" => Color.Error,
+        _ => Color.Default
+    };
 
-    private sealed record UsageRow(string Endpoint, string Area, long Total, DateTimeOffset? LastUsed);
+    private sealed record UsageRow(string Method, string Operation, string Area, long Total);
 }

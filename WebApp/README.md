@@ -1,9 +1,10 @@
 # Field Management WebApp
 
-The WebApp is a Blazor Server front end for the Field microservice. It hosts the Field and Cluster management packages, field-level vocabulary pages, trajectory and survey-run displays, contextual data pages, and calculator pages.
+The WebApp is a Blazor Server front end for the Field microservice. It provides a service overview and hosts the Field and Cluster management packages, field-level vocabulary pages, trajectory and survey-run displays, contextual data pages, and calculator pages.
 
 ## Purpose
 
+- Summarize the Field domain, persistence model, available interfaces, and primary workflows on a dedicated Home page.
 - Manage Field records through the Field REST API.
 - Back up all or selected fields and atomically restore portable version-2 JSON backups, including referenced Field-owned catalog definitions.
 - Manage field features, field memberships, field identities, and delineation line types.
@@ -60,12 +61,14 @@ dotnet run --project WebApp
 
 Default URLs:
 
-- HTTP: `http://localhost:5012/Field/webapp/Field`
-- HTTPS: `https://localhost:5011/Field/webapp/Field`
+- HTTP: `http://localhost:5012/Field/webapp/Home`
+- HTTPS: `https://localhost:5011/Field/webapp/Home`
 
 The app sets `UsePathBase("/Field/webapp")`, so all pages are rooted under that path base.
 
 ## Pages
+
+- `Home` (`/Field/webapp/Home`): overview of the Field domain, persistence, primary workflows, and REST, MCP, and web access methods.
 
 Field Management:
 
@@ -96,7 +99,7 @@ Calculators:
 
 Monitoring:
 
-- `Usage Statistics` (`/Field/webapp/StatisticsField`): display per-endpoint usage counters returned by the Field service.
+- `Usage Statistics` (`/Field/webapp/StatisticsField`): display persistent aggregate request totals in a sortable method, operation, and functional-area table.
 
 ## Dependencies
 
@@ -119,7 +122,8 @@ Internal structure:
 - `ExternalRazorAssemblies.cs`: exposes Field and external web page assemblies to the Blazor router.
 - `ExternalWebPagesServiceCollectionExtensions.cs`: registers API utilities for external web page packages.
 - `WebPagesHostConfiguration.cs`: shares host URL configuration across Field and imported web pages.
-- `Shared/NavMenu.razor`: defines the grouped side menu, including Field batch backup and restore.
+- `Pages/Home.razor`: provides the Field service and web application overview.
+- `Shared/NavMenu.razor`: defines the grouped side menu, including Home and Field batch backup and restore.
 
 ## Docker
 
@@ -150,7 +154,7 @@ docker run --rm -p 5012:8080 \
 The Helm chart is `WebApp/charts/osdcdrillingfieldwebappclient`; its Kubernetes
 Service name is `osdcfieldwebappclient`.
 
-Then open `http://localhost:5012/Field/webapp/Field`. TLS is normally
+Then open `http://localhost:5012/Field/webapp/Home`. TLS is normally
 terminated by the Kubernetes ingress in deployed environments.
 
 ## Funding
