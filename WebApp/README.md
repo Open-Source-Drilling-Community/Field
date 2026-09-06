@@ -28,7 +28,7 @@ Configuration keys:
 - `TrajectoryHostURL`: base URL of the Trajectory service.
 
 In Kubernetes production configuration, `TrajectoryHostURL` resolves through the
-OSDC service DNS name `http://osdcdrillingtrajectoryservice/`; the client appends
+OSDC service DNS name `http://osdctrajectoryservice/`; the client appends
 the stable `Trajectory/api/` path.
 - `EarthCartographicProjectionHostURL`: base URL of EarthCartographicProjection.
 - `EarthGeodesyHostURL`: base URL of the EarthGeodesy service used by its hosted pages.
