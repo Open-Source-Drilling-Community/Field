@@ -157,10 +157,61 @@
         finally { _busy = false; }
     }
 
-    private RenderFragment FieldSelector(bool forward) => @<MudSelect T="OSDC.Drilling.Field.ModelShared.Field" Label="Field and projection"
-        Value="@(forward ? _forwardField : _inverseField)" ValueChanged="@((OSDC.Drilling.Field.ModelShared.Field value) => { if (forward) _forwardField = value; else _inverseField = value; })" ToStringFunc="@(value => value?.Name)">
-        @foreach (var item in _fields ?? []) { <MudSelectItem T="OSDC.Drilling.Field.ModelShared.Field" Value="@item">@item.Name</MudSelectItem> }
-    </MudSelect>;
+    private RenderFragment FieldSelector(bool forward) => @<MudAutocomplete T="Guid?"
+        Label="Field and projection"
+        Value="@(forward ? _forwardField?.MetaInfo?.ID : _inverseField?.MetaInfo?.ID)"
+        ValueChanged="@(value => SelectField(forward, value))"
+        SearchFunc="SearchFieldsAsync"
+        ToStringFunc="GetFieldName"
+        Clearable="true"
+        ResetValueOnEmptyText="true"
+        CoerceText="false"
+        MinCharacters="0"
+        MaxItems="@((int?)null)"
+        ShrinkLabel />;
+
+    private Task<IEnumerable<Guid?>> SearchFieldsAsync(string? value, CancellationToken cancellationToken)
+    {
+        string? term = value?.Trim();
+        return Task.FromResult((_fields ?? [])
+            .Where(field => field?.MetaInfo != null &&
+                (string.IsNullOrEmpty(term) ||
+                 GetFieldDisplayName(field).Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                 field.MetaInfo.ID.ToString("D").Contains(term, StringComparison.OrdinalIgnoreCase)))
+            .Select(field => (Guid?)field.MetaInfo.ID));
+    }
+
+    private string GetFieldName(Guid? fieldId)
+    {
+        if (fieldId is not Guid id)
+        {
+            return string.Empty;
+        }
+
+        OSDC.Drilling.Field.ModelShared.Field? field =
+            _fields?.FirstOrDefault(item => item?.MetaInfo?.ID == id);
+        return field == null ? id.ToString("D") : GetFieldDisplayName(field);
+    }
+
+    private void SelectField(bool forward, Guid? fieldId)
+    {
+        OSDC.Drilling.Field.ModelShared.Field? field = fieldId is Guid id
+            ? _fields?.FirstOrDefault(item => item?.MetaInfo?.ID == id)
+            : null;
+        if (forward)
+        {
+            _forwardField = field;
+            _forwardResult = null;
+        }
+        else
+        {
+            _inverseField = field;
+            _inverseResult = null;
+        }
+    }
+
+    private static string GetFieldDisplayName(OSDC.Drilling.Field.ModelShared.Field field) =>
+        string.IsNullOrWhiteSpace(field.Name) ? field.MetaInfo.ID.ToString("D") : field.Name;
 
     private RenderFragment GeographicOutput(string title, FieldGeographicCoordinate? coordinate, double? depth) => @<div class="mt-4">
         <MudText Typo="Typo.subtitle2">@title</MudText>

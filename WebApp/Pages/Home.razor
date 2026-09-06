@@ -49,7 +49,7 @@
                 Requests and results are never persisted, positions are ordered batches converted atomically, angles
                 are SI radians, and distances are SI metres. The same calculators are reachable directly from the
                 web application's <b>Calculators</b> menu for one-off conversions outside the context of a stored
-                field.
+                field; its Field selector accepts case-insensitive partial-name searches.
             </MudText>
         </MudPaper>
     </MudItem>
@@ -150,7 +150,9 @@
         The <b>Survey Display</b> menu shows <MudLink Href="/Field/webapp/FieldTrajectories">Field Trajectories</MudLink>
         and <MudLink Href="/Field/webapp/FieldSurveyRuns">Field Survey Runs</MudLink> with the field's delineation
         lines overlaid, so trajectories and survey runs can be reviewed in the context of the field boundary and any
-        other typed lines. The <b>Contextual Data</b> menu gives read access to
+        other typed lines. These views support WGS84 and Field-relative coordinates, and calculate the cartographic
+        grid offset through the Field coordinate-conversion API when <b>Cartographic</b> is selected. The
+        <b>Contextual Data</b> menu gives read access to
         <MudLink Href="/Field/webapp/Cluster">Clusters</MudLink> and the
         <MudLink Href="/Field/webapp/ProjectionDefinition">Cartographic Projection</MudLink>,
         <MudLink Href="/Field/webapp/GeodeticDatum">Geodetic Datum</MudLink>, and

@@ -1,5 +1,7 @@
 # OSDC.Drilling.Field.WebPages
 
+This release targets MudBlazor 9.9.0 and the matching OSDC shared web component packages.
+
 `OSDC.Drilling.Field.WebPages` is a Razor class library that packages the Field-specific web pages together with the API, editing, import/export, and plotting utilities they require.
 
 ## Contents
@@ -27,10 +29,15 @@ Field editing supports:
 
 Field trajectory and survey-run displays support:
 
+- a complete, case-insensitive searchable field selector; an empty search lists every available field
+- WGS84, Field, and cartographic position references; `Field` uses the selected Field's persisted reference-point north/east offset, while `Cartographic` resolves the selected Field reference point through the Field coordinate-conversion API and applies the resulting projected-grid offset
+- automatic fallback to WGS84 when the selected Field does not provide enough reference data for the requested Field or cartographic datum
 - 3D and horizontal projection views
 - uncertainty ellipse overlays
 - field delineation overlays in the horizontal projection
 - field delineation overlays in 3D projected to the top or bottom plane depending on camera angle
+
+The cartographic converter uses the same complete, case-insensitive partial-name Field autocomplete for both forward and inverse conversion; entering no search text lists every Field that has a projection definition.
 
 ## Dependencies
 

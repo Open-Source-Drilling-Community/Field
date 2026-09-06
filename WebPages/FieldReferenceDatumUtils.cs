@@ -46,6 +46,12 @@ public static class FieldReferenceDatumUtils
         DataUtils.MeanSeaLevelDepthReferenceSource.MeanSeaLevelDepthReference = null;
         DataUtils.CartographicGridPositionReferenceSource.CartographicGridNorthPositionReference = null;
         DataUtils.CartographicGridPositionReferenceSource.CartographicGridEastPositionReference = null;
+        DataUtils.FieldPositionReferenceSource.FieldNorthPositionReference = null;
+        DataUtils.FieldPositionReferenceSource.FieldEastPositionReference = null;
+        if (string.Equals(DataUtils.UnitAndReferenceParameters.PositionReferenceName, "Field", StringComparison.Ordinal))
+        {
+            DataUtils.UnitAndReferenceParameters.PositionReferenceName = "WGS84";
+        }
         DataUtils.CartographicProjectionDatumGeodeticReferenceSource.CartographicProjectionDatumLatitudeReference = null;
         DataUtils.CartographicProjectionDatumGeodeticReferenceSource.CartographicProjectionDatumLongitudeReference = null;
     }

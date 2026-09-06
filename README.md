@@ -170,7 +170,7 @@ The solution is composed of:
   - *dependencies* = MCP client packages + a running Service
 - **WebApp**
   - Blazor Server webapp named `Field Management`
-  - hosts Field management and a single contextual Cluster list/editor, plus vocabulary management, trajectory and survey-run displays, contextual data pages, and calculator pages
+  - hosts Field management and a single contextual Cluster list/editor, plus vocabulary management, trajectory and survey-run displays with WGS84, Field, and API-resolved cartographic position references, contextual data pages, and calculator pages
   - *dependencies* = WebPages plus reusable Cluster, EarthCartographicProjection, EarthGeodesy, EarthVerticalDatum, EarthGravity, and EarthMagneticField web page packages
 - **WebPages**
   - reusable Razor class library containing the Field web pages

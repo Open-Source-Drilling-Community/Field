@@ -17,6 +17,7 @@
                               MeanSeaLevelDepthReferenceSource="@DataUtils.MeanSeaLevelDepthReferenceSource"
                               PositionReferenceName="@DataUtils.UnitAndReferenceParameters.PositionReferenceName"
                               PositionReferenceNameChanged="@DataUtils.UpdatePositionReferenceName"
+                              FieldPositionReferenceSource="@DataUtils.FieldPositionReferenceSource"
                               CartographicGridPositionReferenceSource="@DataUtils.CartographicGridPositionReferenceSource"
                               >
     @if (fieldList == null || clusterList == null)
@@ -33,12 +34,18 @@
                         <MudText Typo="Typo.body2">All wellbore survey runs for the selected field, shown in 3D and as a horizontal projection.</MudText>
                     </MudItem>
                     <MudItem xs="12" sm="8" md="4">
-                        <MudSelect Label="Field" T="Guid?" Value="@selectedFieldId" ValueChanged="OnFieldChanged" ShrinkLabel Clearable="true">
-                            @foreach (FieldModelShared.Field field in AvailableFields)
-                            {
-                                <MudSelectItem T="Guid?" Value="@((Guid?)field.MetaInfo.ID)">@field.Name</MudSelectItem>
-                            }
-                        </MudSelect>
+                        <MudAutocomplete Label="Field"
+                                         T="Guid?"
+                                         Value="@selectedFieldId"
+                                         ValueChanged="OnFieldChanged"
+                                         SearchFunc="SearchFieldsAsync"
+                                         ToStringFunc="GetFieldName"
+                                         Clearable="true"
+                                         ResetValueOnEmptyText="true"
+                                         CoerceText="false"
+                                         MinCharacters="0"
+                                         MaxItems="@((int?)null)"
+                                         ShrinkLabel />
                     </MudItem>
                     <MudItem xs="12" sm="4" md="2">
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="ReloadSelectedFieldAsync" Disabled="@(selectedFieldId == null)">Reload</MudButton>
@@ -254,6 +261,31 @@
             .OrderBy(field => field.Name)
             .ToList() ?? [];
 
+    private Task<IEnumerable<Guid?>> SearchFieldsAsync(string? value, CancellationToken cancellationToken)
+    {
+        string? term = value?.Trim();
+        return Task.FromResult(AvailableFields
+            .Where(field => string.IsNullOrEmpty(term) ||
+                GetFieldDisplayName(field).Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                field.MetaInfo.ID.ToString("D").Contains(term, StringComparison.OrdinalIgnoreCase))
+            .Select(field => (Guid?)field.MetaInfo.ID));
+    }
+
+    private string GetFieldName(Guid? fieldId)
+    {
+        if (fieldId is not Guid id)
+        {
+            return string.Empty;
+        }
+
+        return fieldList?
+            .FirstOrDefault(field => field?.MetaInfo?.ID == id)
+            ?.Name ?? id.ToString("D");
+    }
+
+    private static string GetFieldDisplayName(FieldModelShared.Field field) =>
+        string.IsNullOrWhiteSpace(field.Name) ? field.MetaInfo.ID.ToString("D") : field.Name;
+
     private async Task OnFieldChanged(Guid? fieldId)
     {
         selectedFieldId = fieldId;
@@ -308,6 +340,15 @@
 
     private async Task ApplySelectedFieldReferenceValuesAsync(Guid fieldId)
     {
+        FieldModelShared.Field? field = fieldList?.FirstOrDefault(item => item.MetaInfo?.ID == fieldId);
+        DataUtils.FieldPositionReferenceSource.FieldNorthPositionReference = -field?.ReferencePoint?.RiemannianNorth;
+        DataUtils.FieldPositionReferenceSource.FieldEastPositionReference = -field?.ReferencePoint?.RiemannianEast;
+        if ((field?.ReferencePoint?.RiemannianNorth == null || field.ReferencePoint.RiemannianEast == null) &&
+            string.Equals(DataUtils.UnitAndReferenceParameters.PositionReferenceName, "Field", StringComparison.Ordinal))
+        {
+            DataUtils.UnitAndReferenceParameters.PositionReferenceName = "WGS84";
+        }
+        await CartographicPositionReferenceUtils.ApplyAsync(Api, field, logger);
         FieldReferenceDatumUtils.Apply(
             await FieldReferenceDatumUtils.ResolveForFieldAsync(Api, fieldId, clusterList));
     }

@@ -9,7 +9,7 @@ The WebApp is a Blazor Server front end for the Field microservice. It provides 
 - Back up all or selected fields and atomically restore portable version-2 JSON backups, including referenced Field-owned catalog definitions.
 - Manage field features, field memberships, field identities, and delineation line types.
 - Display trajectories and survey runs for a selected field, including delineation line overlays.
-- Configure field-level depth and position references for plotting.
+- Configure field-level depth and WGS84, Field, or cartographic position references for plotting; cartographic displays use the Field coordinate-conversion API rather than relabelling WGS84 coordinates.
 - Provide calculators for cartographic conversion, vertical datum conversion, Earth gravity, and Earth magnetic field.
 - Host the reusable EarthCartographicProjection projection-definition pages and the remaining contextual page packages.
 - Host the reusable Cluster list/editor as a single contextual-data page.
@@ -96,7 +96,7 @@ Contextual Data:
 
 Calculators:
 
-- `Cartographic Conversion` (`/Field/webapp/FieldCartographicConverter`)
+- `Cartographic Conversion` (`/Field/webapp/FieldCartographicConverter`): forward and inverse conversion with a complete, case-insensitive partial-name Field selector
 - `Vertical Datum Conversion` (`/Field/webapp/EarthVerticalDatumCalculation`)
 - `Earth Gravity Evaluation` (`/Field/webapp/EarthGravityCalculation`)
 - `Earth Magnetic Field Evaluation` (`/Field/webapp/EarthMagneticFieldCalculation`)
