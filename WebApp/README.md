@@ -26,6 +26,10 @@ Configuration keys:
 - `ClusterHostURL`: base URL of the Cluster service.
 - `RigHostURL`: base URL of the Rig service used to resolve Cluster rig references.
 - `TrajectoryHostURL`: base URL of the Trajectory service.
+
+In Kubernetes production configuration, `TrajectoryHostURL` resolves through the
+OSDC service DNS name `http://osdcdrillingtrajectoryservice/`; the client appends
+the stable `Trajectory/api/` path.
 - `EarthCartographicProjectionHostURL`: base URL of EarthCartographicProjection.
 - `EarthGeodesyHostURL`: base URL of the EarthGeodesy service used by its hosted pages.
 - `EarthGravityHostURL`: base URL of the EarthGravity service.

@@ -14,6 +14,11 @@ The generator merges the OpenAPI documents in `json-schemas/`:
 - `EarthGeodesyModel.json`
 - `EarthVerticalDatumMergedModel.json`
 
+`TrajectoryFullName.json` is copied from Trajectory's current service-owned
+Swagger artifact at `Trajectory/ModelSharedOut/json-schemas/TrajectoryFullName.json`.
+Use that document rather than Trajectory's served merged aggregate, which also
+contains transitive snapshots of Field, Cluster, Well, and WellBore schemas.
+
 It writes these version-controlled outputs:
 
 - `Service/wwwroot/json-schema/FieldMergedModel.json`, served at
