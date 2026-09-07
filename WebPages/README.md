@@ -33,9 +33,11 @@ Field trajectory and survey-run displays support:
 - WGS84, Field, and cartographic position references; `Field` uses the selected Field's persisted reference-point north/east offset, while `Cartographic` resolves the selected Field reference point through the Field coordinate-conversion API and applies the resulting projected-grid offset
 - automatic fallback to WGS84 when the selected Field does not provide enough reference data for the requested Field or cartographic datum
 - 3D and horizontal projection views
+- plots remain available when a field has only cluster slots or delineation lines and no survey runs or trajectories
 - uncertainty ellipse overlays
-- field delineation overlays in the horizontal projection
-- field delineation overlays in 3D projected to the top or bottom plane depending on camera angle
+- cluster-slot marker overlays in both views, excluding single-well clusters; each cluster is one legend-toggleable trace
+- field delineation overlays in both views, with each original line and its calculated boundaries controlled by one legend entry
+- WGS84-canonical overlay depths: cluster slots use cluster reference depth, then ground/mud-line depth, then converted 0 MSL; delineations use the average defined field ground/mud-line depth or converted 0 MSL
 
 The cartographic converter uses the same complete, case-insensitive partial-name Field autocomplete for both forward and inverse conversion; entering no search text lists every Field that has a projection definition.
 

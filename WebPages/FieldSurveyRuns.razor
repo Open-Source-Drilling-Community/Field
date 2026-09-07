@@ -107,12 +107,16 @@
             {
                 <MudAlert Severity="Severity.Info" Dense="true">Select a field to display its wellbore survey runs.</MudAlert>
             }
-            else if (surveyRunList.Count == 0)
+            else if (surveyRunList.Count == 0 && plotTraces.Count == 0)
             {
-                <MudAlert Severity="Severity.Info" Dense="true">No survey runs were found for the selected field.</MudAlert>
+                <MudAlert Severity="Severity.Info" Dense="true">No survey runs, cluster slots, or delineation lines were found for the selected field.</MudAlert>
             }
             else
             {
+                @if (surveyRunList.Count == 0)
+                {
+                    <MudAlert Severity="Severity.Info" Dense="true">No survey runs were found; displaying the available cluster slots and delineation lines.</MudAlert>
+                }
                 <MudGrid>
                     <MudItem xs="12" xl="6">
                         <MudPaper Class="pa-4" Elevation="2">
@@ -138,7 +142,10 @@
                                            XAxisPositionDirection="@PositionDirectionType.East"
                                            YAxisPositionDirection="@PositionDirectionType.North"
                                            CameraIsAboveSceneChanged="OnCameraIsAboveSceneChanged"
-                                           ShowLegends="@Plot3DShowLegends" />
+                                           ShowLegends="@Plot3DShowLegends"
+                                           LegendLinkedTraceIds="@Plot3DLegendLinkedTraceIds"
+                                           LegendControlsLinkedTraces="@Plot3DLegendControlsLinkedTraces"
+                                           LegendTraceKinds="@Plot3DLegendTraceKinds" />
                         </MudPaper>
                     </MudItem>
                     <MudItem xs="12" xl="6">
@@ -161,7 +168,10 @@
                                          YAxisUsesPositionReference="true"
                                          XAxisPositionDirection="@PositionDirectionType.East"
                                          YAxisPositionDirection="@PositionDirectionType.North"
-                                         ShowLegends="@PlotHorizontalShowLegends" />
+                                         ShowLegends="@PlotHorizontalShowLegends"
+                                         LegendLinkedTraceIds="@PlotHorizontalLegendLinkedTraceIds"
+                                         LegendControlsLinkedTraces="@PlotHorizontalLegendControlsLinkedTraces"
+                                         LegendTraceKinds="@PlotHorizontalLegendTraceKinds" />
                         </MudPaper>
                     </MudItem>
                 </MudGrid>
@@ -201,6 +211,7 @@
     private bool isCalculatingEllipses;
     private double ellipseConfidenceFactor = 0.95;
     private bool cameraIsAboveScene = true;
+    private double zeroMeanSeaLevelDepthWgs84;
 
     private List<PlotTrace> plotTraces = [];
     private Dictionary<Guid, List<FieldModelShared.SurveyStationEllipseResult>> ellipseResultsBySurveyRun = [];
@@ -216,6 +227,9 @@
     private List<int> Plot3DModeFlags => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.ModeFlag).ToList();
     private List<string> Plot3DColors => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.Color).ToList();
     private List<bool> Plot3DShowLegends => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.ShowLegend).ToList();
+    private List<string?> Plot3DLegendLinkedTraceIds => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.LegendLinkId).ToList();
+    private List<bool> Plot3DLegendControlsLinkedTraces => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.ShowLegend && trace.LegendLinkId != null).ToList();
+    private List<string> Plot3DLegendTraceKinds => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.LegendTraceKind).ToList();
     private List<List<object>> Plot3DNorthValuesList => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.NorthValues).ToList();
     private List<List<object>> Plot3DEastValuesList => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.EastValues).ToList();
     private List<List<object>> Plot3DTvdValuesList => plotTraces.Where(trace => trace.ShowIn3D).Select(trace => trace.TvdValues).ToList();
@@ -223,6 +237,9 @@
     private List<int> PlotHorizontalModeFlags => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.ModeFlag).ToList();
     private List<string> PlotHorizontalColors => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.Color).ToList();
     private List<bool> PlotHorizontalShowLegends => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.ShowLegend).ToList();
+    private List<string?> PlotHorizontalLegendLinkedTraceIds => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.LegendLinkId).ToList();
+    private List<bool> PlotHorizontalLegendControlsLinkedTraces => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.ShowLegend && trace.LegendLinkId != null).ToList();
+    private List<string> PlotHorizontalLegendTraceKinds => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.LegendTraceKind).ToList();
     private List<string> PlotHorizontalLineDashes => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.LineDash).ToList();
     private List<List<object>> PlotHorizontalNorthValuesList => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.NorthValues).ToList();
     private List<List<object>> PlotHorizontalEastValuesList => plotTraces.Where(trace => trace.ShowInHorizontal).Select(trace => trace.EastValues).ToList();
@@ -349,8 +366,10 @@
             DataUtils.UnitAndReferenceParameters.PositionReferenceName = "WGS84";
         }
         await CartographicPositionReferenceUtils.ApplyAsync(Api, field, logger);
-        FieldReferenceDatumUtils.Apply(
-            await FieldReferenceDatumUtils.ResolveForFieldAsync(Api, fieldId, clusterList));
+        FieldReferenceDatumValues datumValues =
+            await FieldReferenceDatumUtils.ResolveForFieldAsync(Api, fieldId, clusterList);
+        FieldReferenceDatumUtils.Apply(datumValues);
+        zeroMeanSeaLevelDepthWgs84 = datumValues.MeanSeaLevelDepthReference ?? 0.0;
     }
 
     private async Task LoadSurveyRunsAsync(Guid fieldId)
@@ -497,6 +516,7 @@
             colorIndex++;
         }
 
+        AppendClusterSlotTraces(nextPlotTraces);
         AppendDelineationTraces(nextPlotTraces);
         plotTraces = nextPlotTraces;
     }
@@ -520,13 +540,16 @@
             return;
         }
 
-        double planeTvd = GetDelineationPlaneTvd(traces);
+        double planeTvd = FieldVisualizationOverlayUtils.ResolveDelineationDepthWgs84(
+            GetSelectedFieldClusters(),
+            zeroMeanSeaLevelDepthWgs84);
         int index = 0;
         foreach (FieldModelShared.FieldDelineationLine line in selectedFieldDelineationLines)
         {
             string color = Colors[(index + 4) % Colors.Length];
             string name = string.IsNullOrWhiteSpace(line.Name) ? $"delineation {index + 1}" : line.Name;
-            if (BuildDelineationTrace(name, line.Points, color, "solid", true, planeTvd) is { } trace)
+            string legendLinkId = $"delineation:{(line.ID == Guid.Empty ? index.ToString() : line.ID.ToString("D"))}";
+            if (BuildDelineationTrace(name, line.Points, color, "solid", true, planeTvd, legendLinkId) is { } trace)
             {
                 traces.Add(trace);
             }
@@ -534,7 +557,7 @@
             int boundaryIndex = 1;
             foreach (FieldModelShared.FieldDelineationBoundaryLine boundary in line.CalculatedBoundaryLines ?? [])
             {
-                if (BuildDelineationTrace($"{name} boundary {boundaryIndex}", boundary.Points, color, "dash", false, planeTvd) is { } boundaryTrace)
+                if (BuildDelineationTrace($"{name} boundary {boundaryIndex}", boundary.Points, color, "dash", false, planeTvd, legendLinkId) is { } boundaryTrace)
                 {
                     traces.Add(boundaryTrace);
                 }
@@ -544,18 +567,42 @@
         }
     }
 
-    private double GetDelineationPlaneTvd(IEnumerable<PlotTrace> traces)
+    private IEnumerable<FieldModelShared.Cluster> GetSelectedFieldClusters()
     {
-        List<double> tvdValues = traces
-            .SelectMany(trace => trace.TvdValues)
-            .SelectMany(ToDoubleValue)
-            .ToList();
-        if (tvdValues.Count == 0)
+        if (selectedFieldId is not Guid fieldId)
         {
-            return 0.0;
+            return [];
         }
 
-        return cameraIsAboveScene ? tvdValues.Min() : tvdValues.Max();
+        return clusterList?.Where(cluster => cluster.FieldID == fieldId) ?? [];
+    }
+
+    private void AppendClusterSlotTraces(List<PlotTrace> traces)
+    {
+        int clusterIndex = 0;
+        foreach (FieldModelShared.Cluster cluster in GetSelectedFieldClusters().Where(cluster => !cluster.IsSingleWell))
+        {
+            List<object> northValues = [];
+            List<object> eastValues = [];
+            List<object> tvdValues = [];
+            double depth = FieldVisualizationOverlayUtils.ResolveClusterSlotDepthWgs84(cluster, zeroMeanSeaLevelDepthWgs84);
+            foreach (FieldModelShared.Slot slot in cluster.Slots?.Values ?? [])
+            {
+                if (FieldVisualizationOverlayUtils.TryGetSlotNorthEast(slot, out double north, out double east))
+                {
+                    AppendPointValues(north, east, depth, northValues, eastValues, tvdValues);
+                }
+            }
+
+            if (northValues.Count > 0)
+            {
+                string clusterName = string.IsNullOrWhiteSpace(cluster.Name) ? "cluster" : cluster.Name;
+                string linkId = $"cluster-slots:{cluster.MetaInfo?.ID.ToString("D") ?? clusterIndex.ToString()}";
+                traces.Add(new PlotTrace($"{clusterName} slots", 2, Colors[(clusterIndex + 2) % Colors.Length], true,
+                    northValues, eastValues, tvdValues, true, true, "solid", linkId, PlotTraceKindClusterSlots));
+            }
+            clusterIndex++;
+        }
     }
 
     private static PlotTrace? BuildDelineationTrace(
@@ -564,7 +611,8 @@
         string color,
         string lineDash,
         bool showLegend,
-        double planeTvd)
+        double planeTvd,
+        string legendLinkId)
     {
         if (points == null || points.Count < 2)
         {
@@ -585,16 +633,8 @@
         }
 
         return northValues.Count >= 2 && northValues.Count == eastValues.Count
-            ? new PlotTrace(name, 1, color, showLegend, northValues, eastValues, tvdValues, true, true, lineDash)
+            ? new PlotTrace(name, 1, color, showLegend, northValues, eastValues, tvdValues, true, true, lineDash, legendLinkId, PlotTraceKindDelineation)
             : null;
-    }
-
-    private static IEnumerable<double> ToDoubleValue(object value)
-    {
-        if (TryGetDouble(value, out double converted))
-        {
-            yield return converted;
-        }
     }
 
     private async Task CalculateUncertaintyEllipsesAsync()
@@ -895,6 +935,10 @@
         "purple"
     ];
 
+    private const string PlotTraceKindDelineation = "delineation";
+    private const string PlotTraceKindClusterSlots = "cluster-slots";
+    private const string PlotTraceKindOther = "other";
+
     private sealed record PlotTrace(
         string Name,
         int ModeFlag,
@@ -905,7 +949,9 @@
         List<object> TvdValues,
         bool ShowIn3D = true,
         bool ShowInHorizontal = true,
-        string LineDash = "solid");
+        string LineDash = "solid",
+        string? LegendLinkId = null,
+        string LegendTraceKind = PlotTraceKindOther);
 
 }
 

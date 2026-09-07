@@ -14,18 +14,24 @@ public static class FieldReferenceDatumUtils
         IEnumerable<FieldModelShared.Cluster>? clusters)
     {
         List<FieldModelShared.Cluster> fieldClusters = clusters?
-            .Where(cluster =>
-                cluster is not null &&
-                cluster.FieldID == fieldId &&
-                cluster.ReferencePoint?.Latitude != null &&
-                cluster.ReferencePoint?.Longitude != null)
+            .Where(cluster => cluster is not null && cluster.FieldID == fieldId)
             .ToList() ?? [];
 
-        double? averageLatitude = Average(fieldClusters.Select(cluster => cluster.ReferencePoint?.Latitude));
-        double? averageLongitude = Average(fieldClusters.Select(cluster => cluster.ReferencePoint?.Longitude));
-        double? averageTopWaterDepth = Average(clusters?
-            .Where(cluster => cluster is not null && cluster.FieldID == fieldId)
-            .Select(cluster => cluster.TopWaterDepth?.GaussianValue?.Mean));
+        List<(double Latitude, double Longitude)> datumPositions = fieldClusters
+            .Where(cluster => cluster.ReferencePoint?.Latitude != null && cluster.ReferencePoint.Longitude != null)
+            .Select(cluster => (cluster.ReferencePoint!.Latitude!.Value, cluster.ReferencePoint.Longitude!.Value))
+            .ToList();
+        if (datumPositions.Count == 0)
+        {
+            datumPositions = fieldClusters.SelectMany(cluster => cluster.Slots?.Values ?? [])
+                .Where(slot => slot.Latitude?.GaussianValue?.Mean != null && slot.Longitude?.GaussianValue?.Mean != null)
+                .Select(slot => (slot.Latitude!.GaussianValue!.Mean!.Value, slot.Longitude!.GaussianValue!.Mean!.Value))
+                .ToList();
+        }
+
+        double? averageLatitude = Average(datumPositions.Select(position => (double?)position.Latitude));
+        double? averageLongitude = Average(datumPositions.Select(position => (double?)position.Longitude));
+        double? averageTopWaterDepth = Average(fieldClusters.Select(cluster => cluster.TopWaterDepth?.GaussianValue?.Mean));
 
         double? meanSeaLevelReference = await CalculateMeanSeaLevelDepthReferenceAsync(api, averageLatitude, averageLongitude);
 
