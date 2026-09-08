@@ -103,7 +103,7 @@ namespace OSDC.Drilling.Field.Service.Managers
             {
                 var command = connection.CreateCommand();
                 command.CommandText = "SELECT COUNT(*) FROM FieldTable WHERE ID = $id";
-                command.Parameters.AddWithValue("$id", guid);
+                command.Parameters.AddWithValue("$id", guid.ToString());
                 try
                 {
                     using SqliteDataReader reader = command.ExecuteReader();
@@ -210,7 +210,7 @@ namespace OSDC.Drilling.Field.Service.Managers
                     Model.Field? field;
                     var command = connection.CreateCommand();
                     command.CommandText = "SELECT Field FROM FieldTable WHERE ID = $id";
-                    command.Parameters.AddWithValue("$id", guid);
+                    command.Parameters.AddWithValue("$id", guid.ToString());
                     try
                     {
                         using var reader = command.ExecuteReader();
@@ -632,7 +632,7 @@ namespace OSDC.Drilling.Field.Service.Managers
                     {
                         var command = connection.CreateCommand();
                         command.CommandText = "DELETE FROM FieldTable WHERE ID = $id";
-                        command.Parameters.AddWithValue("$id", guid);
+                        command.Parameters.AddWithValue("$id", guid.ToString());
                         int count = command.ExecuteNonQuery();
                         if (count < 0)
                         {
