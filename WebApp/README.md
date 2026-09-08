@@ -77,11 +77,14 @@ The app sets `UsePathBase("/Field/webapp")`, so all pages are rooted under that 
 Field Management:
 
 - `Field` (`/Field/webapp/Field`): create, edit, delete, and search Field records.
-- `Backup and Restore` (`/Field/webapp/FieldBackupRestore`): export all or selected fields and their referenced Field-owned catalog definitions to one versioned JSON file, preview an uploaded backup, and restore it atomically with explicit field-conflict and catalog-mapping policies.
 - `Field Features` (`/Field/webapp/FieldFeatures`): manage field feature categories, options, exclusivity, and validity behavior.
 - `Field Memberships` (`/Field/webapp/FieldMemberships`): manage membership categories and options such as basin, play, license, operator, or pipeline network.
 - `Field Identities` (`/Field/webapp/FieldIdentities`): manage symbolic identity definitions such as Official name, WITSML UID, or External database ID.
 - `Delineation Line Types` (`/Field/webapp/FieldDelineationLineTypes`): manage delineation line type names.
+
+Import/Export:
+
+- `Backup / Restore` (`/Field/webapp/FieldBackupRestore`): available from the collapsed `Import/Export` navigation group; export all or selected fields and their referenced Field-owned catalog definitions to one versioned JSON file, preview an uploaded backup, and restore it atomically with explicit field-conflict and catalog-mapping policies.
 
 Survey Display:
 
@@ -127,7 +130,7 @@ Internal structure:
 - `ExternalWebPagesServiceCollectionExtensions.cs`: registers API utilities for external web page packages.
 - `WebPagesHostConfiguration.cs`: shares host URL configuration across Field and imported web pages.
 - `Pages/Home.razor`: provides the Field service and web application overview.
-- `Shared/NavMenu.razor`: defines the grouped side menu, including Home and Field batch backup and restore.
+- `Shared/NavMenu.razor`: defines the grouped side menu, including Home and the collapsed `Import/Export` group for Field backup and restore.
 
 ## Docker
 
