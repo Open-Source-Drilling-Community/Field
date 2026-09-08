@@ -38,7 +38,7 @@ namespace OSDC.Drilling.Field.Service.Managers
             get
             {
                 int count = 0;
-                var connection = _connectionManager.GetConnection();
+                using var connection = _connectionManager.GetConnection();
                 if (connection != null)
                 {
                     var command = connection.CreateCommand();
@@ -66,7 +66,7 @@ namespace OSDC.Drilling.Field.Service.Managers
 
         public bool Clear()
         {
-            var connection = _connectionManager.GetConnection();
+            using var connection = _connectionManager.GetConnection();
             if (connection != null)
             {
                 bool success = false;
@@ -98,11 +98,12 @@ namespace OSDC.Drilling.Field.Service.Managers
         public bool Contains(Guid guid)
         {
             int count = 0;
-            var connection = _connectionManager.GetConnection();
+            using var connection = _connectionManager.GetConnection();
             if (connection != null)
             {
                 var command = connection.CreateCommand();
-                command.CommandText = $"SELECT COUNT(*) FROM FieldTable WHERE ID = '{guid}'";
+                command.CommandText = "SELECT COUNT(*) FROM FieldTable WHERE ID = $id";
+                command.Parameters.AddWithValue("$id", guid);
                 try
                 {
                     using SqliteDataReader reader = command.ExecuteReader();
@@ -130,7 +131,7 @@ namespace OSDC.Drilling.Field.Service.Managers
         public List<Guid>? GetAllFieldId()
         {
             List<Guid> ids = [];
-            var connection = _connectionManager.GetConnection();
+            using var connection = _connectionManager.GetConnection();
             if (connection != null)
             {
                 var command = connection.CreateCommand();
@@ -165,7 +166,7 @@ namespace OSDC.Drilling.Field.Service.Managers
         public List<MetaInfo?>? GetAllFieldMetaInfo()
         {
             List<MetaInfo?> metaInfos = new();
-            var connection = _connectionManager.GetConnection();
+            using var connection = _connectionManager.GetConnection();
             if (connection != null)
             {
                 var command = connection.CreateCommand();
@@ -203,12 +204,13 @@ namespace OSDC.Drilling.Field.Service.Managers
         {
             if (!guid.Equals(Guid.Empty))
             {
-                var connection = _connectionManager.GetConnection();
+                using var connection = _connectionManager.GetConnection();
                 if (connection != null)
                 {
                     Model.Field? field;
                     var command = connection.CreateCommand();
-                    command.CommandText = $"SELECT Field FROM FieldTable WHERE ID = '{guid}'";
+                    command.CommandText = "SELECT Field FROM FieldTable WHERE ID = $id";
+                    command.Parameters.AddWithValue("$id", guid);
                     try
                     {
                         using var reader = command.ExecuteReader();
@@ -289,7 +291,7 @@ namespace OSDC.Drilling.Field.Service.Managers
         public List<Model.Field?>? GetAllFieldForExport()
         {
             List<Model.Field?> fields = [];
-            var connection = _connectionManager.GetConnection();
+            using var connection = _connectionManager.GetConnection();
             if (connection == null)
             {
                 _logger.LogWarning("Impossible to access the SQLite database");
@@ -620,7 +622,7 @@ namespace OSDC.Drilling.Field.Service.Managers
         {
             if (!guid.Equals(Guid.Empty))
             {
-                var connection = _connectionManager.GetConnection();
+                using var connection = _connectionManager.GetConnection();
                 if (connection != null)
                 {
                     using var transaction = connection.BeginTransaction();
@@ -629,7 +631,8 @@ namespace OSDC.Drilling.Field.Service.Managers
                     try
                     {
                         var command = connection.CreateCommand();
-                        command.CommandText = $"DELETE FROM FieldTable WHERE ID = '{guid}'";
+                        command.CommandText = "DELETE FROM FieldTable WHERE ID = $id";
+                        command.Parameters.AddWithValue("$id", guid);
                         int count = command.ExecuteNonQuery();
                         if (count < 0)
                         {
