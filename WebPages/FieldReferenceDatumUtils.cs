@@ -84,7 +84,7 @@ public static class FieldReferenceDatumUtils
 
         FieldModelShared.MeanSeaLevelToWgs84Response response =
             await api.ClientEarthVerticalDatum.ConvertMeanSeaLevelToWgs84Async(request);
-        return response.Samples?.FirstOrDefault()?.Wgs84EllipsoidalDepth;
+        return -response.Samples?.FirstOrDefault()?.Wgs84EllipsoidalDepth;
     }
 
     private static double? Average(IEnumerable<double?>? values)

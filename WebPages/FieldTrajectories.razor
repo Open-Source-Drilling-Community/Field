@@ -485,7 +485,7 @@
         FieldReferenceDatumValues datumValues =
             await FieldReferenceDatumUtils.ResolveForFieldAsync(Api, fieldId, clusterList);
         FieldReferenceDatumUtils.Apply(datumValues);
-        zeroMeanSeaLevelDepthWgs84 = datumValues.MeanSeaLevelDepthReference ?? 0.0;
+        zeroMeanSeaLevelDepthWgs84 = -datumValues.MeanSeaLevelDepthReference ?? 0.0;
         RefreshClosestApproachStartMdDisplay();
     }
 
