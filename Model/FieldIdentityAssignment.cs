@@ -1,30 +1,8 @@
-using OSDC.DotnetLibraries.General.DataManagement;
-using System;
+using OSDC.DotnetLibraries.General.ResourceClassification;
 
-namespace OSDC.Drilling.Field.Model
+namespace OSDC.Drilling.Field.Model;
+
+/// <summary>FieldIdentityAssignment contract using the shared resource classification implementation.</summary>
+public class FieldIdentityAssignment : IdentityAssignment
 {
-    public class FieldIdentityAssignment : IIdentityAssignment
-    {
-        /// <summary>
-        /// unique ID of the assignment
-        /// </summary>
-        public Guid ID { get; set; }
-
-        /// <summary>
-        /// reference to the selected FieldIdentity
-        /// </summary>
-        public Guid? IdentityID { get; set; }
-
-        /// <summary>
-        /// field-specific identity value
-        /// </summary>
-        public string? Value { get; set; }
-
-        /// <summary>
-        /// default constructor required for JSON serialization
-        /// </summary>
-        public FieldIdentityAssignment() : base()
-        {
-        }
-    }
 }

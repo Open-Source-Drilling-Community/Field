@@ -1341,11 +1341,8 @@
 
     private static bool IntervalsOverlap(FieldFeatureAssignment first, FieldFeatureAssignment second)
     {
-        DateTimeOffset firstStart = first.FromDate ?? DateTimeOffset.MinValue;
-        DateTimeOffset firstEnd = first.ToDate ?? DateTimeOffset.MaxValue;
-        DateTimeOffset secondStart = second.FromDate ?? DateTimeOffset.MinValue;
-        DateTimeOffset secondEnd = second.ToDate ?? DateTimeOffset.MaxValue;
-        return firstStart <= secondEnd && secondStart <= firstEnd;
+        return OSDC.DotnetLibraries.General.ResourceClassification.ClassificationValidation.IntervalsOverlap(
+            first.FromDate, first.ToDate, second.FromDate, second.ToDate);
     }
 
     private Variant GetIdentityButtonVariant(FieldIdentity identity)
@@ -1683,11 +1680,8 @@
 
     private static bool MembershipIntervalsOverlap(FieldMembershipAssignment first, FieldMembershipAssignment second)
     {
-        DateTimeOffset firstStart = first.FromDate ?? DateTimeOffset.MinValue;
-        DateTimeOffset firstEnd = first.ToDate ?? DateTimeOffset.MaxValue;
-        DateTimeOffset secondStart = second.FromDate ?? DateTimeOffset.MinValue;
-        DateTimeOffset secondEnd = second.ToDate ?? DateTimeOffset.MaxValue;
-        return firstStart <= secondEnd && secondStart <= firstEnd;
+        return OSDC.DotnetLibraries.General.ResourceClassification.ClassificationValidation.IntervalsOverlap(
+            first.FromDate, first.ToDate, second.FromDate, second.ToDate);
     }
 
     private ProjectionDefinitionSummary? FindCartographicProjection(Guid? cartographicProjectionID)

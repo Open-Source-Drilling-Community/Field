@@ -23,6 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="OSDC.DotnetLibraries.General.ResourceClassification" Version="0.1.0" />
     <PackageReference Include="MudBlazor" Version="9.9.0" />
     <PackageReference Include="OSDC.DotnetLibraries.Drilling.WebAppUtils" Version="1.1.5" />
     <PackageReference Include="OSDC.DotnetLibraries.General.Math" Version="1.3.5" />

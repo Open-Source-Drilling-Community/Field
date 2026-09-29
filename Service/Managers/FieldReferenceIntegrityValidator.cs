@@ -1,3 +1,4 @@
+using OSDC.DotnetLibraries.General.ResourceClassification;
 using Microsoft.Data.Sqlite;
 using OSDC.Drilling.Field.Model;
 using System;
@@ -91,42 +92,16 @@ internal static class FieldReferenceIntegrityValidator
         IReadOnlyDictionary<Guid, HashSet<Guid>> optionsByCategory, string path, string categoryProperty,
         string optionProperty, List<FieldMutationError> errors)
     {
-        if (categoryId == null && optionId == null)
-        {
-            return;
-        }
-        if (categoryId is not Guid category || category == Guid.Empty)
-        {
-            errors.Add(Error($"{path}.{categoryProperty}", "category_id_required", "A category UUID is required when an option is selected."));
-            return;
-        }
-        if (!optionsByCategory.TryGetValue(category, out HashSet<Guid>? options))
-        {
-            errors.Add(Error($"{path}.{categoryProperty}", "category_not_found", $"No local category has UUID {category}."));
-            return;
-        }
-        if (optionId is not Guid option || option == Guid.Empty)
-        {
-            errors.Add(Error($"{path}.{optionProperty}", "option_id_required", "An option UUID is required when a category is selected."));
-            return;
-        }
-        if (!options.Contains(option))
-        {
-            errors.Add(Error($"{path}.{optionProperty}", "option_not_in_category", $"Option UUID {option} does not belong to category UUID {category}."));
-        }
+        ClassificationIssue? issue = ClassificationValidation.ValidateCategoryReference(
+            categoryId, optionId, optionsByCategory, path, categoryProperty, optionProperty);
+        if (issue != null) errors.Add(Error(issue.Property, issue.Code, issue.Message));
     }
 
     private static void ValidateOptionalReference(Guid? id, IReadOnlySet<Guid> knownIds, string property,
         string code, List<FieldMutationError> errors)
     {
-        if (id == null)
-        {
-            return;
-        }
-        if (id == Guid.Empty || !knownIds.Contains(id.Value))
-        {
+        if (!ClassificationValidation.IsValidOptionalReference(id, knownIds))
             errors.Add(Error(property, code, $"No local catalog definition has UUID {id}."));
-        }
     }
 
     private static FieldMutationError? FindReferences(SqliteConnection connection, SqliteTransaction transaction,
