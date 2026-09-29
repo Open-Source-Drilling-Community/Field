@@ -141,3 +141,11 @@ Publish ResourceClassification 0.1.0 before clean CI/Docker builds. For local
 pre-publication checks, supply the packed package directory as an explicit
 NuGet restore source alongside nuget.org; there are no conditional references.
 Model classification contract tests verify serialization and typed options.
+
+## Semantic REST and MCP contracts
+
+`SemanticSchemaFilter` publishes `x-osdc-semantic` from catalogue 0.7.0 on OpenAPI types and properties. MCP argument/output schemas use the same `ProviderSemantics` registry. Bindings include concept, curation status, role/reference where applicable, and resolved physical quantity/SI unit for measurable scalars. Metadata augments documentation; existing validation and payload shapes are retained.
+
+Contextual annotations on referenced OpenAPI properties use an `allOf` wrapper, because OpenAPI 3.0 ignores siblings of `$ref`. Where a shared Gaussian DTO is reused, `x-osdc-semantic-bindings` maps relative JSON Pointers to context-specific scalar meanings. MCP additionally annotates its inline scalar schemas. Do not assign one physical quantity globally to a shared Gaussian distribution.
+
+Semantic contract tests verify REST/MCP agreement, reviewed concept resolution, coordinate distinctions and contextual quantity bindings. Run the isolated test projects described in the root README; deployment verification requires the newly built images.

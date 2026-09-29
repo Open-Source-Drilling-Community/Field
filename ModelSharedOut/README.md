@@ -80,3 +80,9 @@ Review generation errors and diffs for schema-name collisions.
 ## Contributors
 
 - Eric Cayeux, NORCE Research
+
+## Preserving semantic metadata
+
+Refresh `FieldFullName.json` from the built Service OpenAPI output before running this generator. Refresh the sibling ClusterFullName.json input from that service's authoritative schema when its contract changes. The generator merges dependency snapshots first and `FieldFullName.json` last so older copies of shared types cannot overwrite this service's annotations.
+
+Run the existing `ModelSharedOut` program and confirm the overwrite prompt. Commit both generated `FieldMergedModel.cs` and `Service/wwwroot/json-schema/FieldMergedModel.json` with their schema inputs. `x-osdc-semantic` and contextual `x-osdc-semantic-bindings` remain in the merged JSON contract; generated C# carries the accompanying property documentation. Do not hand-edit generated model code. Build the full solution and run contract tests after regeneration.

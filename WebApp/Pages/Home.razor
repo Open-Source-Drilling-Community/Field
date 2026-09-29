@@ -98,6 +98,11 @@
 <MudPaper Class="mx-4 px-4 pa-6 mt-4" Elevation="2">
     <MudText Typo="Typo.h5" Class="mb-3">Conventions this microservice follows</MudText>
     <MudText Typo="Typo.body1" Class="mb-2">
+        Reference-point latitude and longitude use radians in the API. Riemannian north/east coordinates use metres
+        and differ from projected easting/northing. Ellipsoidal depths use metres, positive downward from WGS84;
+        the editor converts the selected display units and depth reference before saving.
+    </MudText>
+    <MudText Typo="Typo.body1" Class="mb-2">
         Field follows the same conventions as the other OSDC drilling microservices, so behavior learned on one
         transfers directly to the others. Resource identifiers are caller-generated UUIDs rather than server
         sequence numbers. Every mutation is checked with <b>optimistic concurrency</b>: an update or delete must echo

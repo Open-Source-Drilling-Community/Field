@@ -1,3 +1,4 @@
+using OSDC.DotnetLibraries.Drilling.SemanticCatalogue;
 using System;
 using System.Collections.Generic;
 
@@ -29,6 +30,7 @@ namespace OSDC.Drilling.Field.Model
         /// Required for Selected and forbidden for All. Every UUID must be
         /// non-empty, unique and identify an existing field.
         /// </summary>
+        [Semantic(Concepts.ResourceIdentifier)]
         public List<Guid>? FieldIDs { get; set; }
     }
 
@@ -162,14 +164,18 @@ namespace OSDC.Drilling.Field.Model
         /// <summary>
         /// Restored field UUIDs in document order.
         /// </summary>
+        [Semantic(Concepts.ResourceIdentifier)]
         public List<Guid> FieldIDs { get; set; } = [];
     }
 
     public sealed class FieldBatchCatalogMapping
     {
         public string Catalog { get; set; } = string.Empty;
+        [Semantic(Concepts.ResourceName)]
         public string Name { get; set; } = string.Empty;
+        [Semantic(Concepts.ResourceIdentifier)]
         public Guid SourceID { get; set; }
+        [Semantic(Concepts.ResourceIdentifier)]
         public Guid LocalID { get; set; }
         public string Resolution { get; set; } = string.Empty;
     }

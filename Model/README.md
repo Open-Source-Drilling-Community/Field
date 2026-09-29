@@ -153,3 +153,11 @@ Publish ResourceClassification 0.1.0 before clean CI/Docker builds. For local
 pre-publication checks, supply the packed package directory as an explicit
 NuGet restore source alongside nuget.org; there are no conditional references.
 Model classification contract tests verify serialization and typed options.
+
+## Semantic bindings (catalogue 0.7.0)
+
+`Semantic` attributes bind local models to the curated catalogue. `ProviderSemantics` supplies explicit bindings for inherited classification members and shared `MetaInfo`/`Point3DGlobalCoordinates` properties; shared DTOs remain package-owned. Resource UUIDs are distinct from symbolic identity values and external authority codes. Timestamps distinguish creation, modification and validity roles.
+
+`Point3DGlobalCoordinates.X/RiemannianNorth` and `Y/RiemannianEast` are WGS84 Riemannian arc coordinates (`PositionDrilling`, metres), not projected easting/northing. `Z/TVD` is ellipsoidal depth (`DepthDrilling`, metres, positive downward from WGS84); latitude/longitude use `PlaneAngleGeodesic`, radians. A reference point carries the `ReferenceLocation` role.
+
+Delineation margins use `LengthStandard` metres; top/bottom use WGS84 ellipsoidal depth with distinct boundary roles. Conversion easting/northing use `PositionDrilling` metres and the explicit projected-axis convention. Conversion latitude/longitude and depth are interpreted in the enclosing selected datum; only explicitly WGS84 results assert WGS84. A retained 2D depth does not prove that a vertical transformation occurred.

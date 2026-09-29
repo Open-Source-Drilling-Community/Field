@@ -255,3 +255,9 @@ Publish ResourceClassification 0.1.0 before clean CI/Docker builds. For local
 pre-publication checks, supply the packed package directory as an explicit
 NuGet restore source alongside nuget.org; there are no conditional references.
 Model classification contract tests verify serialization and typed options.
+
+## Curated semantic vocabulary
+
+The model, REST/OpenAPI and MCP contracts use `OSDC.DotnetLibraries.Drilling.SemanticCatalogue` **0.7.0**. Bindings cover fields, delineation geometry, coordinate conversions, identities, features and memberships. Schema annotations identify concepts, roles, references, physical quantities and canonical SI units. Resource classification implementations remain owned by `ResourceClassification` 0.1.0.
+
+These annotations preserve existing JSON property names, routes and persisted values. See [model binding details](Model/README.md) and [contract generation](ModelSharedOut/README.md). Build the Service and WebApp images from this revision to publish the updated contracts.

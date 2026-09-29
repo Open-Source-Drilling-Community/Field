@@ -123,3 +123,7 @@ Publish ResourceClassification 0.1.0 before clean CI/Docker builds. For local
 pre-publication checks, supply the packed package directory as an explicit
 NuGet restore source alongside nuget.org; there are no conditional references.
 Model classification contract tests verify serialization and typed options.
+
+## Semantic contract conventions
+
+The regenerated shared models follow SemanticCatalogue 0.7.0 descriptions. UI unit selectors remain presentation conversions: wire and stored angular values are radians and linear values are metres. WGS84 ellipsoidal depth is positive downward; display depth references must convert back before saving. Riemannian north/east coordinates are distinct from projected easting/northing. See the Model README for scalar quantity and uncertainty bindings.

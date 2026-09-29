@@ -171,3 +171,7 @@ The current work has been funded by the [Research Council of Norway](https://www
 ## Contributors
 
 - Eric Cayeux, NORCE Research
+
+## Semantic contract release
+
+Build this host with the regenerated shared model from the SemanticCatalogue 0.7.0 integration. Coordinate and unit conventions are described on Home and in the Model README. The catalogue dependency is an unconditional published NuGet reference through Model; no local-library fallback is required. Existing routes and stored JSON are unchanged.
