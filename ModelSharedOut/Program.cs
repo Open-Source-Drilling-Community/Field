@@ -213,7 +213,11 @@ class Program
                             },
                             GenerateClientClasses = true,
                             GenerateDtoTypes = true,
-                            GenerateOptionalParameters = true
+                            GenerateOptionalParameters = true,
+                            // Optimistic-concurrency timestamps are opaque tokens. The
+                            // default "s" format drops fractional seconds and makes an
+                            // unchanged token look stale at the service boundary.
+                            ParameterDateTimeFormat = "O"
                         };
                         var generator = new CSharpClientGenerator(nswDocument, settings);
                         var code = generator.GenerateFile();
