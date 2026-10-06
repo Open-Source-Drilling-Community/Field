@@ -39,6 +39,8 @@ Field trajectory and survey-run displays support:
 - field delineation overlays in both views, with each original line and its calculated boundaries controlled by one legend entry
 - WGS84-canonical overlay depths: cluster slots use cluster reference depth, then ground/mud-line depth, then converted 0 MSL; delineations use the average defined field ground/mud-line depth or converted 0 MSL
 
+Ellipse overlays call the Trajectory service's resource-specific SurveyRun or Trajectory endpoint. The service reconstructs authoritative uncertainty ancestry before returning ellipses, so the plots do not silently restart Wolff-de Wardt propagation from a tied or sidetrack resource.
+
 The cartographic converter uses the same complete, case-insensitive partial-name Field autocomplete for both forward and inverse conversion; entering no search text lists every Field that has a projection definition.
 
 ## Dependencies

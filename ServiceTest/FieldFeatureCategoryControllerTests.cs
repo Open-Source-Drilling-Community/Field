@@ -4,7 +4,7 @@ namespace OSDC.Drilling.Field.ServiceTest
 {
     public class FieldFeatureCategoryControllerTests
     {
-        private static string host = "https://localhost:5001/";
+        private static string host = Environment.GetEnvironmentVariable("OSDC_SERVICE_TEST_BASE_URL") ?? "https://localhost:5001/";
         private static string basePath = "Field/api/";
 
         [Test]

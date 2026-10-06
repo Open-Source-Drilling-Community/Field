@@ -1265,6 +1265,17 @@
             "type": "string",
             "nullable": true
           }
+        },
+        "x-osdc-semantic": {
+          "catalogue": "urn:osdc:semantic-catalogue",
+          "catalogueVersion": "0.15.0",
+          "concept": "urn:osdc:semantic:authority-identifier",
+          "curationStatus": "Reviewed",
+          "assertionSource": "provider-binding-registry",
+          "requiredContext": [
+            "authority namespace",
+            "object category"
+          ]
         }
       },
       "CatalogEntryStatus": {
@@ -1324,6 +1335,17 @@
           "IsLegacyCombinedDefinition": {
             "type": "boolean"
           }
+        },
+        "x-osdc-semantic": {
+          "catalogue": "urn:osdc:semantic-catalogue",
+          "catalogueVersion": "0.15.0",
+          "concept": "urn:osdc:semantic:catalog-entry-provenance",
+          "curationStatus": "Reviewed",
+          "assertionSource": "provider-binding-registry",
+          "requiredContext": [
+            "source catalogue",
+            "matching method"
+          ]
         }
       },
       "CatalogReference": {
@@ -1334,11 +1356,30 @@
         "properties": {
           "Id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Identifier": {
             "$ref": "#/components/schemas/AuthorityIdentifier"
@@ -1533,7 +1574,18 @@
           "Geocentric3D",
           "Other"
         ],
-        "type": "string"
+        "type": "string",
+        "x-osdc-semantic": {
+          "catalogue": "urn:osdc:semantic-catalogue",
+          "catalogueVersion": "0.15.0",
+          "concept": "urn:osdc:semantic:coordinate-operation-domain",
+          "curationStatus": "Reviewed",
+          "assertionSource": "provider-binding-registry",
+          "requiredContext": [
+            "operation",
+            "CRS axes"
+          ]
+        }
       },
       "CoordinateOperationParameterValue": {
         "required": [
@@ -1547,7 +1599,15 @@
           },
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Value": {
             "type": "number",
@@ -1563,7 +1623,15 @@
           },
           "UnitName": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:unit-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           }
         }
       },
@@ -1579,7 +1647,15 @@
           },
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Domain": {
             "$ref": "#/components/schemas/CoordinateOperationDomain"
@@ -1594,15 +1670,42 @@
         "properties": {
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Description": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-description",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "ReferenceEllipsoidId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Identifier": {
             "$ref": "#/components/schemas/AuthorityIdentifier"
@@ -1622,7 +1725,27 @@
           },
           "PrimeMeridianLongitude": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:prime-meridian-longitude",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "comparison meridian",
+                "reference",
+                "axis/sign convention"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "Origin": {
             "type": "string",
@@ -1634,17 +1757,59 @@
           },
           "RealizationEpoch": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:realization-epoch",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "authority realization description",
+                "epoch purpose",
+                "calendar and decimal-year convention",
+                "time scale",
+                "timestamp representation"
+              ]
+            }
           },
           "FrameReferenceEpoch": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:frame-reference-epoch",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "dynamic reference frame",
+                "epoch purpose",
+                "calendar and decimal-year convention",
+                "time scale",
+                "timestamp representation"
+              ]
+            }
           },
           "AnchorEpoch": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:anchor-epoch",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "anchor definition",
+                "epoch purpose",
+                "calendar and decimal-year convention",
+                "time scale",
+                "timestamp representation"
+              ]
+            }
           },
           "ConventionalReferenceSystem": {
             "type": "string",
@@ -1657,7 +1822,26 @@
           "EnsembleAccuracy": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:datum-ensemble-accuracy",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "ensemble members",
+                "accuracy definition"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "MemberDatumIds": {
             "type": "array",
@@ -1688,55 +1872,250 @@
         "properties": {
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Description": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-description",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "SourceDatumId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "TargetDatumId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Method": {
             "$ref": "#/components/schemas/GeodeticTransformationMethod"
           },
           "TranslationX": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geocentric-translation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "source and target frames",
+                "Cartesian axis",
+                "operation direction"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "TranslationY": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geocentric-translation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "source and target frames",
+                "Cartesian axis",
+                "operation direction"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "TranslationZ": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geocentric-translation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "source and target frames",
+                "Cartesian axis",
+                "operation direction"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "RotationX": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-rotation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "Cartesian axis",
+                "rotation convention",
+                "operation direction"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "RotationY": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-rotation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "Cartesian axis",
+                "rotation convention",
+                "operation direction"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "RotationZ": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-rotation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "Cartesian axis",
+                "rotation convention",
+                "operation direction"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "ScaleDifference": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-scale-difference",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "operation direction"
+              ],
+              "siUnit": "1",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "f81f6f40-0910-47e0-9769-56d8542d61e9",
+                "name": "HelmertScaleDifference",
+                "siUnitName": "dimensionless"
+              }
+            }
           },
           "Accuracy": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:coordinate-operation-accuracy",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "operation",
+                "accuracy definition and estimation basis"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "96058475-80c4-4394-b21a-afd2fb1594c8",
+                "name": "Length",
+                "siUnitName": "metre"
+              }
+            }
           },
           "AreaOfUse": {
             "type": "string",
@@ -1758,22 +2137,65 @@
         "properties": {
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Description": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-description",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Identifier": {
             "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SemiMajorAxis": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:semi-major-axis",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "InverseFlattening": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:inverse-flattening",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "ellipsoid definition",
+                "spherical representation"
+              ],
+              "siUnit": "1",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "2f4ba904-6f7d-4be7-abc8-602d37370b59",
+                "name": "InverseFlattening",
+                "siUnitName": "dimensionless"
+              }
+            }
           }
         }
       },
@@ -1786,11 +2208,30 @@
         "properties": {
           "Id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Identifier": {
             "$ref": "#/components/schemas/AuthorityIdentifier"
@@ -1822,11 +2263,33 @@
           },
           "SourceDatumId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "TargetDatumId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "IsReversible": {
             "type": "boolean"
@@ -1933,22 +2396,68 @@
         "properties": {
           "Id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Identifier": {
             "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SemiMajorAxis": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:semi-major-axis",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "InverseFlattening": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:inverse-flattening",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "ellipsoid definition",
+                "spherical representation"
+              ],
+              "siUnit": "1",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "2f4ba904-6f7d-4be7-abc8-602d37370b59",
+                "name": "InverseFlattening",
+                "siUnitName": "dimensionless"
+              }
+            }
           }
         }
       },
@@ -1961,19 +2470,57 @@
         "properties": {
           "Id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Description": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-description",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "ReferenceEllipsoidId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Identifier": {
             "$ref": "#/components/schemas/AuthorityIdentifier"
@@ -2020,7 +2567,27 @@
           },
           "PrimeMeridianLongitude": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:prime-meridian-longitude",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "comparison meridian",
+                "reference",
+                "axis/sign convention"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "Origin": {
             "type": "string",
@@ -2032,17 +2599,59 @@
           },
           "RealizationEpoch": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:realization-epoch",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "authority realization description",
+                "epoch purpose",
+                "calendar and decimal-year convention",
+                "time scale",
+                "timestamp representation"
+              ]
+            }
           },
           "FrameReferenceEpoch": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:frame-reference-epoch",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "dynamic reference frame",
+                "epoch purpose",
+                "calendar and decimal-year convention",
+                "time scale",
+                "timestamp representation"
+              ]
+            }
           },
           "AnchorEpoch": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:anchor-epoch",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "anchor definition",
+                "epoch purpose",
+                "calendar and decimal-year convention",
+                "time scale",
+                "timestamp representation"
+              ]
+            }
           },
           "ConventionalReferenceSystem": {
             "type": "string",
@@ -2055,7 +2664,26 @@
           "EnsembleAccuracy": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:datum-ensemble-accuracy",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "ensemble members",
+                "accuracy definition"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "MemberDatumIds": {
             "type": "array",
@@ -2088,6 +2716,17 @@
           "CatalogStatus": {
             "$ref": "#/components/schemas/CatalogEntryStatus"
           }
+        },
+        "x-osdc-semantic": {
+          "catalogue": "urn:osdc:semantic-catalogue",
+          "catalogueVersion": "0.15.0",
+          "concept": "urn:osdc:semantic:geodetic-reference-object",
+          "curationStatus": "Reviewed",
+          "assertionSource": "provider-binding-registry",
+          "requiredContext": [
+            "reference-object identity",
+            "reference-object type"
+          ]
         }
       },
       "GeodeticDatumSummary": {
@@ -2100,15 +2739,42 @@
         "properties": {
           "Id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Description": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-description",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Identifier": {
             "$ref": "#/components/schemas/AuthorityIdentifier"
@@ -2140,7 +2806,27 @@
           },
           "PrimeMeridianLongitude": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:prime-meridian-longitude",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "comparison meridian",
+                "reference",
+                "axis/sign convention"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "Origin": {
             "type": "string",
@@ -2152,17 +2838,59 @@
           },
           "RealizationEpoch": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:realization-epoch",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "authority realization description",
+                "epoch purpose",
+                "calendar and decimal-year convention",
+                "time scale",
+                "timestamp representation"
+              ]
+            }
           },
           "FrameReferenceEpoch": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:frame-reference-epoch",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "dynamic reference frame",
+                "epoch purpose",
+                "calendar and decimal-year convention",
+                "time scale",
+                "timestamp representation"
+              ]
+            }
           },
           "AnchorEpoch": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:anchor-epoch",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "anchor definition",
+                "epoch purpose",
+                "calendar and decimal-year convention",
+                "time scale",
+                "timestamp representation"
+              ]
+            }
           },
           "ConventionalReferenceSystem": {
             "type": "string",
@@ -2175,7 +2903,26 @@
           "EnsembleAccuracy": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:datum-ensemble-accuracy",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "ensemble members",
+                "accuracy definition"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "MemberDatumIds": {
             "type": "array",
@@ -2215,21 +2962,106 @@
         "properties": {
           "Latitude": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geodetic-latitude",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "reference",
+                "axis/sign convention"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "Longitude": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geodetic-longitude",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "reference",
+                "axis/sign convention"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "Depth": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:ellipsoidal-depth",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "reference",
+                "axis/sign convention"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion.DrillingEngineering",
+                "id": "c0d965b2-a153-420a-9d03-7a2a272d619e",
+                "name": "DepthDrilling",
+                "siUnitName": "metre"
+              }
+            }
           },
           "CoordinateEpochUtc": {
             "type": "string",
             "format": "date-time",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:coordinate-epoch",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "coordinate set",
+                "epoch purpose",
+                "calendar and decimal-year convention",
+                "time scale",
+                "timestamp representation"
+              ]
+            }
           }
+        },
+        "x-osdc-semantic": {
+          "catalogue": "urn:osdc:semantic-catalogue",
+          "catalogueVersion": "0.15.0",
+          "concept": "urn:osdc:semantic:geodetic-position",
+          "curationStatus": "Reviewed",
+          "assertionSource": "provider-binding-registry",
+          "requiredContext": [
+            "reference ellipsoid",
+            "angular units",
+            "vertical sign",
+            "reference meridian",
+            "vertical representation and sign"
+          ]
         }
       },
       "GeodeticReferenceObjectType": {
@@ -2249,23 +3081,72 @@
         "properties": {
           "Id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Description": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-description",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "SourceDatumId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "TargetDatumId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Method": {
             "$ref": "#/components/schemas/GeodeticTransformationMethod"
@@ -2310,36 +3191,193 @@
           },
           "TranslationX": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geocentric-translation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "source and target frames",
+                "Cartesian axis",
+                "operation direction"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "TranslationY": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geocentric-translation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "source and target frames",
+                "Cartesian axis",
+                "operation direction"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "TranslationZ": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geocentric-translation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "source and target frames",
+                "Cartesian axis",
+                "operation direction"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "RotationX": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-rotation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "Cartesian axis",
+                "rotation convention",
+                "operation direction"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "RotationY": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-rotation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "Cartesian axis",
+                "rotation convention",
+                "operation direction"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "RotationZ": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-rotation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "Cartesian axis",
+                "rotation convention",
+                "operation direction"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "ScaleDifference": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-scale-difference",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "operation direction"
+              ],
+              "siUnit": "1",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "f81f6f40-0910-47e0-9769-56d8542d61e9",
+                "name": "HelmertScaleDifference",
+                "siUnitName": "dimensionless"
+              }
+            }
           },
           "Accuracy": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:coordinate-operation-accuracy",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "operation",
+                "accuracy definition and estimation basis"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "96058475-80c4-4394-b21a-afd2fb1594c8",
+                "name": "Length",
+                "siUnitName": "metre"
+              }
+            }
           },
           "AreaOfUse": {
             "type": "string",
@@ -2374,6 +3412,21 @@
           "CatalogStatus": {
             "$ref": "#/components/schemas/CatalogEntryStatus"
           }
+        },
+        "x-osdc-semantic": {
+          "catalogue": "urn:osdc:semantic-catalogue",
+          "catalogueVersion": "0.15.0",
+          "concept": "urn:osdc:semantic:geodetic-transformation",
+          "curationStatus": "Reviewed",
+          "assertionSource": "provider-binding-registry",
+          "requiredContext": [
+            "source reference object",
+            "target reference object",
+            "source CRS",
+            "target CRS",
+            "operation method and direction",
+            "area of use"
+          ]
         }
       },
       "GeodeticTransformationMethod": {
@@ -2395,15 +3448,42 @@
         "properties": {
           "Id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Description": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-description",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Identifier": {
             "$ref": "#/components/schemas/AuthorityIdentifier"
@@ -2455,36 +3535,193 @@
           },
           "TranslationX": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geocentric-translation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "source and target frames",
+                "Cartesian axis",
+                "operation direction"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "TranslationY": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geocentric-translation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "source and target frames",
+                "Cartesian axis",
+                "operation direction"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "TranslationZ": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geocentric-translation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "source and target frames",
+                "Cartesian axis",
+                "operation direction"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "RotationX": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-rotation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "Cartesian axis",
+                "rotation convention",
+                "operation direction"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "RotationY": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-rotation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "Cartesian axis",
+                "rotation convention",
+                "operation direction"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "RotationZ": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-rotation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "Cartesian axis",
+                "rotation convention",
+                "operation direction"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "ScaleDifference": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-scale-difference",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "operation direction"
+              ],
+              "siUnit": "1",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "f81f6f40-0910-47e0-9769-56d8542d61e9",
+                "name": "HelmertScaleDifference",
+                "siUnitName": "dimensionless"
+              }
+            }
           },
           "Accuracy": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:coordinate-operation-accuracy",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "operation",
+                "accuracy definition and estimation basis"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "96058475-80c4-4394-b21a-afd2fb1594c8",
+                "name": "Length",
+                "siUnitName": "metre"
+              }
+            }
           },
           "AccuracyMeaning": {
             "type": "string",
@@ -2517,6 +3754,16 @@
             "type": "string",
             "nullable": true
           }
+        },
+        "x-osdc-semantic": {
+          "catalogue": "urn:osdc:semantic-catalogue",
+          "catalogueVersion": "0.15.0",
+          "concept": "urn:osdc:semantic:geodetic-usage",
+          "curationStatus": "Reviewed",
+          "assertionSource": "provider-binding-registry",
+          "requiredContext": [
+            "geodetic definition"
+          ]
         }
       },
       "GeographicBoundingBox": {
@@ -2524,20 +3771,107 @@
         "properties": {
           "SouthLatitude": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geodetic-latitude",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "reference",
+                "axis/sign convention"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "NorthLatitude": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geodetic-latitude",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "reference",
+                "axis/sign convention"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "WestLongitude": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geodetic-longitude",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "reference",
+                "axis/sign convention"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "EastLongitude": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geodetic-longitude",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "reference",
+                "axis/sign convention"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           }
+        },
+        "x-osdc-semantic": {
+          "catalogue": "urn:osdc:semantic-catalogue",
+          "catalogueVersion": "0.15.0",
+          "concept": "urn:osdc:semantic:geographic-bounding-box",
+          "curationStatus": "Reviewed",
+          "assertionSource": "provider-binding-registry",
+          "requiredContext": [
+            "geographic reference",
+            "antimeridian convention"
+          ]
         }
       },
       "ReferenceEllipsoid": {
@@ -2549,26 +3883,80 @@
         "properties": {
           "Id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Description": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-description",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Identifier": {
             "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SemiMajorAxis": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:semi-major-axis",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "InverseFlattening": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:inverse-flattening",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "ellipsoid definition",
+                "spherical representation"
+              ],
+              "siUnit": "1",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "2f4ba904-6f7d-4be7-abc8-602d37370b59",
+                "name": "InverseFlattening",
+                "siUnitName": "dimensionless"
+              }
+            }
           },
           "IsBuiltIn": {
             "type": "boolean"
@@ -2622,8 +4010,24 @@
           "SemiMinorAxis": {
             "type": "number",
             "format": "double",
-            "readOnly": true
+            "readOnly": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:semi-minor-axis",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           }
+        },
+        "x-osdc-semantic": {
+          "catalogue": "urn:osdc:semantic-catalogue",
+          "catalogueVersion": "0.15.0",
+          "concept": "urn:osdc:semantic:reference-ellipsoid",
+          "curationStatus": "Reviewed",
+          "assertionSource": "provider-binding-registry",
+          "requiredContext": [ ]
         }
       },
       "ReferenceEllipsoidSummary": {
@@ -2635,30 +4039,92 @@
         "properties": {
           "Id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Description": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-description",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Identifier": {
             "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SemiMajorAxis": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:semi-major-axis",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "InverseFlattening": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:inverse-flattening",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "ellipsoid definition",
+                "spherical representation"
+              ],
+              "siUnit": "1",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "2f4ba904-6f7d-4be7-abc8-602d37370b59",
+                "name": "InverseFlattening",
+                "siUnitName": "dimensionless"
+              }
+            }
           },
           "SemiMinorAxis": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:semi-minor-axis",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "SourceUnit": {
             "$ref": "#/components/schemas/AuthorityIdentifier"
@@ -2698,11 +4164,33 @@
         "properties": {
           "SourceDatumId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "TargetDatumId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Positions": {
             "type": "array",
@@ -2769,11 +4257,33 @@
         "properties": {
           "SourceDatumId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "TargetDatumId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Positions": {
             "type": "array",
@@ -2791,7 +4301,18 @@
               "type": "string",
               "format": "uuid"
             },
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "SelectionToken": {
             "type": "string",
@@ -2803,6 +4324,18 @@
           "DepthPolicy": {
             "$ref": "#/components/schemas/DepthTransformationPolicy"
           }
+        },
+        "x-osdc-semantic": {
+          "catalogue": "urn:osdc:semantic-catalogue",
+          "catalogueVersion": "0.15.0",
+          "concept": "urn:osdc:semantic:coordinate-transformation-request",
+          "curationStatus": "Reviewed",
+          "assertionSource": "provider-binding-registry",
+          "requiredContext": [
+            "source and target references",
+            "coordinate epochs when required",
+            "selection and depth policies"
+          ]
         }
       },
       "TransformCoordinatesResponse": {
@@ -2823,7 +4356,18 @@
             "items": {
               "$ref": "#/components/schemas/TransformationReference"
             },
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:transformation-path",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "source and target",
+                "operation order and direction"
+              ]
+            }
           },
           "Positions": {
             "type": "array",
@@ -2857,6 +4401,18 @@
             },
             "nullable": true
           }
+        },
+        "x-osdc-semantic": {
+          "catalogue": "urn:osdc:semantic-catalogue",
+          "catalogueVersion": "0.15.0",
+          "concept": "urn:osdc:semantic:coordinate-transformation-response",
+          "curationStatus": "Reviewed",
+          "assertionSource": "provider-binding-registry",
+          "requiredContext": [
+            "source and target references",
+            "depth policy",
+            "warnings and applicability"
+          ]
         }
       },
       "TransformationApplicability": {
@@ -2910,7 +4466,27 @@
           "CombinedAccuracy": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:transformation-path-accuracy",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "path",
+                "aggregation rule",
+                "operation accuracy definitions"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "96058475-80c4-4394-b21a-afd2fb1594c8",
+                "name": "Length",
+                "siUnitName": "metre"
+              }
+            }
           },
           "AccuracyMeaning": {
             "type": "string",
@@ -2924,6 +4500,18 @@
             },
             "nullable": true
           }
+        },
+        "x-osdc-semantic": {
+          "catalogue": "urn:osdc:semantic-catalogue",
+          "catalogueVersion": "0.15.0",
+          "concept": "urn:osdc:semantic:transformation-path-candidate",
+          "curationStatus": "Reviewed",
+          "assertionSource": "provider-binding-registry",
+          "requiredContext": [
+            "input positions and epochs",
+            "runtime resources",
+            "catalogue revision"
+          ]
         }
       },
       "TransformationReference": {
@@ -2934,11 +4522,30 @@
         "properties": {
           "Id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Identifier": {
             "$ref": "#/components/schemas/AuthorityIdentifier"
@@ -2975,7 +4582,26 @@
           "Accuracy": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:coordinate-operation-accuracy",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "operation",
+                "accuracy definition and estimation basis"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "96058475-80c4-4394-b21a-afd2fb1594c8",
+                "name": "Length",
+                "siUnitName": "metre"
+              }
+            }
           },
           "AccuracyMeaning": {
             "type": "string",
@@ -3013,15 +4639,42 @@
         "properties": {
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Description": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-description",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "ReferenceEllipsoidId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Identifier": {
             "$ref": "#/components/schemas/AuthorityIdentifier"
@@ -3041,7 +4694,27 @@
           },
           "PrimeMeridianLongitude": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:prime-meridian-longitude",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "comparison meridian",
+                "reference",
+                "axis/sign convention"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "Origin": {
             "type": "string",
@@ -3053,17 +4726,59 @@
           },
           "RealizationEpoch": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:realization-epoch",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "authority realization description",
+                "epoch purpose",
+                "calendar and decimal-year convention",
+                "time scale",
+                "timestamp representation"
+              ]
+            }
           },
           "FrameReferenceEpoch": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:frame-reference-epoch",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "dynamic reference frame",
+                "epoch purpose",
+                "calendar and decimal-year convention",
+                "time scale",
+                "timestamp representation"
+              ]
+            }
           },
           "AnchorEpoch": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:anchor-epoch",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "anchor definition",
+                "epoch purpose",
+                "calendar and decimal-year convention",
+                "time scale",
+                "timestamp representation"
+              ]
+            }
           },
           "ConventionalReferenceSystem": {
             "type": "string",
@@ -3076,7 +4791,26 @@
           "EnsembleAccuracy": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:datum-ensemble-accuracy",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "ensemble members",
+                "accuracy definition"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "MemberDatumIds": {
             "type": "array",
@@ -3107,55 +4841,250 @@
         "properties": {
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Description": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-description",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "SourceDatumId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "TargetDatumId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ]
+            }
           },
           "Method": {
             "$ref": "#/components/schemas/GeodeticTransformationMethod"
           },
           "TranslationX": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geocentric-translation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "source and target frames",
+                "Cartesian axis",
+                "operation direction"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "TranslationY": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geocentric-translation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "source and target frames",
+                "Cartesian axis",
+                "operation direction"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "TranslationZ": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:geocentric-translation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "source and target frames",
+                "Cartesian axis",
+                "operation direction"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "3716ad37-2b0c-4c0b-8936-6c9cdb47ad1d",
+                "name": "LengthStandard",
+                "siUnitName": "metre"
+              }
+            }
           },
           "RotationX": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-rotation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "Cartesian axis",
+                "rotation convention",
+                "operation direction"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "RotationY": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-rotation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "Cartesian axis",
+                "rotation convention",
+                "operation direction"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "RotationZ": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-rotation",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "Cartesian axis",
+                "rotation convention",
+                "operation direction"
+              ],
+              "siUnit": "rad",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "fc88c9ff-fa0a-4406-b397-015f3ca062bc",
+                "name": "PlaneAngleGeodesic",
+                "siUnitName": "radian"
+              }
+            }
           },
           "ScaleDifference": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:helmert-scale-difference",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "operation direction"
+              ],
+              "siUnit": "1",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "f81f6f40-0910-47e0-9769-56d8542d61e9",
+                "name": "HelmertScaleDifference",
+                "siUnitName": "dimensionless"
+              }
+            }
           },
           "Accuracy": {
             "type": "number",
             "format": "double",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:coordinate-operation-accuracy",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "operation",
+                "accuracy definition and estimation basis"
+              ],
+              "siUnit": "m",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "96058475-80c4-4394-b21a-afd2fb1594c8",
+                "name": "Length",
+                "siUnitName": "metre"
+              }
+            }
           },
           "AreaOfUse": {
             "type": "string",
@@ -3177,22 +5106,65 @@
         "properties": {
           "Name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-name",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Description": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:resource-description",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "Identifier": {
             "$ref": "#/components/schemas/AuthorityIdentifier"
           },
           "SemiMajorAxis": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:semi-major-axis",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [ ]
+            }
           },
           "InverseFlattening": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.15.0",
+              "concept": "urn:osdc:semantic:inverse-flattening",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-binding-registry",
+              "requiredContext": [
+                "ellipsoid definition",
+                "spherical representation"
+              ],
+              "siUnit": "1",
+              "physicalQuantityStatus": "resolved",
+              "physicalQuantity": {
+                "catalogue": "Conversion",
+                "id": "2f4ba904-6f7d-4be7-abc8-602d37370b59",
+                "name": "InverseFlattening",
+                "siUnitName": "dimensionless"
+              }
+            }
           }
         }
       },

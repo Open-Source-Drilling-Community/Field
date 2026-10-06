@@ -1,5 +1,7 @@
 # ModelSharedOut Project
 
+Generated source and merged OpenAPI outputs preserve the service's structured `x-osdc-semantic` extensions and must be refreshed after semantic binding changes.
+
 ModelSharedOut produces the merged Field OpenAPI document and the generated C#
 client/DTO contract consumed by the WebApp and tests.
 

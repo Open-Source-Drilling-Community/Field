@@ -1,4 +1,3 @@
-using Model = OSDC.Drilling.Field.Model;
 using System;
 using System.Text.Json.Nodes;
 
@@ -6,30 +5,6 @@ namespace OSDC.Drilling.Field.Service.Mcp.Tools;
 
 internal static class McpToolArgumentHelpers
 {
-    // All domain schemas are annotated from the same model bindings as REST.
-    private static JsonObject CreateFieldObjectSchema(bool includeCalculatedBoundaryLines = true) => Model.ProviderSemantics.Annotate(CreateFieldObjectSchemaRaw(includeCalculatedBoundaryLines), typeof(Model.Field));
-    private static JsonObject CreateFieldLightSchema() => Model.ProviderSemantics.Annotate(CreateFieldLightSchemaRaw(), typeof(Model.FieldLight));
-    private static JsonObject CreateNamedDefinitionSchema(string entity) => Model.ProviderSemantics.Annotate(CreateNamedDefinitionSchemaRaw(entity), entity == "field identity" ? typeof(Model.FieldIdentity) : typeof(Model.FieldDelineationLineType));
-    private static JsonObject CreateCategorySchema(string kind) => Model.ProviderSemantics.Annotate(CreateCategorySchemaRaw(kind), kind == "feature" ? typeof(Model.FieldFeatureCategory) : typeof(Model.FieldMembershipCategory));
-    private static JsonObject CreateCategoryAssignmentSchema(string kind) => Model.ProviderSemantics.Annotate(CreateCategoryAssignmentSchemaRaw(kind), kind == "Feature" ? typeof(Model.FieldFeatureAssignment) : typeof(Model.FieldMembershipAssignment));
-    private static JsonObject CreateMetaInfoSchema(string resource) => Model.ProviderSemantics.Annotate(CreateMetaInfoSchemaRaw(resource), typeof(OSDC.DotnetLibraries.General.DataManagement.MetaInfo));
-    private static JsonObject CreateIdentityAssignmentSchema() => Model.ProviderSemantics.Annotate(CreateIdentityAssignmentSchemaRaw(), typeof(Model.FieldIdentityAssignment));
-    private static JsonObject CreateDelineationLineSchema(bool includeCalculatedBoundaryLines = true) => Model.ProviderSemantics.Annotate(CreateDelineationLineSchemaRaw(includeCalculatedBoundaryLines), typeof(Model.FieldDelineationLine));
-    private static JsonObject CreateBoundaryLineSchema() => Model.ProviderSemantics.Annotate(CreateBoundaryLineSchemaRaw(), typeof(Model.FieldDelineationBoundaryLine));
-    private static JsonObject CreatePointSchema(string description) => Model.ProviderSemantics.Annotate(CreatePointSchemaRaw(description), typeof(OSDC.DotnetLibraries.General.Math.Point3DGlobalCoordinates));
-    public static JsonObject CreateFieldForwardConversionSchema() => Model.ProviderSemantics.Annotate(CreateFieldForwardConversionSchemaRaw(), typeof(Model.FieldForwardConversionRequest));
-    public static JsonObject CreateFieldInverseConversionSchema() => Model.ProviderSemantics.Annotate(CreateFieldInverseConversionSchemaRaw(), typeof(Model.FieldInverseConversionRequest));
-    private static JsonObject CreateCatalogReferenceSchema() => Model.ProviderSemantics.Annotate(CreateCatalogReferenceSchemaRaw(), typeof(Model.FieldCatalogReference));
-    private static JsonObject CreateConversionPositionResultSchema() => Model.ProviderSemantics.Annotate(CreateConversionPositionResultSchemaRaw(), typeof(Model.FieldCoordinateConversionPositionResult));
-    private static JsonObject CreateGeographicCoordinateSchema(bool nullable) => Model.ProviderSemantics.Annotate(CreateGeographicCoordinateSchemaRaw(nullable), typeof(Model.FieldGeographicCoordinate));
-    private static JsonObject CreateBatchDocumentSchema(int minimumFields) => Model.ProviderSemantics.Annotate(CreateBatchDocumentSchemaRaw(minimumFields), typeof(Model.FieldBatchExportDocument));
-    public static JsonObject CreateFieldCoordinateConversionOutputSchema()
-    {
-        var schema = CreateFieldCoordinateConversionOutputSchemaRaw();
-        Model.ProviderSemantics.Annotate(schema["properties"]!["data"]!.AsObject(), typeof(Model.FieldCoordinateConversionResponse));
-        return schema;
-    }
-
     public static JsonObject CreateEmptySchema() => new()
     {
         ["type"] = "object",
@@ -59,11 +34,11 @@ internal static class McpToolArgumentHelpers
     }
 
     public static JsonObject CreateFieldSchema(bool includeId = false) =>
-        WrapBody("field", CreateFieldObjectSchema(includeCalculatedBoundaryLines: false), includeId, "field.MetaInfo.ID");
+        WrapBody("field", Model.ProviderSemantics.Annotate(CreateFieldObjectSchema(includeCalculatedBoundaryLines: false), typeof(Model.Field)), includeId, "field.MetaInfo.ID");
 
-    public static JsonObject CreateFieldResourceSchema() => CreateFieldObjectSchema();
-    public static JsonObject CreateFieldLightResourceSchema() => CreateFieldLightSchema();
-    public static JsonObject CreateFieldDelineationLineTypeResourceSchema() => CreateNamedDefinitionSchema("field delineation line type");
+    public static JsonObject CreateFieldResourceSchema() => Model.ProviderSemantics.Annotate(CreateFieldObjectSchema(), typeof(Model.Field));
+    public static JsonObject CreateFieldLightResourceSchema() => Model.ProviderSemantics.Annotate(CreateFieldLightSchema(), typeof(Model.FieldLight));
+    public static JsonObject CreateFieldDelineationLineTypeResourceSchema() => Model.ProviderSemantics.Annotate(CreateNamedDefinitionSchema("field delineation line type"), typeof(Model.FieldDelineationLineType));
     public static JsonObject CreateFieldFeatureCategoryResourceSchema() => CreateCategorySchema("feature");
     public static JsonObject CreateFieldIdentityResourceSchema() => CreateNamedDefinitionSchema("field identity");
     public static JsonObject CreateFieldMembershipCategoryResourceSchema() => CreateCategorySchema("membership");
@@ -87,7 +62,7 @@ internal static class McpToolArgumentHelpers
     public static JsonObject CreateResourceListOutputSchema(JsonObject resourceSchema) => SuccessEnvelope(
         ArraySchema("Stored resources.", resourceSchema));
 
-    public static JsonObject CreateFieldForwardConversionSchemaRaw() => JsonNode.Parse("""
+    public static JsonObject CreateFieldForwardConversionSchema() => Model.ProviderSemantics.Annotate(JsonNode.Parse("""
     {
       "type":"object",
       "properties":{
@@ -101,9 +76,9 @@ internal static class McpToolArgumentHelpers
       "additionalProperties":false,
       "$defs":{"transformation":{"type":"object","properties":{"SelectionPolicy":{"type":"string","enum":["RequireUnambiguous","FirstAvailable","ExplicitPath"],"default":"RequireUnambiguous"},"TransformationPathIDs":{"type":"array","items":{"type":"string","format":"uuid"}},"SelectionToken":{"type":"string"},"ApplicabilityPolicy":{"type":"string","enum":["RequireApplicable","AllowUnknown"],"default":"RequireApplicable"},"DepthPolicy":{"type":"string","enum":["PreservePhysicalPoint","AllowUntransformedDepthFor2D"],"default":"AllowUntransformedDepthFor2D"}},"additionalProperties":false}}
     }
-    """)!.AsObject();
+    """)!.AsObject(), typeof(Model.FieldForwardConversionRequest));
 
-    public static JsonObject CreateFieldInverseConversionSchemaRaw() => JsonNode.Parse("""
+    public static JsonObject CreateFieldInverseConversionSchema() => Model.ProviderSemantics.Annotate(JsonNode.Parse("""
     {
       "type":"object",
       "properties":{
@@ -116,9 +91,9 @@ internal static class McpToolArgumentHelpers
       "additionalProperties":false,
       "$defs":{"transformation":{"type":"object","properties":{"SelectionPolicy":{"type":"string","enum":["RequireUnambiguous","FirstAvailable","ExplicitPath"],"default":"RequireUnambiguous"},"TransformationPathIDs":{"type":"array","items":{"type":"string","format":"uuid"}},"SelectionToken":{"type":"string"},"ApplicabilityPolicy":{"type":"string","enum":["RequireApplicable","AllowUnknown"],"default":"RequireApplicable"},"DepthPolicy":{"type":"string","enum":["PreservePhysicalPoint","AllowUntransformedDepthFor2D"],"default":"AllowUntransformedDepthFor2D"}},"additionalProperties":false}}
     }
-    """)!.AsObject();
+    """)!.AsObject(), typeof(Model.FieldInverseConversionRequest));
 
-    public static JsonObject CreateFieldCoordinateConversionOutputSchemaRaw() => SuccessEnvelope(new JsonObject
+    public static JsonObject CreateFieldCoordinateConversionOutputSchema() => SuccessEnvelope(Model.ProviderSemantics.Annotate(new JsonObject
     {
         ["type"] = "object",
         ["properties"] = new JsonObject
@@ -143,7 +118,7 @@ internal static class McpToolArgumentHelpers
         },
         ["required"] = new JsonArray("FieldID", "ProjectionDefinition", "ProjectionDatum", "Wgs84Datum", "ApiAxisConvention", "Positions", "Warnings"),
         ["additionalProperties"] = false
-    });
+    }, typeof(Model.FieldCoordinateConversionResponse)));
 
     public static JsonObject CreateFieldDelineationLineTypeSchema(bool includeId = false) =>
         WrapBody("fieldDelineationLineType", CreateNamedDefinitionSchema("field delineation line type"), includeId, "fieldDelineationLineType.MetaInfo.ID");
@@ -224,7 +199,7 @@ internal static class McpToolArgumentHelpers
         ["additionalProperties"] = false
     });
 
-    private static JsonObject CreateBatchDocumentSchemaRaw(int minimumFields)
+    private static JsonObject CreateBatchDocumentSchema(int minimumFields)
     {
         JsonObject dependencies = new()
         {
@@ -308,7 +283,7 @@ internal static class McpToolArgumentHelpers
         };
     }
 
-    private static JsonObject CreateFieldObjectSchemaRaw(bool includeCalculatedBoundaryLines = true) => new()
+    private static JsonObject CreateFieldObjectSchema(bool includeCalculatedBoundaryLines = true) => new()
     {
         ["type"] = "object",
         ["description"] = "Complete Field resource. MetaInfo.ID must be a caller-generated, non-empty UUID; ProjectionDefinitionID selects the EarthCartographicProjection definition used for stateless conversion.",
@@ -330,7 +305,7 @@ internal static class McpToolArgumentHelpers
         ["additionalProperties"] = false
     };
 
-    private static JsonObject CreateFieldLightSchemaRaw() => new()
+    private static JsonObject CreateFieldLightSchema() => new()
     {
         ["type"] = "object",
         ["properties"] = new JsonObject
@@ -345,7 +320,7 @@ internal static class McpToolArgumentHelpers
         ["additionalProperties"] = false
     };
 
-    private static JsonObject CreateCatalogReferenceSchemaRaw() => new()
+    private static JsonObject CreateCatalogReferenceSchema() => new()
     {
         ["type"] = "object",
         ["properties"] = new JsonObject
@@ -359,7 +334,7 @@ internal static class McpToolArgumentHelpers
         ["additionalProperties"] = false
     };
 
-    private static JsonObject CreateConversionPositionResultSchemaRaw() => new()
+    private static JsonObject CreateConversionPositionResultSchema() => new()
     {
         ["type"] = "object",
         ["properties"] = new JsonObject
@@ -387,7 +362,7 @@ internal static class McpToolArgumentHelpers
         ["additionalProperties"] = false
     };
 
-    private static JsonObject CreateGeographicCoordinateSchemaRaw(bool nullable)
+    private static JsonObject CreateGeographicCoordinateSchema(bool nullable)
     {
         JsonObject schema = new()
         {
@@ -403,7 +378,7 @@ internal static class McpToolArgumentHelpers
         return schema;
     }
 
-    private static JsonObject CreateNamedDefinitionSchemaRaw(string entity) => new()
+    private static JsonObject CreateNamedDefinitionSchema(string entity) => new()
     {
         ["type"] = "object",
         ["description"] = $"Complete {entity} definition. MetaInfo.ID must be a caller-generated, non-empty UUID.",
@@ -418,7 +393,7 @@ internal static class McpToolArgumentHelpers
         ["additionalProperties"] = false
     };
 
-    private static JsonObject CreateCategorySchemaRaw(string kind) => new()
+    private static JsonObject CreateCategorySchema(string kind) => new()
     {
         ["type"] = "object",
         ["description"] = $"Definition of a field {kind} category and its allowed options. MetaInfo.ID must be a caller-generated, non-empty UUID.",
@@ -436,7 +411,7 @@ internal static class McpToolArgumentHelpers
         ["additionalProperties"] = false
     };
 
-    private static JsonObject CreateMetaInfoSchemaRaw(string resource) => new()
+    private static JsonObject CreateMetaInfoSchema(string resource) => new()
     {
         ["type"] = "object",
         ["description"] = $"Identity and optional HTTP location metadata for the {resource}.",
@@ -451,7 +426,7 @@ internal static class McpToolArgumentHelpers
         ["additionalProperties"] = false
     };
 
-    private static JsonObject CreateCategoryAssignmentSchemaRaw(string kind) => new()
+    private static JsonObject CreateCategoryAssignmentSchema(string kind) => new()
     {
         ["type"] = "object",
         ["description"] = $"Selection of one field {kind.ToLowerInvariant()} option, optionally constrained to a validity interval.",
@@ -467,7 +442,7 @@ internal static class McpToolArgumentHelpers
         ["additionalProperties"] = false
     };
 
-    private static JsonObject CreateIdentityAssignmentSchemaRaw() => new()
+    private static JsonObject CreateIdentityAssignmentSchema() => new()
     {
         ["type"] = "object",
         ["description"] = "A field-specific value for a defined FieldIdentity.",
@@ -494,7 +469,7 @@ internal static class McpToolArgumentHelpers
         ["additionalProperties"] = false
     };
 
-    private static JsonObject CreateDelineationLineSchemaRaw(bool includeCalculatedBoundaryLines = true)
+    private static JsonObject CreateDelineationLineSchema(bool includeCalculatedBoundaryLines = true)
     {
         JsonObject properties = new()
         {
@@ -521,7 +496,7 @@ internal static class McpToolArgumentHelpers
         };
     }
 
-    private static JsonObject CreateBoundaryLineSchemaRaw() => new()
+    private static JsonObject CreateBoundaryLineSchema() => new()
     {
         ["type"] = "object",
         ["description"] = "A boundary line calculated by the service from a delineation line and its margin.",
@@ -536,7 +511,7 @@ internal static class McpToolArgumentHelpers
         ["additionalProperties"] = false
     };
 
-    private static JsonObject CreatePointSchemaRaw(string description) => new()
+    private static JsonObject CreatePointSchema(string description) => new()
     {
         ["type"] = new JsonArray { "object", "null" },
         ["description"] = description + " Latitude/Longitude are radians; Riemannian coordinates and true vertical depth are meters.",

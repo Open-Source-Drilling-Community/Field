@@ -1,5 +1,5 @@
-using OSDC.DotnetLibraries.Drilling.SemanticCatalogue;
 using OSDC.DotnetLibraries.General.Math;
+using OSDC.DotnetLibraries.Drilling.SemanticCatalogue;
 using System;
 using System.Collections.Generic;
 
@@ -11,44 +11,37 @@ namespace OSDC.Drilling.Field.Model
         /// <summary>
         /// stable identifier for the delineation line
         /// </summary>
-        [Semantic(Concepts.ResourceIdentifier)]
-        public Guid ID { get; set; }
+        [Semantic(Concepts.ResourceIdentifier)] public Guid ID { get; set; }
 
         /// <summary>
         /// reference to the standalone delineation line type
         /// </summary>
-        [Semantic(Concepts.ResourceIdentifier)]
-        public Guid? DelineationLineTypeID { get; set; }
+        [Semantic(Concepts.ResourceIdentifier)] public Guid? DelineationLineTypeID { get; set; }
 
         /// <summary>
         /// user-defined name of the delineation line
         /// </summary>
-        [Semantic(Concepts.ResourceName)]
-        public string? Name { get; set; }
+        [Semantic(Concepts.ResourceName)] public string? Name { get; set; }
 
         /// <summary>
         /// user-defined description of the delineation line
         /// </summary>
-        [Semantic(Concepts.ResourceDescription)]
-        public string? Description { get; set; }
+        [Semantic(Concepts.ResourceDescription)] public string? Description { get; set; }
 
         /// <summary>
         /// margin distance in SI units. The semantic physical quantity is LengthStandard.
         /// </summary>
-        [Semantic(Concepts.DelineationMargin)]
-        public double? Margin { get; set; }
+        [Semantic(Concepts.DelineationMargin)] public double? Margin { get; set; }
 
         /// <summary>
         /// optional top depth in SI units and WGS84 depth reference. The semantic physical quantity is DepthDrilling.
         /// </summary>
-        [Semantic(Concepts.EllipsoidalDepth, Role = Concepts.TopDepthBoundary, Reference = Concepts.Wgs84)]
-        public double? TopDepth { get; set; }
+        [Semantic(Concepts.EllipsoidalDepth, Role = Concepts.TopDepthBoundary, Reference = Concepts.Wgs84)] public double? TopDepth { get; set; }
 
         /// <summary>
         /// optional bottom depth in SI units and WGS84 depth reference. The semantic physical quantity is DepthDrilling.
         /// </summary>
-        [Semantic(Concepts.EllipsoidalDepth, Role = Concepts.BottomDepthBoundary, Reference = Concepts.Wgs84)]
-        public double? BottomDepth { get; set; }
+        [Semantic(Concepts.EllipsoidalDepth, Role = Concepts.BottomDepthBoundary, Reference = Concepts.Wgs84)] public double? BottomDepth { get; set; }
 
         /// <summary>
         /// original delineation line points in SI and WGS84 references

@@ -1,5 +1,5 @@
-using OSDC.DotnetLibraries.Drilling.SemanticCatalogue;
 using OSDC.DotnetLibraries.General.Math;
+using OSDC.DotnetLibraries.Drilling.SemanticCatalogue;
 using System;
 using System.Collections.Generic;
 
@@ -11,20 +11,17 @@ namespace OSDC.Drilling.Field.Model
         /// <summary>
         /// stable identifier for the calculated boundary line
         /// </summary>
-        [Semantic(Concepts.ResourceIdentifier)]
-        public Guid ID { get; set; }
+        [Semantic(Concepts.ResourceIdentifier)] public Guid ID { get; set; }
 
         /// <summary>
         /// true if the boundary line represents the interior side of a closed input line
         /// </summary>
-        [Semantic(Concepts.InteriorBoundaryFlag)]
-        public bool IsInteriorBoundary { get; set; }
+        [Semantic(Concepts.InteriorBoundaryFlag)] public bool IsInteriorBoundary { get; set; }
 
         /// <summary>
         /// true if this calculated line is closed
         /// </summary>
-        [Semantic(Concepts.ClosedLineFlag)]
-        public bool IsClosed { get; set; }
+        [Semantic(Concepts.ClosedLineFlag)] public bool IsClosed { get; set; }
 
         /// <summary>
         /// calculated boundary line points in SI and WGS84 references
