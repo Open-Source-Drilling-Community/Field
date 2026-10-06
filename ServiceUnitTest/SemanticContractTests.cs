@@ -47,7 +47,7 @@ public class SemanticContractTests
     {
         var rest = Rest(typeof(Model.Field));
         var mcp = Mcp("field_get_by_id")["properties"]!["data"]!;
-        Assert.That(rest[Extension]!["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.7.0"));
+        Assert.That(rest[Extension]!["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.15.0"));
         Assert.That(JsonNode.DeepEquals(rest[Extension], mcp[Extension]), Is.True);
         var category = Rest(typeof(Model.FieldFeatureCategory));
         Assert.That(category[Extension]!["concept"]!.GetValue<string>(), Is.EqualTo(Concepts.FeatureCategory));
@@ -87,7 +87,7 @@ public class SemanticContractTests
                     if (obj["concept"] != null)
                     {
                         count++;
-                        Assert.That(obj["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.7.0"));
+                        Assert.That(obj["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.15.0"));
                         Assert.That(obj["curationStatus"]!.GetValue<string>(), Is.EqualTo("Reviewed"));
                         Assert.That(SemanticCatalogue.Default.Get(obj["concept"]!.GetValue<string>()).Status, Is.EqualTo(CurationStatus.Reviewed));
                     }
