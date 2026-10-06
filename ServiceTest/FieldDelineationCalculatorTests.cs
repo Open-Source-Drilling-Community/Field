@@ -409,7 +409,8 @@ namespace OSDC.Drilling.Field.ServiceTest
         private static string GetServiceAssemblyPath(string assemblyName)
         {
             string solutionRoot = Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", ".."));
-            return Path.Combine(solutionRoot, "Service", "bin", "Debug", "net8.0", assemblyName);
+            string configuration = Directory.GetParent(TestContext.CurrentContext.TestDirectory)?.Name ?? "Debug";
+            return Path.Combine(solutionRoot, "Service", "bin", configuration, "net8.0", assemblyName);
         }
     }
 }
