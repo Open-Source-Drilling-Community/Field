@@ -2,7 +2,7 @@
 
 The Field solution provides a microservice (REST API), reusable Razor pages, and a Blazor Server web application to manage Field data, display field trajectories and survey runs, maintain field-level vocabularies and delineation lines, and run contextual calculators. It also includes shared models and generators for OpenAPI-based clients used across the solution.
 
-Field references `OSDC.DotnetLibraries.Drilling.SemanticCatalogue` 0.15.0. Model attributes and the reviewed provider registry publish structured `x-osdc-semantic` metadata consistently in REST/OpenAPI and MCP for Field resources, light projections, identity/feature/membership catalogues, delineations, and coordinate-conversion contracts. The metadata identifies stable concepts and, where applicable, coordinate references and canonical SI quantities without changing the established JSON contract.
+Field references `OSDC.DotnetLibraries.Drilling.SemanticCatalogue` 0.16.0. Model attributes and the reviewed provider registry publish structured `x-osdc-semantic` metadata consistently in REST/OpenAPI and MCP for Field resources, light projections, identity/feature/membership catalogues, delineations, and coordinate-conversion contracts. The metadata identifies stable concepts and, where applicable, coordinate references and canonical SI quantities without changing the established JSON contract.
 
 ## Purpose
 

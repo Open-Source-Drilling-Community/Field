@@ -2,7 +2,7 @@
 
 The Model project contains the domain types and supporting utilities for the Field microservice. It defines the core data models exchanged by the Service REST API and used by the managers for persistence and processing.
 
-Public resource and catalogue types carry reviewed SemanticCatalogue 0.15.0 bindings; `ProviderSemantics` covers inherited and generated contract members.
+Public resource and catalogue types carry reviewed SemanticCatalogue 0.16.0 bindings; `ProviderSemantics` covers inherited and generated contract members.
 
 ## Purpose
 

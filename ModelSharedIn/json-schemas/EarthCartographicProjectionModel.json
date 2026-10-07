@@ -543,7 +543,7 @@
             "description": "Approximate geographic extent in SI radians, longitude east of Greenwich; not in a non-Greenwich source CRS. West greater than east denotes antimeridian crossing.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geographic-bounding-box",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -560,7 +560,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:geodetic-usage",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -597,7 +597,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:authority-identifier",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -675,7 +675,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:catalog-entry-provenance",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -863,7 +863,7 @@
             "description": "Official axis direction. Other includes meridian-qualified polar axes; retain authority CRS identity for exact orientation.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:coordinate-axis-direction",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -887,7 +887,7 @@
             "format": "double",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:linear-unit-conversion-factor",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -905,7 +905,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:coordinate-system-axis",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -947,7 +947,7 @@
             "description": "Official axis direction. Other includes meridian-qualified polar axes; retain authority CRS identity for exact orientation.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:coordinate-axis-direction",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -962,7 +962,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:coordinate-system-axis",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -1010,7 +1010,7 @@
             "description": "Base geographic CRS and datum/prime-meridian context; forward and inverse projection retain this datum.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geographic-coordinate-reference-system",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1032,7 +1032,7 @@
             "format": "uuid",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:cartographic-projection-method",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1050,7 +1050,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:cartographic-projection",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1100,7 +1100,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:projected-coordinate-reference-system",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -1133,7 +1133,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:coordinate-reference-system",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -1225,7 +1225,7 @@
             "description": "Horizontal latitude/longitude pair in SI radians on the unchanged base datum. Input/output role depends on projection direction.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geographic-position-2d",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1249,7 +1249,7 @@
             "description": "Horizontal canonical easting/northing pair in SI metres. Input/output role depends on projection direction.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projected-position-2d",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1277,7 +1277,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:grid-convergence",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1312,7 +1312,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:projection-position-result",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -1342,7 +1342,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geographic-position-2d",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1362,7 +1362,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:forward-projection-request",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -1393,7 +1393,7 @@
             "description": "Geographic CRS of the latitude/longitude values; longitude is relative to its prime meridian.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geographic-coordinate-reference-system",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1418,7 +1418,7 @@
             "description": "Projected CRS of the canonical SI easting/northing values.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projected-coordinate-reference-system",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1454,7 +1454,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-position-result",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1478,7 +1478,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:projection-result",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -1515,7 +1515,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:instant",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1533,7 +1533,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:geodetic-reference-object",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -1555,7 +1555,7 @@
             "format": "double",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1583,7 +1583,7 @@
             "format": "double",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1611,7 +1611,7 @@
             "format": "double",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1639,7 +1639,7 @@
             "format": "double",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1665,7 +1665,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:geographic-bounding-box",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -1687,7 +1687,7 @@
             "format": "double",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1714,7 +1714,7 @@
             "format": "double",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1739,7 +1739,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:geographic-position-2d",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -1772,7 +1772,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:geographic-coordinate-reference-system",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -1809,7 +1809,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:geographic-coordinate-reference-system",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -1846,7 +1846,7 @@
             "description": "Horizontal canonical easting/northing pair in SI metres. Input/output role depends on projection direction.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projected-position-2d",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1876,7 +1876,7 @@
             "description": "Horizontal latitude/longitude pair in SI radians on the unchanged base datum. Input/output role depends on projection direction.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geographic-position-2d",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1898,7 +1898,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:grid-convergence",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1933,7 +1933,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:projection-position-result",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -1963,7 +1963,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projected-position-2d",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -1983,7 +1983,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:inverse-projection-request",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -2014,7 +2014,7 @@
             "description": "Geographic CRS of the latitude/longitude values; longitude is relative to its prime meridian.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geographic-coordinate-reference-system",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2039,7 +2039,7 @@
             "description": "Projected CRS of the canonical SI easting/northing values.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projected-coordinate-reference-system",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2075,7 +2075,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-position-result",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2099,7 +2099,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:projection-result",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -2120,7 +2120,7 @@
             "format": "double",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:easting",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2157,7 +2157,7 @@
             "format": "double",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:northing",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2192,7 +2192,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:projected-position-2d",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -2226,7 +2226,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:projected-coordinate-system",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -2252,7 +2252,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:projected-coordinate-system",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -2285,7 +2285,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:instant",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2303,7 +2303,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:geodetic-reference-object",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -2357,7 +2357,7 @@
             "description": "Base geographic CRS and datum/prime-meridian context; forward and inverse projection retain this datum.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geographic-coordinate-reference-system",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2379,7 +2379,7 @@
             "format": "uuid",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:cartographic-projection-method",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2400,7 +2400,7 @@
             "description": "Authority identity of the configured coordinate conversion; distinct from the method or projected CRS identity.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:cartographic-projection",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2426,7 +2426,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:cartographic-projection",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2490,7 +2490,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:instant",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2513,7 +2513,7 @@
             "format": "date-time",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:instant",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2533,7 +2533,7 @@
             "format": "date-time",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:instant",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2561,7 +2561,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:projected-coordinate-reference-system",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -2601,7 +2601,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:projected-coordinate-reference-system",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -2653,7 +2653,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:cartographic-projection-method",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2683,7 +2683,7 @@
             "description": "Area-search position in SI radians, latitude north and longitude east of Greenwich. Approximate geographic extent check, not a datum transformation.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geographic-position-2d",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2707,7 +2707,7 @@
             "description": "Area-search envelope in SI radians referenced to Greenwich. West greater than east denotes antimeridian crossing.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geographic-bounding-box",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2787,7 +2787,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:projected-coordinate-reference-system",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -2870,7 +2870,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:cartographic-projection-method",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -2917,7 +2917,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:cartographic-projection-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2946,7 +2946,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:cartographic-projection-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -2976,7 +2976,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:projection-parameter-definition",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -2999,7 +2999,7 @@
           "parameters": {
             "8801": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3022,7 +3022,7 @@
             },
             "8802": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3045,7 +3045,7 @@
             },
             "8805": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-scale-factor",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3080,7 +3080,7 @@
             },
             "8806": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3112,7 +3112,7 @@
             },
             "8807": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3144,7 +3144,7 @@
             },
             "8811": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3167,7 +3167,7 @@
             },
             "8812": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3190,7 +3190,7 @@
             },
             "8813": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-angular-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3221,7 +3221,7 @@
             },
             "8814": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-angular-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3252,7 +3252,7 @@
             },
             "8815": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-scale-factor",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3287,7 +3287,7 @@
             },
             "8816": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3319,7 +3319,7 @@
             },
             "8817": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3351,7 +3351,7 @@
             },
             "8818": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3374,7 +3374,7 @@
             },
             "8819": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-scale-factor",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3409,7 +3409,7 @@
             },
             "8821": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3432,7 +3432,7 @@
             },
             "8822": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3455,7 +3455,7 @@
             },
             "8823": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3478,7 +3478,7 @@
             },
             "8824": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3501,7 +3501,7 @@
             },
             "8826": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3533,7 +3533,7 @@
             },
             "8827": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3565,7 +3565,7 @@
             },
             "8830": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3587,7 +3587,7 @@
             },
             "8831": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-angular-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3618,7 +3618,7 @@
             },
             "8832": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3641,7 +3641,7 @@
             },
             "8833": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3663,7 +3663,7 @@
             },
             "1036": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-angular-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3694,7 +3694,7 @@
             },
             "1039": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3725,7 +3725,7 @@
             },
             "8617": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3756,7 +3756,7 @@
             },
             "8618": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3798,7 +3798,7 @@
             "format": "uuid",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:cartographic-projection-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3828,7 +3828,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:cartographic-projection-parameter",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -3860,7 +3860,7 @@
           "parameters": {
             "8801": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3883,7 +3883,7 @@
             },
             "8802": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3906,7 +3906,7 @@
             },
             "8805": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-scale-factor",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3941,7 +3941,7 @@
             },
             "8806": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -3973,7 +3973,7 @@
             },
             "8807": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4005,7 +4005,7 @@
             },
             "8811": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4028,7 +4028,7 @@
             },
             "8812": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4051,7 +4051,7 @@
             },
             "8813": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-angular-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4082,7 +4082,7 @@
             },
             "8814": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-angular-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4113,7 +4113,7 @@
             },
             "8815": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-scale-factor",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4148,7 +4148,7 @@
             },
             "8816": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4180,7 +4180,7 @@
             },
             "8817": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4212,7 +4212,7 @@
             },
             "8818": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4235,7 +4235,7 @@
             },
             "8819": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-scale-factor",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4270,7 +4270,7 @@
             },
             "8821": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4293,7 +4293,7 @@
             },
             "8822": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4316,7 +4316,7 @@
             },
             "8823": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4339,7 +4339,7 @@
             },
             "8824": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4362,7 +4362,7 @@
             },
             "8826": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4394,7 +4394,7 @@
             },
             "8827": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4426,7 +4426,7 @@
             },
             "8830": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4448,7 +4448,7 @@
             },
             "8831": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-angular-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4479,7 +4479,7 @@
             },
             "8832": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4502,7 +4502,7 @@
             },
             "8833": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4524,7 +4524,7 @@
             },
             "1036": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-angular-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4555,7 +4555,7 @@
             },
             "1039": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4586,7 +4586,7 @@
             },
             "8617": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4617,7 +4617,7 @@
             },
             "8618": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4672,7 +4672,7 @@
             "format": "uuid",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:cartographic-projection-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4735,7 +4735,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:cartographic-projection-parameter",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
@@ -4767,7 +4767,7 @@
           "parameters": {
             "8801": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4790,7 +4790,7 @@
             },
             "8802": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4813,7 +4813,7 @@
             },
             "8805": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-scale-factor",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4848,7 +4848,7 @@
             },
             "8806": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4880,7 +4880,7 @@
             },
             "8807": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4912,7 +4912,7 @@
             },
             "8811": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4935,7 +4935,7 @@
             },
             "8812": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4958,7 +4958,7 @@
             },
             "8813": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-angular-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -4989,7 +4989,7 @@
             },
             "8814": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-angular-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5020,7 +5020,7 @@
             },
             "8815": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-scale-factor",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5055,7 +5055,7 @@
             },
             "8816": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5087,7 +5087,7 @@
             },
             "8817": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5119,7 +5119,7 @@
             },
             "8818": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5142,7 +5142,7 @@
             },
             "8819": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-scale-factor",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5177,7 +5177,7 @@
             },
             "8821": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5200,7 +5200,7 @@
             },
             "8822": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5223,7 +5223,7 @@
             },
             "8823": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5246,7 +5246,7 @@
             },
             "8824": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5269,7 +5269,7 @@
             },
             "8826": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5301,7 +5301,7 @@
             },
             "8827": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5333,7 +5333,7 @@
             },
             "8830": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5355,7 +5355,7 @@
             },
             "8831": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-angular-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5386,7 +5386,7 @@
             },
             "8832": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-latitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5409,7 +5409,7 @@
             },
             "8833": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geodetic-longitude",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5431,7 +5431,7 @@
             },
             "1036": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-angular-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5462,7 +5462,7 @@
             },
             "1039": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5493,7 +5493,7 @@
             },
             "8617": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5524,7 +5524,7 @@
             },
             "8618": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:projection-linear-parameter",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5620,7 +5620,7 @@
             "description": "Base geographic CRS and datum/prime-meridian context; forward and inverse projection retain this datum.",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:geographic-coordinate-reference-system",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5642,7 +5642,7 @@
             "format": "uuid",
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:cartographic-projection-method",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5660,7 +5660,7 @@
             "nullable": true,
             "x-osdc-semantic": {
               "catalogue": "urn:osdc:semantic-catalogue",
-              "catalogueVersion": "0.15.0",
+              "catalogueVersion": "0.16.0",
               "concept": "urn:osdc:semantic:cartographic-projection",
               "curationStatus": "Reviewed",
               "assertionSource": "provider-model-attribute",
@@ -5710,7 +5710,7 @@
         "additionalProperties": false,
         "x-osdc-semantic": {
           "catalogue": "urn:osdc:semantic-catalogue",
-          "catalogueVersion": "0.15.0",
+          "catalogueVersion": "0.16.0",
           "concept": "urn:osdc:semantic:projected-coordinate-reference-system",
           "curationStatus": "Reviewed",
           "assertionSource": "provider-model-attribute",
