@@ -1,6 +1,6 @@
 # Field Service
 
-The Swagger schema filter and MCP schema helpers use the same Field provider registry to publish structured SemanticCatalogue 0.16.0 metadata.
+The Swagger schema filter and MCP schema helpers use the same Field provider registry to publish structured SemanticCatalogue 0.18.0 metadata, including generic operation roles on MCP input roots.
 
 The ASP.NET Core service persists Field-owned records and exposes synchronous,
 stateless field coordinate conversion. Conversion requests and results are never

@@ -43,11 +43,21 @@ public class SemanticContractTests
     }
 
     [Test]
+    public void Mcp_inputs_declare_generic_resource_operation_roles()
+    {
+        Assert.That(Mcp("field_get_all", false)[Extension]!["role"]!.GetValue<string>(), Is.EqualTo(Concepts.ResourceCollectionRetrieval));
+        Assert.That(Mcp("field_get_by_id", false)[Extension]!["role"]!.GetValue<string>(), Is.EqualTo(Concepts.ResourceRetrieval));
+        Assert.That(Mcp("field_create", false)[Extension]!["role"]!.GetValue<string>(), Is.EqualTo(Concepts.ResourceCreation));
+        Assert.That(Mcp("field_update_by_id", false)[Extension]!["role"]!.GetValue<string>(), Is.EqualTo(Concepts.ResourceReplacement));
+        Assert.That(Mcp("field_delete_by_id", false)[Extension]!["role"]!.GetValue<string>(), Is.EqualTo(Concepts.ResourceDeletion));
+    }
+
+    [Test]
     public void ResourceAndInheritedClassificationsPublishCuratedCatalogue()
     {
         var rest = Rest(typeof(Model.Field));
         var mcp = Mcp("field_get_by_id")["properties"]!["data"]!;
-        Assert.That(rest[Extension]!["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.16.0"));
+        Assert.That(rest[Extension]!["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.18.0"));
         Assert.That(JsonNode.DeepEquals(rest[Extension], mcp[Extension]), Is.True);
         var category = Rest(typeof(Model.FieldFeatureCategory));
         Assert.That(category[Extension]!["concept"]!.GetValue<string>(), Is.EqualTo(Concepts.FeatureCategory));
@@ -87,7 +97,7 @@ public class SemanticContractTests
                     if (obj["concept"] != null)
                     {
                         count++;
-                        Assert.That(obj["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.16.0"));
+                        Assert.That(obj["catalogueVersion"]!.GetValue<string>(), Is.EqualTo("0.18.0"));
                         Assert.That(obj["curationStatus"]!.GetValue<string>(), Is.EqualTo("Reviewed"));
                         Assert.That(SemanticCatalogue.Default.Get(obj["concept"]!.GetValue<string>()).Status, Is.EqualTo(CurationStatus.Reviewed));
                     }
