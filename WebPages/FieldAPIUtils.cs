@@ -1,4 +1,5 @@
 using OSDC.DotnetLibraries.Drilling.WebAppUtils;
+using OSDC.Drilling.Field.ModelShared;
 using FieldModelShared = OSDC.Drilling.Field.ModelShared;
 
 namespace OSDC.Drilling.Field.WebPages;
@@ -85,7 +86,7 @@ public class FieldAPIUtils : APIUtils, IFieldAPIUtils
             try
             {
                 ICollection<FieldModelShared.ProjectionDefinitionSummary> summaries =
-                    await ClientEarthCartographicProjection.SummariesAsync(false, cancellationToken).ConfigureAwait(false);
+                    await ClientEarthCartographicProjection.ListProjectionDefinitionSummariesAsync(false, cancellationToken).ConfigureAwait(false);
                 projectionDefinitionCache = summaries
                     .OrderBy(summary => summary.Name, StringComparer.OrdinalIgnoreCase)
                     .ToArray();

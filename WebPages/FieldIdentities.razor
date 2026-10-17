@@ -62,7 +62,7 @@ else
     {
         try
         {
-            identities = (List<FieldIdentity>)await Api.ClientField.GetAllFieldIdentityAsync();
+            identities = (List<FieldIdentity>)await Api.ClientField.ListFieldIdentityReferencesAsync();
             identities = identities
                 .Where(identity => identity?.MetaInfo?.ID != null)
                 .OrderBy(identity => identity.Name, StringComparer.OrdinalIgnoreCase)

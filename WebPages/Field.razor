@@ -76,7 +76,7 @@ else
 
             // Starting all loading tasks asynchronously
             logger.LogInformation("Trying to load list of Fields from client: " + Api.HostNameField);
-            var fieldTask = Api.ClientField.GetAllFieldAsync();
+            var fieldTask = Api.ClientField.ListFieldReferencesAsync();
             var cartographicProjectionTask = Api.GetProjectionDefinitionSummariesAsync();
 
             List<Task> loadingTaskList = new List<Task> { fieldTask, cartographicProjectionTask };

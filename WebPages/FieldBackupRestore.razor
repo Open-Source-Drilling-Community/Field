@@ -264,7 +264,7 @@
     {
         try
         {
-            _fields = ((await Api.ClientField.GetAllFieldLightAsync()) ?? [])
+            _fields = ((await Api.ClientField.ListFieldLightAsync()) ?? [])
                 .Where(field => field?.MetaInfo?.ID is Guid id && id != Guid.Empty)
                 .OrderBy(field => field.Name, StringComparer.OrdinalIgnoreCase)
                 .ToList();

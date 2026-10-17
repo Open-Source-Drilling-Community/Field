@@ -77,7 +77,7 @@
     {
         try
         {
-            _fields = ((await Api.ClientField.GetAllFieldAsync()) ?? [])
+            _fields = ((await Api.ClientField.ListFieldReferencesAsync()) ?? [])
                 .Where(item => item.ProjectionDefinitionID is Guid id && id != Guid.Empty)
                 .OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase).ToList();
             _forwardField = _fields.FirstOrDefault();

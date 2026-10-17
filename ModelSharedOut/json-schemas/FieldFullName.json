@@ -5,6 +5,61 @@
     "version": "1.0"
   },
   "paths": {
+    "/Field/LightData": {
+      "get": {
+        "tags": [
+          "Field"
+        ],
+        "operationId": "DiscoverField",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "projectionDefinitionId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldDiscoveryPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/Field": {
       "get": {
         "tags": [
@@ -269,29 +324,6 @@
         }
       }
     },
-    "/Field/HeavyData": {
-      "get": {
-        "tags": [
-          "Field"
-        ],
-        "operationId": "GetAllField",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.Field"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/Field/BatchExport": {
       "post": {
         "tags": [
@@ -423,29 +455,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldBatchErrorEnvelope"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Field/LightData": {
-      "get": {
-        "tags": [
-          "Field"
-        ],
-        "operationId": "GetAllFieldLight",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldLight"
-                  }
                 }
               }
             }
@@ -604,6 +613,53 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldConversionErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/FieldDelineationLineType/LightData": {
+      "get": {
+        "tags": [
+          "FieldDelineationLineType"
+        ],
+        "operationId": "DiscoverFieldDelineationLineType",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldDelineationLineTypeDiscoveryPage"
                 }
               }
             }
@@ -815,22 +871,46 @@
         }
       }
     },
-    "/FieldDelineationLineType/HeavyData": {
+    "/FieldFeatureCategory/LightData": {
       "get": {
         "tags": [
-          "FieldDelineationLineType"
+          "FieldFeatureCategory"
         ],
-        "operationId": "GetAllFieldDelineationLineType",
+        "operationId": "DiscoverFieldFeatureCategory",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldDelineationLineType"
-                  }
+                  "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldFeatureCategoryDiscoveryPage"
                 }
               }
             }
@@ -1042,22 +1122,46 @@
         }
       }
     },
-    "/FieldFeatureCategory/HeavyData": {
+    "/FieldIdentity/LightData": {
       "get": {
         "tags": [
-          "FieldFeatureCategory"
+          "FieldIdentity"
         ],
-        "operationId": "GetAllFieldFeatureCategory",
+        "operationId": "DiscoverFieldIdentity",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldFeatureCategory"
-                  }
+                  "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldIdentityDiscoveryPage"
                 }
               }
             }
@@ -1269,22 +1373,46 @@
         }
       }
     },
-    "/FieldIdentity/HeavyData": {
+    "/FieldMembershipCategory/LightData": {
       "get": {
         "tags": [
-          "FieldIdentity"
+          "FieldMembershipCategory"
         ],
-        "operationId": "GetAllFieldIdentity",
+        "operationId": "DiscoverFieldMembershipCategory",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldIdentity"
-                  }
+                  "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldMembershipCategoryDiscoveryPage"
                 }
               }
             }
@@ -1492,29 +1620,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          }
-        }
-      }
-    },
-    "/FieldMembershipCategory/HeavyData": {
-      "get": {
-        "tags": [
-          "FieldMembershipCategory"
-        ],
-        "operationId": "GetAllFieldMembershipCategory",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldMembershipCategory"
-                  }
-                }
-              }
-            }
           }
         }
       }
@@ -3064,12 +3169,95 @@
           "constraints": [ ]
         }
       },
+      "OSDC.Drilling.Field.Model.FieldDelineationLineTypeDiscoveryPage": {
+        "type": "object",
+        "properties": {
+          "Items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldDelineationLineTypeLight"
+            },
+            "nullable": true
+          },
+          "Offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TotalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NextOffset": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Field.Model.FieldDelineationLineTypeLight": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "OSDC.Drilling.Field.Model.FieldDepthTransformationPolicy": {
         "enum": [
           "PreservePhysicalPoint",
           "AllowUntransformedDepthFor2D"
         ],
         "type": "string"
+      },
+      "OSDC.Drilling.Field.Model.FieldDiscoveryPage": {
+        "type": "object",
+        "properties": {
+          "Items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldLight"
+            },
+            "nullable": true
+          },
+          "Offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TotalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NextOffset": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "OSDC.Drilling.Field.Model.FieldFeatureAssignment": {
         "type": "object",
@@ -3299,6 +3487,65 @@
           ],
           "constraints": [ ]
         }
+      },
+      "OSDC.Drilling.Field.Model.FieldFeatureCategoryDiscoveryPage": {
+        "type": "object",
+        "properties": {
+          "Items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldFeatureCategoryLight"
+            },
+            "nullable": true
+          },
+          "Offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TotalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NextOffset": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Field.Model.FieldFeatureCategoryLight": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsExclusive": {
+            "type": "boolean"
+          },
+          "HasValidityPeriod": {
+            "type": "boolean"
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "OSDC.Drilling.Field.Model.FieldFeatureOption": {
         "type": "object",
@@ -3762,6 +4009,59 @@
           ]
         }
       },
+      "OSDC.Drilling.Field.Model.FieldIdentityDiscoveryPage": {
+        "type": "object",
+        "properties": {
+          "Items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldIdentityLight"
+            },
+            "nullable": true
+          },
+          "Offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TotalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NextOffset": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Field.Model.FieldIdentityLight": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "OSDC.Drilling.Field.Model.FieldInverseConversionPosition": {
         "type": "object",
         "properties": {
@@ -3963,6 +4263,54 @@
       "OSDC.Drilling.Field.Model.FieldLight": {
         "type": "object",
         "properties": {
+          "ProjectionDefinitionID": {
+            "type": "string",
+            "description": "UUID of the definition owned by EarthCartographicProjection, not an EPSG code.",
+            "format": "uuid",
+            "nullable": true,
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.18.0",
+              "concept": "urn:osdc:semantic:resource-identifier",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-model-attribute",
+              "requiredContext": [
+                "identified object type",
+                "owning service or containing resource"
+              ],
+              "constraints": [
+                "A display name or assigned external identity value is not this UUID.",
+                "Null means absent where permitted by the provider; an empty UUID does not identify a resource."
+              ]
+            }
+          },
+          "ReferencePoint": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.Math.Point3DGlobalCoordinates"
+              }
+            ],
+            "description": "Position specified by geodetic latitude, longitude and ellipsoidal depth. Geographic angles use SI radians; linear coordinates and ellipsoidal depth use SI metres. X/Y are Riemannian north/east arc coordinates, not projected easting/northing. Reference: WGS84 ellipsoid convention.",
+            "x-osdc-semantic": {
+              "catalogue": "urn:osdc:semantic-catalogue",
+              "catalogueVersion": "0.18.0",
+              "concept": "urn:osdc:semantic:geodetic-position",
+              "curationStatus": "Reviewed",
+              "assertionSource": "provider-model-attribute",
+              "role": "urn:osdc:semantic:reference-location",
+              "reference": "urn:osdc:semantic:wgs84",
+              "requiredContext": [
+                "reference ellipsoid",
+                "angular units",
+                "vertical sign",
+                "reference meridian",
+                "vertical representation and sign"
+              ],
+              "constraints": [ ],
+              "referenceDefinition": "WGS84 geodetic latitude/longitude with Greenwich origin and ellipsoidal depth positive downward; not a fully specified terrestrial frame realization or epoch.",
+              "referenceRequiredContext": [ ]
+            }
+          },
           "MetaInfo": {
             "allOf": [
               {
@@ -4299,6 +4647,65 @@
           ]
         }
       },
+      "OSDC.Drilling.Field.Model.FieldMembershipCategoryDiscoveryPage": {
+        "type": "object",
+        "properties": {
+          "Items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.FieldMembershipCategoryLight"
+            },
+            "nullable": true
+          },
+          "Offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TotalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NextOffset": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OSDC.Drilling.Field.Model.FieldMembershipCategoryLight": {
+        "type": "object",
+        "properties": {
+          "MetaInfo": {
+            "$ref": "#/components/schemas/OSDC.DotnetLibraries.General.DataManagement.MetaInfo"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsExclusive": {
+            "type": "boolean"
+          },
+          "HasValidityPeriod": {
+            "type": "boolean"
+          },
+          "CreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastModificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "OSDC.Drilling.Field.Model.FieldMembershipOption": {
         "type": "object",
         "properties": {
@@ -4513,6 +4920,9 @@
       "OSDC.Drilling.Field.Model.UsageStatisticsField": {
         "type": "object",
         "properties": {
+          "DiscoveryRequestsPerDay": {
+            "$ref": "#/components/schemas/OSDC.Drilling.Field.Model.History"
+          },
           "LastSaved": {
             "type": "string",
             "format": "date-time"

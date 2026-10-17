@@ -60,7 +60,7 @@ else
     {
         try
         {
-            lineTypes = (List<FieldDelineationLineType>)await Api.ClientField.GetAllFieldDelineationLineTypeAsync();
+            lineTypes = (List<FieldDelineationLineType>)await Api.ClientField.ListFieldDelineationLineTypeReferencesAsync();
             lineTypes = lineTypes
                 .Where(lineType => lineType?.MetaInfo?.ID != null)
                 .OrderBy(lineType => lineType.Name, StringComparer.OrdinalIgnoreCase)

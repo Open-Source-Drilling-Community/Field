@@ -249,8 +249,8 @@
         try
         {
             logger.LogInformation("Trying to load list of Fields from client: {Host}", Api.HostNameField);
-            Task<ICollection<FieldModelShared.Field>> fieldTask = Api.ClientField.GetAllFieldAsync();
-            Task<ICollection<FieldModelShared.Cluster>> clusterTask = Api.ClientCluster.GetAllClusterAsync();
+            var fieldTask = Api.ClientField.ListFieldReferencesAsync();
+            var clusterTask = Api.ClientCluster.ListClusterReferencesAsync();
             fieldList = (await fieldTask).OrderBy(field => field.Name).ToList();
             clusterList = (await clusterTask).OrderBy(cluster => cluster.Name).ToList();
             selectedFieldId = null;
@@ -357,6 +357,10 @@
 
     private async Task ApplySelectedFieldReferenceValuesAsync(Guid fieldId)
     {
+        if (fieldList != null) await Api.ClientField.LoadFieldDetailsAsync(fieldList, fieldId);
+        foreach (var cluster in clusterList?.Where(value => value.FieldID == fieldId) ?? [])
+            await Api.ClientCluster.LoadClusterSlotReferencesAsync(cluster);
+
         FieldModelShared.Field? field = fieldList?.FirstOrDefault(item => item.MetaInfo?.ID == fieldId);
         DataUtils.FieldPositionReferenceSource.FieldNorthPositionReference = -field?.ReferencePoint?.RiemannianNorth;
         DataUtils.FieldPositionReferenceSource.FieldEastPositionReference = -field?.ReferencePoint?.RiemannianEast;
@@ -386,7 +390,7 @@
             await InvokeAsync(StateHasChanged);
             selectedFieldDelineationLines = await LoadSelectedFieldDelineationLinesAsync(fieldId);
             logger.LogInformation("Loading survey run light data for field {FieldId}", fieldId);
-            surveyRunLightList = (await Api.ClientTrajectory.GetAllSurveyRunLightAsync(fieldId: fieldId)).Where(MatchesSurveyRunFilters).OrderBy(surveyRun => surveyRun.Name).ToList();
+            surveyRunLightList = (await Api.ClientTrajectory.ListSurveyRunLightAsync(fieldId: fieldId)).Where(MatchesSurveyRunFilters).OrderBy(surveyRun => surveyRun.Name).ToList();
 
             List<Task<FieldModelShared.SurveyRun>> detailTasks = surveyRunLightList
                 .Where(light => light?.MetaInfo != null && light.MetaInfo.ID != Guid.Empty)

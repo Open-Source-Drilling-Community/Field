@@ -37,7 +37,7 @@ namespace OSDC.Drilling.Field.ServiceTest
 
             var ids = await api.GetAllFieldDelineationLineTypeIdAsync();
             var metas = await api.GetAllFieldDelineationLineTypeMetaInfoAsync();
-            var heavy = await api.GetAllFieldDelineationLineTypeAsync();
+            var heavy = await api.ListFieldDelineationLineTypeReferencesAsync();
 
             Assert.That(ids, Is.Not.Null);
             Assert.That(metas, Is.Not.Null);

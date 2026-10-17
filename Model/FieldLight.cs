@@ -11,6 +11,10 @@ namespace OSDC.Drilling.Field.Model
     [Semantic(Concepts.Field)]
     public class FieldLight
     {
+        [Semantic(Concepts.ResourceIdentifier)] public System.Guid? ProjectionDefinitionID { get; set; }
+        [Semantic(Concepts.Position, Role = Concepts.ReferenceLocation, Reference = Concepts.Wgs84)]
+        public OSDC.DotnetLibraries.General.Math.Point3DGlobalCoordinates? ReferencePoint { get; set; }
+
         /// <summary>
         /// a MetaInfo for the FieldLight
         /// </summary>

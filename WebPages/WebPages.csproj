@@ -36,7 +36,7 @@
 
 	<!-- Include generated DTO source files directly from ModelSharedOut -->
 	<ItemGroup>
-		<Compile Include="..\ModelSharedOut\FieldMergedModel.cs" Link="GeneratedDtos\%(RecursiveDir)%(Filename)%(Extension)" />
+		<Compile Include="..\ModelSharedOut\FieldMergedModel.cs;..\ModelSharedOut\DiscoveryClientExtensions.cs;..\ModelSharedOut\ProjectionDiscoveryClientExtensions.cs;..\ModelSharedOut\SlotDiscoveryClientExtensions.cs" Link="GeneratedDtos\%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
 </Project>

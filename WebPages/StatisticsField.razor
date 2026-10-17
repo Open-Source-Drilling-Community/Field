@@ -151,6 +151,7 @@
 
     private static string GetMethod(string propertyName) => propertyName switch
     {
+        _ when propertyName == "DiscoveryRequestsPerDay" => "GET",
         _ when propertyName.StartsWith("Get", StringComparison.Ordinal) => "GET",
         _ when propertyName.StartsWith("Post", StringComparison.Ordinal) => "POST",
         _ when propertyName.StartsWith("Put", StringComparison.Ordinal) => "PUT",

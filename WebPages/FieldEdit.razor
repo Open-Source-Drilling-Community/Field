@@ -152,6 +152,7 @@
                             @foreach (FieldFeatureCategory category in _fieldFeatureCategories)
                             {
                                 <MudExpansionPanel Text="@GetCategoryDisplayName(category)">
+                                    <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => LoadFieldFeatureCategoryOptionsAsync(category))">Load options</MudButton>
                                     @foreach (FieldFeatureOption option in category.Options ?? [])
                                     {
                                         <MudButton Class="me-1 mb-1" Variant="@GetOptionButtonVariant(category, option)" Color="@GetOptionButtonColor(category, option)" Size="Size.Small" Disabled="@IsOptionUnavailable(category)" OnClick="@(() => SelectFeatureOption(category, option))">
@@ -197,6 +198,7 @@
                             @foreach (FieldMembershipCategory category in _fieldMembershipCategories)
                             {
                                 <MudExpansionPanel Text="@GetMembershipCategoryDisplayName(category)">
+                                    <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => LoadFieldMembershipCategoryOptionsAsync(category))">Load options</MudButton>
                                     @foreach (FieldMembershipOption option in category.Options ?? [])
                                     {
                                         <MudButton Class="me-1 mb-1" Variant="@GetMembershipOptionButtonVariant(category, option)" Color="@GetMembershipOptionButtonColor(category, option)" Size="Size.Small" Disabled="@IsMembershipOptionUnavailable(category)" OnClick="@(() => SelectMembershipOption(category, option))">
@@ -238,6 +240,20 @@
     </MudExpansionPanels>
 </MudUnitAndReferenceChoiceTag>
 @code {
+    private async Task LoadFieldFeatureCategoryOptionsAsync(FieldFeatureCategory category)
+    {
+        var full = await Api.ClientField.GetFieldFeatureCategoryByIdAsync(category.MetaInfo!.ID);
+        foreach (var property in typeof(FieldFeatureCategory).GetProperties().Where(property => property.CanWrite))
+            property.SetValue(category, property.GetValue(full));
+    }
+
+    private async Task LoadFieldMembershipCategoryOptionsAsync(FieldMembershipCategory category)
+    {
+        var full = await Api.ClientField.GetFieldMembershipCategoryByIdAsync(category.MetaInfo!.ID);
+        foreach (var property in typeof(FieldMembershipCategory).GetProperties().Where(property => property.CanWrite))
+            property.SetValue(category, property.GetValue(full));
+    }
+
     [Parameter]
     public OSDC.Drilling.Field.ModelShared.Field? CurrentField { get; set; }
 
@@ -525,7 +541,9 @@
     {
         try
         {
-            List<FieldFeatureCategory>? categories = (List<FieldFeatureCategory>)await Api.ClientField.GetAllFieldFeatureCategoryAsync();
+            List<FieldFeatureCategory>? categories = (List<FieldFeatureCategory>)await Api.ClientField.ListFieldFeatureCategoryReferencesAsync();
+            foreach (Guid id in CurrentField?.FieldFeatureAssignments?.Where(value => value.FeatureCategoryID.HasValue).Select(value => value.FeatureCategoryID!.Value).Distinct() ?? [])
+                if (categories != null) await Api.ClientField.LoadFieldFeatureCategoryDetailsAsync(categories, id);
             return categories?
                 .Where(category => category?.MetaInfo?.ID != null)
                 .OrderBy(category => category.Name, StringComparer.OrdinalIgnoreCase)
@@ -543,7 +561,7 @@
     {
         try
         {
-            List<FieldDelineationLineType>? lineTypes = (List<FieldDelineationLineType>)await Api.ClientField.GetAllFieldDelineationLineTypeAsync();
+            List<FieldDelineationLineType>? lineTypes = (List<FieldDelineationLineType>)await Api.ClientField.ListFieldDelineationLineTypeReferencesAsync();
             return lineTypes?
                 .Where(lineType => lineType?.MetaInfo?.ID != null)
                 .OrderBy(lineType => lineType.Name, StringComparer.OrdinalIgnoreCase)
@@ -561,7 +579,7 @@
     {
         try
         {
-            List<FieldIdentity>? identities = (List<FieldIdentity>)await Api.ClientField.GetAllFieldIdentityAsync();
+            List<FieldIdentity>? identities = (List<FieldIdentity>)await Api.ClientField.ListFieldIdentityReferencesAsync();
             return identities?
                 .Where(identity => identity?.MetaInfo?.ID != null)
                 .OrderBy(identity => identity.Name, StringComparer.OrdinalIgnoreCase)
@@ -579,7 +597,9 @@
     {
         try
         {
-            List<FieldMembershipCategory>? categories = (List<FieldMembershipCategory>)await Api.ClientField.GetAllFieldMembershipCategoryAsync();
+            List<FieldMembershipCategory>? categories = (List<FieldMembershipCategory>)await Api.ClientField.ListFieldMembershipCategoryReferencesAsync();
+            foreach (Guid id in CurrentField?.FieldMembershipAssignments?.Where(value => value.MembershipCategoryID.HasValue).Select(value => value.MembershipCategoryID!.Value).Distinct() ?? [])
+                if (categories != null) await Api.ClientField.LoadFieldMembershipCategoryDetailsAsync(categories, id);
             return categories?
                 .Where(category => category?.MetaInfo?.ID != null)
                 .OrderBy(category => category.Name, StringComparer.OrdinalIgnoreCase)
@@ -853,7 +873,7 @@
 
     private async Task<ReferencePositionSample?> TryBuildTrajectoryBarycenterSampleAsync(Guid fieldId)
     {
-        ICollection<TrajectoryLight> trajectoryLights = await Api.ClientTrajectory.GetAllTrajectoryLightAsync(fieldId: fieldId);
+        ICollection<TrajectoryLight> trajectoryLights = await Api.ClientTrajectory.ListTrajectoryLightAsync(fieldId: fieldId);
         List<Guid> trajectoryIds = trajectoryLights
             .Where(trajectory => trajectory?.MetaInfo?.ID != null && trajectory.MetaInfo.ID != Guid.Empty)
             .Take(20)
@@ -871,7 +891,9 @@
 
     private async Task<ReferencePositionSample?> TryBuildClusterBarycenterSampleAsync(Guid fieldId)
     {
-        ICollection<Cluster> clusters = await Api.ClientCluster.GetAllClusterAsync();
+        ICollection<Cluster> clusters = await Api.ClientCluster.ListClusterReferencesAsync();
+        foreach (var cluster in clusters.Where(value => value.FieldID == fieldId && value.ReferencePoint == null))
+            await Api.ClientCluster.LoadClusterSlotReferencesAsync(cluster);
         List<(double? North, double? East, double? Latitude, double? Longitude)> clusterSamples = clusters
             .Where(cluster => cluster?.FieldID == fieldId)
             .Select(TryBuildClusterReferenceSample)

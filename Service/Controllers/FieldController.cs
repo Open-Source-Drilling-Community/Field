@@ -1,3 +1,4 @@
+using OSDC.Drilling.Field.Service;
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
@@ -15,11 +16,34 @@ namespace OSDC.Drilling.Field.Service.Controllers
     [ApiController]
     public class FieldController : ControllerBase
     {
+        private readonly SqlConnectionManager _discoveryConnections;
+
+        /// <summary>Discover Field resources as bounded light records; retrieve selected full records by ID.</summary>
+        [HttpGet("LightData", Name = "DiscoverField")]
+        public ActionResult<OSDC.Drilling.Field.Model.FieldDiscoveryPage> DiscoverField([FromQuery] int offset = 0, [FromQuery] int limit = 50, [FromQuery] string? name = null, [FromQuery] System.Guid? projectionDefinitionId = null)
+        {
+            UsageStatisticsField.Instance.IncrementDiscoveryRequestsPerDay();
+            if (offset < 0 || limit < 1 || limit > 200 || name?.Length > 200 || projectionDefinitionId == System.Guid.Empty)
+                return BadRequest(new { error = "invalid_discovery_query", message = "Offset must be non-negative, limit 1–200, name at most 200 characters, and UUID filters non-empty." });
+            try
+            {
+                var records = DiscoveryRecords.ReadPage<OSDC.Drilling.Field.Model.FieldLight>(_discoveryConnections.GetConnection(), "FieldTable", "Field", offset, limit, name,
+                    new System.Collections.Generic.Dictionary<string, object?> { ["ProjectionDefinitionID"] = projectionDefinitionId }, out int total);
+                return Ok(new OSDC.Drilling.Field.Model.FieldDiscoveryPage { Items = records, Offset = offset, Limit = limit, TotalCount = total,
+                    NextOffset = offset < total && records.Count < total - offset ? offset + records.Count : null });
+            }
+            catch (System.Exception ex) when (ex is Microsoft.Data.Sqlite.SqliteException or System.Text.Json.JsonException or System.InvalidOperationException)
+            {
+                return StatusCode(500, new { error = "discovery_failed" });
+            }
+        }
+
         private readonly ILogger<FieldManager> _logger;
         private readonly FieldManager _fieldManager;
 
         public FieldController(ILogger<FieldManager> logger, SqlConnectionManager connectionManager)
         {
+            _discoveryConnections = connectionManager;
             _logger = logger;
             _fieldManager = FieldManager.GetInstance(_logger, connectionManager);
         }
@@ -94,7 +118,7 @@ namespace OSDC.Drilling.Field.Service.Controllers
         /// Returns the list of all Field present in the microservice database, at endpoint Field/api/Field/HeavyData
         /// </summary>
         /// <returns>the list of all Field present in the microservice database, at endpoint Field/api/Field/HeavyData</returns>
-        [HttpGet("HeavyData", Name = "GetAllField")]
+        [NonAction]
         public ActionResult<IEnumerable<Model.Field?>> GetAllField()
         {
             UsageStatisticsField.Instance.IncrementGetAllFieldPerDay();
@@ -167,7 +191,7 @@ namespace OSDC.Drilling.Field.Service.Controllers
         /// Returns the list of all FieldLight present in the microservice database, at endpoint Field/api/Field/LightData
         /// </summary>
         /// <returns>the list of all FieldLight present in the microservice database, at endpoint Field/api/Field/LightData</returns>
-        [HttpGet("LightData", Name = "GetAllFieldLight")]
+        [NonAction]
         public ActionResult<IEnumerable<Model.FieldLight>> GetAllFieldLight()
         {
             UsageStatisticsField.Instance.IncrementGetAllFieldLightPerDay();

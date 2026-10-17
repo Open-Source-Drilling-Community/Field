@@ -58,7 +58,7 @@ class Program
         bool finished = false;
         try
         {
-            Console.Clear();
+            if (!Console.IsOutputRedirected) Console.Clear();
         }
         catch (IOException)
         {

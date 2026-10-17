@@ -151,3 +151,21 @@ Model classification contract tests verify serialization and typed options.
 Contextual annotations on referenced OpenAPI properties use an `allOf` wrapper, because OpenAPI 3.0 ignores siblings of `$ref`. Where a shared Gaussian DTO is reused, `x-osdc-semantic-bindings` maps relative JSON Pointers to context-specific scalar meanings. MCP additionally annotates its inline scalar schemas. Do not assign one physical quantity globally to a shared Gaussian distribution.
 
 Semantic contract tests verify REST/MCP agreement, reviewed concept resolution, coordinate distinctions and contextual quantity bindings. Run the isolated test projects described in the root README; deployment verification requires the newly built images.
+
+## Bounded light discovery
+
+Resource and catalog discovery returns light pages, with `offset` defaulting to 0 and `limit` defaulting to 50 (allowed range 1–200). Names and relevant resource-reference filters are evaluated on the server. Unbounded full-object `HeavyData` routes and tools, including filtered full-object lists, have been removed. Existing UUID and HTTP-metadata listings remain available; use named light pages for routine discovery.
+
+REST routes and MCP tool names (relative to the service's existing API path base):
+
+- `/Field/LightData` / `field_discover`
+- `/FieldDelineationLineType/LightData` / `field_delineation_line_type_discover`
+- `/FieldFeatureCategory/LightData` / `field_feature_category_discover`
+- `/FieldIdentity/LightData` / `field_identity_discover`
+- `/FieldMembershipCategory/LightData` / `field_membership_category_discover`
+
+Pages contain `Items`, `Offset`, `Limit`, `TotalCount`, and `NextOffset`; `NextOffset` is null on the final page. Offset pages are individually consistent reads, not a snapshot spanning requests: concurrent inserts/deletes can change later pages. Refresh discovery when the underlying collection changes. EarthGeodesy's existing search pages instead expose `Items[].Value`, `Offset`, `Limit`, and `TotalCount`.
+
+Single-record reads, result/chunk reads, and deliberate backup/export/restore operations are preserved. Backups can still contain complete resources and should be treated as explicit bulk operations.
+
+This is a breaking REST/MCP contract change: update generated clients, UIs, and external integrations together with the service release. Removed heavy-list names are not compatibility aliases. No persisted engineering shapes, database names, or storage volumes are changed. Historical usage counters are retained; bounded discovery has a separate additive `DiscoveryRequestsPerDay` history in resource services.

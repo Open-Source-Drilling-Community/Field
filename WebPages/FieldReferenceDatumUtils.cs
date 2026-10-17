@@ -23,6 +23,8 @@ public static class FieldReferenceDatumUtils
             .ToList();
         if (datumPositions.Count == 0)
         {
+            foreach (var cluster in fieldClusters)
+                await FieldModelShared.SlotDiscoveryClientExtensions.LoadClusterSlotReferencesAsync(api.ClientCluster, cluster);
             datumPositions = fieldClusters.SelectMany(cluster => cluster.Slots?.Values ?? [])
                 .Where(slot => slot.Latitude?.GaussianValue?.Mean != null && slot.Longitude?.GaussianValue?.Mean != null)
                 .Select(slot => (slot.Latitude!.GaussianValue!.Mean!.Value, slot.Longitude!.GaussianValue!.Mean!.Value))

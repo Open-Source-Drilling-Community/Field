@@ -134,8 +134,8 @@ public sealed class McpToolRegistrationTests
     }
 
     [TestCase("field_get_all_ids")]
-    [TestCase("field_get_all")]
-    [TestCase("field_identity_get_all")]
+    [TestCase("field_discover")]
+    [TestCase("field_identity_discover")]
     public void Parameterless_tools_publish_an_explicit_empty_schema(string toolName)
     {
         JsonObject schema = RequireObject(_tools[toolName].InputSchema);

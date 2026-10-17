@@ -57,7 +57,7 @@ namespace OSDC.Drilling.Field.ServiceTest
                 Assert.That(metas, Is.Not.Null);
                 Assert.That(metas.Any(m => m.ID == fieldId), Is.True);
 
-                var heavies = await api.GetAllFieldAsync();
+                var heavies = await api.ListFieldReferencesAsync();
                 Assert.That(heavies, Is.Not.Null);
                 Assert.That(heavies.Any(f => f?.MetaInfo?.ID == fieldId), Is.True);
 

@@ -135,6 +135,6 @@ app.UseCors(cors => cors
 app.MapMcp("/mcp");
 app.MapMcpWebSocket("/mcp/ws");
 app.MapControllers();
-app.MapFallbackToFile("index.html");
+app.MapFallbackToFile("/", "index.html");
 
 app.Run();

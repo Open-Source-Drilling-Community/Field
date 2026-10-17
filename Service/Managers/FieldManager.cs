@@ -443,7 +443,7 @@ namespace OSDC.Drilling.Field.Service.Managers
                                 field.Name,
                                 field.Description,
                                 field.CreationDate,
-                                field.LastModificationDate));
+                                field.LastModificationDate) { ProjectionDefinitionID = field.ProjectionDefinitionID });
                         }
                     }
                     _logger.LogInformation("Returning the list of existing FieldLight from FieldTable");

@@ -367,7 +367,7 @@ namespace OSDC.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ProjectionDefinitionSummary>> SummariesAsync(bool? includeDeprecated = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ProjectionDefinitionDiscoveryPage> SummariesAsync(bool? includeDeprecated = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -386,6 +386,14 @@ namespace OSDC.Drilling.Field.ModelShared
                     if (includeDeprecated != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("includeDeprecated")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(includeDeprecated, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (offset != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("offset")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(offset, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (limit != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("limit")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(limit, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -414,7 +422,7 @@ namespace OSDC.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ProjectionDefinitionSummary>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProjectionDefinitionDiscoveryPage>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1411,170 +1419,6 @@ namespace OSDC.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<GeodeticDatum>> GeodeticDatumAllAsync(string name = null, string authority = null, string code = null, bool? builtIn = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticDatum"
-                    urlBuilder_.Append("GeodeticDatum");
-                    urlBuilder_.Append('?');
-                    if (name != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("name")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    if (authority != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("authority")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(authority, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    if (code != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("code")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(code, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    if (builtIn != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("builtIn")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(builtIn, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    urlBuilder_.Length--;
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<GeodeticDatum>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GeodeticDatum> GeodeticDatumPOSTAsync(CreateGeodeticDatumRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
-                    var content_ = new System.Net.Http.ByteArrayContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticDatum"
-                    urlBuilder_.Append("GeodeticDatum");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<GeodeticDatum>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<CatalogSearchResult_GeodeticDatumSummary> Search3Async(CatalogSearchRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
@@ -1853,22 +1697,22 @@ namespace OSDC.Drilling.Field.ModelShared
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Microsoft_AspNetCore_Mvc_ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiException<Microsoft_AspNetCore_Mvc_ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 409)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Microsoft_AspNetCore_Mvc_ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiException<Microsoft_AspNetCore_Mvc_ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -1893,96 +1737,7 @@ namespace OSDC.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<GeodeticTransformation>> GeodeticTransformationAllAsync(string name = null, string authority = null, string code = null, bool? builtIn = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticTransformation"
-                    urlBuilder_.Append("GeodeticTransformation");
-                    urlBuilder_.Append('?');
-                    if (name != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("name")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    if (authority != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("authority")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(authority, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    if (code != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("code")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(code, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    if (builtIn != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("builtIn")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(builtIn, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    urlBuilder_.Length--;
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<GeodeticTransformation>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GeodeticTransformation> GeodeticTransformationPOSTAsync(CreateGeodeticTransformationRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<GeodeticDatum> GeodeticDatumPOSTAsync(CreateGeodeticDatumRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1999,8 +1754,8 @@ namespace OSDC.Drilling.Field.ModelShared
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "GeodeticTransformation"
-                    urlBuilder_.Append("GeodeticTransformation");
+                    // Operation Path: "GeodeticDatum"
+                    urlBuilder_.Append("GeodeticDatum");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2027,7 +1782,7 @@ namespace OSDC.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<GeodeticTransformation>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GeodeticDatum>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2335,22 +2090,22 @@ namespace OSDC.Drilling.Field.ModelShared
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Microsoft_AspNetCore_Mvc_ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiException<Microsoft_AspNetCore_Mvc_ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 409)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Microsoft_AspNetCore_Mvc_ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiException<Microsoft_AspNetCore_Mvc_ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -2375,96 +2130,7 @@ namespace OSDC.Drilling.Field.ModelShared
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ReferenceEllipsoid>> ReferenceEllipsoidAllAsync(string name = null, string authority = null, string code = null, bool? builtIn = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "ReferenceEllipsoid"
-                    urlBuilder_.Append("ReferenceEllipsoid");
-                    urlBuilder_.Append('?');
-                    if (name != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("name")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    if (authority != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("authority")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(authority, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    if (code != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("code")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(code, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    if (builtIn != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("builtIn")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(builtIn, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    urlBuilder_.Length--;
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ReferenceEllipsoid>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ReferenceEllipsoid> ReferenceEllipsoidPOSTAsync(CreateReferenceEllipsoidRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<GeodeticTransformation> GeodeticTransformationPOSTAsync(CreateGeodeticTransformationRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2481,8 +2147,8 @@ namespace OSDC.Drilling.Field.ModelShared
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "ReferenceEllipsoid"
-                    urlBuilder_.Append("ReferenceEllipsoid");
+                    // Operation Path: "GeodeticTransformation"
+                    urlBuilder_.Append("GeodeticTransformation");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2509,7 +2175,7 @@ namespace OSDC.Drilling.Field.ModelShared
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<ReferenceEllipsoid>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GeodeticTransformation>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2817,22 +2483,97 @@ namespace OSDC.Drilling.Field.ModelShared
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Microsoft_AspNetCore_Mvc_ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiException<Microsoft_AspNetCore_Mvc_ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 409)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Microsoft_AspNetCore_Mvc_ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new ApiException<Microsoft_AspNetCore_Mvc_ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ReferenceEllipsoid> ReferenceEllipsoidPOSTAsync(CreateReferenceEllipsoidRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "ReferenceEllipsoid"
+                    urlBuilder_.Append("ReferenceEllipsoid");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ReferenceEllipsoid>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -2985,6 +2726,10 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("scope")]
         public string Scope { get; set; }
 
+        /// <summary>
+        /// Approximate geographic extent in SI radians, longitude east of Greenwich; not in a non-Greenwich source CRS. West greater than east denotes antimeridian crossing.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("bounds")]
         public GeographicBoundingBox Bounds { get; set; }
 
@@ -3134,6 +2879,10 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.ComponentModel.DataAnnotations.Required]
         public ProjectionDefinition Value { get; set; } = new ProjectionDefinition();
 
+        /// <summary>
+        /// Unitless search ranking score; not a probability, confidence or scientific accuracy.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("matchScore")]
         public double MatchScore { get; set; }
 
@@ -3158,6 +2907,10 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("value")]
         [System.ComponentModel.DataAnnotations.Required]
         public ProjectionMethod Value { get; set; } = new ProjectionMethod();
+
+        /// <summary>
+        /// Unitless search ranking score; not a probability, confidence or scientific accuracy.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("matchScore")]
         public double MatchScore { get; set; }
@@ -3304,8 +3057,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("abbreviation")]
         public string Abbreviation { get; set; }
 
+        /// <summary>
+        /// One-based official axis serialization ordinal; no physical unit.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("order")]
         public int Order { get; set; }
+
+        /// <summary>
+        /// Official axis direction. Other includes meridian-qualified polar axes; retain authority CRS identity for exact orientation.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("direction")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
@@ -3317,6 +3078,10 @@ namespace OSDC.Drilling.Field.ModelShared
 
         [System.Text.Json.Serialization.JsonPropertyName("unitName")]
         public string UnitName { get; set; }
+
+        /// <summary>
+        /// Metres per one original axis unit. Source unit is Unit; target is SI metre. This coefficient is not a projection scale factor.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("unitToMetre")]
         public double UnitToMetre { get; set; }
@@ -3342,8 +3107,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("abbreviation")]
         public string Abbreviation { get; set; }
 
+        /// <summary>
+        /// One-based official axis serialization ordinal; no physical unit.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("order")]
         public int Order { get; set; }
+
+        /// <summary>
+        /// Official axis direction. Other includes meridian-qualified polar axes; retain authority CRS identity for exact orientation.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("direction")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
@@ -3376,12 +3149,24 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("identifier")]
         public AuthorityIdentifier Identifier { get; set; }
 
+        /// <summary>
+        /// Base geographic CRS and datum/prime-meridian context; forward and inverse projection retain this datum.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("baseGeographicCrs")]
         [System.ComponentModel.DataAnnotations.Required]
         public GeographicCrsInput BaseGeographicCrs { get; set; } = new GeographicCrsInput();
 
+        /// <summary>
+        /// Internal UUID of the projection method, not an EPSG numeric code.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("methodId")]
         public System.Guid MethodId { get; set; }
+
+        /// <summary>
+        /// Name of the configured same-datum coordinate conversion.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("conversionName")]
         public string ConversionName { get; set; }
@@ -3494,17 +3279,32 @@ namespace OSDC.Drilling.Field.ModelShared
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ForwardProjectionPosition
     {
+        /// <summary>
+        /// Zero-based position in the submitted ordered batch; no physical unit.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("positionIndex")]
         public int PositionIndex { get; set; }
+
+        /// <summary>
+        /// Horizontal latitude/longitude pair in SI radians on the unchanged base datum. Input/output role depends on projection direction.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("geographicCoordinate")]
         [System.ComponentModel.DataAnnotations.Required]
         public GeographicCoordinate GeographicCoordinate { get; set; } = new GeographicCoordinate();
 
+        /// <summary>
+        /// Horizontal canonical easting/northing pair in SI metres. Input/output role depends on projection direction.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("projectedCoordinate")]
         [System.ComponentModel.DataAnnotations.Required]
         public ProjectedCoordinate ProjectedCoordinate { get; set; } = new ProjectedCoordinate();
+
+        /// <summary>
+        /// Angle in SI radians, clockwise from true/geodetic north to grid north. Null means unavailable. Numerical differentiation does not imply catalogue display precision is accuracy.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("gridConvergence")]
         public double? GridConvergence { get; set; }
@@ -3553,13 +3353,25 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.ComponentModel.DataAnnotations.Required]
         public ProjectionDefinitionReference ProjectionDefinition { get; set; } = new ProjectionDefinitionReference();
 
+        /// <summary>
+        /// Geographic CRS of the latitude/longitude values; longitude is relative to its prime meridian.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("geographicCoordinateReferenceSystem")]
         [System.ComponentModel.DataAnnotations.Required]
         public CrsReference GeographicCoordinateReferenceSystem { get; set; } = new CrsReference();
 
+        /// <summary>
+        /// Projected CRS of the canonical SI easting/northing values.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("projectedCoordinateReferenceSystem")]
         [System.ComponentModel.DataAnnotations.Required]
         public CrsReference ProjectedCoordinateReferenceSystem { get; set; } = new CrsReference();
+
+        /// <summary>
+        /// Canonical grid easting/northing in SI metres. Official CRS axis metadata remains separately available.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("apiAxisConvention")]
         public string ApiAxisConvention { get; set; }
@@ -3601,6 +3413,10 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("name")]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Opaque pinned EarthGeodesy revision token. Copy exactly from the latest read; do not truncate or normalize.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("expectedModifiedUtc")]
         public System.DateTimeOffset? ExpectedModifiedUtc { get; set; }
 
@@ -3618,15 +3434,30 @@ namespace OSDC.Drilling.Field.ModelShared
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class GeographicBoundingBox
     {
+        /// <summary>
+        /// WGS84/Greenwich geographic boundary in SI radians; longitude bounds may wrap across the antimeridian.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("SouthLatitude")]
         public double SouthLatitude { get; set; }
 
+        /// <summary>
+        /// WGS84/Greenwich geographic boundary in SI radians; longitude bounds may wrap across the antimeridian.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("NorthLatitude")]
         public double NorthLatitude { get; set; }
 
+        /// <summary>
+        /// WGS84/Greenwich geographic boundary in SI radians; longitude bounds may wrap across the antimeridian.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("WestLongitude")]
         public double WestLongitude { get; set; }
+
+        /// <summary>
+        /// WGS84/Greenwich geographic boundary in SI radians; longitude bounds may wrap across the antimeridian.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("EastLongitude")]
         public double EastLongitude { get; set; }
@@ -3645,9 +3476,16 @@ namespace OSDC.Drilling.Field.ModelShared
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class GeographicCoordinate
     {
+        /// <summary>
+        /// Latitude in SI radians, positive north. Geographic CRS/datum supplied by the enclosing definition; no vertical coordinate.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("latitude")]
         public double Latitude { get; set; }
+
+        /// <summary>
+        /// Longitude in SI radians, positive east from the base geographic CRS prime meridian. Search positions instead use Greenwich.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("longitude")]
         public double Longitude { get; set; }
@@ -3713,17 +3551,32 @@ namespace OSDC.Drilling.Field.ModelShared
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class InverseProjectionPosition
     {
+        /// <summary>
+        /// Zero-based position in the submitted ordered batch; no physical unit.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("positionIndex")]
         public int PositionIndex { get; set; }
+
+        /// <summary>
+        /// Horizontal canonical easting/northing pair in SI metres. Input/output role depends on projection direction.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("projectedCoordinate")]
         [System.ComponentModel.DataAnnotations.Required]
         public ProjectedCoordinate ProjectedCoordinate { get; set; } = new ProjectedCoordinate();
 
+        /// <summary>
+        /// Horizontal latitude/longitude pair in SI radians on the unchanged base datum. Input/output role depends on projection direction.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("geographicCoordinate")]
         [System.ComponentModel.DataAnnotations.Required]
         public GeographicCoordinate GeographicCoordinate { get; set; } = new GeographicCoordinate();
+
+        /// <summary>
+        /// Angle in SI radians, clockwise from true/geodetic north to grid north. Null means unavailable. Numerical differentiation does not imply catalogue display precision is accuracy.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("gridConvergence")]
         public double? GridConvergence { get; set; }
@@ -3772,13 +3625,25 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.ComponentModel.DataAnnotations.Required]
         public ProjectionDefinitionReference ProjectionDefinition { get; set; } = new ProjectionDefinitionReference();
 
+        /// <summary>
+        /// Geographic CRS of the latitude/longitude values; longitude is relative to its prime meridian.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("geographicCoordinateReferenceSystem")]
         [System.ComponentModel.DataAnnotations.Required]
         public CrsReference GeographicCoordinateReferenceSystem { get; set; } = new CrsReference();
 
+        /// <summary>
+        /// Projected CRS of the canonical SI easting/northing values.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("projectedCoordinateReferenceSystem")]
         [System.ComponentModel.DataAnnotations.Required]
         public CrsReference ProjectedCoordinateReferenceSystem { get; set; } = new CrsReference();
+
+        /// <summary>
+        /// Canonical grid easting/northing in SI metres. Official CRS axis metadata remains separately available.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("apiAxisConvention")]
         public string ApiAxisConvention { get; set; }
@@ -3810,9 +3675,16 @@ namespace OSDC.Drilling.Field.ModelShared
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ProjectedCoordinate
     {
+        /// <summary>
+        /// Signed grid easting in SI metres in the declared projected CRS; canonical API convention, independent of official axis order and units.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("easting")]
         public double Easting { get; set; }
+
+        /// <summary>
+        /// Signed grid northing in SI metres in the declared projected CRS; canonical API convention, independent of official axis order and units.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("northing")]
         public double Northing { get; set; }
@@ -3834,6 +3706,10 @@ namespace OSDC.Drilling.Field.ModelShared
 
         [System.Text.Json.Serialization.JsonPropertyName("axes")]
         public System.Collections.Generic.ICollection<CoordinateSystemAxis> Axes { get; set; }
+
+        /// <summary>
+        /// Canonical grid easting/northing in SI metres. Official CRS axis metadata remains separately available.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("apiConvention")]
         public string ApiConvention { get; set; }
@@ -3886,6 +3762,10 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("earthGeodesyDatumId")]
         public System.Guid EarthGeodesyDatumId { get; set; }
 
+        /// <summary>
+        /// Opaque pinned EarthGeodesy revision token. Copy exactly from the latest read; do not truncate or normalize.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("expectedModifiedUtc")]
         public System.DateTimeOffset? ExpectedModifiedUtc { get; set; }
 
@@ -3919,15 +3799,31 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("identifier")]
         public AuthorityIdentifier Identifier { get; set; }
 
+        /// <summary>
+        /// Base geographic CRS and datum/prime-meridian context; forward and inverse projection retain this datum.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("baseGeographicCrs")]
         [System.ComponentModel.DataAnnotations.Required]
         public GeographicCrsReference BaseGeographicCrs { get; set; } = new GeographicCrsReference();
 
+        /// <summary>
+        /// Internal UUID of the projection method, not an EPSG numeric code.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("methodId")]
         public System.Guid MethodId { get; set; }
 
+        /// <summary>
+        /// Authority identity of the configured coordinate conversion; distinct from the method or projected CRS identity.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("conversionIdentifier")]
         public AuthorityIdentifier ConversionIdentifier { get; set; }
+
+        /// <summary>
+        /// Name of the configured same-datum coordinate conversion.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("conversionName")]
         public string ConversionName { get; set; }
@@ -3961,6 +3857,10 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("informationSource")]
         public string InformationSource { get; set; }
 
+        /// <summary>
+        /// Authority revision date, not a coordinate epoch.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("revisionDate")]
         public System.DateTimeOffset? RevisionDate { get; set; }
 
@@ -3968,8 +3868,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.ComponentModel.DataAnnotations.Required]
         public CatalogProvenance Provenance { get; set; } = new CatalogProvenance();
 
+        /// <summary>
+        /// Creation instant in UTC; not a coordinate epoch.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("createdUtc")]
         public System.DateTimeOffset CreatedUtc { get; set; }
+
+        /// <summary>
+        /// Modification instant in UTC; not a coordinate epoch.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("modifiedUtc")]
         public System.DateTimeOffset ModifiedUtc { get; set; }
@@ -3984,6 +3892,39 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("catalogStatus")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
         public CatalogEntryStatus CatalogStatus { get; set; }
+
+        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    /// <summary>
+    /// A bounded page of projection-definition summaries, ordered by UUID.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectionDefinitionDiscoveryPage
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<ProjectionDefinitionSummary> Items { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("offset")]
+        public int Offset { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("limit")]
+        public int Limit { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalCount")]
+        public int TotalCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("nextOffset")]
+        public int? NextOffset { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -4050,6 +3991,10 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("limit")]
         public int Limit { get; set; }
 
+        /// <summary>
+        /// Internal UUID of the projection method, not an EPSG numeric code.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("methodId")]
         public System.Guid? MethodId { get; set; }
 
@@ -4059,8 +4004,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("areaQuery")]
         public string AreaQuery { get; set; }
 
+        /// <summary>
+        /// Area-search position in SI radians, latitude north and longitude east of Greenwich. Approximate geographic extent check, not a datum transformation.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("containsPosition")]
         public GeographicCoordinate ContainsPosition { get; set; }
+
+        /// <summary>
+        /// Area-search envelope in SI radians referenced to Greenwich. West greater than east denotes antimeridian crossing.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("containsBounds")]
         public GeographicBoundingBox ContainsBounds { get; set; }
@@ -4204,6 +4157,10 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("identifier")]
         public AuthorityIdentifier Identifier { get; set; }
 
+        /// <summary>
+        /// Broad representation category; parameter identity and method determine scientific meaning. Scale alone does not establish ProjectionScaleFactor for generic polynomial coefficients.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("quantity")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
         public ProjectionParameterQuantity Quantity { get; set; }
@@ -4211,8 +4168,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("isRequired")]
         public bool IsRequired { get; set; }
 
+        /// <summary>
+        /// Lower bound in the identified parameter normalized representation. See x-osdc-parameter-semantics; no universal physical quantity.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("minimumValue")]
         public double? MinimumValue { get; set; }
+
+        /// <summary>
+        /// Upper bound in the identified parameter normalized representation. See x-osdc-parameter-semantics; no universal physical quantity.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("maximumValue")]
         public double? MaximumValue { get; set; }
@@ -4234,9 +4199,16 @@ namespace OSDC.Drilling.Field.ModelShared
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ProjectionParameterInput
     {
+        /// <summary>
+        /// Internal parameter UUID; resolve with the enclosing selected method. Meaning and physical quantity depend on EPSG parameter identity.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("parameterId")]
         public System.Guid ParameterId { get; set; }
+
+        /// <summary>
+        /// Normalized parameter value: radians for angles, metres for linear parameters, full factor for projection scale. Resolve parameter identity and method using x-osdc-parameter-semantics; generic coefficients have no asserted universal quantity.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("value")]
         public double Value { get; set; }
@@ -4276,6 +4248,9 @@ namespace OSDC.Drilling.Field.ModelShared
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ProjectionParameterValue
     {
+        /// <summary>
+        /// Internal parameter UUID; resolve with the enclosing selected method. Meaning and physical quantity depend on EPSG parameter identity.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("parameterId")]
         public System.Guid ParameterId { get; set; }
@@ -4286,15 +4261,34 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("identifier")]
         public AuthorityIdentifier Identifier { get; set; }
 
+        /// <summary>
+        /// Broad representation category; parameter identity and method determine scientific meaning. Scale alone does not establish ProjectionScaleFactor for generic polynomial coefficients.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("quantity")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
         public ProjectionParameterQuantity Quantity { get; set; }
 
+        /// <summary>
+        /// Normalized parameter value: radians for angles, metres for linear parameters, full factor for projection scale. Resolve parameter identity and method using x-osdc-parameter-semantics; generic coefficients have no asserted universal quantity.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("value")]
         public double Value { get; set; }
 
+        /// <summary>
+        /// Original source value in OriginalUnit/OriginalUnitName, which may use encoded sexagesimal DMS. It is not necessarily SI and must not inherit the normalized Value quantity.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("originalValue")]
         public double? OriginalValue { get; set; }
+
+        /// <summary>
+        /// Null when normalization succeeded. Otherwise the source encoding is invalid and Value is retained only for traceability; do not interpret it as verified SI or reuse it as calculation input. OriginalValue and OriginalUnit remain unchanged.
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("normalizationWarning")]
+        public string NormalizationWarning { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("originalUnit")]
         public AuthorityIdentifier OriginalUnit { get; set; }
@@ -4371,12 +4365,24 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("identifier")]
         public AuthorityIdentifier Identifier { get; set; }
 
+        /// <summary>
+        /// Base geographic CRS and datum/prime-meridian context; forward and inverse projection retain this datum.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("baseGeographicCrs")]
         [System.ComponentModel.DataAnnotations.Required]
         public GeographicCrsInput BaseGeographicCrs { get; set; } = new GeographicCrsInput();
 
+        /// <summary>
+        /// Internal UUID of the projection method, not an EPSG numeric code.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("methodId")]
         public System.Guid MethodId { get; set; }
+
+        /// <summary>
+        /// Name of the configured same-datum coordinate conversion.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("conversionName")]
         public string ConversionName { get; set; }
@@ -4451,7 +4457,7 @@ namespace OSDC.Drilling.Field.ModelShared
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Microsoft_AspNetCore_Mvc_ProblemDetails
+    public partial class ProblemDetails
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("type")]
@@ -4490,6 +4496,10 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
 
@@ -4511,6 +4521,10 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Value")]
         [System.ComponentModel.DataAnnotations.Required]
         public GeodeticDatumSummary Value { get; set; } = new GeodeticDatumSummary();
+
+        /// <summary>
+        /// Unitless provider search-ranking score, not a physical quantity, probability or accuracy estimate.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("MatchScore")]
         public double MatchScore { get; set; }
@@ -4537,6 +4551,10 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.ComponentModel.DataAnnotations.Required]
         public GeodeticTransformationSummary Value { get; set; } = new GeodeticTransformationSummary();
 
+        /// <summary>
+        /// Unitless provider search-ranking score, not a physical quantity, probability or accuracy estimate.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("MatchScore")]
         public double MatchScore { get; set; }
 
@@ -4561,6 +4579,10 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Value")]
         [System.ComponentModel.DataAnnotations.Required]
         public ReferenceEllipsoidSummary Value { get; set; } = new ReferenceEllipsoidSummary();
+
+        /// <summary>
+        /// Unitless provider search-ranking score, not a physical quantity, probability or accuracy estimate.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("MatchScore")]
         public double MatchScore { get; set; }
@@ -4690,6 +4712,9 @@ namespace OSDC.Drilling.Field.ModelShared
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CoordinateOperationParameterValue
     {
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         [System.ComponentModel.DataAnnotations.Required]
@@ -4698,14 +4723,30 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Original authority parameter value in the declared Unit/UnitName, not necessarily SI. Quantity depends on method and parameter identity; null can accompany a file-valued parameter.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Value")]
         public double? Value { get; set; }
+
+        /// <summary>
+        /// Authority parameter resource-file reference; not a numeric engineering value.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("FileReference")]
         public string FileReference { get; set; }
 
+        /// <summary>
+        /// Authority unit identity for the original parameter Value; do not assume SI.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Unit")]
         public AuthorityIdentifier Unit { get; set; }
+
+        /// <summary>
+        /// Name of the original authority unit for Value; resolve Unit identity rather than assuming SI.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("UnitName")]
         public string UnitName { get; set; }
@@ -4724,6 +4765,9 @@ namespace OSDC.Drilling.Field.ModelShared
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CoordinateReferenceSystemReference
     {
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         [System.ComponentModel.DataAnnotations.Required]
@@ -4731,6 +4775,10 @@ namespace OSDC.Drilling.Field.ModelShared
 
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string Name { get; set; }
+
+        /// <summary>
+        /// Coordinate representation and dimensionality; geographic 2D does not define transformed height.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Domain")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
@@ -4757,8 +4805,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Internal catalogue UUID of the reference ellipsoid definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("ReferenceEllipsoidId")]
         public System.Guid ReferenceEllipsoidId { get; set; }
+
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
@@ -4770,11 +4826,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("IsDeprecated")]
         public bool IsDeprecated { get; set; }
 
+        /// <summary>
+        /// Name of the meridian defining the datum longitude origin.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianName")]
         public string PrimeMeridianName { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianIdentifier")]
         public AuthorityIdentifier PrimeMeridianIdentifier { get; set; }
+
+        /// <summary>
+        /// SI radians east of Greenwich; not longitude measured from the selected datum prime meridian.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianLongitude")]
         public double PrimeMeridianLongitude { get; set; }
@@ -4785,11 +4853,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("PublicationDate")]
         public string PublicationDate { get; set; }
 
+        /// <summary>
+        /// Authority-supplied realization epoch text; not automatically a parsed UTC instant.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("RealizationEpoch")]
         public string RealizationEpoch { get; set; }
 
+        /// <summary>
+        /// Authority-supplied decimal-year frame reference epoch; not a duration or coordinate epoch. Retain the defining authority calendar/time convention; do not infer UTC.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("FrameReferenceEpoch")]
         public double? FrameReferenceEpoch { get; set; }
+
+        /// <summary>
+        /// Authority-supplied decimal-year anchor epoch; not an elapsed duration. Retain the defining authority calendar/time convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("AnchorEpoch")]
         public double? AnchorEpoch { get; set; }
@@ -4800,11 +4880,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("RealizationMethod")]
         public string RealizationMethod { get; set; }
 
+        /// <summary>
+        /// Stated ensemble accuracy in SI metres; not an operation accuracy or a guaranteed standard deviation.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("EnsembleAccuracy")]
         public double? EnsembleAccuracy { get; set; }
 
+        /// <summary>
+        /// Internal UUIDs of the ensemble member reference frames.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("MemberDatumIds")]
         public System.Collections.Generic.ICollection<System.Guid> MemberDatumIds { get; set; }
+
+        /// <summary>
+        /// Declared purposes and extents of this definition.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Usage")]
         public System.Collections.Generic.ICollection<GeodeticUsage> Usage { get; set; }
@@ -4833,36 +4925,80 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Source datum/frame or ensemble context for input coordinates.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("SourceDatumId")]
         public System.Guid SourceDatumId { get; set; }
 
+        /// <summary>
+        /// Target datum/frame or ensemble context for output coordinates.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TargetDatumId")]
         public System.Guid TargetDatumId { get; set; }
+
+        /// <summary>
+        /// Coordinate operation method; preserve method identity and rotation convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Method")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
         public GeodeticTransformationMethod Method { get; set; }
 
+        /// <summary>
+        /// Signed geocentric X translation in SI metres; source/target frames and operation direction define meaning.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TranslationX")]
         public double TranslationX { get; set; }
+
+        /// <summary>
+        /// Signed geocentric Y translation in SI metres; source/target frames and operation direction define meaning.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("TranslationY")]
         public double TranslationY { get; set; }
 
+        /// <summary>
+        /// Signed geocentric Z translation in SI metres; source/target frames and operation direction define meaning.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TranslationZ")]
         public double TranslationZ { get; set; }
+
+        /// <summary>
+        /// Signed geocentric X rotation in SI radians. Custom operations use the position-vector convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("RotationX")]
         public double RotationX { get; set; }
 
+        /// <summary>
+        /// Signed geocentric Y rotation in SI radians. Custom operations use the position-vector convention.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("RotationY")]
         public double RotationY { get; set; }
+
+        /// <summary>
+        /// Signed geocentric Z rotation in SI radians. Custom operations use the position-vector convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("RotationZ")]
         public double RotationZ { get; set; }
 
+        /// <summary>
+        /// Dimensionless increment s in scale factor 1+s, not ppm or the full factor. Zero means no scale change; display precision 1e-12 does not round stored values.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("ScaleDifference")]
         public double ScaleDifference { get; set; }
+
+        /// <summary>
+        /// Estimated operation accuracy in SI metres; null means unknown, not zero or a guaranteed standard deviation.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Accuracy")]
         public double? Accuracy { get; set; }
@@ -4870,8 +5006,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("AreaOfUse")]
         public string AreaOfUse { get; set; }
 
+        /// <summary>
+        /// WGS84/Greenwich geographic bounds in SI radians; west greater than east denotes antimeridian crossing.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("AreaOfUseBounds")]
         public GeographicBoundingBox AreaOfUseBounds { get; set; }
+
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
@@ -4897,11 +5041,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
 
+        /// <summary>
+        /// Equatorial semi-major axis in SI metres.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("SemiMajorAxis")]
         public double SemiMajorAxis { get; set; }
+
+        /// <summary>
+        /// Dimensionless inverse flattening 1/f; zero is the provider sphere sentinel, otherwise greater than one. Display precision 1e-9 does not round stored values.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("InverseFlattening")]
         public double InverseFlattening { get; set; }
@@ -4927,8 +5083,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
+
+        /// <summary>
+        /// Reference ellipsoid definition, distinct from a datum/frame realization.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("ReferenceEllipsoid")]
         [System.ComponentModel.DataAnnotations.Required]
@@ -4959,11 +5123,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("TransformationName")]
         public string TransformationName { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
 
+        /// <summary>
+        /// Source datum/frame or ensemble context for input coordinates.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("SourceDatumId")]
         public System.Guid SourceDatumId { get; set; }
+
+        /// <summary>
+        /// Target datum/frame or ensemble context for output coordinates.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("TargetDatumId")]
         public System.Guid TargetDatumId { get; set; }
@@ -4979,6 +5155,10 @@ namespace OSDC.Drilling.Field.ModelShared
 
         [System.Text.Json.Serialization.JsonPropertyName("AreaOfUse")]
         public string AreaOfUse { get; set; }
+
+        /// <summary>
+        /// WGS84/Greenwich geographic bounds in SI radians; west greater than east denotes antimeridian crossing.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("AreaOfUseBounds")]
         public GeographicBoundingBox AreaOfUseBounds { get; set; }
@@ -5082,11 +5262,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
 
+        /// <summary>
+        /// Equatorial semi-major axis in SI metres.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("SemiMajorAxis")]
         public double SemiMajorAxis { get; set; }
+
+        /// <summary>
+        /// Dimensionless inverse flattening 1/f; zero is the provider sphere sentinel, otherwise greater than one. Display precision 1e-9 does not round stored values.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("InverseFlattening")]
         public double InverseFlattening { get; set; }
@@ -5115,8 +5307,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Internal catalogue UUID of the reference ellipsoid definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("ReferenceEllipsoidId")]
         public System.Guid ReferenceEllipsoidId { get; set; }
+
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
@@ -5127,12 +5327,24 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("IsDefault")]
         public bool IsDefault { get; set; }
 
+        /// <summary>
+        /// Source and identity-match evidence; not semantic curation status or runtime executability.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Provenance")]
         [System.ComponentModel.DataAnnotations.Required]
         public CatalogProvenance Provenance { get; set; } = new CatalogProvenance();
 
+        /// <summary>
+        /// Catalogue creation/modification instant in UTC.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("CreatedUtc")]
         public System.DateTimeOffset CreatedUtc { get; set; }
+
+        /// <summary>
+        /// Catalogue creation/modification instant in UTC.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("ModifiedUtc")]
         public System.DateTimeOffset ModifiedUtc { get; set; }
@@ -5150,11 +5362,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("IsSuperseded")]
         public bool IsSuperseded { get; set; }
 
+        /// <summary>
+        /// Name of the meridian defining the datum longitude origin.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianName")]
         public string PrimeMeridianName { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianIdentifier")]
         public AuthorityIdentifier PrimeMeridianIdentifier { get; set; }
+
+        /// <summary>
+        /// SI radians east of Greenwich; not longitude measured from the selected datum prime meridian.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianLongitude")]
         public double PrimeMeridianLongitude { get; set; }
@@ -5165,11 +5389,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("PublicationDate")]
         public string PublicationDate { get; set; }
 
+        /// <summary>
+        /// Authority-supplied realization epoch text; not automatically a parsed UTC instant.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("RealizationEpoch")]
         public string RealizationEpoch { get; set; }
 
+        /// <summary>
+        /// Authority-supplied decimal-year frame reference epoch; not a duration or coordinate epoch. Retain the defining authority calendar/time convention; do not infer UTC.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("FrameReferenceEpoch")]
         public double? FrameReferenceEpoch { get; set; }
+
+        /// <summary>
+        /// Authority-supplied decimal-year anchor epoch; not an elapsed duration. Retain the defining authority calendar/time convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("AnchorEpoch")]
         public double? AnchorEpoch { get; set; }
@@ -5180,11 +5416,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("RealizationMethod")]
         public string RealizationMethod { get; set; }
 
+        /// <summary>
+        /// Stated ensemble accuracy in SI metres; not an operation accuracy or a guaranteed standard deviation.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("EnsembleAccuracy")]
         public double? EnsembleAccuracy { get; set; }
 
+        /// <summary>
+        /// Internal UUIDs of the ensemble member reference frames.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("MemberDatumIds")]
         public System.Collections.Generic.ICollection<System.Guid> MemberDatumIds { get; set; }
+
+        /// <summary>
+        /// Declared purposes and extents of this definition.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Usage")]
         public System.Collections.Generic.ICollection<GeodeticUsage> Usage { get; set; }
@@ -5226,8 +5474,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
+
+        /// <summary>
+        /// Reference ellipsoid definition, distinct from a datum/frame realization.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("ReferenceEllipsoid")]
         [System.ComponentModel.DataAnnotations.Required]
@@ -5250,11 +5506,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("IsSuperseded")]
         public bool IsSuperseded { get; set; }
 
+        /// <summary>
+        /// Name of the meridian defining the datum longitude origin.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianName")]
         public string PrimeMeridianName { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianIdentifier")]
         public AuthorityIdentifier PrimeMeridianIdentifier { get; set; }
+
+        /// <summary>
+        /// SI radians east of Greenwich; not longitude measured from the selected datum prime meridian.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianLongitude")]
         public double PrimeMeridianLongitude { get; set; }
@@ -5265,11 +5533,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("PublicationDate")]
         public string PublicationDate { get; set; }
 
+        /// <summary>
+        /// Authority-supplied realization epoch text; not automatically a parsed UTC instant.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("RealizationEpoch")]
         public string RealizationEpoch { get; set; }
 
+        /// <summary>
+        /// Authority-supplied decimal-year frame reference epoch; not a duration or coordinate epoch. Retain the defining authority calendar/time convention; do not infer UTC.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("FrameReferenceEpoch")]
         public double? FrameReferenceEpoch { get; set; }
+
+        /// <summary>
+        /// Authority-supplied decimal-year anchor epoch; not an elapsed duration. Retain the defining authority calendar/time convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("AnchorEpoch")]
         public double? AnchorEpoch { get; set; }
@@ -5280,11 +5560,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("RealizationMethod")]
         public string RealizationMethod { get; set; }
 
+        /// <summary>
+        /// Stated ensemble accuracy in SI metres; not an operation accuracy or a guaranteed standard deviation.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("EnsembleAccuracy")]
         public double? EnsembleAccuracy { get; set; }
 
+        /// <summary>
+        /// Internal UUIDs of the ensemble member reference frames.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("MemberDatumIds")]
         public System.Collections.Generic.ICollection<System.Guid> MemberDatumIds { get; set; }
+
+        /// <summary>
+        /// Declared purposes and extents of this definition.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Usage")]
         public System.Collections.Generic.ICollection<GeodeticUsage> Usage { get; set; }
@@ -5297,6 +5589,10 @@ namespace OSDC.Drilling.Field.ModelShared
 
         [System.Text.Json.Serialization.JsonPropertyName("RevisionDate")]
         public System.DateTimeOffset? RevisionDate { get; set; }
+
+        /// <summary>
+        /// Source and identity-match evidence; not semantic curation status or runtime executability.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Provenance")]
         [System.ComponentModel.DataAnnotations.Required]
@@ -5316,15 +5612,30 @@ namespace OSDC.Drilling.Field.ModelShared
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class GeodeticPosition
     {
+        /// <summary>
+        /// Geodetic latitude in SI radians, north positive, relative to the applicable source or target datum ellipsoid.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Latitude")]
         public double Latitude { get; set; }
 
+        /// <summary>
+        /// Geodetic longitude in SI radians, east positive from the applicable source or target datum prime meridian; not necessarily Greenwich.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Longitude")]
         public double Longitude { get; set; }
 
+        /// <summary>
+        /// SI metres positive downward from the applicable source or target datum ellipsoid. Geographic 2D carry-through is not a height transformation.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Depth")]
         public double Depth { get; set; }
+
+        /// <summary>
+        /// Epoch of the coordinates as an ISO 8601 UTC timestamp; not the frame epoch or request execution time.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("CoordinateEpochUtc")]
         public System.DateTimeOffset? CoordinateEpochUtc { get; set; }
@@ -5368,24 +5679,52 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Source datum/frame or ensemble context for input coordinates.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("SourceDatumId")]
         public System.Guid SourceDatumId { get; set; }
 
+        /// <summary>
+        /// Target datum/frame or ensemble context for output coordinates.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TargetDatumId")]
         public System.Guid TargetDatumId { get; set; }
+
+        /// <summary>
+        /// Coordinate operation method; preserve method identity and rotation convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Method")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
         public GeodeticTransformationMethod Method { get; set; }
 
+        /// <summary>
+        /// Coordinate operation method; preserve method identity and rotation convention.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("MethodName")]
         public string MethodName { get; set; }
+
+        /// <summary>
+        /// Coordinate operation method; preserve method identity and rotation convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("MethodIdentifier")]
         public AuthorityIdentifier MethodIdentifier { get; set; }
 
+        /// <summary>
+        /// Source CRS with its coordinate domain and authority identity.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("SourceCrs")]
         public CoordinateReferenceSystemReference SourceCrs { get; set; }
+
+        /// <summary>
+        /// Target CRS with its coordinate domain and authority identity.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("TargetCrs")]
         public CoordinateReferenceSystemReference TargetCrs { get; set; }
@@ -5393,8 +5732,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("IsReversible")]
         public bool IsReversible { get; set; }
 
+        /// <summary>
+        /// Ordered authority identities of component operations in a concatenated operation.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("ComponentOperationIdentifiers")]
         public System.Collections.Generic.ICollection<AuthorityIdentifier> ComponentOperationIdentifiers { get; set; }
+
+        /// <summary>
+        /// Method-defined parameters in original authority units, not uniformly SI. Resolve each parameter identity and Unit before arithmetic; file-valued parameters are resource references.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Parameters")]
         public System.Collections.Generic.ICollection<CoordinateOperationParameterValue> Parameters { get; set; }
@@ -5405,26 +5752,58 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("RequiresCoordinateEpoch")]
         public bool RequiresCoordinateEpoch { get; set; }
 
+        /// <summary>
+        /// Signed geocentric X translation in SI metres; source/target frames and operation direction define meaning.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TranslationX")]
         public double TranslationX { get; set; }
+
+        /// <summary>
+        /// Signed geocentric Y translation in SI metres; source/target frames and operation direction define meaning.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("TranslationY")]
         public double TranslationY { get; set; }
 
+        /// <summary>
+        /// Signed geocentric Z translation in SI metres; source/target frames and operation direction define meaning.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TranslationZ")]
         public double TranslationZ { get; set; }
+
+        /// <summary>
+        /// Signed geocentric X rotation in SI radians. Custom operations use the position-vector convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("RotationX")]
         public double RotationX { get; set; }
 
+        /// <summary>
+        /// Signed geocentric Y rotation in SI radians. Custom operations use the position-vector convention.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("RotationY")]
         public double RotationY { get; set; }
+
+        /// <summary>
+        /// Signed geocentric Z rotation in SI radians. Custom operations use the position-vector convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("RotationZ")]
         public double RotationZ { get; set; }
 
+        /// <summary>
+        /// Dimensionless increment s in scale factor 1+s, not ppm or the full factor. Zero means no scale change; display precision 1e-12 does not round stored values.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("ScaleDifference")]
         public double ScaleDifference { get; set; }
+
+        /// <summary>
+        /// Estimated operation accuracy in SI metres; null means unknown, not zero or a guaranteed standard deviation.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Accuracy")]
         public double? Accuracy { get; set; }
@@ -5432,8 +5811,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("AreaOfUse")]
         public string AreaOfUse { get; set; }
 
+        /// <summary>
+        /// WGS84/Greenwich geographic bounds in SI radians; west greater than east denotes antimeridian crossing.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("AreaOfUseBounds")]
         public GeographicBoundingBox AreaOfUseBounds { get; set; }
+
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
@@ -5447,12 +5834,24 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("IsSuperseded")]
         public bool IsSuperseded { get; set; }
 
+        /// <summary>
+        /// Source and identity-match evidence; not semantic curation status or runtime executability.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Provenance")]
         [System.ComponentModel.DataAnnotations.Required]
         public CatalogProvenance Provenance { get; set; } = new CatalogProvenance();
 
+        /// <summary>
+        /// Catalogue creation/modification instant in UTC.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("CreatedUtc")]
         public System.DateTimeOffset CreatedUtc { get; set; }
+
+        /// <summary>
+        /// Catalogue creation/modification instant in UTC.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("ModifiedUtc")]
         public System.DateTimeOffset ModifiedUtc { get; set; }
@@ -5500,29 +5899,61 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
+
+        /// <summary>
+        /// Source datum/frame or ensemble context for input coordinates.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("SourceDatum")]
         [System.ComponentModel.DataAnnotations.Required]
         public CatalogReference SourceDatum { get; set; } = new CatalogReference();
 
+        /// <summary>
+        /// Target datum/frame or ensemble context for output coordinates.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TargetDatum")]
         [System.ComponentModel.DataAnnotations.Required]
         public CatalogReference TargetDatum { get; set; } = new CatalogReference();
+
+        /// <summary>
+        /// Coordinate operation method; preserve method identity and rotation convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Method")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
         public GeodeticTransformationMethod Method { get; set; }
 
+        /// <summary>
+        /// Coordinate operation method; preserve method identity and rotation convention.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("MethodName")]
         public string MethodName { get; set; }
+
+        /// <summary>
+        /// Coordinate operation method; preserve method identity and rotation convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("MethodIdentifier")]
         public AuthorityIdentifier MethodIdentifier { get; set; }
 
+        /// <summary>
+        /// Source CRS with its coordinate domain and authority identity.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("SourceCrs")]
         public CoordinateReferenceSystemReference SourceCrs { get; set; }
+
+        /// <summary>
+        /// Target CRS with its coordinate domain and authority identity.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("TargetCrs")]
         public CoordinateReferenceSystemReference TargetCrs { get; set; }
@@ -5530,8 +5961,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("IsReversible")]
         public bool IsReversible { get; set; }
 
+        /// <summary>
+        /// Ordered authority identities of component operations in a concatenated operation.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("ComponentOperationIdentifiers")]
         public System.Collections.Generic.ICollection<AuthorityIdentifier> ComponentOperationIdentifiers { get; set; }
+
+        /// <summary>
+        /// Method-defined parameters in original authority units, not uniformly SI. Resolve each parameter identity and Unit before arithmetic; file-valued parameters are resource references.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Parameters")]
         public System.Collections.Generic.ICollection<CoordinateOperationParameterValue> Parameters { get; set; }
@@ -5542,26 +5981,58 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("RequiresCoordinateEpoch")]
         public bool RequiresCoordinateEpoch { get; set; }
 
+        /// <summary>
+        /// Signed geocentric X translation in SI metres; source/target frames and operation direction define meaning.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TranslationX")]
         public double TranslationX { get; set; }
+
+        /// <summary>
+        /// Signed geocentric Y translation in SI metres; source/target frames and operation direction define meaning.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("TranslationY")]
         public double TranslationY { get; set; }
 
+        /// <summary>
+        /// Signed geocentric Z translation in SI metres; source/target frames and operation direction define meaning.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TranslationZ")]
         public double TranslationZ { get; set; }
+
+        /// <summary>
+        /// Signed geocentric X rotation in SI radians. Custom operations use the position-vector convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("RotationX")]
         public double RotationX { get; set; }
 
+        /// <summary>
+        /// Signed geocentric Y rotation in SI radians. Custom operations use the position-vector convention.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("RotationY")]
         public double RotationY { get; set; }
+
+        /// <summary>
+        /// Signed geocentric Z rotation in SI radians. Custom operations use the position-vector convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("RotationZ")]
         public double RotationZ { get; set; }
 
+        /// <summary>
+        /// Dimensionless increment s in scale factor 1+s, not ppm or the full factor. Zero means no scale change; display precision 1e-12 does not round stored values.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("ScaleDifference")]
         public double ScaleDifference { get; set; }
+
+        /// <summary>
+        /// Estimated operation accuracy in SI metres; null means unknown, not zero or a guaranteed standard deviation.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Accuracy")]
         public double? Accuracy { get; set; }
@@ -5572,12 +6043,20 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("AreaOfUse")]
         public string AreaOfUse { get; set; }
 
+        /// <summary>
+        /// WGS84/Greenwich geographic bounds in SI radians; west greater than east denotes antimeridian crossing.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("AreaOfUseBounds")]
         public GeographicBoundingBox AreaOfUseBounds { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("CatalogStatus")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
         public CatalogEntryStatus CatalogStatus { get; set; }
+
+        /// <summary>
+        /// Source and identity-match evidence; not semantic curation status or runtime executability.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Provenance")]
         [System.ComponentModel.DataAnnotations.Required]
@@ -5628,11 +6107,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
 
+        /// <summary>
+        /// Equatorial semi-major axis in SI metres.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("SemiMajorAxis")]
         public double SemiMajorAxis { get; set; }
+
+        /// <summary>
+        /// Dimensionless inverse flattening 1/f; zero is the provider sphere sentinel, otherwise greater than one. Display precision 1e-9 does not round stored values.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("InverseFlattening")]
         public double InverseFlattening { get; set; }
@@ -5643,12 +6134,24 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("IsDefault")]
         public bool IsDefault { get; set; }
 
+        /// <summary>
+        /// Source and identity-match evidence; not semantic curation status or runtime executability.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Provenance")]
         [System.ComponentModel.DataAnnotations.Required]
         public CatalogProvenance Provenance { get; set; } = new CatalogProvenance();
 
+        /// <summary>
+        /// Catalogue creation/modification instant in UTC.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("CreatedUtc")]
         public System.DateTimeOffset CreatedUtc { get; set; }
+
+        /// <summary>
+        /// Catalogue creation/modification instant in UTC.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("ModifiedUtc")]
         public System.DateTimeOffset ModifiedUtc { get; set; }
@@ -5671,12 +6174,20 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("RevisionDate")]
         public System.DateTimeOffset? RevisionDate { get; set; }
 
+        /// <summary>
+        /// Original authority unit identity retained for provenance; ellipsoid axes themselves are exposed in SI metres.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("SourceUnit")]
         public AuthorityIdentifier SourceUnit { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("CatalogStatus")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
         public CatalogEntryStatus CatalogStatus { get; set; }
+
+        /// <summary>
+        /// Derived polar semi-minor axis in SI metres.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("SemiMinorAxis")]
         public double SemiMinorAxis { get; set; }
@@ -5705,17 +6216,37 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
+
+        /// <summary>
+        /// Equatorial semi-major axis in SI metres.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("SemiMajorAxis")]
         public double SemiMajorAxis { get; set; }
 
+        /// <summary>
+        /// Dimensionless inverse flattening 1/f; zero is the provider sphere sentinel, otherwise greater than one. Display precision 1e-9 does not round stored values.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("InverseFlattening")]
         public double InverseFlattening { get; set; }
 
+        /// <summary>
+        /// Derived polar semi-minor axis in SI metres.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("SemiMinorAxis")]
         public double SemiMinorAxis { get; set; }
+
+        /// <summary>
+        /// Original authority unit identity retained for provenance; ellipsoid axes themselves are exposed in SI metres.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("SourceUnit")]
         public AuthorityIdentifier SourceUnit { get; set; }
@@ -5742,6 +6273,10 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("RevisionDate")]
         public System.DateTimeOffset? RevisionDate { get; set; }
 
+        /// <summary>
+        /// Source and identity-match evidence; not semantic curation status or runtime executability.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Provenance")]
         [System.ComponentModel.DataAnnotations.Required]
         public CatalogProvenance Provenance { get; set; } = new CatalogProvenance();
@@ -5760,12 +6295,23 @@ namespace OSDC.Drilling.Field.ModelShared
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ResolveTransformationPathsRequest
     {
+        /// <summary>
+        /// Source datum/frame or ensemble context for input coordinates.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("SourceDatumId")]
         public System.Guid SourceDatumId { get; set; }
 
+        /// <summary>
+        /// Target datum/frame or ensemble context for output coordinates.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TargetDatumId")]
         public System.Guid TargetDatumId { get; set; }
+
+        /// <summary>
+        /// Ordered positions in the source reference for inputs or target reference for transformed outputs.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Positions")]
         public System.Collections.Generic.ICollection<GeodeticPosition> Positions { get; set; }
@@ -5787,10 +6333,17 @@ namespace OSDC.Drilling.Field.ModelShared
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ResolveTransformationPathsResponse
     {
+        /// <summary>
+        /// Source datum/frame or ensemble context for input coordinates.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("SourceDatum")]
         [System.ComponentModel.DataAnnotations.Required]
         public DatumReference SourceDatum { get; set; } = new DatumReference();
+
+        /// <summary>
+        /// Target datum/frame or ensemble context for output coordinates.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("TargetDatum")]
         [System.ComponentModel.DataAnnotations.Required]
@@ -5801,6 +6354,10 @@ namespace OSDC.Drilling.Field.ModelShared
 
         [System.Text.Json.Serialization.JsonPropertyName("SelectionGuidance")]
         public string SelectionGuidance { get; set; }
+
+        /// <summary>
+        /// Candidate paths with independent applicability and runtime executability evidence.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Candidates")]
         public System.Collections.Generic.ICollection<TransformationPathCandidate> Candidates { get; set; }
@@ -5819,12 +6376,23 @@ namespace OSDC.Drilling.Field.ModelShared
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class TransformCoordinatesRequest
     {
+        /// <summary>
+        /// Source datum/frame or ensemble context for input coordinates.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("SourceDatumId")]
         public System.Guid SourceDatumId { get; set; }
 
+        /// <summary>
+        /// Target datum/frame or ensemble context for output coordinates.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TargetDatumId")]
         public System.Guid TargetDatumId { get; set; }
+
+        /// <summary>
+        /// Ordered positions in the source reference for inputs or target reference for transformed outputs.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Positions")]
         public System.Collections.Generic.ICollection<GeodeticPosition> Positions { get; set; }
@@ -5835,6 +6403,10 @@ namespace OSDC.Drilling.Field.ModelShared
 
         [System.Text.Json.Serialization.JsonPropertyName("TransformationPathIds")]
         public System.Collections.Generic.ICollection<System.Guid> TransformationPathIds { get; set; }
+
+        /// <summary>
+        /// Opaque expiring provider token binding the selected path to exact ordered inputs and catalogue revisions; re-resolve after changes.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("SelectionToken")]
         public string SelectionToken { get; set; }
@@ -5861,17 +6433,32 @@ namespace OSDC.Drilling.Field.ModelShared
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class TransformCoordinatesResponse
     {
+        /// <summary>
+        /// Source datum/frame or ensemble context for input coordinates.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("SourceDatum")]
         [System.ComponentModel.DataAnnotations.Required]
         public CatalogReference SourceDatum { get; set; } = new CatalogReference();
 
+        /// <summary>
+        /// Target datum/frame or ensemble context for output coordinates.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TargetDatum")]
         [System.ComponentModel.DataAnnotations.Required]
         public CatalogReference TargetDatum { get; set; } = new CatalogReference();
 
+        /// <summary>
+        /// Ordered directed operations; order and applied direction are significant.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TransformationPath")]
         public System.Collections.Generic.ICollection<TransformationReference> TransformationPath { get; set; }
+
+        /// <summary>
+        /// Ordered positions in the source reference for inputs or target reference for transformed outputs.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Positions")]
         public System.Collections.Generic.ICollection<GeodeticPosition> Positions { get; set; }
@@ -5883,8 +6470,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("DepthReferenceChanged")]
         public bool DepthReferenceChanged { get; set; }
 
+        /// <summary>
+        /// Output depth minus input depth for each ordered position, in SI metres; not geoid undulation or physical displacement.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("DepthChanges")]
         public System.Collections.Generic.ICollection<double> DepthChanges { get; set; }
+
+        /// <summary>
+        /// Maximum absolute output-minus-input depth change in SI metres; not an error estimate.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("MaximumAbsoluteDepthChange")]
         public double MaximumAbsoluteDepthChange { get; set; }
@@ -5947,14 +6542,26 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("ExecutionIssues")]
         public System.Collections.Generic.ICollection<ServiceWarning> ExecutionIssues { get; set; }
 
+        /// <summary>
+        /// Opaque expiring provider token binding the selected path to exact ordered inputs and catalogue revisions; re-resolve after changes.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("SelectionToken")]
         public string SelectionToken { get; set; }
+
+        /// <summary>
+        /// Root-sum-square of known operation accuracies in SI metres; null if any is unknown. Not a rigorous error bound or proof of independent uncertainties.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("CombinedAccuracy")]
         public double? CombinedAccuracy { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("AccuracyMeaning")]
         public string AccuracyMeaning { get; set; }
+
+        /// <summary>
+        /// Ordered directed operations; order and applied direction are significant.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Operations")]
         public System.Collections.Generic.ICollection<TransformationReference> Operations { get; set; }
@@ -5980,24 +6587,52 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
+
+        /// <summary>
+        /// Coordinate operation method; preserve method identity and rotation convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Method")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
         public GeodeticTransformationMethod Method { get; set; }
 
+        /// <summary>
+        /// Coordinate operation method; preserve method identity and rotation convention.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("MethodName")]
         public string MethodName { get; set; }
+
+        /// <summary>
+        /// Coordinate operation method; preserve method identity and rotation convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("MethodIdentifier")]
         public AuthorityIdentifier MethodIdentifier { get; set; }
 
+        /// <summary>
+        /// Source CRS with its coordinate domain and authority identity.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("SourceCrs")]
         public CoordinateReferenceSystemReference SourceCrs { get; set; }
 
+        /// <summary>
+        /// Target CRS with its coordinate domain and authority identity.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TargetCrs")]
         public CoordinateReferenceSystemReference TargetCrs { get; set; }
+
+        /// <summary>
+        /// Ordered authority identities of component operations in a concatenated operation.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("ComponentOperationIdentifiers")]
         public System.Collections.Generic.ICollection<AuthorityIdentifier> ComponentOperationIdentifiers { get; set; }
@@ -6008,6 +6643,10 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("RequiresCoordinateEpoch")]
         public bool RequiresCoordinateEpoch { get; set; }
 
+        /// <summary>
+        /// Estimated operation accuracy in SI metres; null means unknown, not zero or a guaranteed standard deviation.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Accuracy")]
         public double? Accuracy { get; set; }
 
@@ -6016,6 +6655,10 @@ namespace OSDC.Drilling.Field.ModelShared
 
         [System.Text.Json.Serialization.JsonPropertyName("AreaOfUse")]
         public string AreaOfUse { get; set; }
+
+        /// <summary>
+        /// WGS84/Greenwich geographic bounds in SI radians; west greater than east denotes antimeridian crossing.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("AreaOfUseBounds")]
         public GeographicBoundingBox AreaOfUseBounds { get; set; }
@@ -6063,8 +6706,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Internal catalogue UUID of the reference ellipsoid definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("ReferenceEllipsoidId")]
         public System.Guid ReferenceEllipsoidId { get; set; }
+
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
@@ -6076,11 +6727,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("IsDeprecated")]
         public bool IsDeprecated { get; set; }
 
+        /// <summary>
+        /// Name of the meridian defining the datum longitude origin.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianName")]
         public string PrimeMeridianName { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianIdentifier")]
         public AuthorityIdentifier PrimeMeridianIdentifier { get; set; }
+
+        /// <summary>
+        /// SI radians east of Greenwich; not longitude measured from the selected datum prime meridian.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("PrimeMeridianLongitude")]
         public double PrimeMeridianLongitude { get; set; }
@@ -6091,11 +6754,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("PublicationDate")]
         public string PublicationDate { get; set; }
 
+        /// <summary>
+        /// Authority-supplied realization epoch text; not automatically a parsed UTC instant.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("RealizationEpoch")]
         public string RealizationEpoch { get; set; }
 
+        /// <summary>
+        /// Authority-supplied decimal-year frame reference epoch; not a duration or coordinate epoch. Retain the defining authority calendar/time convention; do not infer UTC.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("FrameReferenceEpoch")]
         public double? FrameReferenceEpoch { get; set; }
+
+        /// <summary>
+        /// Authority-supplied decimal-year anchor epoch; not an elapsed duration. Retain the defining authority calendar/time convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("AnchorEpoch")]
         public double? AnchorEpoch { get; set; }
@@ -6106,11 +6781,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("RealizationMethod")]
         public string RealizationMethod { get; set; }
 
+        /// <summary>
+        /// Stated ensemble accuracy in SI metres; not an operation accuracy or a guaranteed standard deviation.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("EnsembleAccuracy")]
         public double? EnsembleAccuracy { get; set; }
 
+        /// <summary>
+        /// Internal UUIDs of the ensemble member reference frames.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("MemberDatumIds")]
         public System.Collections.Generic.ICollection<System.Guid> MemberDatumIds { get; set; }
+
+        /// <summary>
+        /// Declared purposes and extents of this definition.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Usage")]
         public System.Collections.Generic.ICollection<GeodeticUsage> Usage { get; set; }
@@ -6139,36 +6826,80 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Source datum/frame or ensemble context for input coordinates.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("SourceDatumId")]
         public System.Guid SourceDatumId { get; set; }
 
+        /// <summary>
+        /// Target datum/frame or ensemble context for output coordinates.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TargetDatumId")]
         public System.Guid TargetDatumId { get; set; }
+
+        /// <summary>
+        /// Coordinate operation method; preserve method identity and rotation convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Method")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
         public GeodeticTransformationMethod Method { get; set; }
 
+        /// <summary>
+        /// Signed geocentric X translation in SI metres; source/target frames and operation direction define meaning.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TranslationX")]
         public double TranslationX { get; set; }
+
+        /// <summary>
+        /// Signed geocentric Y translation in SI metres; source/target frames and operation direction define meaning.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("TranslationY")]
         public double TranslationY { get; set; }
 
+        /// <summary>
+        /// Signed geocentric Z translation in SI metres; source/target frames and operation direction define meaning.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("TranslationZ")]
         public double TranslationZ { get; set; }
+
+        /// <summary>
+        /// Signed geocentric X rotation in SI radians. Custom operations use the position-vector convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("RotationX")]
         public double RotationX { get; set; }
 
+        /// <summary>
+        /// Signed geocentric Y rotation in SI radians. Custom operations use the position-vector convention.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("RotationY")]
         public double RotationY { get; set; }
+
+        /// <summary>
+        /// Signed geocentric Z rotation in SI radians. Custom operations use the position-vector convention.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("RotationZ")]
         public double RotationZ { get; set; }
 
+        /// <summary>
+        /// Dimensionless increment s in scale factor 1+s, not ppm or the full factor. Zero means no scale change; display precision 1e-12 does not round stored values.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("ScaleDifference")]
         public double ScaleDifference { get; set; }
+
+        /// <summary>
+        /// Estimated operation accuracy in SI metres; null means unknown, not zero or a guaranteed standard deviation.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Accuracy")]
         public double? Accuracy { get; set; }
@@ -6176,8 +6907,16 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("AreaOfUse")]
         public string AreaOfUse { get; set; }
 
+        /// <summary>
+        /// WGS84/Greenwich geographic bounds in SI radians; west greater than east denotes antimeridian crossing.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("AreaOfUseBounds")]
         public GeographicBoundingBox AreaOfUseBounds { get; set; }
+
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
@@ -6203,11 +6942,23 @@ namespace OSDC.Drilling.Field.ModelShared
         [System.Text.Json.Serialization.JsonPropertyName("Description")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Authority namespace, code and optional version/URI identifying this definition.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("Identifier")]
         public AuthorityIdentifier Identifier { get; set; }
 
+        /// <summary>
+        /// Equatorial semi-major axis in SI metres.
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("SemiMajorAxis")]
         public double SemiMajorAxis { get; set; }
+
+        /// <summary>
+        /// Dimensionless inverse flattening 1/f; zero is the provider sphere sentinel, otherwise greater than one. Display precision 1e-9 does not round stored values.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("InverseFlattening")]
         public double InverseFlattening { get; set; }

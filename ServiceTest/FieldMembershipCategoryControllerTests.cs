@@ -41,7 +41,7 @@ namespace OSDC.Drilling.Field.ServiceTest
 
             var ids = await api.GetAllFieldMembershipCategoryIdAsync();
             var metas = await api.GetAllFieldMembershipCategoryMetaInfoAsync();
-            var heavy = await api.GetAllFieldMembershipCategoryAsync();
+            var heavy = await api.ListFieldMembershipCategoryReferencesAsync();
 
             Assert.That(ids, Is.Not.Null);
             Assert.That(metas, Is.Not.Null);
