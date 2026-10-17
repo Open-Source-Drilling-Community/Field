@@ -19,13 +19,17 @@ jobs:
       run: docker login -u="${{ secrets.DOCKERHUB_USERNAME }}" -p="${{ secrets.DOCKERHUB_PASSWORD }}"
       
     - name: Build Service Docker image
-      run: docker build --file "${{ github.workspace }}/Service/Dockerfile" --tag digiwells/osdcdrillingfieldservice:stable .
+      run: docker build --file "${{ github.workspace }}/Service/Dockerfile" --tag digiwells/osdcdrillingfieldservice:stable --tag digiwells/osdcdrillingfieldservice:sha-${{ github.sha }} .
 
     - name: Push Docker image for Service to DockerHub
-      run: docker push digiwells/osdcdrillingfieldservice:stable
+      run: |
+        docker push digiwells/osdcdrillingfieldservice:stable
+        docker push digiwells/osdcdrillingfieldservice:sha-${{ github.sha }}
 
     - name: Build WebApp Docker image
-      run: docker build --file "${{ github.workspace }}/WebApp/Dockerfile" --tag digiwells/osdcdrillingfieldwebappclient:stable .
+      run: docker build --file "${{ github.workspace }}/WebApp/Dockerfile" --tag digiwells/osdcdrillingfieldwebappclient:stable --tag digiwells/osdcdrillingfieldwebappclient:sha-${{ github.sha }} .
 
     - name: Push Docker image for WebApp to DockerHub
-      run: docker push digiwells/osdcdrillingfieldwebappclient:stable
+      run: |
+        docker push digiwells/osdcdrillingfieldwebappclient:stable
+        docker push digiwells/osdcdrillingfieldwebappclient:sha-${{ github.sha }}
