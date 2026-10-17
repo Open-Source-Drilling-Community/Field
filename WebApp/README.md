@@ -115,7 +115,7 @@ Runtime and packages:
 - ASP.NET Core Blazor Server, .NET 8
 - MudBlazor
 - `OSDC.Drilling.Field.WebPages`
-- `OSDC.Drilling.Cluster.WebPages` 2.0.0
+- `OSDC.Drilling.Cluster.WebPages` 2.0.2
 - `OSDC.Drilling.EarthCartographicProjection.WebPages`
 - `OSDC.Drilling.EarthGeodesy.WebPages`
 - `OSDC.Drilling.EarthGravity.WebPages`
@@ -203,7 +203,7 @@ The host embeds the following current WebPages packages. Publish these versions 
 
 | Package | Version |
 | --- | --- |
-| `OSDC.Drilling.Cluster.WebPages` | `2.0.0` |
+| `OSDC.Drilling.Cluster.WebPages` | `2.0.2` |
 | `OSDC.Drilling.EarthCartographicProjection.WebPages` | `2.0.0` |
 | `OSDC.Drilling.EarthGeodesy.WebPages` | `2.0.0` |
 | `OSDC.Drilling.EarthGravity.WebPages` | `1.0.4` |
@@ -213,3 +213,5 @@ The host embeds the following current WebPages packages. Publish these versions 
 Package releases with a new major version use the bounded light discovery contracts. Selected full-record reads and dedicated backup operations remain available.
 
 The Docker publishing workflow pushes each service and WebApp image as both `stable` and `sha-<full Git commit SHA>`, so a coordinated package upgrade can be traced to its exact source commit.
+
+The Cluster, Well and WellBore trajectory/SurveyRun views use WebPages 2.0.2, which submits each complete plot frame in one update, including all ellipses.
