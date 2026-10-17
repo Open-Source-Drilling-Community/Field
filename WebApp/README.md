@@ -115,7 +115,7 @@ Runtime and packages:
 - ASP.NET Core Blazor Server, .NET 8
 - MudBlazor
 - `OSDC.Drilling.Field.WebPages`
-- `OSDC.Drilling.Cluster.WebPages` 1.1.0
+- `OSDC.Drilling.Cluster.WebPages` 2.0.0
 - `OSDC.Drilling.EarthCartographicProjection.WebPages`
 - `OSDC.Drilling.EarthGeodesy.WebPages`
 - `OSDC.Drilling.EarthGravity.WebPages`
@@ -196,3 +196,18 @@ This is a breaking REST/MCP contract change: update generated clients, UIs, and 
 
 
 Tables/selectors use light discovery. Editors retrieve the selected complete resource; category options load only for chosen or already assigned definitions. Slot context uses paginated light locations, and rig-history context reads the selected wellbore. Backup selection uses discovery while the dedicated export/restore APIs retain full backup semantics.
+
+## Coordinated WebPages package upgrade
+
+The host embeds the following current WebPages packages. Publish these versions and verify their availability on nuget.org before restoring and publishing this WebApp image. The host's own WebPages remain a project reference.
+
+| Package | Version |
+| --- | --- |
+| `OSDC.Drilling.Cluster.WebPages` | `2.0.0` |
+| `OSDC.Drilling.EarthCartographicProjection.WebPages` | `2.0.0` |
+| `OSDC.Drilling.EarthGeodesy.WebPages` | `2.0.0` |
+| `OSDC.Drilling.EarthGravity.WebPages` | `1.0.4` |
+| `OSDC.Drilling.EarthMagneticField.WebPages` | `1.0.4` |
+| `OSDC.Drilling.EarthVerticalDatum.WebPages` | `1.1.4` |
+
+Package releases with a new major version use the bounded light discovery contracts. Selected full-record reads and dedicated backup operations remain available.
